@@ -1,0 +1,30 @@
+/* 改变主题色变量 */
+$--color-primary: #3296fa;
+
+/* 改变 icon 字体路径变量，必需 */
+$--font-path: '~element-ui/lib/theme-chalk/fonts';
+
+@import "~element-ui/packages/theme-chalk/src/index";
+
+.el-button--text {
+  padding: 0;
+}
+.el-message {
+  &--info {
+    background-color: rgba($color: #313131, $alpha: 0.6);
+    color: #fff;
+    top: 50% !important;
+    transform: translateX(-50%);
+    text-align: center;
+    min-width: auto;
+    .el-message {
+      &__icon {
+        display: none;
+      }
+      &__content {
+        color: #fff;
+        text-align: center;
+      }
+    }
+  }
+}
