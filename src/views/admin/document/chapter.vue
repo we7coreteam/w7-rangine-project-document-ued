@@ -1,7 +1,12 @@
 <template>
-  <div>
-    <el-button @click="add">添加</el-button>
-  </div>
+  <el-container>
+    <el-aside>
+      <el-tree :data="chapters" empty-text=""></el-tree>
+    </el-aside>
+    <el-main>
+      
+    </el-main>
+  </el-container>
 </template>
 
 <script>
@@ -9,35 +14,21 @@ export default {
   name: 'chapter',
   data() {
     return {
-      menu: {}
+      chapters: []
     }
   },
   methods: {
-    getMenu() {
-      this.$http.get('/admin/chapter/index', {
-        params: {
-          document_id: this.$route.params.id
-        }
+    getChapters() {
+      this.$post('/admin/chapter/index', {
+        document_id: this.$route.params.id
       })
         .then(res => {
-          this.menu = res
-        })
-    },
-    add() {
-      this.$post('/admin/chapter/create', {
-        document_id: this.$route.params.id,
-        parent_id: 0,
-        name: '章节1',
-        sort: 1
-      })
-        .then(() => {
-          this.getMenu()
-          this.$message('添加成功')
+           this.chapters = res
         })
     }
   },
   created() {
-    this.getMenu()
+    this.getChapters()
   }
 }
 </script>

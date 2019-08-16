@@ -34,8 +34,7 @@ export default {
       formData: {
         username: '',
         userpass: '',
-        code: '',
-        imgcodeKey: ''
+        code: ''
       }
     }
   },
@@ -44,11 +43,11 @@ export default {
       this.$message({message: '请联系管理员修改或使用密码找回工具修改'})
     },
     getCode() {
-      this.$http.get('/admin/verificationcode/getcodeimg')
+      this.$post('/admin/verificationcode/getcodeimg')
         .then(res => {
-          if(res.img && res.imgcodeKey) {
+          if(res.img) {
             this.code = res.img
-            this.formData.imgcodeKey = res.imgcodeKey
+            // this.formData.imgcodeKey = res.imgcodeKey
           }
         })
     },

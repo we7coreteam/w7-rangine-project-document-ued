@@ -31,12 +31,40 @@ export default new Router({
             {
               path: '',
               name: 'documentIndex',
-              component: () => import(/* webpackChunkName: "about" */ './views/admin/document/index.vue'),
+              component: () => import(/* webpackChunkName: "about" */ './views/admin/document/index.vue')
             },
             {
               path: ':id',
-              name: 'documentIndex',
-              component: () => import(/* webpackChunkName: "about" */ './views/admin/document/chapter.vue'),
+              name: 'manageSetting',
+              component: () => import(/* webpackChunkName: "about" */ './views/admin/document/manageSetting.vue')
+            },
+            {
+              path: 'chapter/:id',
+              name: 'chapter',
+              component: () => import(/* webpackChunkName: "about" */ './views/admin/document/chapter.vue')
+            }
+          ]
+        },
+        {
+          path: 'user',
+          name: 'user',
+          redirect: 'user',
+          component: () => import(/* webpackChunkName: "about" */ './views/admin/user/layout.vue'),
+          children: [
+            {
+              path: '',
+              name: 'userIndex',
+              component: () => import(/* webpackChunkName: "about" */ './views/admin/user/index.vue')
+            },
+            {
+              path: 'create',
+              name: 'baseInfo',
+              component: () => import(/* webpackChunkName: "about" */ './views/admin/user/baseInfo.vue')
+            },
+            {
+              path: ':id',
+              name: 'baseInfoId',
+              component: () => import(/* webpackChunkName: "about" */ './views/admin/user/baseInfo.vue')
             }
           ]
         }

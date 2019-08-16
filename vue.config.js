@@ -6,7 +6,7 @@ module.exports = {
 	devServer: {
 		proxy: {
 			'/admin': {
-					target: 'https://wiki.w7.cc/',
+					target: 'http://172.16.1.13:98/',
 					// secure: false,
 					changeOrigin: true,
 					headers: {

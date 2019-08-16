@@ -5,20 +5,10 @@ import {
 } from 'element-ui'
 import qs from 'qs'
 
+axios.defaults.withCredentials=true
 const instance = axios.create()
+
 instance.interceptors.request.use(request => {
-  if(request.method == 'post') {
-    request.data = {
-      ...request.data,
-      document_access_token: localStorage.getItem('document_access_token')
-    }
-  }
-  if(request.method == 'get') {
-    request.params = {
-      ...request.params,
-      document_access_token: localStorage.getItem('document_access_token')
-    }
-  }
   request.transformRequest = [function (data) {
     return typeof data === 'object' ? qs.stringify(data) : data
   }]

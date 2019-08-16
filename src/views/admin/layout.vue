@@ -6,7 +6,7 @@
       </router-link>
       <div class="menu">
         <router-link class="item" to="/admin/document">文档管理</router-link>
-        <router-link class="item" to="/admin/document">用户管理</router-link>
+        <router-link class="item" to="/admin/user">用户管理</router-link>
       </div>
       <div class="user">
         Admin
@@ -28,9 +28,9 @@ export default {
     }
   },
   created() {
-    if(!window.localStorage.getItem('document_access_token')) {
-      this.$router.push('/admin/login')
-    }
+    // if(!window.localStorage.getItem('document_access_token')) {
+    //   this.$router.push('/admin/login')
+    // }
   }
 }
 </script>
