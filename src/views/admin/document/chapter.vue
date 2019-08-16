@@ -4,7 +4,6 @@
       <el-tree :data="chapters" empty-text=""></el-tree>
     </el-aside>
     <el-main>
-      
     </el-main>
   </el-container>
 </template>
@@ -14,7 +13,8 @@ export default {
   name: 'chapter',
   data() {
     return {
-      chapters: []
+      chapters: [],
+      ccccc: ''
     }
   },
   methods: {
