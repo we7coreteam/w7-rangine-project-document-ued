@@ -1,8 +1,10 @@
 <template>
   <div>
     <h3 class="page-head">
+      <!-- TODO -->
       <router-link to='/admin/document'><i class="el-icon-arrow-left"></i></router-link>普通文档/管理设置
     </h3>
+    <!-- TODO -->
     <div class="title">
       <i class="fl el-icon-folder-opened"></i>{{ details.name }}
        <router-link :to="{path:'chapter/'+ details.id}" class="fr el-button el-button--primary">进入文档</router-link>
@@ -46,6 +48,7 @@
     <!-- 基本信息弹出框 -->
     <el-dialog title="基本信息" :visible.sync="dialogDocInfoVisible" :close-on-click-modal="false" center>
       <el-form :model="details">
+        <!-- TODO nameVisible ? descriptionVisible ? -->
         <el-form-item label="文档名称" :label-width="formLabelWidth" v-if="nameVisible">
           <el-input v-model="details.name" autocomplete="off"></el-input>
         </el-form-item>

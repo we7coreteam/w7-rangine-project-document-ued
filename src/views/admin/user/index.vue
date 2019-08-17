@@ -94,6 +94,7 @@ export default {
     },
     deleteSelectRows() {
       this.$post('/admin/user/deluser',{
+        // TODO ?????
         ids: this.selectRowID ? this.selectRowID : JSON.stringify(this.selectRowsID).slice(1, JSON.stringify(this.selectRowsID).length -1)
       })
         .then(() => {
@@ -103,6 +104,7 @@ export default {
         })
     },
     deleteRow(id) {
+      // TODO  删除之前弹窗提示
       this.selectRowID = id
       this.deleteSelectRows()
     }

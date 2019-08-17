@@ -40,6 +40,7 @@ export default {
     }
   },
   methods: {
+    // TODO userpass confirm_userpass id????
     onSubmit() {
       if(this.formData.userpass !== this.formData.confirm_userpass) {
         this.$message('两次密码不一致，请重新输入！')
@@ -65,6 +66,7 @@ export default {
     }
   },
   created() {
+    // TODO {}
     if(this.id) this.getDetailsUser()
   }
 }

@@ -23,6 +23,7 @@
       <el-table-column label="创建时间" prop="created_at"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
+          <!-- TODO scope.row.has_creator != 3  -->
           <el-button type="text" v-if="scope.row.has_creator != 3 ? true : false">删除</el-button>
           <router-link
             :to="{path: 'document/'+ scope.row.id}"
@@ -47,6 +48,7 @@
     </el-pagination>
     <!-- 基本信息弹出框 -->
     <el-dialog title="创建文档" :visible.sync="dialogDocInfoVisible" :close-on-click-modal="false" center>
+      <!-- TODO label-width -->
       <el-form>
         <el-form-item label="文档名称" :label-width="formLabelWidth">
           <el-input v-model="name" autocomplete="off"></el-input>
@@ -80,6 +82,7 @@ export default {
     }
   },
   methods: {
+    // TODO  getList ? searchDoc ?
     getList() {
       this.$post('/admin/document/getlist',{
         page: this.currentPage,
