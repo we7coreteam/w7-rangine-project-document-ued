@@ -1,10 +1,56 @@
 <template>
-  <el-container>
-    <el-aside>
-      <el-tree :data="chapters" empty-text=""></el-tree>
+  <el-container class="w7-container">
+    <el-aside class="w7-aside" width="202px">
+      <div class="w7-aside-head">
+        <div class="icon"></div>
+        <p>{{ docName }}</p>
+      </div>
+      <el-input placeholder="请输入关键字搜索" v-model="keyword">
+        <i slot="suffix" class="el-input__icon el-icon-search" @click="searchDoc"></i>
+      </el-input>
+      <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text=""
+        ref="chaptersTree"
+        node-key="id"
+        accordion
+        :expand-on-click-node="false"
+        @node-contextmenu="rightClick"
+        :highlight-current="true"
+        @node-click="handleNodeClick">
+        <span class="custom-tree-node" slot-scope="{ node }">
+          <span>{{ node.label }}</span>
+          <span class="point3" @click="rightClick"><span>...</span></span>
+        </span>
+      </el-tree>
+      <div id="menu-bar" v-show="menuBarVisible">
+        <ul class="menu">
+          <li class="menu__item" @click="addChildNode">创建子章节</li>
+          <li class="menu__item" @click="updateNode">编辑</li>
+          <li class="menu__item" @click="removeNode">删除</li>
+          <li class="menu__item" >预览</li>
+        </ul>
+      </div>
+      <div class="add-node">
+        <el-button type="primary" @click="addNode">创建章节</el-button>
+      </div>
     </el-aside>
     <el-main>
+      <mavon-editor v-model="value"/>
     </el-main>
+    <!-- 基本信息弹出框 -->
+    <el-dialog class="w7-dialog" :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false">
+      <el-form :model="selectNodeObj" label-width="100px">
+        <el-form-item label="章节顺序">
+          <el-input v-model="selectNodeObj.sort"></el-input>
+        </el-form-item>
+        <el-form-item label="章节名称">
+          <el-input v-model="selectNodeObj.name"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="confirmBtn">确 定</el-button>
+        <el-button @click="dialogVisible = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </el-container>
 </template>
 
@@ -13,8 +59,21 @@ export default {
   name: 'chapter',
   data() {
     return {
+      docName: this.$route.params.name,
+      keyword: '',
+      sort: 0,
       chapters: [],
-      ccccc: ''
+      defaultProps: {
+        children: 'children',
+        label: 'name'
+      },
+      menuBarVisible: false,
+      selectNode: {},//选中的节点
+      selectNodeObj: {},//选中的节点data
+      rightSelectNodeObj: {},//右键选中的节点Object
+      rightSelectNode: {},//右键选中的节点的Node
+      dialogTitle: '',
+      dialogVisible: false
     }
   },
   methods: {
@@ -22,9 +81,172 @@ export default {
       this.$post('/admin/chapter/index', {
         document_id: this.$route.params.id
       })
+        .then(() => {
+          //  this.chapters = res
+          this.chapters = [
+                {
+                "id": 1,
+                "name": "快速入门",
+                "sort": 1,
+                "children": [
+                      {
+                        "id": 2,
+                        "name": "山海经",
+                        "sort": 0,
+                        "children": [
+                          {
+                            "id": 5,
+                            "name": "九霄明尊-张无忌",
+                            "sort": 300,
+                            "children": []
+                            },
+                        ]
+                    },
+                  ]
+                },
+            ]
+          if(!this.sort) {
+            let maxsort = this.sort
+            //找到sort的最大值
+            let maxValue = function(arr, value) {
+              for(let i in arr) {
+                maxsort = arr[i][value] > maxsort ? arr[i][value] : maxsort
+                if(arr[i].children.length > 0) {
+                  maxValue(arr[i].children, value)
+                }
+              }
+            }
+            maxValue(this.chapters, 'sort')
+            this.sort = maxsort + 1
+           }
+        })
+    },
+    searchDoc() {
+      this.$post('/admin/chapter/search ', {
+        document_id: this.$route.params.id,
+        keywords: this.keyword
+      })
         .then(res => {
            this.chapters = res
         })
+    },
+    handleNodeClick() {
+      if(this.menuBarVisible) {this.menuBarVisible = false}
+    },
+    rightClick(MouseEvent, object, Node) {
+      // console.log('右键被点击---event:', MouseEvent)
+      // console.log('右键被点击---传递给 data 属性的数组中该节点所对应的对象:', object)
+      // console.log('右键被点击---节点对应的 Node:', Node)
+      // console.log('右键被点击---节点组件本身:', element)
+      this.menuBarVisible = false // 先把模态框关死，目的是 第二次或者第n次右键鼠标的时候 它默认的是true
+      this.menuBarVisible = true  // 显示模态窗口，跳出自定义菜单栏
+      const menuBar = document.querySelector('#menu-bar')
+      menuBar.style.left = MouseEvent.clientX + 'px'
+      menuBar.style.top = MouseEvent.clientY + 'px'
+      this.rightSelectNodeObj = object
+      this.rightSelectNode = Node
+      // 给整个document添加监听鼠标事件，点击任何位置执行removeRightClickEvent
+      document.addEventListener('click', this.removeRightClickEvent)
+    },
+    removeRightClickEvent() {
+      this.menuBarVisible = false
+      document.removeEventListener('click', this.removeRightClickEvent)
+    },
+    addChildNode() {
+      if(this.rightSelectNode.level == 3) {
+        this.$message('当前属于第三级，不可以添加子章节！')
+        return
+      }
+      this.dialogTitle = '新建子章节'
+      this.selectNodeObj = {} //清空
+      this.selectNodeObj.sort = this.sort
+      this.dialogVisible = true
+    },
+    confirmBtn() {
+      if(!this.selectNodeObj.name) {
+        this.$message('章节名称不能为空！')
+        return
+      }
+      if(this.dialogTitle == '新建子章节' || this.dialogTitle == '创建章节' ) {
+        // this.$post('/admin/chapter/creat', {
+        //   document_id: this.$route.params.id,
+        //   parent_id: this.rightSelectNode.level > 1 ? this.rightSelectNode.data.id : 0,
+        //   name: this.selectNodeObj.name,
+        //   sort: this.selectNodeObj.sort
+        // })
+        //   .then(res => {
+        //     let newChild = {name: this.selectNodeObj.name, children: [] }
+        //     if(this.dialogTitle == '新建子章节') {
+        //       let data = this.rightSelectNodeObj
+        //       if (!data.children) {
+        //         this.$set(data, 'children', []);
+        //       }
+        //       data.children.push(newChild)
+        //     }else {
+        //       this.chapters.push(newChild)
+        //     }
+        //     this.$message('新增成功！')
+        //     this.dialogVisible = false
+        //     this.sort++
+        //   })
+        let newChild = {name: this.selectNodeObj.name, children: [] }
+        if(this.dialogTitle == '新建子章节') {
+          let data = this.rightSelectNodeObj
+          if (!data.children) {
+            this.$set(data, 'children', []);
+          }
+          data.children.push(newChild)
+        }else {
+          this.chapters.push(newChild)
+        }
+        this.dialogVisible = false
+        this.sort++
+      }if(this.dialogTitle == '编辑章节') {
+        this.$post('/admin/chapter/update', {
+          id: this.selectNodeObj.id,
+          name: this.selectNodeObj.name,
+          sort: this.selectNodeObj.sort
+        })
+          .then(() => {
+            this.$message('修改成功！')
+            this.dialogVisible = false
+          })
+      }
+    },
+    updateNode() {
+      this.dialogTitle = '编辑章节'
+      this.selectNodeObj = this.rightSelectNodeObj
+      this.dialogVisible = true
+    },
+    removeNode() {
+      this.$confirm('确定删除该章节吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$post('/admin/chapter/destroy', {
+          id: this.selectNodeObj.id
+        })
+          .then(() => {
+            let node = this.rightSelectNode
+            let data = this.rightSelectNodeObj
+            let parent = node.parent;
+            let children = parent.data.children || parent.data
+            let index = children.findIndex(d => d.id === data.id)
+            children.splice(index, 1)
+            console.log(this.chapters)
+            this.$message('删除成功！')
+          })
+      }).catch(() => {
+      })
+    },
+    addNode() {
+      this.dialogTitle = '创建章节'
+      this.rightSelectNode = {}
+      this.rightSelectNodeObj = {}
+      this.selectNodeObj = {} //清空
+      this.selectNodeObj.sort = this.sort
+      this.dialogVisible = true
     }
   },
   created() {
@@ -32,3 +254,98 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.w7-container {
+  margin: -30px;
+  .w7-aside {
+    border-left: solid 1px #eeeeee;
+    border-right: solid 1px #eeeeee;
+    .w7-aside-head {
+      .icon {
+        width: 33px;
+        height: 29px;
+        background: url('~@/assets/img/fileFolder-normal.png') no-repeat;
+        margin: 30px auto 10px;
+      }
+      p {
+        font-size: 16px;
+        color: #4d4d4d;
+        text-align: center;
+      }
+    }
+    .el-input {
+      width: 180px;
+      margin: 25px 10px;
+      /deep/ input {
+        height: 34px;
+        border: solid 1px #eeeeee;
+        border-radius: 0;
+      }
+      /deep/ i {
+        line-height: 34px;
+      }
+    }
+  }
+}
+#menu-bar {
+  width: 120px;
+  height: 146px;
+  position: absolute;
+	background-color: #ffffff;
+	border: solid 1px #e5e5e5;
+  z-index: 10;
+	font-size: 14px;
+	color: #4d4d4d;
+  ul, li {
+    padding:0;
+    list-style:none;
+  }
+  ul {
+    margin: 3px 0;
+  }
+  li {
+    height: 35px;
+    line-height: 35px;
+    padding: 0 20px;
+    &:hover {
+      background-color: #3296fa;
+      color: #fff;
+      cursor: pointer;
+    }
+  }
+}
+.w7-tree {
+  .el-tree-node__content {
+    &:hover .custom-tree-node .point3 {
+      display: inline-block;
+    }
+    .custom-tree-node {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .point3 {
+        display: none;
+        color: #409eff;
+        span {
+          display: block;
+          font-size: 30px;
+          margin-top: -23px;
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+}
+.add-node {
+  margin: 10px auto;
+  text-align: center;
+  button {
+    width: 120px;
+    height: 34px;
+    border-radius: 2px;
+    padding: 9px 20px;
+  }
+}
+</style>

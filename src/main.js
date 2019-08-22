@@ -8,13 +8,16 @@ import { Tabs, TabPane } from 'element-ui'
 import { Input } from 'element-ui'
 import { Button, Link } from 'element-ui'
 import { Icon } from 'element-ui'
-import { Message } from 'element-ui'
-import { Container, Aside, Main, Header, Menu, MenuItem, MenuItemGroup } from 'element-ui'
+import { Message, MessageBox } from 'element-ui'
+import { Container, Aside, Main, Header, Menu, MenuItem, MenuItemGroup, Footer } from 'element-ui'
 import { Table, TableColumn } from 'element-ui'
 import { Tree } from 'element-ui'
 import { Pagination } from 'element-ui'
 import { Dialog } from 'element-ui'
 import './assets/scss/element-variables.scss'
+import mavonEditor from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
+
 Vue.use(Form)
 Vue.use(FormItem)
 Vue.use(Tabs)
@@ -30,13 +33,16 @@ Vue.use(Header)
 Vue.use(Menu)
 Vue.use(MenuItem)
 Vue.use(MenuItemGroup)
+Vue.use(Footer)
 Vue.use(Table)
 Vue.use(TableColumn)
 Vue.use(Tree)
 Vue.use(Pagination)
 Vue.use(Dialog)
+Vue.use(mavonEditor)
 
 Vue.prototype.$message = Message;
+Vue.prototype.$confirm = MessageBox.confirm;
 Vue.prototype.$http = axios;
 Vue.prototype.$post = axios.post;
 Vue.config.productionTip = false

@@ -4,19 +4,24 @@
       用户管理
     </h3>
     <div class="search-box">
-      <div class="fl demo-input-suffix">
+      <div class="demo-input-suffix">
         <el-input placeholder="请输入用户名称"  v-model="keyword">
         <i slot="suffix" class="el-input__icon el-icon-search" @click="searchUser"></i>
         </el-input>
       </div>
-      <div class="fr">
+      <div class="demo-input-btn">
         <router-link to="user/create" type="button" class="el-button el-button--primary">添加用户</router-link>
       </div>
     </div>
-    <el-table :data="userList" ref="multipleTable" @selection-change="handleSelectionChange">
+    <el-table class="w7-table" :data="userList" ref="multipleTable" @selection-change="handleSelectionChange"
+      :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label="账号" prop="username"></el-table-column>
-      <el-table-column label="添加时间" prop="created_at"></el-table-column>
+      <el-table-column label="添加时间" prop="created_at"
+        sortable
+        column-key="date"
+      >
+      </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <router-link :to="{path:'user/'+ scope.row.id}" class="el-button el-button--text">编辑</router-link>
@@ -47,7 +52,7 @@ export default {
     return {
       keyword: '',
       userList: [],//用户列表
-      selectRowsID: [],//选中多行id的集合
+      selectRowIDs: [],//选中多行id的集合
       selectRowID: '',//选中单行id
       currentPage: 1,//当前页码
       pageCount: 0,//总页数
@@ -79,9 +84,9 @@ export default {
         })
     },
     handleSelectionChange(val) {
-      this.selectRowsID = []
+      this.selectRowIDs = []
       for (let i = 0; i < val.length; i++) {
-        this.selectRowsID.push(val[i].id)
+        this.selectRowIDs.push(val[i].id)
       }
     },
     toggleSelectAll() {
@@ -93,20 +98,23 @@ export default {
       }
     },
     deleteSelectRows() {
-      this.$post('/admin/user/deluser',{
-        // TODO ?????
-        ids: this.selectRowID ? this.selectRowID : JSON.stringify(this.selectRowsID).slice(1, JSON.stringify(this.selectRowsID).length -1)
-      })
-        .then(() => {
-          this.$message('删除成功！')
-          this.getuserlist()
-          this.selectRowID = ''
+      this.$confirm('此操作将永久删除用户, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$post('/admin/user/deluser',{
+            ids: this.selectRowID ? this.selectRowID : JSON.stringify(this.selectRowIDs).slice(1, JSON.stringify(this.selectRowIDs).length -1)
+          })
+            .then(() => {
+              this.$message('删除成功！')
+              this.getuserlist()
+              this.selectRowID = ''
+            })
         })
     },
     deleteRow(id) {
-      // TODO  删除之前弹窗提示
       this.selectRowID = id
-      this.deleteSelectRows()
     }
   },
   created() {
@@ -116,5 +124,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.w7-table /deep/ .el-table__header thead tr th:nth-last-child(2) > .cell {
+  text-align: left !important;
+}
 </style>

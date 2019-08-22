@@ -39,7 +39,7 @@ export default new Router({
               component: () => import(/* webpackChunkName: "about" */ './views/admin/document/manageSetting.vue')
             },
             {
-              path: 'chapter/:id',
+              path: 'chapter/:id/:name',
               name: 'chapter',
               component: () => import(/* webpackChunkName: "about" */ './views/admin/document/chapter.vue')
             }

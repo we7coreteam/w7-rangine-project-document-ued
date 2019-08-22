@@ -4,7 +4,7 @@
       普通文档
     </h3>
     <div class="search-box">
-      <div class="fl demo-input-suffix">
+      <div class="demo-input-suffix">
         <el-input
           placeholder="请输入关键字搜索"
           v-model="keyword"
@@ -12,48 +12,58 @@
           <i slot="suffix" class="el-input__icon el-icon-search" @click="searchDoc"></i>
         </el-input>
       </div>
-      <div class="fr">
+      <div class="demo-input-btn">
         <el-button type="primary" @click="dialogDocInfoVisible = true">创建文档</el-button>
       </div>
     </div>
-    <el-table :data="docList">
-      <el-table-column label="名称" prop="name"></el-table-column>
+    <el-table class="w7-table" :data="docList" empty-text=""
+        :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
+      <el-table-column label="名称">
+        <template slot-scope="scope">
+          <i class="w7-icon-fileFolder"></i>
+          <span style="margin-left: 10px">{{ scope.row.name }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="创建者" prop="username"></el-table-column>
       <!-- <el-table-column label="访问量" prop=""></el-table-column> -->
       <el-table-column label="创建时间" prop="created_at"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <!-- TODO scope.row.has_creator != 3  -->
-          <el-button type="text" v-if="scope.row.has_creator != 3 ? true : false">删除</el-button>
+          <el-button type="text" v-if="scope.row.has_creator != 3" @click="removeDoc(scope.row.id)">删除</el-button>
           <router-link
-            :to="{path: 'document/'+ scope.row.id}"
+            :to="{path: 'document/chapter/' + scope.row.id +'/' + scope.row.name}"
             class="el-button el-button--text">编辑</router-link>
           <router-link
             :to="{path: 'document/'+ scope.row.id}"
-            class="el-button el-button--text" v-if="scope.row.has_creator != 3 ? true : false">
+            class="el-button el-button--text" v-if="scope.row.has_creator != 3">
             管理设置
           </router-link>
-          <el-button type="text" v-if="scope.row.has_creator != 3 ? true : false">发布</el-button>
+          <el-button type="text" v-if="scope.row.has_creator != 3">发布</el-button>
           <el-button type="text">阅读文档</el-button>
         </template>
       </el-table-column>
+      <div class="nodata" slot="empty">
+        <p>暂无可以查看管理的文档，请先操作<el-button type="text" @click="dialogDocInfoVisible = true">创建文档</el-button></p>
+      </div>
     </el-table>
     <el-pagination
       background
       @current-change = "getList"
       layout="prev, pager, next, total"
+      prev-text="上一页"
+      next-text="下一页"
       :current-page.sync = "currentPage"
       :page-count="pageCount"
+      :hide-on-single-page = "true"
     >
     </el-pagination>
     <!-- 基本信息弹出框 -->
-    <el-dialog title="创建文档" :visible.sync="dialogDocInfoVisible" :close-on-click-modal="false" center>
-      <!-- TODO label-width -->
-      <el-form>
-        <el-form-item label="文档名称" :label-width="formLabelWidth">
+    <el-dialog class="w7-dialog" title="创建文档" :visible.sync="dialogDocInfoVisible" :close-on-click-modal="false" center>
+      <el-form :label-width="formLabelWidth">
+        <el-form-item label="文档名称">
           <el-input v-model="name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="文档介绍" :label-width="formLabelWidth">
+        <el-form-item label="文档介绍">
           <el-input type="textarea" :rows="2" v-model="description"></el-input>
         </el-form-item>
       </el-form>
@@ -72,7 +82,7 @@ export default {
     return {
       keyword: '',
       docList: [],
-      currentPage: 1,//当前页码
+      currentPage: 0,//当前页码
       pageCount: 0,//总页数
       total: 0,//总数
       name: '',
@@ -82,7 +92,6 @@ export default {
     }
   },
   methods: {
-    // TODO  getList ? searchDoc ?
     getList() {
       this.$post('/admin/document/getlist',{
         page: this.currentPage,
@@ -114,6 +123,21 @@ export default {
           this.dialogDocInfoVisible = false
           this.getList()
         })
+    },
+    removeDoc(id) {
+      this.$confirm('确定删除该文档吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$post('/admin/document/del',{
+          id: id
+        })
+          .then(() => {
+            this.getList()
+            this.$message('删除成功！')
+          })
+      })
     }
   },
   created() {
@@ -122,11 +146,19 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.demo-input-suffix {
-  width: 240px;
+.nodata {
+  min-height: 400px;
+  background-color: #fff;
+  background-image:  url('~@/assets/img/nodata-bg.png');
+  background-position:  center;
+  background-repeat: no-repeat;
+  p {
+    padding-top: 280px;
+    font-family: MicrosoftYaHei;
+    font-size: 14px;
+  }
 }
-.el-pagination {
-  float:right;
-  margin-right: 20px;
+.w7-icon-fileFolder:after {
+  content:url('~@/assets/img/fileFolder-small.png')
 }
 </style>
