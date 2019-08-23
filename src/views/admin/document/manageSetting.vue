@@ -59,16 +59,18 @@
       </div>
     </el-dialog>
     <!-- 操作员弹出框 -->
-    <el-dialog class="w7-dialog" title="添加账号操作员" :visible.sync="dialogAddManageVisible" :close-on-click-modal="false" center>
-      <el-form :label-width="formLabelWidth">
+    <el-dialog class="w7-dialog w7-dialog-user" title="添加账号操作员" :visible.sync="dialogAddManageVisible" :close-on-click-modal="false" center>
+      <el-form :model="userInfo" :label-width="formLabelWidth">
         <el-form-item label="用户名">
-          <el-input autocomplete="off"></el-input>
+          <el-input v-model="userInfo.username" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
-      <el-table class="w7-table-small" :data="userList" height="250" ref="multipleTable" :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
+      <el-table class="w7-table-small" :data="userList" height="250" ref="multipleTable"
+       :header-cell-style="{background:'#f7f9fc',color:'#606266'}"
+       @row-click="rowClick">
         <el-table-column prop="username" label="账号"></el-table-column>
       </el-table>
-      <div style="margin-top: 20px">
+      <div class="w7-pagination">
         <el-pagination class="fr"
           background
           @current-change = "getuserlist"
@@ -100,6 +102,7 @@ export default {
       docInfoVisible: '',//
       docuserList: [],//操作人数组
       dialogAddManageVisible: false,//添加操作人弹出框
+      userInfo: {},
       userList: [],//所有用户
       pageCountUser: 0,//总页数
       currentPageUser: 1//当前页面
@@ -176,15 +179,19 @@ export default {
           })
       })
     },
-    addManage(id) {
+    addManage() {
       this.$post('/admin/auth/invite_user',{
-        user_id: id,
+        user_id: this.userInfo.id,
         document_id: this.id
       })
         .then(() => {
           this.getdocuserlist()
           this.$message('添加成功！')
+          this.dialogAddManageVisible = false
         })
+    },
+    rowClick(row) {
+      this.userInfo = row
     }
   },
   created() {
@@ -249,9 +256,31 @@ export default {
     }
   }
 }
+.w7-dialog-user {
+  /deep/ .el-dialog__body {
+    padding-bottom: 0;
+  }
+  .el-form-item__content .el-input {
+    width: 95%;
+  }
+}
 .w7-table /deep/ .el-table__header thead tr th:nth-last-child(2) > .cell {
   padding-right: 0;
 }
 .w7-table-small {
+  padding: 0 20px;
+  /deep/ th {
+    padding: 5px 0 !important;
+  }
+  /deep/ td {
+    padding: 7px 0 !important;
+  }
+}
+.w7-pagination {
+  overflow: hidden;
+  .el-pagination {
+    margin-top: 10px;
+    margin-right: 10px;
+  }
 }
 </style>

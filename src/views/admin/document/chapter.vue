@@ -34,7 +34,15 @@
       </div>
     </el-aside>
     <el-main>
-      <mavon-editor v-model="value"/>
+      <div class="chapter-title">{{ chapterInfo.name }}</div>
+      <div class="chapter-date" v-show="!isEdit">
+        <p>
+          <span>更新时间：{{ chapterInfo.updated_at }}</span>
+          <span>作者：{{ chapterInfo.username }}</span>
+        </p>
+        <button @click="editorsClick">编辑</button>
+      </div>
+      <editors :chapterId="chapterInfo.id" :isEdit="isEdit"></editors>
     </el-main>
     <!-- 基本信息弹出框 -->
     <el-dialog class="w7-dialog" :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false">
@@ -55,11 +63,15 @@
 </template>
 
 <script>
+import editors from './editors.vue'
 export default {
   name: 'chapter',
+  components: {
+    editors
+  },
   data() {
     return {
-      docName: this.$route.params.name,
+      docName: '',
       keyword: '',
       sort: 0,
       chapters: [],
@@ -68,43 +80,30 @@ export default {
         label: 'name'
       },
       menuBarVisible: false,
-      selectNode: {},//选中的节点
       selectNodeObj: {},//选中的节点data
       rightSelectNodeObj: {},//右键选中的节点Object
       rightSelectNode: {},//右键选中的节点的Node
       dialogTitle: '',
-      dialogVisible: false
+      dialogVisible: false,
+      chapterInfo: {},//选中的文档，基本信息
+      isEdit: false,//是否处于编辑状态
     }
   },
   methods: {
+    init() {
+      this.$post('/admin/document/getdetails ', {
+        id: this.$route.params.id
+      })
+        .then(res => {
+          this.docName = res.name
+        })
+    },
     getChapters() {
       this.$post('/admin/chapter/index', {
         document_id: this.$route.params.id
       })
-        .then(() => {
-          //  this.chapters = res
-          this.chapters = [
-                {
-                "id": 1,
-                "name": "快速入门",
-                "sort": 1,
-                "children": [
-                      {
-                        "id": 2,
-                        "name": "山海经",
-                        "sort": 0,
-                        "children": [
-                          {
-                            "id": 5,
-                            "name": "九霄明尊-张无忌",
-                            "sort": 300,
-                            "children": []
-                            },
-                        ]
-                    },
-                  ]
-                },
-            ]
+        .then(res => {
+          this.chapters = res
           if(!this.sort) {
             let maxsort = this.sort
             //找到sort的最大值
@@ -130,8 +129,16 @@ export default {
            this.chapters = res
         })
     },
-    handleNodeClick() {
+    handleNodeClick(object) {
       if(this.menuBarVisible) {this.menuBarVisible = false}
+      // this.chapterInfo.name = object.name
+      this.$post('/admin/document/getdetails', {
+        id: object.id
+      })
+        .then(res => {
+          this.chapterInfo = res
+          this.isEdit = false
+        })
     },
     rightClick(MouseEvent, object, Node) {
       // console.log('右键被点击---event:', MouseEvent)
@@ -168,39 +175,39 @@ export default {
         return
       }
       if(this.dialogTitle == '新建子章节' || this.dialogTitle == '创建章节' ) {
-        // this.$post('/admin/chapter/creat', {
-        //   document_id: this.$route.params.id,
-        //   parent_id: this.rightSelectNode.level > 1 ? this.rightSelectNode.data.id : 0,
-        //   name: this.selectNodeObj.name,
-        //   sort: this.selectNodeObj.sort
-        // })
-        //   .then(res => {
-        //     let newChild = {name: this.selectNodeObj.name, children: [] }
-        //     if(this.dialogTitle == '新建子章节') {
-        //       let data = this.rightSelectNodeObj
-        //       if (!data.children) {
-        //         this.$set(data, 'children', []);
-        //       }
-        //       data.children.push(newChild)
-        //     }else {
-        //       this.chapters.push(newChild)
-        //     }
-        //     this.$message('新增成功！')
-        //     this.dialogVisible = false
-        //     this.sort++
-        //   })
-        let newChild = {name: this.selectNodeObj.name, children: [] }
-        if(this.dialogTitle == '新建子章节') {
-          let data = this.rightSelectNodeObj
-          if (!data.children) {
-            this.$set(data, 'children', []);
-          }
-          data.children.push(newChild)
-        }else {
-          this.chapters.push(newChild)
-        }
-        this.dialogVisible = false
-        this.sort++
+        this.$post('/admin/chapter/create', {
+          document_id: this.$route.params.id,
+          parent_id: this.dialogTitle == '新建子章节' ? this.rightSelectNode.data.id : 0,
+          name: this.selectNodeObj.name,
+          sort: this.selectNodeObj.sort
+        })
+          .then(res => {
+            let newChild = res
+            if(this.dialogTitle == '新建子章节') {
+              let data = this.rightSelectNodeObj
+              if (!data.children) {
+                this.$set(data, 'children', []);
+              }
+              data.children.push(newChild)
+            }else {
+              this.chapters.push(newChild)
+            }
+            this.$message('新增成功！')
+            this.dialogVisible = false
+            this.sort++
+          })
+        // let newChild = {name: this.selectNodeObj.name, children: [] }
+        // if(this.dialogTitle == '新建子章节') {
+        //   let data = this.rightSelectNodeObj
+        //   if (!data.children) {
+        //     this.$set(data, 'children', []);
+        //   }
+        //   data.children.push(newChild)
+        // }else {
+        //   this.chapters.push(newChild)
+        // }
+        // this.dialogVisible = false
+        // this.sort++
       }if(this.dialogTitle == '编辑章节') {
         this.$post('/admin/chapter/update', {
           id: this.selectNodeObj.id,
@@ -247,9 +254,13 @@ export default {
       this.selectNodeObj = {} //清空
       this.selectNodeObj.sort = this.sort
       this.dialogVisible = true
+    },
+    editorsClick() {
+      this.isEdit = true
     }
   },
   created() {
+    this.init()
     this.getChapters()
   }
 }
@@ -346,6 +357,33 @@ export default {
     height: 34px;
     border-radius: 2px;
     padding: 9px 20px;
+  }
+}
+.chapter-title {
+  font-size: 20px;
+  letter-spacing: 1px;
+  color: #4d4d4d;
+}
+.chapter-date {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 48px;
+  font-size: 14px;
+  p span {
+    padding-right: 40px;
+  }
+  button {
+    width: 120px;
+    height: 35px;
+    background-color: #ddedfd;
+    border-radius: 2px;
+    border: solid 1px #3296fa;
+    cursor: pointer;
+    &:hover {
+      color: #fff;
+      background-color: #409eff;
+      border-color: #409eff;
+    }
   }
 }
 </style>

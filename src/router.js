@@ -8,11 +8,6 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/:id',
-      name: 'home',
-      component: () => import(/* webpackChunkName: "about" */ './views/home/index.vue')
-    },
-    {
       path: '/admin/login',
       name: 'adminLogin',
       component: () => import(/* webpackChunkName: "about" */ './views/admin/login.vue')
@@ -20,13 +15,13 @@ export default new Router({
     {
       path: '/admin',
       name: 'admin',
+      redirect: '/admin/document',
       component: () => import(/* webpackChunkName: "about" */ './views/admin/layout.vue'),
       children: [
         {
           path: 'document',
           name: 'document',
           component: () => import(/* webpackChunkName: "about" */ './views/admin/document/layout.vue'),
-          redirect: 'document',
           children: [
             {
               path: '',
@@ -39,7 +34,7 @@ export default new Router({
               component: () => import(/* webpackChunkName: "about" */ './views/admin/document/manageSetting.vue')
             },
             {
-              path: 'chapter/:id/:name',
+              path: 'chapter/:id',
               name: 'chapter',
               component: () => import(/* webpackChunkName: "about" */ './views/admin/document/chapter.vue')
             }
@@ -69,6 +64,11 @@ export default new Router({
           ]
         }
       ]
-    }
+    },
+    {
+      path: '/:id',
+      name: 'home',
+      component: () => import(/* webpackChunkName: "about" */ './views/home/index.vue')
+    },
   ]
 })

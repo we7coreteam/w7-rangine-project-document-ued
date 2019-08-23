@@ -31,7 +31,7 @@
         <template slot-scope="scope">
           <el-button type="text" v-if="scope.row.has_creator != 3" @click="removeDoc(scope.row.id)">删除</el-button>
           <router-link
-            :to="{path: 'document/chapter/' + scope.row.id +'/' + scope.row.name}"
+            :to="{path: 'document/chapter/' + scope.row.id}"
             class="el-button el-button--text">编辑</router-link>
           <router-link
             :to="{path: 'document/'+ scope.row.id}"
