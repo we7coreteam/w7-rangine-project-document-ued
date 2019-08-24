@@ -60,6 +60,7 @@ export default {
         chapter_id: this.chapterId
       })
         .then(res => {
+          this.isEdit = false
           if(!res) {
             this.content = ''
             return

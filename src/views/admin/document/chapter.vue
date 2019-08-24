@@ -281,7 +281,7 @@ export default {
   position: absolute;
 	background-color: #ffffff;
 	border: solid 1px #e5e5e5;
-  z-index: 10;
+  z-index: 10000;
 	font-size: 14px;
 	color: #4d4d4d;
   ul, li {
