@@ -60,28 +60,38 @@
     </el-dialog>
     <!-- 操作员弹出框 -->
     <el-dialog class="w7-dialog w7-dialog-user" title="添加账号操作员" :visible.sync="dialogAddManageVisible" :close-on-click-modal="false" center>
-      <el-form :model="userInfo" :label-width="formLabelWidth">
+      <!-- <el-form :model="userInfo" :label-width="formLabelWidth">
         <el-form-item label="用户名">
           <el-input v-model="userInfo.username" autocomplete="off"></el-input>
         </el-form-item>
-      </el-form>
-      <el-table class="w7-table-small" :data="userList" height="250" ref="multipleTable"
+      </el-form> -->
+      <div class="demo-input-suffix">
+        <!-- <span>用户名</span> -->
+        <el-input placeholder="搜索用户名" v-model="keyword">
+          <i slot="suffix" class="el-input__icon el-icon-search" @click="getuserlist"></i>
+        </el-input>
+      </div>
+      <el-table class="w7-table-small" height="250"
+        :data="userList"
+        ref="multipleTable"
        :header-cell-style="{background:'#f7f9fc',color:'#606266'}"
        @row-click="rowClick">
         <el-table-column prop="username" label="账号"></el-table-column>
+        <el-table-column prop="created_at" label="添加时间"></el-table-column>
       </el-table>
       <div class="w7-pagination">
         <el-pagination class="fr"
           background
-          @current-change = "getuserlist"
+          :hide-on-single-page="true"
+          @current-change="getuserlist"
           layout="prev, pager, next, total"
-          :current-page.sync = "currentPageUser"
+          :current-page.sync="currentPageUser"
           :page-count="pageCountUser"
         >
         </el-pagination>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="addManage">确 定</el-button>
+        <!-- <el-button type="primary" @click="addManage">确 定</el-button> -->
         <el-button @click="dialogAddManageVisible = false">取 消</el-button>
       </div>
     </el-dialog>
@@ -102,7 +112,7 @@ export default {
       docInfoVisible: '',//
       docuserList: [],//操作人数组
       dialogAddManageVisible: false,//添加操作人弹出框
-      userInfo: {},
+      keyword: '',//添加操作人搜索
       userList: [],//所有用户
       pageCountUser: 0,//总页数
       currentPageUser: 1//当前页面
@@ -156,6 +166,7 @@ export default {
     },
     getuserlist() {
       this.$post('/admin/user/getuserlist',{
+         username: this.keyword,
          page: this.currentPageUser
       })
         .then(res => {
@@ -179,9 +190,9 @@ export default {
           })
       })
     },
-    addManage() {
+    addManage(userId) {
       this.$post('/admin/auth/invite_user',{
-        user_id: this.userInfo.id,
+        user_id: userId,
         document_id: this.id
       })
         .then(() => {
@@ -191,12 +202,12 @@ export default {
         })
     },
     rowClick(row) {
-      this.userInfo = row
+      this.addManage(row.id)
     }
   },
   created() {
     this.getdetails()
-    this.getuserlist()
+    // this.getuserlist()
   }
 }
 </script>
@@ -268,7 +279,8 @@ export default {
   padding-right: 0;
 }
 .w7-table-small {
-  padding: 0 20px;
+  // padding: 0 20px;
+  margin: 30px 0;
   /deep/ th {
     padding: 5px 0 !important;
   }

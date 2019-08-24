@@ -1,7 +1,7 @@
 <template>
   <el-container class="w7-container">
-    <el-aside class="w7-aside" width="202px">
-      <div class="w7-aside-head">
+    <el-aside class="w7-aside-chapter" width="202px">
+      <div class="w7-aside-chapter-head">
         <div class="icon"></div>
         <p>{{ docName }}</p>
       </div>
@@ -11,14 +11,13 @@
       <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text=""
         ref="chaptersTree"
         node-key="id"
-        accordion
         :expand-on-click-node="false"
         @node-contextmenu="rightClick"
         :highlight-current="true"
         @node-click="handleNodeClick">
         <span class="custom-tree-node" slot-scope="{ node }">
           <span>{{ node.label }}</span>
-          <span class="point3" @click="rightClick"><span>...</span></span>
+          <span class="point3" @click.stop="rightClick"><span>...</span></span>
         </span>
       </el-tree>
       <div id="menu-bar" v-show="menuBarVisible">
@@ -34,15 +33,7 @@
       </div>
     </el-aside>
     <el-main>
-      <div class="chapter-title">{{ chapterInfo.name }}</div>
-      <div class="chapter-date" v-show="!isEdit">
-        <p>
-          <span>更新时间：{{ chapterInfo.updated_at }}</span>
-          <span>作者：{{ chapterInfo.username }}</span>
-        </p>
-        <button @click="editorsClick">编辑</button>
-      </div>
-      <editors :chapterId="chapterInfo.id" :isEdit="isEdit"></editors>
+      <editors :chapterId="selectNodeObj.id" :chapterName="selectNodeObj.name" v-if="selectNodeObj && selectNodeObj.id"></editors>
     </el-main>
     <!-- 基本信息弹出框 -->
     <el-dialog class="w7-dialog" :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false">
@@ -85,8 +76,7 @@ export default {
       rightSelectNode: {},//右键选中的节点的Node
       dialogTitle: '',
       dialogVisible: false,
-      chapterInfo: {},//选中的文档，基本信息
-      isEdit: false,//是否处于编辑状态
+      chapterInfo: {}//选中的文档，基本信息
     }
   },
   methods: {
@@ -117,6 +107,9 @@ export default {
             }
             maxValue(this.chapters, 'sort')
             this.sort = maxsort + 1
+            this.$nextTick(() => {
+              this.defaultSelectNode()
+            })
            }
         })
     },
@@ -129,16 +122,14 @@ export default {
            this.chapters = res
         })
     },
+    defaultSelectNode() {
+      //tree默认选中第一个
+      this.$refs.chaptersTree.setCurrentKey( this.chapters[0].id )
+      this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode())
+    },
     handleNodeClick(object) {
       if(this.menuBarVisible) {this.menuBarVisible = false}
-      // this.chapterInfo.name = object.name
-      this.$post('/admin/document/getdetails', {
-        id: object.id
-      })
-        .then(res => {
-          this.chapterInfo = res
-          this.isEdit = false
-        })
+      this.selectNodeObj = object
     },
     rightClick(MouseEvent, object, Node) {
       // console.log('右键被点击---event:', MouseEvent)
@@ -196,18 +187,6 @@ export default {
             this.dialogVisible = false
             this.sort++
           })
-        // let newChild = {name: this.selectNodeObj.name, children: [] }
-        // if(this.dialogTitle == '新建子章节') {
-        //   let data = this.rightSelectNodeObj
-        //   if (!data.children) {
-        //     this.$set(data, 'children', []);
-        //   }
-        //   data.children.push(newChild)
-        // }else {
-        //   this.chapters.push(newChild)
-        // }
-        // this.dialogVisible = false
-        // this.sort++
       }if(this.dialogTitle == '编辑章节') {
         this.$post('/admin/chapter/update', {
           id: this.selectNodeObj.id,
@@ -254,9 +233,6 @@ export default {
       this.selectNodeObj = {} //清空
       this.selectNodeObj.sort = this.sort
       this.dialogVisible = true
-    },
-    editorsClick() {
-      this.isEdit = true
     }
   },
   created() {
@@ -269,10 +245,10 @@ export default {
 <style lang="scss" scoped>
 .w7-container {
   margin: -30px;
-  .w7-aside {
+  .w7-aside-chapter {
     border-left: solid 1px #eeeeee;
     border-right: solid 1px #eeeeee;
-    .w7-aside-head {
+    .w7-aside-chapter-head {
       .icon {
         width: 33px;
         height: 29px;
@@ -357,33 +333,6 @@ export default {
     height: 34px;
     border-radius: 2px;
     padding: 9px 20px;
-  }
-}
-.chapter-title {
-  font-size: 20px;
-  letter-spacing: 1px;
-  color: #4d4d4d;
-}
-.chapter-date {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 48px;
-  font-size: 14px;
-  p span {
-    padding-right: 40px;
-  }
-  button {
-    width: 120px;
-    height: 35px;
-    background-color: #ddedfd;
-    border-radius: 2px;
-    border: solid 1px #3296fa;
-    cursor: pointer;
-    &:hover {
-      color: #fff;
-      background-color: #409eff;
-      border-color: #409eff;
-    }
   }
 }
 </style>

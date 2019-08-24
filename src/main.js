@@ -6,6 +6,7 @@ import axios from './utils/axios'
 import { Form, FormItem } from 'element-ui'
 import { Tabs, TabPane } from 'element-ui'
 import { Input } from 'element-ui'
+import { Checkbox } from 'element-ui'
 import { Button, Link } from 'element-ui'
 import { Icon } from 'element-ui'
 import { Message, MessageBox } from 'element-ui'
@@ -23,6 +24,7 @@ Vue.use(FormItem)
 Vue.use(Tabs)
 Vue.use(TabPane)
 Vue.use(Input)
+Vue.use(Checkbox)
 Vue.use(Icon)
 Vue.use(Button)
 Vue.use(Link)

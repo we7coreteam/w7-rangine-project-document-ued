@@ -13,7 +13,7 @@
         <router-link to="user/create" type="button" class="el-button el-button--primary">添加用户</router-link>
       </div>
     </div>
-    <el-table class="w7-table" :data="userList" ref="multipleTable" @selection-change="handleSelectionChange"
+    <el-table class="w7-table" :data="userList" ref="multipleTable" @select="handleSelectionChange"
       :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label="账号" prop="username"></el-table-column>
@@ -22,17 +22,17 @@
         column-key="date"
       >
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作" align="right">
         <template slot-scope="scope">
           <router-link :to="{path:'user/'+ scope.row.id}" class="el-button el-button--text">编辑</router-link>
           <el-button type="text" @click="deleteRow(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <div style="margin-top: 20px">
-      <el-button class="fl" @click="toggleSelectAll()">全选</el-button>
-      <el-button class="fl" @click="deleteSelectRows()">批量删除</el-button>
-      <el-pagination class="fr"
+    <div class="btns">
+      <el-checkbox v-model="selectAll" @change="toggleSelectAll()">全选</el-checkbox>
+      <el-button type="primary" @click="deleteSelectRows()">批量删除</el-button>
+      <el-pagination
       background
       @current-change = "getuserlist"
       layout="prev, pager, next, total"
@@ -57,7 +57,7 @@ export default {
       currentPage: 1,//当前页码
       pageCount: 0,//总页数
       total: 0,//总数
-      selectFlag: true//全选反选
+      selectAll: false//全选反选
     }
   },
   methods: {
@@ -88,13 +88,13 @@ export default {
       for (let i = 0; i < val.length; i++) {
         this.selectRowIDs.push(val[i].id)
       }
+      this.selectAll = this.selectRowIDs.length == this.userList.length
     },
     toggleSelectAll() {
       if (this.userList) {
         this.userList.forEach(row => {
-          this.$refs.multipleTable.toggleRowSelection(row, this.selectFlag)
+          this.$refs.multipleTable.toggleRowSelection(row, this.selectAll)
         })
-        this.selectFlag = !this.selectFlag
       }
     },
     deleteSelectRows() {
@@ -124,7 +124,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.w7-table /deep/ .el-table__header thead tr th:nth-last-child(2) > .cell {
-  text-align: left !important;
+.btns {
+  margin-top: 20px;
+  button {
+    margin: 0 20px;
+    padding: 12px 30px;
+  }
+  .el-pagination {
+    margin-top:0;
+  }
 }
 </style>

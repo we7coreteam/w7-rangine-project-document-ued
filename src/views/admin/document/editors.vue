@@ -1,70 +1,63 @@
 <template>
-  <div class="editors">
-    <div v-html="content" v-show="!isEdit"></div>
-    <div class="btn" v-show="isEdit">
-      <el-button @click="layout = 1">Markdown编辑器</el-button>
-      <el-button @click="layout = 2">富文本编辑器</el-button>
+  <div>
+    <div class="chapter-title">{{ chapterName }}</div>
+    <div class="chapter-date" v-show="!isEdit && chapterId">
+      <p>
+        <span v-if="chapterInfo.updated_at">更新时间：{{ chapterInfo.updated_at }}</span>
+        <span v-if="chapterInfo.username">作者：{{ chapterInfo.username }}</span>
+      </p>
+      <button @click="isEdit = !isEdit">编辑</button>
     </div>
-    <div id="mavon-editor" v-show="isEdit && layout == 1">
-      <mavon-editor ref="mavonEditor"
-        :toolbars="toolbars"
-        :boxShadow="false"
-        :scrollStyle="true"
-        :ishljs="true"
-        @save="saveBtn"></mavon-editor>
+    <div class="editors">
+      <div v-html="content" v-show="!isEdit"></div>
+      <div class="editorBtn" v-show="isEdit">
+        <el-button :type="layout == 1 ? 'primary' : ''" @click="layout = 1">Markdown编辑器</el-button>
+        <el-button :type="layout == 2 ? 'primary' : ''" @click="layout = 2">UEditor编辑器</el-button>
+      </div>
+      <div v-show="isEdit && layout == 1">
+        <mavon-editor ref="mavonEditor"
+          :boxShadow="false"
+          :scrollStyle="true"
+          :ishljs="true"
+          v-model="contentMd"
+          @imgAdd="$imgAdd"
+          @imgDel="$imgDel"
+          @save="save"></mavon-editor>
+      </div>
+      <div v-show="isEdit && layout == 2">
+        <vue-ueditor-wrap v-model="content" :config="config"></vue-ueditor-wrap>
+      </div>
+      <el-button class="saveBtn" type="primary" @click="save" v-if="isEdit">保存</el-button>
+      <el-button class="backBtn" @click="back" v-if="isEdit">返回</el-button>
     </div>
-    <div v-show="isEdit && layout == 2">
-
-    </div>
-    <!-- <el-button type="primary" @click="saveBtn">保存</el-button> -->
   </div>
 </template>
 
 <script>
+import VueUeditorWrap from 'vue-ueditor-wrap'
 export default {
-  props: ['chapterId', 'isEdit'],
+  props: ['chapterId', 'chapterName'],
+  components: {
+    VueUeditorWrap
+  },
   data() {
     return {
-      toolbars: {
-          bold: true, // 粗体
-          italic: true, // 斜体
-          header: true, // 标题
-          underline: true, // 下划线
-          strikethrough: true, // 中划线
-          mark: true, // 标记
-          superscript: true, // 上角标
-          subscript: true, // 下角标
-          quote: true, // 引用
-          ol: true, // 有序列表
-          ul: true, // 无序列表
-          link: true, // 链接
-          imagelink: true, // 图片链接
-          code: true, // code
-          table: true, // 表格
-          fullscreen: true, // 全屏编辑
-          readmodel: true, // 沉浸式阅读
-          htmlcode: true, // 展示html源码
-          help: true, // 帮助
-          undo: true, // 上一步
-          redo: true, // 下一步
-          trash: true, // 清空
-          save: true, // 保存（触发events中的save事件）
-          navigation: true, // 导航目录
-          alignleft: true, // 左对齐
-          aligncenter: true, // 居中
-          alignright: true, // 右对齐
-          subfield: true, // 单双栏模式
-          preview: true, // 预览
+      chapterInfo: {},
+      isEdit: false,
+      config: {
+        autoHeightEnabled: false,// 编辑器不自动被内容撑高
+        initialFrameHeight: '400',// 初始容器高度
+        initialFrameWidth: '100%'// 初始容器宽度
       },
-      content: '',
-      dataChapterId: undefined,
+      content: '',//最终显示的html
+      contentMd: '',//md格式的内容
       layout: 1//1 markdown 2 富文本
     }
   },
   methods: {
     init() {
       this.$post('/admin/chapter/get_content', {
-        chapter_id: this.dataChapterId
+        chapter_id: this.chapterId
       })
         .then(res => {
           if(!res) {
@@ -72,44 +65,105 @@ export default {
             return
           }
           if(res.layout == 1) {
+            this.layout = 1
             this.content = this.$refs.mavonEditor.markdownIt.render(res.content)
+            this.contentMd = res.content
+          }else if (res.layout == 2) {
+            this.layout = 2
+            this.content = res.content
           }
         })
     },
-    saveBtn(value) {
-      this.$post('/admin/chapter/save_content', {
-        chapter_id: this.dataChapterId,
-        layout: 1,
-        content: value
+    $imgAdd(pos, $file) {
+      console.log(pos)
+      console.log($file)
+      // 第一步.将图片上传到服务器.
+      var formdata = new FormData();
+      formdata.append('file', $file);
+      formdata.append('name', 12312);
+      console.log(formdata.get('name'))
+      this.$post('/admin/upload/image', formdata, {
+         headers: { 'Content-Type': 'multipart/form-data' }
       })
         .then(res => {
-          console.log(res)
-          this.$message('保存成功！')
+          this.$refs.mavonEditor.$img2Url(pos, res.url);
         })
+    },
+    $imgDel() {
+
+    },
+    save() {
+      console.log(this.chapterId)
+      this.$post('/admin/chapter/save_content', {
+        chapter_id: this.chapterId,
+        layout: this.layout,
+        content: this.layout == 1 ? this.contentMd : this.content
+      })
+        .then(res => {
+          this.$message('保存成功！')
+          if (this.layout == 1) {
+            this.content = this.$refs.mavonEditor.markdownIt.render(res.content)
+            this.contentMd = res.content
+          } else if (this.layout == 2)  {
+            this.content = res.content
+          }
+        })
+    },
+    back() {
+      this.isEdit = false
     }
   },
-  watch:{
-    chapterId:function(newData){
-      this.dataChapterId = newData
+  watch: {
+    chapterId() {
       this.init()
     }
+  },
+  mounted () {
+    this.init()
   }
 }
 </script>
 
 <style lang="scss">
+.chapter-title {
+  font-size: 20px;
+  letter-spacing: 1px;
+  color: #4d4d4d;
+}
+.chapter-date {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 48px;
+  font-size: 14px;
+  p span {
+    padding-right: 40px;
+  }
+  button {
+    width: 120px;
+    height: 35px;
+    background-color: #ddedfd;
+    border-radius: 2px;
+    border: solid 1px #3296fa;
+    cursor: pointer;
+    &:hover {
+      color: #fff;
+      background-color: #409eff;
+      border-color: #409eff;
+    }
+  }
+}
 .editors {
   width: 100%;
   height: 100%;
   padding: 15px 0;
-  .btn {
+  .editorBtn {
     padding-bottom: 15px;
     button {
       height: 35px;
       padding: 9px 20px;
-      background-color: #ddedfd;
+      // background-color: #ddedfd;
       border-radius: 2px;
-      border: solid 1px #3296fa;
+      // border: solid 1px #3296fa;
       cursor: pointer;
       &:hover {
         color: #fff;
@@ -117,7 +171,13 @@ export default {
         border-color: #409eff;
       }
     }
-
+  }
+  .saveBtn, .backBtn {
+    margin-top: 10px;
+    margin-right: 10px;
+    height: 34px;
+    border-radius: 2px;
+    padding: 9px 20px;
   }
 }
 </style>

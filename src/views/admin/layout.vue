@@ -2,7 +2,7 @@
   <el-container class="admin-view">
     <el-header>
       <router-link to="/admin" class="logo">
-        <img src="" alt="">文档控制台
+        <img src="~@/assets/img/logo.png" alt="">文档控制台
       </router-link>
       <div class="menu">
         <router-link class="item" to="/admin/document">文档管理</router-link>
@@ -44,17 +44,6 @@ export default {
 }
 .admin-view {
   &>.el-header {
-    background-color: #383d41;
-    color: #fff;
-    line-height: 60px;
-    font-size: 16px;
-    display: flex;
-    padding: 0 50px;
-    .logo {
-      font-size: 24px;
-      color: #f7f8fa;
-      margin-right: 20px;
-    }
     .menu {
       flex: 1;
       width: 0;
@@ -83,7 +72,6 @@ export default {
     }
   }
   .el-main {
-    min-height: calc(100vh - 60px);
     padding: 30px;
   }
 }

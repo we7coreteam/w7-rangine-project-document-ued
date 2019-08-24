@@ -5,10 +5,7 @@
     </h3>
     <div class="search-box">
       <div class="demo-input-suffix">
-        <el-input
-          placeholder="请输入关键字搜索"
-          v-model="keyword"
-         >
+        <el-input placeholder="请输入关键字搜索" v-model="keyword">
           <i slot="suffix" class="el-input__icon el-icon-search" @click="searchDoc"></i>
         </el-input>
       </div>
@@ -27,7 +24,7 @@
       <el-table-column label="创建者" prop="username"></el-table-column>
       <!-- <el-table-column label="访问量" prop=""></el-table-column> -->
       <el-table-column label="创建时间" prop="created_at"></el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作" align="right">
         <template slot-scope="scope">
           <el-button type="text" v-if="scope.row.has_creator != 3" @click="removeDoc(scope.row.id)">删除</el-button>
           <router-link
@@ -38,8 +35,12 @@
             class="el-button el-button--text" v-if="scope.row.has_creator != 3">
             管理设置
           </router-link>
-          <el-button type="text" v-if="scope.row.has_creator != 3">发布</el-button>
-          <el-button type="text">阅读文档</el-button>
+          <el-button type="text" v-if="scope.row.has_creator != 3"
+            :class="{redBtn: scope.row.is_show == 2}"
+            @click="updateDoc(scope.row.id, scope.row.is_show)">{{scope.row.is_show == 1 ? "发布" : "取消发布"}}</el-button>
+          <router-link :to="{path: '/'+ scope.row.id}" class="el-button el-button--text">
+            阅读文档
+          </router-link>
         </template>
       </el-table-column>
       <div class="nodata" slot="empty">
@@ -138,6 +139,21 @@ export default {
             this.$message('删除成功！')
           })
       })
+    },
+    updateDoc(id, isShow) {
+      this.$post('/admin/document/update',{
+          id: id,
+          is_show: isShow == 1 ? 1 : 2
+        })
+          .then(() => {
+            //修改docList
+            this.docList.forEach(row => {
+              if(row.id == id) {
+                row.is_show = isShow == 1 ? 2 : 1
+                return
+              }
+            });
+          })
     }
   },
   created() {
@@ -157,6 +173,9 @@ export default {
     font-family: MicrosoftYaHei;
     font-size: 14px;
   }
+}
+.redBtn {
+  color: #eb2e56;
 }
 .w7-icon-fileFolder:after {
   content:url('~@/assets/img/fileFolder-small.png')
