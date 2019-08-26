@@ -68,7 +68,15 @@ export default new Router({
     {
       path: '/:id',
       name: 'home',
-      component: () => import(/* webpackChunkName: "about" */ './views/home/index.vue')
-    },
+      redirect: 'home',
+      component: () => import(/* webpackChunkName: "about" */ './views/home/layout.vue'),
+      children: [
+        {
+          path: '',
+          name: 'homeChild',
+          component: () => import(/* webpackChunkName: "about" */ './views/home/index.vue')
+        }
+      ]
+    }
   ]
 })

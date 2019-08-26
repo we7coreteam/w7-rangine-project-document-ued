@@ -14,7 +14,7 @@
         <el-button :type="layout == 1 ? 'primary' : ''" @click="layout = 1">Markdown编辑器</el-button>
         <el-button :type="layout == 2 ? 'primary' : ''" @click="layout = 2">UEditor编辑器</el-button>
       </div>
-      <div v-show="isEdit && layout == 1">
+      <div class="mavon-editor" v-show="isEdit && layout == 1">
         <mavon-editor ref="mavonEditor"
           :boxShadow="false"
           :scrollStyle="true"
@@ -171,6 +171,11 @@ export default {
         background-color: #409eff;
         border-color: #409eff;
       }
+    }
+  }
+  .mavon-editor {
+    .v-note-wrapper {
+      height: 500px;
     }
   }
   .saveBtn, .backBtn {
