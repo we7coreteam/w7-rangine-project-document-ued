@@ -80,7 +80,7 @@ export default new Router({
     {
       path: '',
       redirect: '/admin/document',
-      component: () => import(/* webpackChunkName: "about" */ './views/admin/layout.vue')
+      // component: () => import(/* webpackChunkName: "about" */ './views/admin/layout.vue')
     }
   ]
 })
