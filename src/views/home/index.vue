@@ -30,12 +30,12 @@
           <div v-html="articleContent.content"></div>
           <mavon-editor ref="mavonEditor" v-show="false"></mavon-editor>
           <div class="up-down">
-            <el-button type="text" v-show="articleContent.previous_chapter_id > 0" @click="selectNode(articleContent.previous_chapter_id)">
+            <el-button type="text" v-show="articleContent.previous_chapter_id > 0" @click="getArticle(articleContent.previous_chapter_id)">
               <i class="el-icon-arrow-left"></i>上一篇：{{articleContent.previous_chapter_name}}
             </el-button>
             <el-button type="text" v-show="articleContent.previous_chapter_id == 0" disabled>没有上一章了</el-button>
             <el-button type="text" v-show="articleContent.next_chapter_id == 0" disabled>没有下一章了</el-button>
-            <el-button v-show="articleContent.next_chapter_id > 0" type="text" @click="selectNode(articleContent.next_chapter_id)">
+            <el-button v-show="articleContent.next_chapter_id > 0" type="text" @click="getArticle(articleContent.next_chapter_id)">
               下一篇：{{articleContent.next_chapter_name}}<i class="el-icon-arrow-right"></i>
             </el-button>
           </div>
@@ -45,13 +45,13 @@
           <p class="number-result">{{articleInfoList.length}}条结果"{{keyword}}"</p>
           <div class="list-content" v-for="articleInfo in articleInfoList" v-bind:key="articleInfo.id" v-show="articleInfoList.length">
             <div class="header">
-              <p class="title" v-html="articleInfo.name" @click="selectNode(articleInfo.id)"></p>
+              <p class="title" v-html="articleInfo.name" @click="getArticle(articleInfo.id)"></p>
               <p class="info">
                 <span>作者：Admin</span>
                 <span>更新时间：{{articleInfo.updated_at}}</span>
               </p>
             </div>
-            <p class="content" v-html="articleInfo.content" @click="selectNode(articleInfo.id)"></p>
+            <p class="content" v-html="articleInfo.content" @click="getArticle(articleInfo.id)"></p>
             <p class="from">来源：入门指引-域名网站-使用规则</p>
           </div>
           <p class="no-result" v-if="!articleInfoList.length">没有找到相关内容"{{keyword}}"</p>
@@ -100,18 +100,25 @@ export default {
           this.chapters = res
           this.$nextTick(() => {
             //tree默认选中第一个
-            this.selectNode(this.chapters[0].id)
+            this.handleNodeClick(this.chapters[0])
           })
-          // this.getFrom({id: 32, name: "测试"})
+          this.getFrom({id: 32, name: "测试"})
         })
     },
     handleNodeClick(obj) {
       this.$router.push({ path: '/'+ this.document_id, query: {id: obj.id} })
+      this.getArticle(obj.id)
+    },
+    getArticle(id) {
       this.$post('/client/detail', {
         document_id: this.$route.params.id,
-        id: obj.id
+        id: id
       })
         .then(res => {
+          //路由
+          this.$router.push({ path: '/'+ this.document_id, query: {id: id} })
+          //菜单样式选择
+          this.selectNode(id)
           this.articleContent = res
           if (this.articleContent.layout == 1) {
             this.articleContent.content = this.$refs.mavonEditor.markdownIt.render(res.content)
@@ -121,7 +128,7 @@ export default {
     },
     selectNode(id) {
       this.$refs.chaptersTree.setCurrentKey(id)
-      this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode())
+      // this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode())
       this.expandIdArray = []
       this.expandIdArray.push(id)
     },
@@ -136,9 +143,6 @@ export default {
       })
         .then(res => {
           this.articleFlag = false
-          //TODO
-          res[0]['layout'] = 1
-          res[2]['layout'] = 1
           res.forEach(articleInfo => {
             if (articleInfo.layout == 1) {
               articleInfo.content = this.$refs.mavonEditor.markdownIt.render(articleInfo.content)
@@ -174,6 +178,7 @@ export default {
     },
     getFrom(obj) {
       console.log(obj)
+     
     }
   },
   created () {
