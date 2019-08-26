@@ -115,6 +115,7 @@ export default {
     },
     deleteRow(id) {
       this.selectRowID = id
+      this.deleteSelectRows()
     }
   },
   created() {

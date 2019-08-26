@@ -20,7 +20,6 @@ export default new Router({
       children: [
         {
           path: 'document',
-          name: 'document',
           component: () => import(/* webpackChunkName: "about" */ './views/admin/document/layout.vue'),
           children: [
             {
@@ -77,6 +76,11 @@ export default new Router({
           component: () => import(/* webpackChunkName: "about" */ './views/home/index.vue')
         }
       ]
+    },
+    {
+      path: '',
+      redirect: '/admin/document',
+      component: () => import(/* webpackChunkName: "about" */ './views/admin/layout.vue')
     }
   ]
 })
