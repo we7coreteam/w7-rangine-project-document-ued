@@ -47,7 +47,7 @@
             <div class="header">
               <p class="title" v-html="articleInfo.name" @click="getArticle(articleInfo.id)"></p>
               <p class="info">
-                <span>作者：Admin</span>
+                <span>作者：{{articleInfo.username}}</span>
                 <span>更新时间：{{articleInfo.updated_at}}</span>
               </p>
             </div>
@@ -73,15 +73,7 @@ export default {
       expandIdArray:[],//需要展开的节点id
       keyword: '',
       articleFlag: true,//true显示文章内容 false显示搜索列表
-      articleContent: {
-        name: "标题标题章节名称",
-        updated_at: "2019-08-30 12:35:23",
-        content: '',
-        previous_chapter_id: 2,
-        previous_chapter_name: "山海经",
-        next_chapter_id: 0,
-        next_chapter_name: ""
-      },
+      articleContent: {},
       articleInfoList: []
       }
   },

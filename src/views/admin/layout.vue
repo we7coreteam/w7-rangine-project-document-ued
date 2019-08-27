@@ -6,10 +6,15 @@
       </router-link>
       <div class="menu">
         <router-link class="item" to="/admin/document">文档管理</router-link>
-        <router-link class="item" to="/admin/user">用户管理</router-link>
+        <router-link class="item" to="/admin/user" v-if="userInfo.has_privilege == 1">用户管理</router-link>
       </div>
       <div class="user">
-        Admin
+        {{userInfo.username}}
+        <div id="w7-nav-menu" class="menu-bar">
+          <ul class="menu-ul">
+            <li class="menu__item" @click="exit">退出系统</li>
+          </ul>
+        </div>
       </div>
     </el-header>
     <router-view></router-view>
@@ -20,17 +25,30 @@
 export default {
   name: 'admin',
   data() {
-    return {}
+    return {
+      userInfo: ''
+    }
   },
   methods: {
     getUserInfo() {
-      this.$post()
+      this.$post('/admin/user/getuser')
+        .then(res => {
+          this.userInfo = res
+        })
+    },
+    exit() {
+      this.$router.push({
+        name: 'adminLogin'
+      })
+      //清除cookie
+      var d = new Date();
+      d.setTime(d.getTime() + (-1*24*60*60*1000));
+      var expires = "expires="+d.toUTCString();
+      document.cookie = 'PHPSESSID' + "=" + '' + "; " + expires+"; path=/";//path=/是根路径
     }
   },
   created() {
-    // if(!window.localStorage.getItem('document_access_token')) {
-    //   this.$router.push('/admin/login')
-    // }
+    this.getUserInfo()
   }
 }
 </script>

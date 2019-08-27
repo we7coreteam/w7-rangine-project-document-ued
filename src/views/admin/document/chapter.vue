@@ -22,7 +22,7 @@
           <span class="point3" @mousemove='updateXY' @click.stop="rightClick(false, data, node)"><span>...</span></span>
         </span>
       </el-tree>
-      <div id="menu-bar" v-show="menuBarVisible">
+      <div id="menu-bar" class="menu-bar" v-show="menuBarVisible">
         <ul class="menu">
           <li class="menu__item" @click="addChildNode">创建子章节</li>
           <li class="menu__item" @click="updateNode">编辑</li>
@@ -39,12 +39,12 @@
     </el-main>
     <!-- 基本信息弹出框 -->
     <el-dialog class="w7-dialog" :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false">
-      <el-form :model="selectNodeObj" label-width="100px">
+      <el-form :model="addNodeObj" label-width="100px">
         <el-form-item label="章节顺序">
-          <el-input v-model="selectNodeObj.sort"></el-input>
+          <el-input v-model="addNodeObj.sort"></el-input>
         </el-form-item>
         <el-form-item label="章节名称">
-          <el-input v-model="selectNodeObj.name"></el-input>
+          <el-input v-model="addNodeObj.name"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -80,6 +80,9 @@ export default {
       selectNodeObj: {},//选中的节点data
       rightSelectNodeObj: {},//右键选中的节点Object
       rightSelectNode: {},//右键选中的节点的Node
+      addNodeObj: {
+        sort: ''
+      },//新增节点
       dialogTitle: '',
       dialogVisible: false,
       chapterInfo: {}//选中的文档，基本信息
@@ -87,7 +90,7 @@ export default {
   },
   methods: {
     init() {
-      this.$post('/admin/document/getdetails ', {
+      this.$post('/admin/document/getdetails', {
         id: this.$route.params.id
       })
         .then(res => {
@@ -177,12 +180,12 @@ export default {
         return
       }
       this.dialogTitle = '新建子章节'
-      this.selectNodeObj = {} //清空
-      this.selectNodeObj.sort = this.sort
+      this.addNodeObj.sort = this.sort
+      this.addNodeObj.name = ''
       this.dialogVisible = true
     },
     confirmBtn() {
-      if(!this.selectNodeObj.name) {
+      if(!this.addNodeObj.name) {
         this.$message('章节名称不能为空！')
         return
       }
@@ -190,8 +193,8 @@ export default {
         this.$post('/admin/chapter/create', {
           document_id: this.$route.params.id,
           parent_id: this.dialogTitle == '新建子章节' ? this.rightSelectNode.data.id : 0,
-          name: this.selectNodeObj.name,
-          sort: this.selectNodeObj.sort
+          name: this.addNodeObj.name,
+          sort: this.addNodeObj.sort
         })
           .then(res => {
             let newChild = res
@@ -230,7 +233,7 @@ export default {
     },
     updateNode() {
       this.dialogTitle = '编辑章节'
-      this.selectNodeObj = this.rightSelectNodeObj
+      this.addNodeObj = this.rightSelectNodeObj
       this.dialogVisible = true
     },
     removeNode() {
@@ -259,8 +262,8 @@ export default {
       this.dialogTitle = '创建章节'
       this.rightSelectNode = {}
       this.rightSelectNodeObj = {}
-      this.selectNodeObj = {} //清空
-      this.selectNodeObj.sort = this.sort
+      this.addNodeObj.sort = this.sort
+      this.addNodeObj.name = ''
       this.dialogVisible = true
     }
   },
@@ -306,33 +309,6 @@ export default {
       /deep/ i {
         line-height: 34px;
       }
-    }
-  }
-}
-#menu-bar {
-  width: 120px;
-  height: 146px;
-  position: absolute;
-	background-color: #ffffff;
-	border: solid 1px #e5e5e5;
-  z-index: 10000;
-	font-size: 14px;
-	color: #4d4d4d;
-  ul, li {
-    padding:0;
-    list-style:none;
-  }
-  ul {
-    margin: 3px 0;
-  }
-  li {
-    height: 35px;
-    line-height: 35px;
-    padding: 0 20px;
-    &:hover {
-      background-color: #3296fa;
-      color: #fff;
-      cursor: pointer;
     }
   }
 }
