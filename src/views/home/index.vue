@@ -52,7 +52,6 @@
               </p>
             </div>
             <p class="content" v-html="articleInfo.content" @click="getArticle(articleInfo.id)"></p>
-            <p class="from">来源：入门指引-域名网站-使用规则</p>
           </div>
           <p class="no-result" v-if="!articleInfoList.length">没有找到相关内容"{{keyword}}"</p>
         </div>
@@ -102,7 +101,6 @@ export default {
             //tree默认选中第一个
             this.handleNodeClick(this.chapters[0])
           })
-          this.getFrom({id: 32, name: "测试"})
         })
     },
     handleNodeClick(obj) {
@@ -152,8 +150,6 @@ export default {
             //关键字变亮
             articleInfo.name = this.highlight(articleInfo.name)
             articleInfo.content = this.highlight(articleInfo.content)
-            //添加字段来源fromArray
-            // articleInfo.fromArray = this.getFrom({id:articleInfo.id, name:articleInfo.name})
           })
           this.articleInfoList = res
         })
@@ -175,10 +171,6 @@ export default {
     htmlToWord(html) {
       var word = html.replace(/<(style|script|iframe)[^>]*?>[\s\S]+?<\/\1\s*>/gi,'').replace(/<[^>]+?>/g,'').replace(/\s+/g,' ').replace(/ /g,' ').replace(/>/g,' ')
       return word
-    },
-    getFrom(obj) {
-      console.log(obj)
-     
     }
   },
   created () {
@@ -285,7 +277,7 @@ export default {
               }
             }
           }
-          .content, .from {
+          .content {
             color: #999999;
             line-height: 24px;
           }
@@ -296,9 +288,6 @@ export default {
             overflow: hidden;
             margin-left: 0;
             cursor: pointer;
-          }
-          .from {
-            margin-top: 18px;
           }
         }
         .no-result {
