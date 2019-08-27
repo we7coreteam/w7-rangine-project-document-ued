@@ -21,7 +21,6 @@
           :ishljs="true"
           v-model="contentMd"
           @imgAdd="$imgAdd"
-          @imgDel="$imgDel"
           @save="save"></mavon-editor>
       </div>
       <div v-show="isEdit && layout == 2">
@@ -78,22 +77,16 @@ export default {
         })
     },
     $imgAdd(pos, $file) {
-      console.log(pos)
-      console.log($file)
       // 第一步.将图片上传到服务器.
       var formdata = new FormData();
       formdata.append('file', $file);
-      formdata.append('name', 12312);
-      console.log(formdata.get('name'))
       this.$post('/admin/upload/image', formdata, {
          headers: { 'Content-Type': 'multipart/form-data' }
       })
         .then(res => {
-          this.$refs.mavonEditor.$img2Url(pos, res.url);
+          // 第二步.将返回的url替换到文本原位置![...](0) -> ![...](url)
+          this.$refs.mavonEditor.$img2Url(pos, res.url)
         })
-    },
-    $imgDel() {
-
     },
     edit() {
       this.isEdit = !this.isEdit
@@ -114,8 +107,10 @@ export default {
         .then(res => {
           this.$message('保存成功！')
           this.chapterInfo.layout = res.layout
+          console.log(res.content)
           if (this.chapterInfo.layout == 1) {
             this.content = this.$refs.mavonEditor.markdownIt.render(res.content)
+            console.log(this.content)
             this.contentMd = res.content
           } else if (this.chapterInfo.layout == 2)  {
             this.content = res.content
