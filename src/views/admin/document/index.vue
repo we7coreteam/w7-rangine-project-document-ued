@@ -36,8 +36,8 @@
             管理设置
           </router-link>
           <el-button type="text" v-if="scope.row.has_creator != 3"
-            :class="{redBtn: scope.row.is_show == 2}"
-            @click="updateDoc(scope.row.id, scope.row.is_show)">{{scope.row.is_show == 1 ? "发布" : "取消发布"}}</el-button>
+            :class="{redBtn: scope.row.is_show == 1}"
+            @click="updateDoc(scope.row.id, scope.row.is_show)">{{scope.row.is_show == 2 ? "发布" : "取消发布"}}</el-button>
           <router-link :to="{path: '/'+ scope.row.id}" class="el-button el-button--text">
             阅读文档
           </router-link>

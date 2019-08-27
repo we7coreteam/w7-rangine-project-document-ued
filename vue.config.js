@@ -12,20 +12,17 @@ module.exports = {
 				target: 'http://172.16.1.13:98/',
 				// secure: false,
 				changeOrigin: true,
-				headers: {
-					'User-Agent': "we7test-develop",
-					host: 'https://wiki.w7.cc/'
-				},
 			},
 			'/client': {
 				target: 'http://172.16.1.13:98/',
 				// secure: false,
 				changeOrigin: true,
-				headers: {
-					'User-Agent': "we7test-develop",
-					host: 'https://wiki.w7.cc/'
-				},
-		}
+			},
+			'js': {
+				target: 'http://172.16.1.13:98/',
+				// secure: false,
+				changeOrigin: true,
+			}
 		}
 	},
 	chainWebpack: config => {

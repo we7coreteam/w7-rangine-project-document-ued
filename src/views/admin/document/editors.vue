@@ -35,7 +35,7 @@
 <script>
 import VueUeditorWrap from 'vue-ueditor-wrap'
 export default {
-  props: ['chapterId', 'chapterName'],
+  props: ['chapterId', 'chapterName', 'clickSum'],
   components: {
     VueUeditorWrap
   },
@@ -60,8 +60,9 @@ export default {
         chapter_id: this.chapterId
       })
         .then(res => {
-          this.isEdit = false
+          this.isEdit = this.clickSum == 1 ? true : false
           if(!res) {
+            this.chapterInfo = ''
             this.content = ''
             return
           }

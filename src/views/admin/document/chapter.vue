@@ -5,19 +5,21 @@
         <div class="icon"></div>
         <p>{{ docName }}</p>
       </div>
-      <el-input placeholder="请输入关键字搜索" v-model="keyword">
-        <i slot="suffix" class="el-input__icon el-icon-search" @click="searchDoc"></i>
+      <el-input placeholder="请输入关键字搜索" v-model="filterText">
+        <!-- <i slot="suffix" class="el-input__icon el-icon-search" @click="searchDoc"></i> -->
       </el-input>
       <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text=""
         ref="chaptersTree"
         node-key="id"
         :expand-on-click-node="false"
-        @node-contextmenu="rightClick"
         :highlight-current="true"
+        :default-expanded-keys="defaultExpanded"
+        :filter-node-method="filterNode"
+        @node-contextmenu="rightClick"
         @node-click="handleNodeClick">
-        <span class="custom-tree-node" slot-scope="{ node }">
+        <span class="custom-tree-node" slot-scope="{ node, data }">
           <span>{{ node.label }}</span>
-          <span class="point3" @click.stop="rightClick"><span>...</span></span>
+          <span class="point3" @mousemove='updateXY' @click.stop="rightClick(false, data, node)"><span>...</span></span>
         </span>
       </el-tree>
       <div id="menu-bar" v-show="menuBarVisible">
@@ -33,7 +35,7 @@
       </div>
     </el-aside>
     <el-main>
-      <editors :chapterId="selectNodeObj.id" :chapterName="selectNodeObj.name" v-if="selectNodeObj && selectNodeObj.id"></editors>
+      <editors :chapterId="selectNodeObj.id" :chapterName="selectNodeObj.name" :clickSum="clickSum" v-if="selectNodeObj && selectNodeObj.id"></editors>
     </el-main>
     <!-- 基本信息弹出框 -->
     <el-dialog class="w7-dialog" :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false">
@@ -63,14 +65,18 @@ export default {
   data() {
     return {
       docName: '',
-      keyword: '',
+      filterText: '',
       sort: 0,
       chapters: [],
       defaultProps: {
         children: 'children',
         label: 'name'
       },
+      clickSum: 2,//章节点击次数，每次新建重置为0
+      defaultExpanded: [],//默认展开节点的数组
       menuBarVisible: false,
+      clientX: '',
+      clientY: '',
       selectNodeObj: {},//选中的节点data
       rightSelectNodeObj: {},//右键选中的节点Object
       rightSelectNode: {},//右键选中的节点的Node
@@ -93,6 +99,7 @@ export default {
         document_id: this.$route.params.id
       })
         .then(res => {
+          if(!res) { return }
           this.chapters = res
           if(!this.sort) {
             let maxsort = this.sort
@@ -122,14 +129,24 @@ export default {
            this.chapters = res
         })
     },
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.name.indexOf(value) !== -1;
+    },
     defaultSelectNode() {
       //tree默认选中第一个
+      if(!this.chapters.length) { return }
       this.$refs.chaptersTree.setCurrentKey( this.chapters[0].id )
       this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode())
     },
     handleNodeClick(object) {
       if(this.menuBarVisible) {this.menuBarVisible = false}
       this.selectNodeObj = object
+      this.clickSum++
+    },
+    updateXY(event) {
+      this.clientX = event.clientX
+      this.clientY = event.clientY
     },
     rightClick(MouseEvent, object, Node) {
       // console.log('右键被点击---event:', MouseEvent)
@@ -139,6 +156,10 @@ export default {
       this.menuBarVisible = false // 先把模态框关死，目的是 第二次或者第n次右键鼠标的时候 它默认的是true
       this.menuBarVisible = true  // 显示模态窗口，跳出自定义菜单栏
       const menuBar = document.querySelector('#menu-bar')
+      if(!MouseEvent) {
+        menuBar.style.left = this.clientX + 'px'
+        menuBar.style.top = this.clientY + 'px'
+      }
       menuBar.style.left = MouseEvent.clientX + 'px'
       menuBar.style.top = MouseEvent.clientY + 'px'
       this.rightSelectNodeObj = object
@@ -186,6 +207,14 @@ export default {
             this.$message('新增成功！')
             this.dialogVisible = false
             this.sort++
+            this.clickSum = 0
+            this.$nextTick(() => {
+              //选中新建章节
+              this.$refs.chaptersTree.setCurrentKey( newChild.id )
+              this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode())
+              //展开
+              this.defaultExpanded.push(newChild.id)
+            })
           })
       }if(this.dialogTitle == '编辑章节') {
         this.$post('/admin/chapter/update', {
@@ -233,6 +262,11 @@ export default {
       this.selectNodeObj = {} //清空
       this.selectNodeObj.sort = this.sort
       this.dialogVisible = true
+    }
+  },
+  watch: {
+    filterText(val) {
+      this.$refs.chaptersTree.filter(val);
     }
   },
   created() {

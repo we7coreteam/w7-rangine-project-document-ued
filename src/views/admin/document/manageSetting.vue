@@ -47,10 +47,10 @@
     <el-dialog class="w7-dialog" title="基本信息" :visible.sync="dialogDocInfoVisible" :close-on-click-modal="false" center>
       <el-form :model="details" :label-width="formLabelWidth">
         <el-form-item label="文档名称" v-if="docInfoVisible == 'name'">
-          <el-input v-model="details.name" autocomplete="off"></el-input>
+          <el-input v-model="name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="文档介绍" v-if="docInfoVisible == 'description'">
-          <el-input type="textarea" :rows="2" v-model="details.description"></el-input>
+          <el-input type="textarea" :rows="2" v-model="description"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -107,6 +107,8 @@ export default {
       manageVisible: false,//操作员管理选项卡是否显示
       activeName: 'first',//tabs显示的选项卡名字
       details: '',//文档数据
+      name: '',//弹出框文档名称
+      description: '',//弹出框文档介绍
       dialogDocInfoVisible: false,//基本信息弹弹出框
       formLabelWidth: '90px',
       docInfoVisible: '',//
@@ -122,16 +124,14 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    // modalShow(type) {
-    //   this.fileName = {
-    //     label: 'M',
-    //     key:
-    //   }
-    //   this.dialogDocInfoVisible = true;
-    // },
     modalShow(labelname) {
       this.docInfoVisible = labelname
       this.dialogDocInfoVisible = true
+      if (labelname == 'name') {
+        this.name = this.details.name
+      } else {
+        this.description = this.details.description
+      }
     },
     getdetails() {
       this.$post('/admin/document/getdetails',{
@@ -156,12 +156,16 @@ export default {
     updateDocument() {
       this.$post('/admin/document/update',{
         id: this.details.id,
-        name: this.details.name,
-        description: this.details.name
+        name: this.name ? this.name : this.details.name,
+        description: this.description ? this.description : this.details.description
       })
         .then(() => {
           this.$message('修改成功！')
+          this.details.name = this.name ? this.name : this.details.name
+          this.details.description = this.description ? this.description : this.details.description
           this.dialogDocInfoVisible = false
+          this.name = ''
+          this.description = ''
         })
     },
     getuserlist() {
