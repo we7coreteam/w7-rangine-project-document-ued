@@ -6,7 +6,7 @@
         <span v-if="chapterInfo.updated_at">更新时间：{{ chapterInfo.updated_at }}</span>
         <span v-if="chapterInfo.username">作者：{{ chapterInfo.username }}</span>
       </p>
-      <button @click="isEdit = !isEdit">编辑</button>
+      <button @click="edit">编辑</button>
     </div>
     <div class="editors">
       <div v-html="content" v-show="!isEdit"></div>
@@ -65,6 +65,7 @@ export default {
             this.content = ''
             return
           }
+          this.chapterInfo = res
           if(res.layout == 1) {
             this.layout = 1
             this.content = this.$refs.mavonEditor.markdownIt.render(res.content)
@@ -93,6 +94,15 @@ export default {
     $imgDel() {
 
     },
+    edit() {
+      this.isEdit = !this.isEdit
+      if(this.layout == 1) {
+        this.content = ''
+      }
+      if(this.layout == 2) {
+        this.contentMd = ''
+      }
+    },
     save() {
       console.log(this.chapterId)
       this.$post('/admin/chapter/save_content', {
@@ -102,16 +112,20 @@ export default {
       })
         .then(res => {
           this.$message('保存成功！')
-          if (this.layout == 1) {
+          this.chapterInfo.layout = res.layout
+          if (this.chapterInfo.layout == 1) {
             this.content = this.$refs.mavonEditor.markdownIt.render(res.content)
             this.contentMd = res.content
-          } else if (this.layout == 2)  {
+          } else if (this.chapterInfo.layout == 2)  {
             this.content = res.content
           }
         })
     },
     back() {
       this.isEdit = false
+      if (this.chapterInfo.layout == 1) {
+        this.content = this.$refs.mavonEditor.markdownIt.render(this.contentMd)
+      }
     }
   },
   watch: {
