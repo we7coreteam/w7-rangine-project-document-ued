@@ -280,8 +280,6 @@ export default {
           .content {
             color: #999999;
             line-height: 24px;
-          }
-          .content {
             display: -webkit-box;
             -webkit-box-orient: vertical;
             -webkit-line-clamp: 2;
