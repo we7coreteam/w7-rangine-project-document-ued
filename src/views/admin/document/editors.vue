@@ -47,7 +47,8 @@ export default {
       config: {
         autoHeightEnabled: false,// 编辑器不自动被内容撑高
         initialFrameHeight: '400',// 初始容器高度
-        initialFrameWidth: '100%'// 初始容器宽度
+        initialFrameWidth: '100%',// 初始容器宽度
+        serverUrl: 'js/php/controller.php'// 上传文件接口
       },
       content: '',//最终显示的html
       contentMd: '',//md格式的内容
