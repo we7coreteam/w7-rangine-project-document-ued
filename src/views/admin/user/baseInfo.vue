@@ -45,10 +45,17 @@ export default {
         this.$message('两次密码不一致，请重新输入！')
         return
       }
-      this.$post('/admin/user/adduser', this.formData)
-        .then(() => {
-          this.$message('保存成功！')
-        })
+      if (this.$route.params.id) {
+        this.$post('/admin/user/updateuser ', this.formData)
+          .then(() => {
+            this.$message('修改成功！')
+          })
+      }else {
+        this.$post('/admin/user/adduser', this.formData)
+          .then(() => {
+            this.$message('保存成功！')
+          })
+        }
     },
     getDetailsUser() {
       this.$post('/admin/user/detailsuser',{
