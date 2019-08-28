@@ -62,9 +62,13 @@ export default {
         .then(res => {
           this.isEdit = this.clickSum == 1 ? true : false
           if(!res) {
-            this.chapterInfo = ''
-            this.content = ''
-            this.contentMd = ''
+            this.chapterInfo = {
+              updated_at: '',
+              username: '',
+              layout: 1
+            }
+            this.content = ' '
+            this.contentMd = ' '
             return
           }
           this.chapterInfo = res
