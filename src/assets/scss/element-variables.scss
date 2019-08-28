@@ -159,6 +159,8 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   }
 }
 .user {
+  width: 100px;
+  text-align: center;
   cursor: pointer;
   padding: 0 10px;
   &:hover {
