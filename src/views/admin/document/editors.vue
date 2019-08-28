@@ -64,6 +64,7 @@ export default {
           if(!res) {
             this.chapterInfo = ''
             this.content = ''
+            this.contentMd = ''
             return
           }
           this.chapterInfo = res
