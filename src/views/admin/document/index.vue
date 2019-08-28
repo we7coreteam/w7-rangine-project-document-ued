@@ -81,7 +81,6 @@ export default {
   name: 'docIndex',
   data() {
     return {
-      hasPrivilege: '',//是否为超管
       keyword: '',
       docList: [],
       currentPage: 0,//当前页码
@@ -132,7 +131,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$post('/admin/document/del',{
+        this.$post('/admin/document/delete',{
           id: id
         })
           .then(() => {
@@ -157,8 +156,12 @@ export default {
           })
     }
   },
+  computed: {
+      hasPrivilege() {
+        return sessionStorage.getItem("has_privilege") //是否为超管
+      }
+  },
   created() {
-    this.hasPrivilege = sessionStorage.getItem("has_privilege")
     this.getList()
   }
 }
