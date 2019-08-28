@@ -9,8 +9,10 @@ import qs from 'qs'
 const instance = axios.create({
   withCredentials: true
 })
+var url = ''
 
 instance.interceptors.request.use(request => {
+  url = request.url
   request.transformRequest = [function (data) {
     return (typeof data === 'object' && !(data instanceof FormData)) ? qs.stringify(data) : data
   }]
@@ -18,18 +20,22 @@ instance.interceptors.request.use(request => {
 })
 instance.interceptors.response.use(response => {
   // response.
-  if (!response.data || !response.data.status) {
-    if (response.data.code == '444') {
-      router.push('/admin/login')
-    } else {
-      Message({
-        message: (response.data && response.data.message) ? response.data.message : '出错了', 
-        duration: 1000
-        })
-    }
-    return Promise.reject(response.data)
+  if (url == '/admin/upload/image') {
+    return response.data
   } else {
-    return response.data.data
+    if (!response.data || !response.data.status) {
+      if (response.data.code == '444') {
+        router.push('/admin/login')
+      } else {
+        Message({
+          message: (response.data && response.data.message) ? response.data.message : '出错了',
+          duration: 1000
+          })
+      }
+      return Promise.reject(response.data)
+    } else {
+      return response.data.data
+    }
   }
 }, error => {
   return Promise.reject(error.response)

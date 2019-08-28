@@ -88,6 +88,9 @@ export default {
           // 第二步.将返回的url替换到文本原位置![...](0) -> ![...](url)
           this.$refs.mavonEditor.$img2Url(pos, res.url)
         })
+          .catch(function(error) {
+            console.log('发生错误！', error)
+          })
     },
     edit() {
       this.isEdit = !this.isEdit
@@ -99,7 +102,6 @@ export default {
       }
     },
     save() {
-      console.log(this.chapterId)
       this.$post('/admin/chapter/save_content', {
         chapter_id: this.chapterId,
         layout: this.layout,
@@ -108,10 +110,8 @@ export default {
         .then(res => {
           this.$message('保存成功！')
           this.chapterInfo.layout = res.layout
-          console.log(res.content)
           if (this.chapterInfo.layout == 1) {
             this.content = this.$refs.mavonEditor.markdownIt.render(res.content)
-            console.log(this.content)
             this.contentMd = res.content
           } else if (this.chapterInfo.layout == 2)  {
             this.content = res.content
