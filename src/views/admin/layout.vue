@@ -34,12 +34,14 @@ export default {
       this.$post('/admin/user/getuser')
         .then(res => {
           this.userInfo = res
+          sessionStorage.setItem("has_privilege",res.has_privilege)
         })
     },
     exit() {
       this.$router.push({
         name: 'adminLogin'
       })
+      sessionStorage.removeItem("has_privilege")
       //清除cookie
       var d = new Date();
       d.setTime(d.getTime() + (-1*24*60*60*1000));
