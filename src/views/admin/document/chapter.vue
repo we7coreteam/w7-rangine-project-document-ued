@@ -81,7 +81,8 @@ export default {
       rightSelectNodeObj: {},//右键选中的节点Object
       rightSelectNode: {},//右键选中的节点的Node
       addNodeObj: {
-        sort: ''
+        sort: '',
+        name: ''
       },//新增节点
       dialogTitle: '',
       dialogVisible: false,
