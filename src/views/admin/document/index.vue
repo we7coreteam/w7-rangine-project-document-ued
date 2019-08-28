@@ -143,7 +143,7 @@ export default {
     updateDoc(id, isShow) {
       this.$post('/admin/document/update',{
           id: id,
-          is_show: isShow == 1 ? 1 : 2
+          is_show: isShow == 1 ? 2 : 1
         })
           .then(() => {
             //修改docList
