@@ -41,7 +41,11 @@ export default {
   },
   data() {
     return {
-      chapterInfo: {},
+      chapterInfo: {
+        updated_at: '',
+        username: '',
+        layout: 1
+      },
       isEdit: false,
       config: {
         autoHeightEnabled: false,// 编辑器不自动被内容撑高
@@ -114,7 +118,7 @@ export default {
       })
         .then(res => {
           this.$message('保存成功！')
-          this.chapterInfo.layout = res.layout
+          this.chapterInfo = res
           if (this.chapterInfo.layout == 1) {
             this.content = this.$refs.mavonEditor.markdownIt.render(res.content)
             this.contentMd = res.content
