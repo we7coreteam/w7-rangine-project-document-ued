@@ -26,16 +26,16 @@
       <el-table-column label="创建时间" prop="created_at"></el-table-column>
       <el-table-column label="操作" align="right">
         <template slot-scope="scope">
-          <el-button type="text" v-if="scope.row.has_creator != 3 || hasPrivilege == 1" @click="removeDoc(scope.row.id)">删除</el-button>
+          <el-button type="text" v-if="scope.row.has_creator != 3 || UserInfo.has_privilege == 1" @click="removeDoc(scope.row.id)">删除</el-button>
           <router-link
             :to="{path: 'document/chapter/' + scope.row.id}"
             class="el-button el-button--text">编辑</router-link>
           <router-link
             :to="{path: 'document/'+ scope.row.id}"
-            class="el-button el-button--text" v-if="scope.row.has_creator != 3 || hasPrivilege == 1">
+            class="el-button el-button--text" v-if="scope.row.has_creator != 3 || UserInfo.has_privilege == 1">
             管理设置
           </router-link>
-          <el-button type="text" v-if="scope.row.has_creator != 3 || hasPrivilege == 1"
+          <el-button type="text" v-if="scope.row.has_creator != 3 || UserInfo.has_privilege == 1"
             :class="{redBtn: scope.row.is_show == 1}"
             @click="updateDoc(scope.row.id, scope.row.is_show)">{{scope.row.is_show == 2 ? "发布" : "取消发布"}}</el-button>
           <router-link :to="{path: '/'+ scope.row.id}" class="el-button el-button--text">
@@ -77,6 +77,7 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
 export default {
   name: 'docIndex',
   data() {
@@ -157,11 +158,10 @@ export default {
     }
   },
   computed: {
-      hasPrivilege() {
-        return sessionStorage.getItem("has_privilege") //是否为超管
-      }
+      ...mapGetters({UserInfo: 'UserInfo', isNotRead: 'isNotRead'})
   },
   created() {
+    this.$store.dispatch('getUserInfo')
     this.getList()
   }
 }

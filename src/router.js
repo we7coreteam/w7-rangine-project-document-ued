@@ -16,7 +16,7 @@ export default new Router({
       path: '/admin',
       name: 'admin',
       redirect: '/admin/document',
-      component: () => import(/* webpackChunkName: "about" */ './views/admin/layout.vue'),
+      component: () => import(/* webpackChunkName: "about" */ './views/layout.vue'),
       children: [
         {
           path: 'document',
@@ -68,7 +68,7 @@ export default new Router({
       path: '/:id',
       name: 'home',
       redirect: 'home',
-      component: () => import(/* webpackChunkName: "about" */ './views/home/layout.vue'),
+      component: () => import(/* webpackChunkName: "about" */ './views/layout.vue'),
       children: [
         {
           path: '',
