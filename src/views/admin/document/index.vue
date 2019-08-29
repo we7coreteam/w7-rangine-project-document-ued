@@ -158,7 +158,7 @@ export default {
     }
   },
   computed: {
-      ...mapGetters({UserInfo: 'UserInfo', isNotRead: 'isNotRead'})
+      ...mapGetters({UserInfo: 'UserInfo'})
   },
   created() {
     this.$store.dispatch('getUserInfo')
