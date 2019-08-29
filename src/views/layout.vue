@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     isNotReadFnc() {//F5刷新
-      this.isNotRead = this.$route.query.id ? false : true
+      this.isNotRead = this.$route.name == 'homeChild' ? false : true
     },
     exit() {
       this.$router.push({
@@ -50,8 +50,6 @@ export default {
   },
   watch: {
     $route(to,from){
-      console.log(to.name);
-      console.log(from.name);
       if(to.name == 'documentIndex' && from.name == 'homeChild') {
         this.isNotRead = true
       }else if(to.name == 'homeChild') {

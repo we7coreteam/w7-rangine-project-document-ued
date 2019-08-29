@@ -24,8 +24,8 @@
         <div class="article" v-show="articleFlag">
           <p class="title">{{ articleContent.name }}</p>
           <p class="info">
-            <span>更新时间：{{ articleContent.updated_at }}</span>
-            <span>作者：{{ articleContent.username }}</span>
+            <span v-show="articleContent.updated_at">更新时间：{{ articleContent.updated_at }}</span>
+            <span v-show="articleContent.username">作者：{{ articleContent.username }}</span>
           </p>
           <div v-html="articleContent.content"></div>
           <mavon-editor ref="mavonEditor" v-show="false"></mavon-editor>
@@ -83,6 +83,7 @@ export default {
         document_id: this.$route.params.id
       })
         .then(res => {
+          if(!res.length) {return}
           this.$router.push({
             query:{
               id: res[0].id
