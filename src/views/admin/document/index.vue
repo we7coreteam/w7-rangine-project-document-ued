@@ -38,9 +38,7 @@
           <el-button type="text" v-if="scope.row.has_creator != 3 || UserInfo.has_privilege == 1"
             :class="{redBtn: scope.row.is_show == 1}"
             @click="updateDoc(scope.row.id, scope.row.is_show)">{{scope.row.is_show == 2 ? "发布" : "取消发布"}}</el-button>
-          <router-link :to="{path: '/'+ scope.row.id}" target="_blank" :class="[{'is-disabled': scope.row.is_show == 2}, 'el-button','el-button--text']" class="el-button el-button--text">
-            阅读文档
-          </router-link>
+          <el-button type="text" :class="{'is-disabled': scope.row.is_show == 2}" @click="readDoc(scope.row.id, scope.row.is_show)">阅读文档</el-button>
         </template>
       </el-table-column>
       <div class="nodata" slot="empty">
@@ -155,6 +153,16 @@ export default {
               }
             });
           })
+    },
+    readDoc(id, isShow) {
+      if(isShow == 2) {
+        this.$message('请先发布文档！')
+        return
+      }
+      let routeUrl = this.$router.resolve({
+        path: "/"+ id
+      })
+      window.open(routeUrl.href, '_blank')
     }
   },
   computed: {
