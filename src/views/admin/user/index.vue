@@ -17,15 +17,15 @@
       :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label="账号" prop="username"></el-table-column>
-      <el-table-column label="添加时间" prop="created_at"
-        sortable
-        column-key="date"
-      >
+      <el-table-column label="添加时间" prop="created_at" sortable column-key="date">
+        <template slot-scope="scope">
+          <div v-if="scope.row.username != 'admin'">{{scope.row.created_at}}</div>
+        </template>
       </el-table-column>
       <el-table-column label="操作" align="right">
         <template slot-scope="scope">
           <router-link :to="{path:'user/'+ scope.row.id}" class="el-button el-button--text">编辑</router-link>
-          <el-button type="text" @click="deleteRow(scope.row.id)">删除</el-button>
+          <el-button type="text" v-if="scope.row.username != 'admin'" @click="deleteRow(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
