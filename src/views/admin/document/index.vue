@@ -97,7 +97,7 @@ export default {
     getList() {
       this.$post('/admin/document/getlist',{
         page: this.currentPage,
-        keyword: this.keyword
+        name: this.keyword
       })
         .then(res => {
            this.docList = res.data
@@ -106,7 +106,7 @@ export default {
         })
     },
     searchDoc() {
-      this.$post('/admin/document/search',{
+      this.$post('/admin/document/getlist',{
         name: this.keyword
       })
         .then(res => {

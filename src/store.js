@@ -22,7 +22,14 @@ export default new Vuex.Store({
     getUserInfo(context) {
       Axios.post('/admin/user/getuser')
       .then(res => {
-        context.commit('setUserInfo', res.data.data)
+        if (res.data.code == '444') {
+          context.commit('setUserInfo', {
+            has_privilege: '',
+            username: ''
+          })
+        } else {
+          context.commit('setUserInfo', res.data.data)
+        }
       })
     }
   }
