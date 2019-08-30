@@ -29,16 +29,6 @@
           </p>
           <div v-html="articleContent.content"></div>
           <mavon-editor ref="mavonEditor" v-show="false"></mavon-editor>
-          <div class="up-down">
-            <el-button type="text" v-show="articleContent.previous_chapter_id > 0" @click="getArticle(articleContent.previous_chapter_id)">
-              <i class="el-icon-arrow-left"></i>上一篇：{{articleContent.previous_chapter_name}}
-            </el-button>
-            <el-button type="text" v-show="articleContent.previous_chapter_id == 0" disabled>没有上一章了</el-button>
-            <el-button type="text" v-show="articleContent.next_chapter_id == 0" disabled>没有下一章了</el-button>
-            <el-button v-show="articleContent.next_chapter_id > 0" type="text" @click="getArticle(articleContent.next_chapter_id)">
-              下一篇：{{articleContent.next_chapter_name}}<i class="el-icon-arrow-right"></i>
-            </el-button>
-          </div>
         </div>
         <div class="article-list" v-if="!articleFlag">
           <el-button class="back" type="text" @click="articleFlag = !articleFlag">返回</el-button>
@@ -234,11 +224,6 @@ export default {
           span {
             margin-right: 40px;
           }
-        }
-        .up-down {
-          display: flex;
-          justify-content: space-between;
-          margin: 45px 0 20px 0;
         }
       }
       .article-list {
