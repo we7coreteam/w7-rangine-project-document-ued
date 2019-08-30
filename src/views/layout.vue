@@ -8,7 +8,7 @@
         <router-link class="item" to="/admin/document" v-if="isNotRead">文档管理</router-link>
         <router-link class="item" to="/admin/user" v-if="UserInfo.has_privilege == 1 && isNotRead">用户管理</router-link>
       </div>
-      <div class="user" v-if="UserInfo.has_privilege">
+      <div class="user" v-if="UserInfo.username">
         {{UserInfo.username}}
         <div id="w7-nav-menu" class="menu-bar">
           <ul class="menu-ul">
@@ -16,7 +16,7 @@
           </ul>
         </div>
       </div>
-      <router-link class="item" to="/admin/login" v-if="!UserInfo.has_privilege">登录</router-link>
+      <router-link class="item" to="/admin/login" v-if="!UserInfo.username">登录</router-link>
     </el-header>
     <router-view></router-view>
   </el-container>
