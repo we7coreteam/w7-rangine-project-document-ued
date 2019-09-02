@@ -11,7 +11,7 @@
       <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text=""
         ref="chaptersTree"
         node-key="id"
-        :expand-on-click-node="false"
+        :expand-on-click-node="true"
         :highlight-current="true"
         :default-expanded-keys="defaultExpanded"
         :filter-node-method="filterNode"
