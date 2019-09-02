@@ -9,7 +9,7 @@
       <button @click="edit">编辑</button>
     </div>
     <div class="editors">
-      <div v-html="content" v-show="!isEdit"></div>
+      <div :class="{'markdown-body': layout == 1}" v-html="content" v-show="!isEdit"></div>
       <div class="editorBtn" v-show="isEdit">
         <el-button :type="layout == 1 ? 'primary' : ''" @click="layout = 1">Markdown编辑器</el-button>
         <el-button :type="layout == 2 ? 'primary' : ''" @click="layout = 2">UEditor编辑器</el-button>
