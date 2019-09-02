@@ -27,7 +27,7 @@
             <span v-show="articleContent.updated_at">更新时间：{{ articleContent.updated_at }}</span>
             <span v-show="articleContent.username">作者：{{ articleContent.username }}</span>
           </p>
-          <div v-html="articleContent.content"></div>
+          <div :class="{'markdown-body': articleContent.layout == 1}" v-html="articleContent.content"></div>
           <mavon-editor ref="mavonEditor" v-show="false"></mavon-editor>
         </div>
         <div class="article-list" v-if="!articleFlag">
