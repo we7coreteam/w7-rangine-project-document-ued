@@ -35,13 +35,13 @@
           <p class="number-result">{{articleInfoList.length}}条结果"{{keyword}}"</p>
           <div class="list-content" v-for="articleInfo in articleInfoList" v-bind:key="articleInfo.id" v-show="articleInfoList.length">
             <div class="header">
-              <p class="title" v-html="articleInfo.name" @click="getArticle(articleInfo.id)"></p>
+              <p class="title" v-html="articleInfo.name" @click="changeRoute(articleInfo.id)"></p>
               <p class="info">
                 <span>作者：{{articleInfo.username}}</span>
                 <span>更新时间：{{articleInfo.updated_at}}</span>
               </p>
             </div>
-            <p class="content" v-html="articleInfo.content" @click="getArticle(articleInfo.id)"></p>
+            <p class="content" v-html="articleInfo.content" @click="changeRoute(articleInfo.id)"></p>
           </div>
           <p class="no-result" v-if="!articleInfoList.length">没有找到相关内容"{{keyword}}"</p>
         </div>
@@ -55,6 +55,8 @@ export default {
   data() {
     return {
       document_id: this.$route.params.id,
+      document_name: '',
+      id: '',//左侧文档id
       chapters: [],//左侧目录
       defaultProps: {
         children: 'children',
@@ -74,32 +76,38 @@ export default {
       })
         .then(res => {
           if(!res.length) {return}
-          this.$router.push({
-            query:{
-              id: res[0].id
-            }
-          })
           this.chapters = res
           this.$nextTick(() => {
-            //tree默认选中第一个
-            this.handleNodeClick(this.chapters[0])
+            //如果没有id,那么tree默认选中第一个
+            if (this.$route.query.id) {
+              this.id = this.$route.query.id
+              this.getArticle()
+            } else {
+              this.id = this.chapters[0].id
+              this.changeRoute(this.id)
+            }
           })
         })
     },
     handleNodeClick(obj) {
-      this.$router.push({ path: '/'+ this.document_id, query: {id: obj.id} })
-      this.getArticle(obj.id)
+      this.id = obj.id
+      this.changeRoute(this.id)
     },
-    getArticle(id) {
+    changeRoute(id) {
+      this.id = id
+      // this.$router.push({ path: '/'+ this.document_id, query: {id: this.id, document_name: this.document_name} })
+       this.$router.push({ path: '/'+ this.document_id, query: {id: this.id} })
+    },
+    getArticle() {
       this.$post('/client/detail', {
-        document_id: this.$route.params.id,
-        id: id
+        document_id: this.document_id,
+        id: this.id
       })
         .then(res => {
-          //路由
-          this.$router.push({ path: '/'+ this.document_id, query: {id: id} })
           //菜单样式选择
-          this.selectNode(id)
+          this.selectNode(this.id)
+          //页面标题
+          document.title = res.name
           this.articleContent = res
           if (this.articleContent.layout == 1) {
             this.articleContent.content = this.$refs.mavonEditor.markdownIt.render(res.content)
@@ -109,7 +117,6 @@ export default {
     },
     selectNode(id) {
       this.$refs.chaptersTree.setCurrentKey(id)
-      // this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode())
       this.expandIdArray = []
       this.expandIdArray.push(id)
     },
@@ -154,6 +161,16 @@ export default {
     htmlToWord(html) {
       var word = html.replace(/<(style|script|iframe)[^>]*?>[\s\S]+?<\/\1\s*>/gi,'').replace(/<[^>]+?>/g,'').replace(/\s+/g,' ').replace(/ /g,' ').replace(/>/g,' ')
       return word
+    }
+  },
+  watch: {
+    $route: {
+      handler: function(val, oldVal){
+        console.log(val)
+        console.log(oldVal)
+        this.getArticle()
+      },
+      deep: true// 深度观察监听
     }
   },
   created () {
