@@ -19,6 +19,9 @@
       <router-link class="item" to="/admin/login" v-if="!UserInfo.username">登录</router-link>
     </el-header>
     <router-view></router-view>
+    <el-footer class="w7-footer" height="14px">
+      Powered by <a href="https://www.w7.cc">微擎云计算©www.w7.cc</a>
+    </el-footer>
   </el-container>
 </template>
 

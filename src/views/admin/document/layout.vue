@@ -8,14 +8,9 @@
         </el-menu-item>
       </el-menu>
     </el-aside>
-    <el-container>
-      <el-main>
-        <router-view></router-view>
-      </el-main>
-      <el-footer class="w7-footer" height="14px">
-        Powered by <a href="https://www.w7.cc">微擎云计算©www.w7.cc</a>
-      </el-footer>
-    </el-container>
+    <el-main>
+      <router-view></router-view>
+    </el-main>
   </el-container>
 </template>
 
