@@ -103,8 +103,12 @@ export default {
       this.changeRoute(obj.id)
     },
     changeRoute(id) {
-        this.selectChapterId = id
-        this.$router.push({ path: '/'+ this.document_id, query: {id: this.selectChapterId} })
+        if(id == this.$route.query.id) {
+          this.getArticle()
+        }else {
+          this.selectChapterId = id
+          this.$router.push({ path: '/'+ this.document_id, query: {id: this.selectChapterId} })
+        }
     },
     getArticle() {
       this.$post('/client/detail', {
