@@ -56,12 +56,13 @@ export default {
     return {
       document_id: this.$route.params.id,
       document_name: '',
-      id: '',//左侧文档id
       chapters: [],//左侧目录
       defaultProps: {
         children: 'children',
         label: 'name'
       },
+      selectChapterId: '',//左侧文档id(选中节点)
+      selectChapterName: '',//左侧文档name(选中节点)
       expandIdArray:[],//需要展开的节点id
       keyword: '',
       articleFlag: true,//true显示文章内容 false显示搜索列表
@@ -70,6 +71,15 @@ export default {
       }
   },
   methods: {
+    getDocumentName() {
+      this.$post('/client/document/getdetails', {
+        document_id: this.document_id
+      })
+        .then(res => {
+          this.document_name = res.name
+          this.getChapters()
+        })
+    },
     getChapters() {
       this.$post('/client/chapters', {
         document_id: this.$route.params.id
@@ -80,34 +90,32 @@ export default {
           this.$nextTick(() => {
             //如果没有id,那么tree默认选中第一个
             if (this.$route.query.id) {
-              this.id = this.$route.query.id
+              this.selectChapterId = this.$route.query.id
               this.getArticle()
             } else {
-              this.id = this.chapters[0].id
-              this.changeRoute(this.id)
+              this.selectChapterId = this.chapters[0].id
+              this.changeRoute(this.selectChapterId)
             }
           })
         })
     },
     handleNodeClick(obj) {
-      this.id = obj.id
-      this.changeRoute(this.id)
+      this.changeRoute(obj.id)
     },
     changeRoute(id) {
-      this.id = id
-      // this.$router.push({ path: '/'+ this.document_id, query: {id: this.id, document_name: this.document_name} })
-       this.$router.push({ path: '/'+ this.document_id, query: {id: this.id} })
+        this.selectChapterId = id
+        this.$router.push({ path: '/'+ this.document_id, query: {id: this.selectChapterId} })
     },
     getArticle() {
       this.$post('/client/detail', {
         document_id: this.document_id,
-        id: this.id
+        id: this.selectChapterId
       })
         .then(res => {
           //菜单样式选择
-          this.selectNode(this.id)
+          this.selectNode(this.selectChapterId)
           //页面标题
-          document.title = res.name
+          document.title = res.name + ' — '+ this.document_name
           this.articleContent = res
           if (this.articleContent.layout == 1) {
             this.articleContent.content = this.$refs.mavonEditor.markdownIt.render(res.content)
@@ -165,16 +173,15 @@ export default {
   },
   watch: {
     $route: {
-      handler: function(val, oldVal){
-        console.log(val)
-        console.log(oldVal)
+      handler: function(){
         this.getArticle()
       },
       deep: true// 深度观察监听
-    }
+    },
+
   },
   created () {
-    this.getChapters()
+    this.getDocumentName()
   }
 }
 </script>
