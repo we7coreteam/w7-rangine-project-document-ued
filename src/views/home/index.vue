@@ -35,13 +35,13 @@
           <p class="number-result">{{articleInfoList.length}}条结果"{{keyword}}"</p>
           <div class="list-content" v-for="articleInfo in articleInfoList" v-bind:key="articleInfo.id" v-show="articleInfoList.length">
             <div class="header">
-              <p class="title" v-html="articleInfo.name" @click="changeRoute(articleInfo.id)"></p>
+              <p class="title" v-html="articleInfo.name" @click="changeRoute(articleInfo.id, articleInfo.name, true)"></p>
               <p class="info">
                 <span>作者：{{articleInfo.username}}</span>
                 <span>更新时间：{{articleInfo.updated_at}}</span>
               </p>
             </div>
-            <p class="content" v-html="articleInfo.content" @click="changeRoute(articleInfo.id)"></p>
+            <p class="content" v-html="articleInfo.content" @click="changeRoute(articleInfo.id, articleInfo.name, true)"></p>
           </div>
           <p class="no-result" v-if="!articleInfoList.length">没有找到相关内容"{{keyword}}"</p>
         </div>
@@ -62,7 +62,6 @@ export default {
         label: 'name'
       },
       selectChapterId: '',//左侧文档id(选中节点)
-      selectChapterName: '',//左侧文档name(选中节点)
       expandIdArray:[],//需要展开的节点id
       keyword: '',
       articleFlag: true,//true显示文章内容 false显示搜索列表
@@ -88,27 +87,50 @@ export default {
           if(!res.length) {return}
           this.chapters = res
           this.$nextTick(() => {
-            //如果没有id,那么tree默认选中第一个
             if (this.$route.query.id) {
+              //F5刷新
               this.selectChapterId = this.$route.query.id
+              //递归找name
+              let name = '';
+              let getName = function (array, id) {
+                array.forEach(chapters => {
+                  if (!chapters.children.length) {
+                    getName(chapters.children)
+                  }
+                  if (chapters.id == id) {
+                    name = chapters.name
+                    return
+                  }
+                })
+              }
+              getName(this.chapters, this.selectChapterId)
+              this.selectNode(this.selectChapterId)
+              document.title = name + ' — '+ this.document_name
               this.getArticle()
             } else {
+              //tree默认选中第一个
               this.selectChapterId = this.chapters[0].id
-              this.changeRoute(this.selectChapterId)
+              this.changeRoute(this.selectChapterId, this.chapters[0].name, true)
             }
           })
         })
     },
     handleNodeClick(obj) {
-      this.changeRoute(obj.id)
+      this.changeRoute(obj.id, obj.name)
     },
-    changeRoute(id) {
+    changeRoute(id, name, handSelectNode) {
         if(id == this.$route.query.id) {
           this.getArticle()
         }else {
           this.selectChapterId = id
           this.$router.push({ path: '/'+ this.document_id, query: {id: this.selectChapterId} })
         }
+        //菜单样式选择
+        if (handSelectNode) {
+         this.selectNode(this.selectChapterId)
+        }
+        //页面标题
+        document.title = name + ' — '+ this.document_name
     },
     getArticle() {
       this.$post('/client/detail', {
@@ -116,10 +138,6 @@ export default {
         id: this.selectChapterId
       })
         .then(res => {
-          //菜单样式选择
-          this.selectNode(this.selectChapterId)
-          //页面标题
-          document.title = res.name + ' — '+ this.document_name
           this.articleContent = res
           if (this.articleContent.layout == 1) {
             this.articleContent.content = this.$refs.mavonEditor.markdownIt.render(res.content)
