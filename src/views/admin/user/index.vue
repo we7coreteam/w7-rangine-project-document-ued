@@ -5,7 +5,7 @@
     </h3>
     <div class="search-box">
       <div class="demo-input-suffix">
-        <el-input placeholder="请输入用户名称"  v-model="keyword">
+        <el-input placeholder="请输入用户名称"  v-model="keyword" @keyup.enter.native="searchUser">
         <i slot="suffix" class="el-input__icon el-icon-search" @click="searchUser"></i>
         </el-input>
       </div>

@@ -15,6 +15,7 @@ import { Table, TableColumn } from 'element-ui'
 import { Tree } from 'element-ui'
 import { Pagination } from 'element-ui'
 import { Dialog } from 'element-ui'
+import { Loading } from 'element-ui'
 import './assets/scss/element-variables.scss'
 import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
@@ -41,6 +42,7 @@ Vue.use(TableColumn)
 Vue.use(Tree)
 Vue.use(Pagination)
 Vue.use(Dialog)
+Vue.use(Loading)
 Vue.use(mavonEditor)
 
 Vue.prototype.$message = Message;

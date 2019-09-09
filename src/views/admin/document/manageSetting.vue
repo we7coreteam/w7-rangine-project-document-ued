@@ -67,15 +67,15 @@
       </el-form> -->
       <div class="demo-input-suffix">
         <!-- <span>用户名</span> -->
-        <el-input placeholder="搜索用户名" v-model="keyword">
+        <el-input placeholder="搜索用户名" v-model="keyword" @keyup.enter.native="getuserlist">
           <i slot="suffix" class="el-input__icon el-icon-search" @click="getuserlist"></i>
         </el-input>
       </div>
       <el-table class="w7-table-small" height="250"
         :data="userList"
         ref="multipleTable"
-       :header-cell-style="{background:'#f7f9fc',color:'#606266'}"
-       @row-click="rowClick">
+        :header-cell-style="{background:'#f7f9fc',color:'#606266'}"
+        @row-click="rowClick">
         <el-table-column prop="username" label="账号"></el-table-column>
         <el-table-column prop="created_at" label="添加时间"></el-table-column>
       </el-table>

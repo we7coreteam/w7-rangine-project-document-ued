@@ -5,7 +5,7 @@
     </h3>
     <div class="search-box">
       <div class="demo-input-suffix">
-        <el-input placeholder="请输入关键字搜索" v-model="keyword">
+        <el-input placeholder="请输入关键字搜索" v-model="keyword" @keyup.enter.native="searchDoc">
           <i slot="suffix" class="el-input__icon el-icon-search" @click="searchDoc"></i>
         </el-input>
       </div>
@@ -14,6 +14,10 @@
       </div>
     </div>
     <el-table class="w7-table" :data="docList" empty-text=""
+        v-loading="loading"
+        element-loading-text="加载中"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.8)"
         :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
       <el-table-column label="名称">
         <template slot-scope="scope">
@@ -80,6 +84,7 @@ export default {
   name: 'docIndex',
   data() {
     return {
+      loading: false,
       keyword: '',
       docList: [],
       currentPage: 0,//当前页码
@@ -93,24 +98,28 @@ export default {
   },
   methods: {
     getList() {
+      this.loading = true
       this.$post('/admin/document/getlist',{
         page: this.currentPage,
         name: this.keyword
       })
         .then(res => {
-           this.docList = res.data
-           this.pageCount = res.pageCount
-           this.total = res.total
+          this.docList = res.data
+          this.pageCount = res.pageCount
+          this.total = res.total
+          this.loading = false
         })
     },
     searchDoc() {
+      this.loading = true
       this.$post('/admin/document/getlist',{
         name: this.keyword
       })
         .then(res => {
-           this.docList = res.data
-           this.pageCount = res.pageCount
-           this.total = res.total
+          this.docList = res.data
+          this.pageCount = res.pageCount
+          this.total = res.total
+          this.loading = false
         })
     },
     createDoc() {
