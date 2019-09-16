@@ -9,18 +9,15 @@ import qs from 'qs'
 const instance = axios.create({
   withCredentials: true
 })
-var url = ''
 
 instance.interceptors.request.use(request => {
-  url = request.url
   request.transformRequest = [function (data) {
     return (typeof data === 'object' && !(data instanceof FormData)) ? qs.stringify(data) : data
   }]
   return request
 })
 instance.interceptors.response.use(response => {
-  // response.
-  if (url == '/admin/upload/image') {
+  if (response.config.url == '/admin/upload/image') {
     return response.data
   } else {
     if (!response.data || !response.data.status) {
