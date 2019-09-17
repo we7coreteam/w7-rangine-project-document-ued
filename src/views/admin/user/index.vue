@@ -63,9 +63,9 @@ export default {
   methods: {
     searchUser() {
       this.currentPage = 1
-      this.$post('/admin/user/searchuser',{
+      this.$post('/admin/user/getuserlist ',{
         page: this.currentPage,
-        keywords: this.keyword
+        username: this.keyword
       })
         .then(res => {
            this.userList = res.data
