@@ -96,6 +96,12 @@ export default {
       formLabelWidth: '120px'
     }
   },
+  computed: {
+      ...mapGetters({UserInfo: 'UserInfo'})
+  },
+  created() {
+    this.getList()
+  },
   methods: {
     getList() {
       this.loading = true
@@ -173,13 +179,6 @@ export default {
       })
       window.open(routeUrl.href, '_blank')
     }
-  },
-  computed: {
-      ...mapGetters({UserInfo: 'UserInfo'})
-  },
-  created() {
-    this.$store.dispatch('getUserInfo')
-    this.getList()
   }
 }
 </script>
