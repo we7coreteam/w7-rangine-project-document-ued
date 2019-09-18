@@ -169,7 +169,7 @@ export default {
         return
       }
       let routeUrl = this.$router.resolve({
-        path: "/"+ id
+        path: "/chapter/" + id
       })
       window.open(routeUrl.href, '_blank')
     }

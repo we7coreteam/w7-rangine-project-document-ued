@@ -65,7 +65,7 @@ export default new Router({
       ]
     },
     {
-      path: '/:id',
+      path: '/chapter/:id',
       name: 'home',
       redirect: 'home',
       component: () => import(/* webpackChunkName: "about" */ './views/layout.vue'),
@@ -78,7 +78,7 @@ export default new Router({
       ]
     },
     {
-      path: '',
+      path: '*',
       redirect: '/admin/document',
       // component: () => import(/* webpackChunkName: "about" */ './views/admin/layout.vue')
     }

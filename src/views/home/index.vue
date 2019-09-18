@@ -123,7 +123,7 @@ export default {
           this.getArticle()
         }else {
           this.selectChapterId = id
-          this.$router.push({ path: '/'+ this.document_id, query: {id: this.selectChapterId} })
+          this.$router.push({ path: '/chapter/'+ this.document_id, query: {id: this.selectChapterId} })
         }
         //菜单样式选择
         if (handSelectNode) {
