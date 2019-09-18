@@ -61,8 +61,11 @@ export default {
       this.$post('/admin/login/check', this.formData)
         .then(res => {
           window.localStorage.setItem('document_access_token', res.document_access_token)
-          this.$message('登录成功')
-          this.$router.push('/admin/document')
+          let msg = this.$message('登录成功')
+          setTimeout(() => {
+            msg.close()
+            this.$router.push('/admin/document')
+          }, 500)
         }).catch(() => {
           this.getCode()
         })
