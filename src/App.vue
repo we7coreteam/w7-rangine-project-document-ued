@@ -18,6 +18,4 @@ body {
     text-decoration: none;
   }
 }
-#app {
-}
 </style>
