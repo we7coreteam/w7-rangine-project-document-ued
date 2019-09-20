@@ -2,11 +2,20 @@
   <el-container class="admin-view">
     <el-header>
       <router-link to="/admin" class="logo">
-        <img src="~@/assets/img/logo.png" alt="">文档控制台
+        <img src="~@/assets/img/logo.png" alt />文档控制台
       </router-link>
       <div class="menu">
         <router-link class="item" to="/admin/document" v-if="isNotRead">文档管理</router-link>
-        <router-link class="item" to="/admin/user" v-if="UserInfo.has_privilege == 1 && isNotRead">用户管理</router-link>
+        <router-link
+          class="item"
+          to="/admin/user"
+          v-if="UserInfo.has_privilege == 1 && isNotRead"
+        >用户管理</router-link>
+        <router-link
+          class="item"
+          to="/admin/setting"
+          v-if="UserInfo.has_privilege == 1 && isNotRead"
+        >系统设置</router-link>
       </div>
       <div class="user" v-if="UserInfo.username">
         {{UserInfo.username}}
@@ -20,22 +29,24 @@
     </el-header>
     <router-view></router-view>
     <el-footer class="w7-footer" height="14px">
-      Powered by <a href="https://www.w7.cc">微擎云计算©www.w7.cc</a>
+      Powered by
+      <a href="https://www.w7.cc">微擎云计算©www.w7.cc</a>
     </el-footer>
   </el-container>
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 export default {
   name: 'admin',
   data() {
     return {
-      isNotRead: true//false表示阅读模式，隐藏菜单
+      isNotRead: true //false表示阅读模式，隐藏菜单
     }
   },
   methods: {
-    isNotReadFnc() {//F5刷新
+    isNotReadFnc() {
+      //F5刷新
       this.isNotRead = this.$route.name == 'homeChild' ? false : true
     },
     exit() {
@@ -43,20 +54,20 @@ export default {
         name: 'adminLogin'
       })
       //清除cookie
-      var d = new Date();
-      d.setTime(d.getTime() + (-1*24*60*60*1000));
-      var expires = "expires="+d.toUTCString();
-      document.cookie = 'PHPSESSID' + "=" + '' + "; " + expires+"; path=/";//path=/是根路径
+      var d = new Date()
+      d.setTime(d.getTime() + -1 * 24 * 60 * 60 * 1000)
+      var expires = 'expires=' + d.toUTCString()
+      document.cookie = 'PHPSESSID' + '=' + '' + '; ' + expires + '; path=/' //path=/是根路径
     }
   },
   computed: {
-    ...mapGetters({UserInfo: 'UserInfo'})
+    ...mapGetters({ UserInfo: 'UserInfo' })
   },
   watch: {
-    $route(to,from){
-      if(to.name == 'documentIndex' && from.name == 'homeChild') {
+    $route(to, from) {
+      if (to.name == 'documentIndex' && from.name == 'homeChild') {
         this.isNotRead = true
-      }else if(to.name == 'homeChild') {
+      } else if (to.name == 'homeChild') {
         this.isNotRead = false
       }
     }
@@ -76,20 +87,20 @@ export default {
   padding: 0;
 }
 .admin-view {
-  &>.el-header {
+  & > .el-header {
     .menu {
       flex: 1;
       width: 0;
     }
     .item {
-        display: inline-block;
-        padding: 0 20px;
-        margin: 0 6px;
-        &:hover,&.active {
-          color: #3296fa;
-        }
+      display: inline-block;
+      padding: 0 20px;
+      margin: 0 6px;
+      &:hover,
+      &.active {
+        color: #3296fa;
       }
-
+    }
   }
   .admin-view-aside {
     background-color: #f7f8fa;

@@ -61,7 +61,18 @@ export default new Router({
               component: () => import(/* webpackChunkName: "about" */ './views/admin/user/baseInfo.vue')
             }
           ]
-        }
+        },
+        {
+          path: 'setting',
+          component: () => import(/* webpackChunkName: "about" */ './views/admin/setting/layout.vue'),
+          children: [
+            {
+              path: '',
+              name: 'settingIndex',
+              component: () => import(/* webpackChunkName: "about" */ './views/admin/setting/index.vue')
+            }
+          ]
+        },
       ]
     },
     {
