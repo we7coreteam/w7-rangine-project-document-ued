@@ -9,17 +9,17 @@ module.exports = {
   devServer: {
     proxy: {
       '/admin': {
-        target: 'http://127.0.0.1:88/',
+        target: 'http://172.16.1.13:98/',
         // secure: false,
         changeOrigin: true
       },
       '/client': {
-        target: 'http://127.0.0.1:88/',
+        target: 'http://172.16.1.13:98/',
         // secure: false,
         changeOrigin: true
       },
       js: {
-        target: 'http://127.0.0.1:88/',
+        target: 'http://172.16.1.13:98/',
         // secure: false,
         changeOrigin: true
       }
