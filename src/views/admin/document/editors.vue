@@ -15,13 +15,15 @@
         <el-button :type="layout == 2 ? 'primary' : ''" @click="layout = 2">UEditor编辑器</el-button>
       </div>
       <div class="mavon-editor" v-show="isEdit && layout == 1">
-        <mavon-editor ref="mavonEditor"
+        <mavon-editor
+          ref="mavonEditor"
           :boxShadow="false"
           :scrollStyle="true"
           :ishljs="true"
           v-model="contentMd"
           @imgAdd="$imgAdd"
-          @save="save"></mavon-editor>
+          @save="save"
+        ></mavon-editor>
       </div>
       <div v-show="isEdit && layout == 2">
         <vue-ueditor-wrap v-model="content" :config="config"></vue-ueditor-wrap>
@@ -48,65 +50,64 @@ export default {
       },
       isEdit: false,
       config: {
-        autoHeightEnabled: false,// 编辑器不自动被内容撑高
-        initialFrameHeight: '400',// 初始容器高度
-        initialFrameWidth: '100%',// 初始容器宽度
-        serverUrl: 'js/php/controller.php'// 上传文件接口
+        autoHeightEnabled: false, // 编辑器不自动被内容撑高
+        initialFrameHeight: '400', // 初始容器高度
+        initialFrameWidth: '100%', // 初始容器宽度
+        serverUrl: '/js/php/controller.php' // 上传文件接口
       },
-      content: '',//最终显示的html
-      contentMd: '',//md格式的内容
-      layout: 1//1 markdown 2 富文本
+      content: '', //最终显示的html
+      contentMd: '', //md格式的内容
+      layout: 1 //1 markdown 2 富文本
     }
   },
   methods: {
     init() {
       this.$post('/admin/chapter/get_content', {
         chapter_id: this.chapterId
+      }).then(res => {
+        this.isEdit = this.clickSum == 1 ? true : false
+        if (!res) {
+          this.chapterInfo = {
+            updated_at: '',
+            username: '',
+            layout: 1
+          }
+          this.content = ' '
+          this.contentMd = ' '
+          return
+        }
+        this.chapterInfo = res
+        if (res.layout == 1) {
+          this.layout = 1
+          this.content = this.$refs.mavonEditor.markdownIt.render(res.content)
+          this.contentMd = res.content
+        } else if (res.layout == 2) {
+          this.layout = 2
+          this.content = res.content
+        }
       })
-        .then(res => {
-          this.isEdit = this.clickSum == 1 ? true : false
-          if(!res) {
-            this.chapterInfo = {
-              updated_at: '',
-              username: '',
-              layout: 1
-            }
-            this.content = ' '
-            this.contentMd = ' '
-            return
-          }
-          this.chapterInfo = res
-          if(res.layout == 1) {
-            this.layout = 1
-            this.content = this.$refs.mavonEditor.markdownIt.render(res.content)
-            this.contentMd = res.content
-          }else if (res.layout == 2) {
-            this.layout = 2
-            this.content = res.content
-          }
-        })
     },
     $imgAdd(pos, $file) {
       // 第一步.将图片上传到服务器.
-      var formdata = new FormData();
-      formdata.append('file', $file);
+      var formdata = new FormData()
+      formdata.append('file', $file)
       this.$post('/admin/upload/image', formdata, {
-         headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 'Content-Type': 'multipart/form-data' }
       })
         .then(res => {
           // 第二步.将返回的url替换到文本原位置![...](0) -> ![...](url)
           this.$refs.mavonEditor.$img2Url(pos, res.url)
         })
-          .catch(function(error) {
-            console.log('发生错误！', error)
-          })
+        .catch(function(error) {
+          console.log('发生错误！', error)
+        })
     },
     edit() {
       this.isEdit = !this.isEdit
-      if(this.layout == 1) {
+      if (this.layout == 1) {
         this.content = ''
       }
-      if(this.layout == 2) {
+      if (this.layout == 2) {
         this.contentMd = ''
       }
     },
@@ -115,17 +116,16 @@ export default {
         chapter_id: this.chapterId,
         layout: this.layout,
         content: this.layout == 1 ? this.contentMd : this.content
+      }).then(res => {
+        this.$message('保存成功！')
+        this.chapterInfo = res
+        if (this.chapterInfo.layout == 1) {
+          this.content = this.$refs.mavonEditor.markdownIt.render(res.content)
+          this.contentMd = res.content
+        } else if (this.chapterInfo.layout == 2) {
+          this.content = res.content
+        }
       })
-        .then(res => {
-          this.$message('保存成功！')
-          this.chapterInfo = res
-          if (this.chapterInfo.layout == 1) {
-            this.content = this.$refs.mavonEditor.markdownIt.render(res.content)
-            this.contentMd = res.content
-          } else if (this.chapterInfo.layout == 2)  {
-            this.content = res.content
-          }
-        })
     },
     back() {
       this.isEdit = false
@@ -139,7 +139,7 @@ export default {
       this.init()
     }
   },
-  mounted () {
+  mounted() {
     this.init()
   }
 }
@@ -198,7 +198,8 @@ export default {
       height: 500px;
     }
   }
-  .saveBtn, .backBtn {
+  .saveBtn,
+  .backBtn {
     margin-top: 10px;
     margin-right: 10px;
     height: 34px;
