@@ -27,7 +27,6 @@
           <li class="menu__item" @click="addChildNode">创建子章节</li>
           <li class="menu__item" @click="updateNode">编辑</li>
           <li class="menu__item" @click="removeNode">删除</li>
-          <li class="menu__item" >预览</li>
         </ul>
       </div>
       <div class="add-node">
