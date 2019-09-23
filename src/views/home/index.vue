@@ -130,7 +130,7 @@ export default {
          this.selectNode(this.selectChapterId)
         }
         //页面标题
-        document.title = name + ' — '+ this.document_name
+        document.title = name + '-'+ this.document_name
     },
     getArticle() {
       this.$post('/client/detail', {
