@@ -27,7 +27,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="Url" prop="url">
-          <el-input v-model="formData.url" placeholder="腾讯云支持用户自定义访问域名。注：url开头加http://或https://结尾不加 ‘/’例：http://abc.com"></el-input>
+          <el-input v-model="formData.url" placeholder="腾讯云支持用户自定义访问域名。注：url结尾不加 ‘/’例：http://abc.com"></el-input>
           <div class="">不填写则使用默认的地址<span v-if="formData.app_id && formData.region && formData.bucket">{{formData.bucket + '-' + formData.app_id + '.cos.'+ formData.region +'.myqcloud.com'}}</span>
           </div>
         </el-form-item>
