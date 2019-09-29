@@ -31,7 +31,7 @@
           <div class="">不填写则使用默认的地址<span v-if="formData.app_id && formData.region && formData.bucket">{{formData.bucket + '-' + formData.app_id + '.cos.'+ formData.region +'.myqcloud.com'}}</span>
           </div>
         </el-form-item>
-         <el-form-item label="上传根目录" prop="path">
+         <el-form-item label="保存目录" prop="path">
           <el-input v-model="formData.path"></el-input>
           <!-- <span>选择bucket对应的区域，如: ap-shanghai</span> -->
         </el-form-item>
@@ -54,7 +54,7 @@ export default {
         secret_key: '',
         bucket: '',
         region: '',
-        cdn: '',
+        url: '',
         path: ''
       },
       regionList: {
