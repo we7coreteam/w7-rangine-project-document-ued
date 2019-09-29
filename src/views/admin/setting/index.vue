@@ -32,8 +32,7 @@
           </div>
         </el-form-item>
          <el-form-item label="保存目录" prop="path">
-          <el-input v-model="formData.path"></el-input>
-          <!-- <span>选择bucket对应的区域，如: ap-shanghai</span> -->
+          <el-input v-model="formData.path" placeholder="指定保存目录后，上传图片后会在COS中新建相应的目录，保存图片方便管理"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">保存</el-button>
