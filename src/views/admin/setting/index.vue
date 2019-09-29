@@ -26,8 +26,8 @@
             <el-option v-for="(region, key) in regionList" :value="key" :key="key" :label="region"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="Url" prop="cdn">
-          <el-input v-model="formData.cdn" placeholder="腾讯云支持用户自定义访问域名。注：url开头加http://或https://结尾不加 ‘/’例：http://abc.com"></el-input>
+        <el-form-item label="Url" prop="url">
+          <el-input v-model="formData.url" placeholder="腾讯云支持用户自定义访问域名。注：url开头加http://或https://结尾不加 ‘/’例：http://abc.com"></el-input>
           <div class="">不填写则使用默认的地址<span v-if="formData.app_id && formData.region && formData.bucket">{{formData.bucket + '-' + formData.app_id + '.cos.'+ formData.region +'.myqcloud.com'}}</span>
           </div>
         </el-form-item>
@@ -96,12 +96,7 @@ export default {
     init() {
       this.$post('/admin/setting/show', { key: 'cloud_cosv5' })
         .then(res => {
-          this.formData.app_id = res.value.app_id
-          this.formData.secret_id = res.value.secret_id
-          this.formData.secret_key = res.value.secret_key
-          this.formData.bucket = res.value.bucket
-          this.formData.region = res.value.region
-          this.formData.cdn = res.value.app_id
+          this.formData = Object.assign(this.formData, res.value)
         })
         .catch(() => {})
     },
@@ -111,9 +106,6 @@ export default {
           this.$post('/admin/setting/save', this.formData)
             .then(() => {
               this.$message('保存成功！')
-            })
-            .catch(() => {
-              this.$message('保存失败！')
             })
         } else {
           return false
