@@ -9,28 +9,31 @@
     <div class="content">
       <el-form ref="form" :model="formData" :rules="rules" label-width="120px">
         <el-form-item label="APPID" prop="app_id">
-          <el-input v-model="formData.app_id"></el-input>
-          <span>APPID 是您项目的唯一ID</span>
+          <el-input v-model="formData.app_id" placeholder="APPID 是您项目的唯一ID"></el-input>
         </el-form-item>
         <el-form-item label="SecretID" prop="secret_id">
-          <el-input v-model="formData.secret_id"></el-input>
-          <span>SecretID 是您项目的安全密钥，具有该账户完全的权限，请妥善保管</span>
+          <el-input v-model="formData.secret_id" placeholder="SecretID 是您项目的安全密钥，具有该账户完全的权限，请妥善保管"></el-input>
         </el-form-item>
         <el-form-item label="SecretKEY" prop="secret_key">
-          <el-input v-model="formData.secret_key"></el-input>
-          <span>SecretKEY 是您项目的安全密钥，具有该账户完全的权限，请妥善保管</span>
+          <el-input v-model="formData.secret_key" placeholder="SecretKEY 是您项目的安全密钥，具有该账户完全的权限，请妥善保管"></el-input>
         </el-form-item>
         <el-form-item label="Bucket" prop="bucket">
-          <el-input v-model="formData.bucket"></el-input>
-          <span>请保证bucket为可公共读取的</span>
+          <el-input v-model="formData.bucket" placeholder="请保证bucket为可公共读取的"></el-input>
         </el-form-item>
         <el-form-item label="所属地域" prop="region">
-          <el-input v-model="formData.region"></el-input>
-          <span>选择bucket对应的区域，如: ap-shanghai</span>
+          <!-- <el-input v-model="formData.region"></el-input> -->
+          <el-select v-model="formData.region" placeholder="所属地域">
+            <el-option v-for="(region, key) in regionList" :value="key" :key="key" :label="region"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="Url" prop="cdn">
-          <el-input v-model="formData.cdn"></el-input>
-          <span>腾讯云支持用户自定义访问域名。注：url开头加http://或https://结尾不加 ‘/’例：http://abc.com</span>
+          <el-input v-model="formData.cdn" placeholder="腾讯云支持用户自定义访问域名。注：url开头加http://或https://结尾不加 ‘/’例：http://abc.com"></el-input>
+          <div class="">不填写则使用默认的地址<span v-if="formData.app_id && formData.region && formData.bucket">{{formData.bucket + '-' + formData.app_id + '.cos.'+ formData.region +'.myqcloud.com'}}</span>
+          </div>
+        </el-form-item>
+         <el-form-item label="上传根目录" prop="path">
+          <el-input v-model="formData.path"></el-input>
+          <!-- <span>选择bucket对应的区域，如: ap-shanghai</span> -->
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">保存</el-button>
@@ -51,7 +54,30 @@ export default {
         secret_key: '',
         bucket: '',
         region: '',
-        cdn: ''
+        cdn: '',
+        path: ''
+      },
+      regionList: {
+        'ap-beijing-1': '北京一区',
+        'ap-beijing': '北京',
+        'ap-shanghai': '上海（华东）',
+        'ap-guangzhou': '广州（华南)',
+        'ap-chengdu': '成都（西南）',
+        'ap-chongqing': '重庆',
+        'ap-shenzhen-fsi': '深圳金融',
+        'ap-shanghai-fsi': '深圳金融',
+        'ap-beijing-fsi': '北京金融',
+        'ap-hongkong': '中国香港',
+        'ap-singapore': '新加坡',
+        'ap-mumbai': '孟买',
+        'ap-seoul': '首尔',
+        'ap-bangkok': '曼谷',
+        'ap-tokyo': '东京',
+        'na-siliconvalley': '硅谷',
+        'na-ashburn': '弗吉尼亚',
+        'na-toronto': '多伦多',
+        'eu-frankfurt': '法兰克福',
+        'eu-moscow': '莫斯科',
       },
       rules: {
         app_id: [{ required: true, message: '请输入APPID', trigger: 'blur' }],
@@ -59,7 +85,7 @@ export default {
         secret_key: [{ required: true, message: '请输入SecretKEY', trigger: 'blur' }],
         bucket: [{ required: true, message: '请输入Bucket', trigger: 'blur' }],
         region: [{ required: true, message: '请输入Bucket所属地域', trigger: 'blur' }],
-        cdn: [{ required: true, message: '请输入Url', trigger: 'blur' }]
+        // cdn: [{ required: true, message: '请输入Url', trigger: 'blur' }]
       }
     }
   },
@@ -109,7 +135,7 @@ export default {
   text-align: center;
 }
 .content {
-  width: 800px;
+  width: 900px;
   margin-top: 69px;
   input {
     border-radius: 2px;
