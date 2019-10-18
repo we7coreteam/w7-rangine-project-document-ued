@@ -17,6 +17,10 @@ import { Tree } from 'element-ui'
 import { Pagination } from 'element-ui'
 import { Dialog } from 'element-ui'
 import { Loading } from 'element-ui'
+import { Card } from 'element-ui'
+import { Row,Col } from 'element-ui'
+import { RadioGroup } from 'element-ui'
+import { Radio } from 'element-ui'
 import './assets/scss/element-variables.scss'
 import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
@@ -46,6 +50,11 @@ Vue.use(Tree)
 Vue.use(Pagination)
 Vue.use(Dialog)
 Vue.use(Loading)
+Vue.use(Card)
+Vue.use(Row)
+Vue.use(Col)
+Vue.use(RadioGroup)
+Vue.use(Radio)
 Vue.use(mavonEditor)
 
 Vue.prototype.$message = Message;

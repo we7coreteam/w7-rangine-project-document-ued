@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <h3 class="page-head">
       用户管理
     </h3>
@@ -10,28 +10,38 @@
         </el-input>
       </div>
       <div class="demo-input-btn">
-        <router-link to="user/create" type="button" class="el-button el-button--primary">添加用户</router-link>
+        <router-link to="user/create" type="button" class="el-button el-button--primary">创建用户</router-link>
       </div>
     </div>
     <el-table class="w7-table" :data="userList" ref="multipleTable" @select="handleSelectionChange"
       :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
-      <el-table-column type="selection" width="55"></el-table-column>
+      <!-- <el-table-column type="selection" width="55"></el-table-column> -->
       <el-table-column label="账号" prop="username"></el-table-column>
       <el-table-column label="添加时间" prop="created_at" sortable column-key="date">
         <template slot-scope="scope">
           <div v-if="scope.row.username != 'admin'">{{scope.row.created_at}}</div>
         </template>
       </el-table-column>
+      <el-table-column label="身份" prop="has_privilege_name"></el-table-column>
+      <el-table-column label="管理权限" prop="has_privilege">
+        <template slot-scope="scope">
+          <span>{{scope.row.has_privilege}}个文档</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作权限" prop="has_privilege"></el-table-column>
+      <el-table-column label="仅阅读" prop="has_privilege"></el-table-column>
       <el-table-column label="操作" align="right">
         <template slot-scope="scope">
-          <router-link :to="{path:'user/'+ scope.row.id}" class="el-button el-button--text">编辑</router-link>
+          <!-- <router-link :to="{path:'user/'+ scope.row.id}" class="el-button el-button--text">编辑</router-link> -->
+          <el-button type="text" @click="deleteRow(scope.row.id)">设置</el-button>
+          <el-button type="text" @click="deleteRow(scope.row.id)">权限管理</el-button>
           <el-button type="text" v-if="scope.row.username != 'admin'" @click="deleteRow(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
     <div class="btns">
-      <el-checkbox v-model="selectAll" @change="toggleSelectAll()">全选</el-checkbox>
-      <el-button type="primary" @click="deleteSelectRows()">批量删除</el-button>
+      <!-- <el-checkbox v-model="selectAll" @change="toggleSelectAll()">全选</el-checkbox>
+      <el-button type="primary" @click="deleteSelectRows()">批量删除</el-button> -->
       <el-pagination
       background
       @current-change = "getuserlist"
@@ -125,6 +135,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.container{
+  padding:30px 40px 0 40px;
+}
+.el-input__icon{
+  color:#3296fa;
+}
 .btns {
   margin-top: 20px;
   button {

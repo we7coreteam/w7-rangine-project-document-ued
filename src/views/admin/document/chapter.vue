@@ -6,8 +6,42 @@
         <p>{{ docName }}</p>
       </div>
       <el-input placeholder="请输入关键字搜索" v-model="filterText">
-        <!-- <i slot="suffix" class="el-input__icon el-icon-search" @click="searchDoc"></i> -->
+        <i slot="suffix" class="el-input__icon el-icon-search" @click="searchDoc" style="color:#3296fa;"></i>
       </el-input>
+      <div class="icon-box">
+        <i class="el-icon-document icon1">
+          <div class="pos-box">
+            <div class="arr-box">
+              <div class="arrow"></div>
+              <span>新建文档</span>
+            </div>
+          </div>
+        </i>
+        <i class="el-icon-wallet icon2">
+          <div class="pos-box">
+            <div class="arr-box">
+              <div class="arrow"></div>
+              <span>文件夹</span>
+            </div>
+          </div>
+        </i>
+        <i class="el-icon-view icon3">
+          <div class="pos-box">
+            <div class="arr-box">
+              <div class="arrow"></div>
+              <span>预览</span>
+            </div>
+          </div>
+        </i>
+        <i class="el-icon-s-tools icon4">
+          <div class="pos-box">
+            <div class="arr-box">
+              <div class="arrow"></div>
+              <span>设置</span>
+            </div>
+          </div>
+        </i>
+      </div>
       <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text=""
         ref="chaptersTree"
         node-key="id"
@@ -18,7 +52,10 @@
         @node-contextmenu="rightClick"
         @node-click="handleNodeClick">
         <span class="custom-tree-node" slot-scope="{ node, data }">
-          <span>{{ node.label }}</span>
+          <span>
+            <i class="w7-icon-fileFolder"></i>
+            <span style="margin-left:10px;">{{ node.label }}</span>
+          </span>
           <span class="point3" @mousemove='updateXY' @click.stop="rightClick(false, data, node)"><span>...</span></span>
         </span>
       </el-tree>
@@ -120,7 +157,7 @@ export default {
             this.$nextTick(() => {
               this.defaultSelectNode()
             })
-           }
+          }
         })
     },
     searchDoc() {
@@ -146,6 +183,7 @@ export default {
       if(this.menuBarVisible) {this.menuBarVisible = false}
       this.selectNodeObj = object
       this.clickSum++
+      // console.log(this.selectNodeObj)
     },
     updateXY(event) {
       this.clientX = event.clientX
@@ -281,7 +319,10 @@ export default {
 
 <style lang="scss" scoped>
 .w7-container {
+  width:100%;
   margin: -30px;
+  padding:30px 40px 0 30px;
+  box-sizing:border-box;
   .w7-aside-chapter {
     border-left: solid 1px #eeeeee;
     border-right: solid 1px #eeeeee;
@@ -344,5 +385,142 @@ export default {
     border-radius: 2px;
     padding: 9px 20px;
   }
+}
+.icon-box{
+  width:100%;
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 35px;
+  font-size:14px;
+  color:#b6b5b5;
+}
+.icon-box i{
+  position: relative;
+}
+.icon-box i:hover .pos-box{
+  display:block;
+}
+.icon-box .icon1 .pos-box{
+  position: absolute;
+  top:20px;
+  left:-20px;
+  display:none;
+  text-align: center;
+  width:70px;
+  height:20px;
+  line-height:16px;
+  background: #000;
+  color:#fff;
+  font-size:14px;
+}
+.icon-box .icon1 .pos-box .arr-box{
+  position: relative;
+  width:100%;
+  height:100%;
+  box-sizing:border-box;
+  background: #000;
+  border:2px solid #000;
+}
+.icon-box .icon1 .arrow{
+  width: 0px;   
+  height: 0px;   
+  position: absolute;   
+  border:5px solid transparent;
+  border-bottom-color:#000;
+  top:-10px;
+  left:30%;
+}
+.icon-box .icon2 .pos-box{
+  position: absolute;
+  top:20px;
+  left:-20px;
+  display:none;
+  text-align: center;
+  width:50px;
+  height:20px;
+  line-height:16px;
+  background: #000;
+  color:#fff;
+  font-size:14px;
+}
+.icon-box .icon2 .pos-box .arr-box{
+  position: relative;
+  width:100%;
+  height:100%;
+  box-sizing:border-box;
+  background: #000;
+  border:2px solid #000;
+}
+.icon-box .icon2 .arrow{
+  width: 0px;   
+  height: 0px;   
+  position: absolute;   
+  border:5px solid transparent;
+  border-bottom-color:#000;
+  top:-10px;
+  left:45%;
+}
+.icon-box .icon3 .pos-box{
+  position: absolute;
+  top:20px;
+  left:-10px;
+  display:none;
+  text-align: center;
+  width:40px;
+  height:20px;
+  line-height:16px;
+  background: #000;
+  color:#fff;
+  font-size:14px;
+}
+.icon-box .icon3 .pos-box .arr-box{
+  position: relative;
+  width:100%;
+  height:100%;
+  box-sizing:border-box;
+  background: #000;
+  border:2px solid #000;
+}
+.icon-box .icon3 .arrow{
+  width: 0px;   
+  height: 0px;   
+  position: absolute;   
+  border:5px solid transparent;
+  border-bottom-color:#000;
+  top:-10px;
+  left:30%;
+}
+.icon-box .icon4 .pos-box{
+  position: absolute;
+  top:20px;
+  left:-10px;
+  display:none;
+  text-align: center;
+  width:40px;
+  height:20px;
+  line-height:16px;
+  background: #000;
+  color:#fff;
+  font-size:14px;
+}
+.icon-box .icon4 .pos-box .arr-box{
+  position: relative;
+  width:100%;
+  height:100%;
+  box-sizing:border-box;
+  background: #000;
+  border:2px solid #000;
+}
+.icon-box .icon4 .arrow{
+  width: 0px;   
+  height: 0px;   
+  position: absolute;   
+  border:5px solid transparent;
+  border-bottom-color:#000;
+  top:-10px;
+  left:30%;
+}
+.w7-icon-fileFolder:after {
+  content:url('~@/assets/img/fileFolder-small.png')
 }
 </style>

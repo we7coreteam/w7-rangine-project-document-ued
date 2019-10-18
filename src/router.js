@@ -20,24 +20,30 @@ export default new Router({
       children: [
         {
           path: 'document',
-          component: () => import(/* webpackChunkName: "about" */ './views/admin/document/layout.vue'),
-          children: [
-            {
-              path: '',
-              name: 'documentIndex',
-              component: () => import(/* webpackChunkName: "about" */ './views/admin/document/index.vue')
-            },
-            {
-              path: ':id',
-              name: 'manageSetting',
-              component: () => import(/* webpackChunkName: "about" */ './views/admin/document/manageSetting.vue')
-            },
-            {
-              path: 'chapter/:id',
-              name: 'chapter',
-              component: () => import(/* webpackChunkName: "about" */ './views/admin/document/chapter.vue')
-            }
-          ]
+          name: 'documentIndex',
+          component: () => import(/* webpackChunkName: "about" */ './views/admin/document/index.vue'),
+          // children: [
+          //   {
+          //     path: ':id',
+          //     name: 'manageSetting',
+          //     component: () => import(/* webpackChunkName: "about" */ './views/admin/document/manageSetting.vue')
+          //   },
+          //   {
+          //     path: 'chapter/:id',
+          //     name: 'chapter',
+          //     component: () => import(/* webpackChunkName: "about" */ './views/admin/document/chapter.vue')
+          //   },
+          // ]
+        },
+        {
+          path: 'document/:id',
+          name: 'manageSetting',
+          component: () => import(/* webpackChunkName: "about" */ './views/admin/document/manageSetting.vue')
+        },
+        {
+          path: 'chapter/:id',
+          name: 'chapter',
+          component: () => import(/* webpackChunkName: "about" */ './views/admin/document/chapter.vue')
         },
         {
           path: 'user',

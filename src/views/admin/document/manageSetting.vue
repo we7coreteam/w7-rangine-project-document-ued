@@ -1,47 +1,53 @@
 <template>
-  <div>
+  <div class="container">
     <h3 class="page-head">
-      <router-link to='/admin/document'><i class="el-icon-arrow-left"></i>普通文档</router-link>/管理设置
+      <router-link to='/admin/document'><i class="el-icon-arrow-left"></i><span style="color:#4da4fb">项目管理</span></router-link>/设置
     </h3>
     <div class="doc-title">
-      <p><span>{{ details.name }}</span></p>
-      <router-link :to="{path:'chapter/'+ details.id}" class="el-button el-button--primary">进入文档</router-link>
+      <div class="title-box">
+        <img src="~@/assets/img/fileFolder-big.png" alt="">
+        <div class="title-text">
+          <div>
+            {{ details.name }}
+          </div>
+          <div>
+            <i :class="iconClass" class="icon-own"></i><span>{{ownTitle}}</span>
+          </div>
+        </div>
+      </div>
+      <!-- <router-link :to="{path:'chapter/'+ details.id}" class="el-button el-button--primary">进入文档</router-link> -->
+      <div class="operation">
+        <span>设为私有项目</span>
+        <span>重命名</span>
+        <router-link :to="{path: '/admin/chapter/' + this.$route.params.id}"><span>编辑文档</span></router-link>
+      </div>
+    </div>
+    <div class="operator-management">
+      <div>操作员管理</div>
+      <el-button type="primary" @click="dialogAddManageVisible = true">添加操作员</el-button>
     </div>
     <div class="content">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="基本信息" name="first">
-          <div class="tab-content-baseInfo">
-            <table>
-              <tr>
-                <td class="title">文档名称</td>
-                <td>{{ details.name }}</td>
-                <td><el-button type="text" @click="modalShow('name')">修改</el-button></td>
-              </tr>
-              <tr>
-                <td class="title">文档介绍</td>
-                <td>{{ details.description }}</td>
-                <td><el-button type="text" @click="modalShow('description')">修改</el-button></td>
-              </tr>
-            </table>
-          </div>
-        </el-tab-pane>
-        <el-tab-pane label="操作员管理" name="second" v-if="manageVisible">
-          <div class="tab-content-manage">
-            <el-table class="w7-table" :data="docuserList" ref="docuserTable" style="width: 100%">
-              <el-table-column prop="username" label="名称"></el-table-column>
-              <el-table-column prop="has_creator_name" label="权限信息"></el-table-column>
-              <el-table-column align="right">
-                <template slot="header">
-                  <el-button type="text" @click="dialogAddManageVisible = true">添加操作员</el-button>
-                </template>
-                <template slot-scope="scope">
-                  <el-button type="text" @click="removeManage(scope.row.id)">删除</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-        </el-tab-pane>
-      </el-tabs>
+      <div class="tab-content-manage">
+        <el-table :header-cell-style="{background:'#f7f9fc',color:'#606266'}" :data="docuserList" ref="docuserTable" style="width: 100%" >
+          <el-table-column prop="username" label="名称"></el-table-column>
+          <el-table-column prop="has_creator_name" label="身份">
+            <template slot-scope="scope">
+              <div
+                :class="scope.row.has_creator_name === '管理员' ? 'admin' : 'other'"
+                >{{scope.row.has_creator_name}}</div>
+            </template>
+          </el-table-column>
+          <el-table-column align="right">
+            <!-- <template slot="header">
+              <el-button type="text" @click="dialogAddManageVisible = true">添加操作员</el-button>
+            </template> -->
+            <template slot-scope="scope">
+              <el-button type="text" @click="dialogOpeInfoVisible = true">编辑</el-button>
+              <el-button type="text" @click="removeManage(scope.row.id)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </div>
     <!-- 基本信息弹出框 -->
     <el-dialog class="w7-dialog" title="基本信息" :visible.sync="dialogDocInfoVisible" :close-on-click-modal="false" center>
@@ -95,6 +101,20 @@
         <el-button @click="dialogAddManageVisible = false">取 消</el-button>
       </div>
     </el-dialog>
+    <!-- 编辑操作员 -->
+    <el-dialog class="w7-dialog" title="编辑操作员" :visible.sync="dialogOpeInfoVisible" :close-on-click-modal="false" center>
+      <el-form style="display:flex;justify-content:center;">
+        <span style="margin-right:30px;">操作员权限</span>
+        <el-radio-group v-model="radio">
+          <el-radio v-model="radio" label="1">管理员</el-radio>
+          <el-radio v-model="radio" label="2">操作员</el-radio>
+        </el-radio-group>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="editOpe">确 定</el-button>
+        <el-button @click="dialogOpeInfoVisible = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -103,12 +123,15 @@ export default {
   name: 'manageSetting',
   data() {
     return {
+      radio: "1",
+      ownTitle: "公开",
+      iconClass: "el-icon-unlock",
       id: this.$route.params.id,//文档id
       manageVisible: false,//操作员管理选项卡是否显示
-      activeName: 'first',//tabs显示的选项卡名字
       details: '',//文档数据
       name: '',//弹出框文档名称
       description: '',//弹出框文档介绍
+      dialogOpeInfoVisible: false,//编辑操作员弹框
       dialogDocInfoVisible: false,//基本信息弹弹出框
       formLabelWidth: '90px',
       docInfoVisible: '',//
@@ -121,9 +144,6 @@ export default {
     }
   },
   methods: {
-    handleClick(tab, event) {
-      console.log(tab, event);
-    },
     modalShow(labelname) {
       this.docInfoVisible = labelname
       this.dialogDocInfoVisible = true
@@ -144,6 +164,7 @@ export default {
             this.getdocuserlist()
           }
         })
+        console.log(this.$route.params)
     },
     getdocuserlist() {
       this.$post('/admin/document/getdocuserlist',{
@@ -177,6 +198,13 @@ export default {
           this.userList = res.data
           this.pageCountUser = res.pageCount
         })
+    },
+    editOpe() {
+      console.log(233)
+      this.dialogOpeInfoVisible = false
+    },
+    editManage() {
+
     },
     removeManage(id) {
       this.$confirm('确定删除该操作员吗?', '提示', {
@@ -217,24 +245,43 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.container{
+  padding:30px 40px 0 40px;
+}
 .doc-title {
   display: flex;
   justify-content:space-between;
 	height: 100px;
-  line-height: 100px;
 	background-color: #f7f9fc;
-  p {
+  .title-box {
     height: 100px;
-    padding-left: 20px;
+    padding: 20px;
+    padding-top: 30px;
     font-family: PingFang-SC-Regular;
-    font-size: 18px;
+    font-size: 14px;
     letter-spacing: 1px;
     color: #4d4d4d;
-    &:before {
-      content: url('~@/assets/img/fileFolder-big.png');
+    box-sizing: border-box;
+    img{
+      float:left;
+      vertical-align: middle;
     }
-    span {
-      padding-left: 28px;
+    .title-text{
+      margin-left: 26px;
+      float:left;
+      .icon-own{
+        color:#38b677;
+        margin-right: 10px;
+      }
+    }
+  }
+  .operation{
+    line-height: 100px;
+    padding-right:20px;
+    span{
+      margin-left:40px;
+      color:#3296fa;
+      font-size:14px;
     }
   }
   .el-button {
@@ -244,13 +291,32 @@ export default {
     padding: 10px 20px;
   }
 }
+.operator-management{
+    width:100%;
+    height:76px;
+    font-size:14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 .content {
-  margin-top: 20px;
   font-family: PingFang-SC-Regular;
   font-size: 14px;
 	color: #4d4d4d;
   .title {
     color: #989898;
+  }
+  .admin{
+    width:80px;
+    height:30px;
+    box-sizing:border-box;
+    border:1px solid #4dc88a;
+    background:#c1fbde;
+    color:#4dc88a;
+    font-size:14px;
+    text-align: center;
+    line-height:30px;
+    border-radius:4px;
   }
 }
 .tab-content-baseInfo {

@@ -20,6 +20,8 @@
           :boxShadow="false"
           :scrollStyle="true"
           :ishljs="true"
+          :codeStyle="code_style"
+          :navigation="false"
           v-model="contentMd"
           @imgAdd="$imgAdd"
           @save="save"
@@ -43,6 +45,7 @@ export default {
   },
   data() {
     return {
+      code_style:"tomorrow-night-blue",
       chapterInfo: {
         updated_at: '',
         username: '',
@@ -207,4 +210,22 @@ export default {
     padding: 9px 20px;
   }
 }
+// .markdown-body>.list-paddingleft-2{
+//   padding:0;
+// }
+.list-paddingleft-2{
+  list-style-type: circle !important;
+}
+// .hljs{
+//   background:#000!important;
+//   color:#fff!important;
+// }
+// .markdown-body code{
+//   background-color:#000!important;
+//   color:#fff;
+// }
+// .markdown-body .highlight pre, .markdown-body pre{
+//   background-color:#000!important;
+//   color:#fff;
+// }
 </style>
