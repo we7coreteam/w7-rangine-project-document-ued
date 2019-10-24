@@ -108,7 +108,7 @@
           <template slot-scope="scope">
             <el-button type="text" v-if="scope.row.has_creator != 3 || UserInfo.has_privilege == 1" @click="removeDoc(scope.row.id)">删除</el-button>
             <router-link
-              :to="{path: 'chapter/' + scope.row.id}"
+              :to="{path: 'document/chapter/' + scope.row.id}"
               class="el-button el-button--text">编辑</router-link>
             <router-link
               :to="{path: 'document/'+ scope.row.id}"
@@ -134,7 +134,7 @@
         :current-page.sync = "currentPage"
         :page-count="pageCount"
         :hide-on-single-page = "true"
-        style="margin:0"
+        style="margin-top:20px"
       >
       </el-pagination>
       <!-- 基本信息弹出框 -->
@@ -287,7 +287,7 @@ export default {
   transition: 0.2s;
 }
 .w7-card-title{
-  wwidth:100%;
+  width:100%;
   overflow: hidden;
   text-overflow:ellipsis;
   white-space: nowrap;

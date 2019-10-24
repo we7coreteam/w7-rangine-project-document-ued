@@ -128,6 +128,7 @@ export default {
         } else if (this.chapterInfo.layout == 2) {
           this.content = res.content
         }
+        console.log(this.content)
       })
     },
     back() {
@@ -210,9 +211,6 @@ export default {
     padding: 9px 20px;
   }
 }
-// .markdown-body>.list-paddingleft-2{
-//   padding:0;
-// }
 .list-paddingleft-2{
   list-style-type: circle !important;
 }

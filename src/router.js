@@ -41,32 +41,42 @@ export default new Router({
           component: () => import(/* webpackChunkName: "about" */ './views/admin/document/manageSetting.vue')
         },
         {
-          path: 'chapter/:id',
+          path: 'document/chapter/:id',
           name: 'chapter',
           component: () => import(/* webpackChunkName: "about" */ './views/admin/document/chapter.vue')
         },
         {
           path: 'user',
-          name: 'user',
-          redirect: 'user',
-          component: () => import(/* webpackChunkName: "about" */ './views/admin/user/layout.vue'),
-          children: [
-            {
-              path: '',
-              name: 'userIndex',
-              component: () => import(/* webpackChunkName: "about" */ './views/admin/user/index.vue')
-            },
-            {
-              path: 'create',
-              name: 'baseInfo',
-              component: () => import(/* webpackChunkName: "about" */ './views/admin/user/baseInfo.vue')
-            },
-            {
-              path: ':id',
-              name: 'baseInfoId',
-              component: () => import(/* webpackChunkName: "about" */ './views/admin/user/baseInfo.vue')
-            }
-          ]
+          name: 'userIndex',
+          // redirect: 'user',
+          component: () => import(/* webpackChunkName: "about" */ './views/admin/user/index.vue'),
+          // children: [
+          //   {
+          //     path: '',
+          //     name: 'userIndex',
+          //     component: () => import(/* webpackChunkName: "about" */ './views/admin/user/index.vue')
+          //   },
+          //   {
+          //     path: 'create',
+          //     name: 'baseInfo',
+          //     component: () => import(/* webpackChunkName: "about" */ './views/admin/user/baseInfo.vue')
+          //   },
+          //   {
+          //     path: ':id',
+          //     name: 'baseInfoId',
+          //     component: () => import(/* webpackChunkName: "about" */ './views/admin/user/baseInfo.vue')
+          //   }
+          // ]
+        },
+        {
+          path: 'user/create',
+          name: 'baseInfo',
+          component: () => import(/* webpackChunkName: "about" */ './views/admin/user/baseInfo.vue')
+        },
+        {
+          path: 'user/:id',
+          name: 'baseInfoId',
+          component: () => import(/* webpackChunkName: "about" */ './views/admin/user/baseInfo.vue')
         },
         {
           path: 'setting',

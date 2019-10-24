@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <h3 class="page-head">
       <router-link to='/admin/user'><i class="el-icon-arrow-left"></i>用户管理</router-link>/<span style="color:#3296fa;">添加用户</span>
     </h3>
@@ -220,6 +220,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.container{
+  padding:30px 40px 0 40px;
+}
 .title {
   width: 100%;
   height: 30px;
@@ -240,7 +243,7 @@ export default {
 }
 .content {
   width: 100%;
-  margin-top:69px;
+  margin-top:32px;
   input {
     border-radius: 2px;
     border: solid 1px #eeeeee;
