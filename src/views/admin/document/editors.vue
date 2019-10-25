@@ -25,7 +25,8 @@
           v-model="contentMd"
           @imgAdd="$imgAdd"
           @save="save"
-        ></mavon-editor>
+        >
+        </mavon-editor>
       </div>
       <div v-show="isEdit && layout == 2">
         <vue-ueditor-wrap v-model="content" :config="config"></vue-ueditor-wrap>
@@ -128,7 +129,6 @@ export default {
         } else if (this.chapterInfo.layout == 2) {
           this.content = res.content
         }
-        console.log(this.content)
       })
     },
     back() {
@@ -214,16 +214,16 @@ export default {
 .list-paddingleft-2{
   list-style-type: circle !important;
 }
-// .hljs{
-//   background:#000!important;
-//   color:#fff!important;
-// }
-// .markdown-body code{
-//   background-color:#000!important;
-//   color:#fff;
-// }
-// .markdown-body .highlight pre, .markdown-body pre{
-//   background-color:#000!important;
-//   color:#fff;
-// }
+.hljs{
+  background:#eee!important;
+  // color:#fff!important;
+}
+.markdown-body code{
+  background-color:#eee!important;
+  // color:#fff;
+}
+.markdown-body .highlight pre, .markdown-body pre{
+  background-color:#eee!important;
+  // color:#fff;
+}
 </style>

@@ -326,4 +326,16 @@ export default {
     }
   }
 }
+.hljs{
+  background:#eee!important;
+  // color:#fff!important;
+}
+.markdown-body code{
+  background-color:#eee!important;
+  // color:#fff;
+}
+.markdown-body .highlight pre, .markdown-body pre{
+  background-color:#eee!important;
+  // color:#fff;
+}
 </style>
