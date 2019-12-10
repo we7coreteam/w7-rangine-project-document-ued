@@ -30,19 +30,16 @@
       <el-table-column label="创建时间" prop="created_at"></el-table-column>
       <el-table-column label="操作" align="right">
         <template slot-scope="scope">
-          <el-button type="text" v-if="scope.row.has_creator != 3 || UserInfo.has_privilege == 1" @click="removeDoc(scope.row.id)">删除</el-button>
+          <el-button type="text" v-if="scope.row.permission.has_delete" @click="removeDoc(scope.row.id)">删除</el-button>
           <router-link
             :to="{path: 'document/chapter/' + scope.row.id}"
-            class="el-button el-button--text">编辑</router-link>
+            class="el-button el-button--text"  v-if="scope.row.permission.has_edit">编辑</router-link>
           <router-link
             :to="{path: 'document/'+ scope.row.id}"
-            class="el-button el-button--text" v-if="scope.row.has_creator != 3 || UserInfo.has_privilege == 1">
+            class="el-button el-button--text" v-if="scope.row.permission.has_manage">
             管理设置
           </router-link>
-          <el-button type="text" v-if="scope.row.has_creator != 3 || UserInfo.has_privilege == 1"
-            :class="{redBtn: scope.row.is_show == 1}"
-            @click="updateDoc(scope.row.id, scope.row.is_show)">{{scope.row.is_show == 2 ? "发布" : "取消发布"}}</el-button>
-          <el-button type="text" :class="{'is-disabled': scope.row.is_show == 2}" @click="readDoc(scope.row.id, scope.row.is_show)">阅读文档</el-button>
+          <el-button type="text" @click="readDoc(scope.row.id)">阅读文档</el-button>
         </template>
       </el-table-column>
       <div class="nodata" slot="empty">
@@ -105,25 +102,25 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      this.$post('/admin/document/getlist',{
+      this.$post('/admin/document/all',{
         page: this.currentPage,
         name: this.keyword
       })
         .then(res => {
           this.docList = res.data
-          this.pageCount = res.pageCount
+          this.pageCount = res.page_count
           this.total = res.total
           this.loading = false
         })
     },
     searchDoc() {
       this.loading = true
-      this.$post('/admin/document/getlist',{
-        name: this.keyword
+      this.$post('/admin/document/all',{
+          keyword: this.keyword
       })
         .then(res => {
           this.docList = res.data
-          this.pageCount = res.pageCount
+          this.pageCount = res.page_count
           this.total = res.total
           this.loading = false
         })
@@ -169,11 +166,7 @@ export default {
             });
           })
     },
-    readDoc(id, isShow) {
-      if(isShow == 2) {
-        this.$message('请先发布文档！')
-        return
-      }
+    readDoc(id) {
       let routeUrl = this.$router.resolve({
         path: "/chapter/" + id
       })
