@@ -138,18 +138,10 @@ export default {
     },
     getdetails() {
       this.$post('/admin/document/detail',{
-        id: this.id
+        document_id : this.id
       })
         .then(res => {
           this.details = res
-        })
-    },
-    getdocuserlist() {
-      this.$post('/admin/document/getdocuserlist',{
-        id: this.id
-      })
-        .then(res => {
-          this.docuserList = res
         })
     },
     updateDocument() {
@@ -183,23 +175,24 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$post('/admin/auth/leave_document',{
+        this.$post('/admin/document/operator',{
           user_id: id,
           document_id: this.id
         })
           .then(() => {
-            this.getdocuserlist()
+            this.getdetails()
             this.$message('删除成功！')
           })
       })
     },
     addManage(userId) {
-      this.$post('/admin/auth/invite_user',{
+      this.$post('/admin/document/operator',{
         user_id: userId,
-        document_id: this.id
+        document_id: this.id,
+        permission : 2,
       })
         .then(() => {
-          this.getdocuserlist()
+          this.getdetails()
           this.$message('添加成功！')
           this.dialogAddManageVisible = false
         })
