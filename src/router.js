@@ -8,7 +8,7 @@ export default new Router({
   // base: process.env.BASE_URL,
   routes: [
     {
-      path: '/admin/login',
+      path: '/login',
       name: 'adminLogin',
       component: () => import(/* webpackChunkName: "about" */ './views/admin/login.vue')
     },
