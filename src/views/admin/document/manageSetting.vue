@@ -25,17 +25,21 @@
             </table>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="操作员管理" name="second" v-if="manageVisible">
+        <el-tab-pane label="操作员管理" name="second">
           <div class="tab-content-manage">
-            <el-table class="w7-table" :data="docuserList" ref="docuserTable" style="width: 100%">
+            <el-table class="w7-table" :data="details.operator" ref="docuserTable" style="width: 100%">
               <el-table-column prop="username" label="名称"></el-table-column>
-              <el-table-column prop="has_creator_name" label="权限信息"></el-table-column>
+              <el-table-column label="权限信息">
+                <template slot-scope="scope">
+                  {{scope.row.acl.name}}
+                </template>
+              </el-table-column>
               <el-table-column align="right">
                 <template slot="header">
                   <el-button type="text" @click="dialogAddManageVisible = true">添加操作员</el-button>
                 </template>
                 <template slot-scope="scope">
-                  <el-button type="text" @click="removeManage(scope.row.id)">删除</el-button>
+                  <el-button type="text" @click="removeManage(scope.row.id)" v-if="!scope.row.acl.has_manage">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -104,7 +108,6 @@ export default {
   data() {
     return {
       id: this.$route.params.id,//文档id
-      manageVisible: false,//操作员管理选项卡是否显示
       activeName: 'first',//tabs显示的选项卡名字
       details: '',//文档数据
       name: '',//弹出框文档名称
@@ -134,15 +137,11 @@ export default {
       }
     },
     getdetails() {
-      this.$post('/admin/document/getdetails',{
+      this.$post('/admin/document/detail',{
         id: this.id
       })
         .then(res => {
           this.details = res
-          this.manageVisible = res.has_creator != 3 ? true : false
-          if(this.manageVisible) {
-            this.getdocuserlist()
-          }
         })
     },
     getdocuserlist() {
@@ -169,7 +168,7 @@ export default {
         })
     },
     getuserlist() {
-      this.$post('/admin/user/getuserlist',{
+      this.$post('/admin/user/search',{
          username: this.keyword,
          page: this.currentPageUser
       })

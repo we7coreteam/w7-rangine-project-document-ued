@@ -63,7 +63,7 @@ export default {
   methods: {
     searchUser() {
       this.currentPage = 1
-      this.$post('/admin/user/getuserlist',{
+      this.$post('/admin/user/search',{
         page: this.currentPage,
         username: this.keyword
       })
@@ -74,7 +74,7 @@ export default {
         })
     },
     getuserlist() {
-      this.$post('/admin/user/getuserlist',{
+      this.$post('/admin/user/search',{
         page: this.currentPage
       })
         .then(res => {

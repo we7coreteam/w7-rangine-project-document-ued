@@ -30,13 +30,13 @@
       <el-table-column label="创建时间" prop="created_at"></el-table-column>
       <el-table-column label="操作" align="right">
         <template slot-scope="scope">
-          <el-button type="text" v-if="scope.row.permission.has_delete" @click="removeDoc(scope.row.id)">删除</el-button>
+          <el-button type="text" v-if="scope.row.acl.has_delete" @click="removeDoc(scope.row.id)">删除</el-button>
           <router-link
             :to="{path: 'document/chapter/' + scope.row.id}"
-            class="el-button el-button--text"  v-if="scope.row.permission.has_edit">编辑</router-link>
+            class="el-button el-button--text"  v-if="scope.row.acl.has_edit">编辑</router-link>
           <router-link
             :to="{path: 'document/'+ scope.row.id}"
-            class="el-button el-button--text" v-if="scope.row.permission.has_manage">
+            class="el-button el-button--text" v-if="scope.row.acl.has_manage">
             管理设置
           </router-link>
           <el-button type="text" @click="readDoc(scope.row.id)">阅读文档</el-button>
