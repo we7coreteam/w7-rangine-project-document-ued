@@ -20,7 +20,7 @@ export default new Vuex.Store({
   },
   actions: {
     getUserInfo(context) {
-      Axios.post('/admin/user/getuser')
+      Axios.post('/common/auth/user')
         .then(res => {
           if (res.data.code == '444') {
             context.commit('setUserInfo', {
