@@ -103,7 +103,7 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$post('/admin/user/deleteuser',{
+          this.$post('/admin/user/delete-by-ids',{
             ids: this.selectRowID ? this.selectRowID : JSON.stringify(this.selectRowIDs).slice(1, JSON.stringify(this.selectRowIDs).length -1)
           })
             .then(() => {
