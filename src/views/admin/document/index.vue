@@ -186,25 +186,25 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      this.$post('/admin/document/getlist',{
+      this.$post('/admin/document/all',{
         page: this.currentPage,
         name: this.keyword
       })
         .then(res => {
           this.docList = res.data
-          this.pageCount = res.pageCount
+          this.pageCount = res.page_count
           this.total = res.total
           this.loading = false
         })
     },
     searchDoc() {
       this.loading = true
-      this.$post('/admin/document/getlist',{
-        name: this.keyword
+      this.$post('/admin/document/all',{
+          keyword: this.keyword
       })
         .then(res => {
           this.docList = res.data
-          this.pageCount = res.pageCount
+          this.pageCount = res.page_count
           this.total = res.total
           this.loading = false
         })
@@ -250,11 +250,7 @@ export default {
             });
           })
     },
-    readDoc(id, isShow) {
-      if(isShow == 2) {
-        this.$message('请先发布文档！')
-        return
-      }
+    readDoc(id) {
       let routeUrl = this.$router.resolve({
         path: "/chapter/" + id
       })

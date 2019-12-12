@@ -128,6 +128,7 @@ export default {
       iconClass: "el-icon-unlock",
       id: this.$route.params.id,//文档id
       manageVisible: false,//操作员管理选项卡是否显示
+      activeName: 'first',//tabs显示的选项卡名字
       details: '',//文档数据
       name: '',//弹出框文档名称
       description: '',//弹出框文档介绍
@@ -154,24 +155,11 @@ export default {
       }
     },
     getdetails() {
-      this.$post('/admin/document/getdetails',{
-        id: this.id
+      this.$post('/admin/document/detail',{
+        document_id : this.id
       })
         .then(res => {
           this.details = res
-          this.manageVisible = res.has_creator != 3 ? true : false
-          if(this.manageVisible) {
-            this.getdocuserlist()
-          }
-        })
-        console.log(this.$route.params)
-    },
-    getdocuserlist() {
-      this.$post('/admin/document/getdocuserlist',{
-        id: this.id
-      })
-        .then(res => {
-          this.docuserList = res
         })
     },
     updateDocument() {
@@ -190,7 +178,7 @@ export default {
         })
     },
     getuserlist() {
-      this.$post('/admin/user/getuserlist',{
+      this.$post('/admin/user/search',{
          username: this.keyword,
          page: this.currentPageUser
       })
@@ -212,23 +200,24 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$post('/admin/auth/leave_document',{
+        this.$post('/admin/document/operator',{
           user_id: id,
           document_id: this.id
         })
           .then(() => {
-            this.getdocuserlist()
+            this.getdetails()
             this.$message('删除成功！')
           })
       })
     },
     addManage(userId) {
-      this.$post('/admin/auth/invite_user',{
+      this.$post('/admin/document/operator',{
         user_id: userId,
-        document_id: this.id
+        document_id: this.id,
+        permission : 2,
       })
         .then(() => {
-          this.getdocuserlist()
+          this.getdetails()
           this.$message('添加成功！')
           this.dialogAddManageVisible = false
         })

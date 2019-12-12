@@ -73,7 +73,7 @@ export default {
   methods: {
     searchUser() {
       this.currentPage = 1
-      this.$post('/admin/user/getuserlist',{
+      this.$post('/admin/user/search',{
         page: this.currentPage,
         username: this.keyword
       })
@@ -84,7 +84,7 @@ export default {
         })
     },
     getuserlist() {
-      this.$post('/admin/user/getuserlist',{
+      this.$post('/admin/user/search',{
         page: this.currentPage
       })
         .then(res => {
@@ -113,7 +113,7 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$post('/admin/user/deleteuser',{
+          this.$post('/admin/user/delete-by-ids',{
             ids: this.selectRowID ? this.selectRowID : JSON.stringify(this.selectRowIDs).slice(1, JSON.stringify(this.selectRowIDs).length -1)
           })
             .then(() => {

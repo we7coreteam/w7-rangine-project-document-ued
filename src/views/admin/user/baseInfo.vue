@@ -188,12 +188,12 @@ export default {
         return
       }
       if (this.$route.params.id) {
-        this.$post('/admin/user/updateuser ', this.formData)
+        this.$post('/admin/user/update', this.formData)
           .then(() => {
             this.$message('修改成功！')
           })
       }else {
-        this.$post('/admin/user/adduser', this.formData)
+        this.$post('/admin/user/add', this.formData)
           .then(() => {
             this.$message('保存成功！')
           })
@@ -201,7 +201,7 @@ export default {
         this.firstPage = false
     },
     getDetailsUser() {
-      this.$post('/admin/user/detailsuser',{
+      this.$post('/admin/user/detail-by-id',{
         id: this.formData.id
       })
         .then(res => {

@@ -43,7 +43,7 @@ export default {
       this.$message({message: '请联系管理员修改或使用密码找回工具修改'})
     },
     getCode() {
-      this.$post('/admin/verificationcode/getcodeimg')
+      this.$post('/common/verifycode/image')
         .then(res => {
           if(res.img) {
             this.code = res.img
@@ -58,9 +58,8 @@ export default {
           return false
         }
       }
-      this.$post('/admin/login/check', this.formData)
+      this.$post('/common/auth/login', this.formData)
         .then(res => {
-          window.localStorage.setItem('document_access_token', res.document_access_token)
           let msg = this.$message('登录成功')
           setTimeout(() => {
             msg.close()
