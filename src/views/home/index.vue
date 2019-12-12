@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     getDocumentName() {
-      this.$post('/client/document/getdetails', {
+      this.$post('/client/document/detail', {
         document_id: this.document_id
       })
         .then(res => {

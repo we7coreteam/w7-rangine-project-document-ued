@@ -7,23 +7,7 @@ module.exports = {
   outputDir: resolve('../document-apiserver/public'), // 构建目录
   assetsDir: '', //静态资源目录
   devServer: {
-    proxy: {
-      '/admin': {
-        target: 'http://172.16.1.13:98/',
-        // secure: false,
-        changeOrigin: true
-      },
-      '/client': {
-        target: 'http://172.16.1.13:98/',
-        // secure: false,
-        changeOrigin: true
-      },
-      js: {
-        target: 'http://172.16.1.13:98/',
-        // secure: false,
-        changeOrigin: true
-      }
-    }
+    proxy: 'http://we7.ngrok.ibanzhuan.cn/'
   },
   chainWebpack: config => {
     config.resolve.alias.set('@', resolve('src'))

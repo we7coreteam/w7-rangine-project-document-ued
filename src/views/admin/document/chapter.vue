@@ -127,7 +127,7 @@ export default {
   },
   methods: {
     init() {
-      this.$post('/admin/document/getdetails', {
+      this.$post('/admin/document/detail', {
         id: this.$route.params.id
       })
         .then(res => {
