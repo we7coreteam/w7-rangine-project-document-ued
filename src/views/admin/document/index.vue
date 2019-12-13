@@ -143,7 +143,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$post('/admin/document/delete',{
-          id: id
+          document_id: id
         })
           .then(() => {
             this.getList()
@@ -153,7 +153,7 @@ export default {
     },
     updateDoc(id, isShow) {
       this.$post('/admin/document/update',{
-          id: id,
+          document_id: id,
           is_show: isShow == 1 ? 2 : 1
         })
           .then(() => {

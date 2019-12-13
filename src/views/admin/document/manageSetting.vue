@@ -146,7 +146,7 @@ export default {
     },
     updateDocument() {
       this.$post('/admin/document/update',{
-        id: this.details.id,
+        document_id: this.details.id,
         name: this.name ? this.name : this.details.name,
         description: this.description ? this.description : this.details.description
       })
