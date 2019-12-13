@@ -11,15 +11,18 @@
             {{ details.name }}
           </div>
           <div>
-            <i :class="iconClass" class="icon-own"></i><span>{{ownTitle}}</span>
+            <i :class="iconClass" class="icon-own"></i>
+            <span>{{this.details.is_public == 1 ? '公有' : '私有'}}</span>
           </div>
         </div>
       </div>
-      <!-- <router-link :to="{path:'chapter/'+ details.id}" class="el-button el-button--primary">进入文档</router-link> -->
       <div class="operation">
-        <span>设为私有项目</span>
-        <span>重命名</span>
-        <router-link :to="{path: '/admin/chapter/' + this.$route.params.id}"><span>编辑文档</span></router-link>
+        <el-button type="text" v-if="details.acl && details.acl.has_manage" @click="editIsPublic">
+          {{this.details.is_public == 1 ? '设为私有项目' : '设为公开项目'}}
+        </el-button>
+        <el-button type="text" v-if="details.acl && details.acl.has_edit" @click="dialogRenameVisible = true">重命名</el-button>
+        <router-link class="el-button el-button--text" v-if="details.acl && details.acl.has_edit" :to="{path: 'chapter/' + this.$route.params.id}"><span>编辑文档</span></router-link>
+        <el-button type="text" v-if="details.acl && details.acl.has_delete" @click="delDoc">删除</el-button>
       </div>
     </div>
     <div class="operator-management">
@@ -28,51 +31,33 @@
     </div>
     <div class="content">
       <div class="tab-content-manage">
-        <el-table :header-cell-style="{background:'#f7f9fc',color:'#606266'}" :data="docuserList" ref="docuserTable" style="width: 100%" >
+        <el-table :header-cell-style="{background:'#f7f9fc',color:'#606266'}" :data="details.operator" ref="docuserTable" style="width: 100%" >
           <el-table-column prop="username" label="名称"></el-table-column>
-          <el-table-column prop="has_creator_name" label="身份">
-            <template slot-scope="scope">
-              <div
-                :class="scope.row.has_creator_name === '管理员' ? 'admin' : 'other'"
-                >{{scope.row.has_creator_name}}</div>
-            </template>
-          </el-table-column>
+          <el-table-column prop="acl.name" label="身份"></el-table-column>
           <el-table-column align="right">
-            <!-- <template slot="header">
-              <el-button type="text" @click="dialogAddManageVisible = true">添加操作员</el-button>
-            </template> -->
             <template slot-scope="scope">
-              <el-button type="text" @click="dialogOpeInfoVisible = true">编辑</el-button>
-              <el-button type="text" @click="removeManage(scope.row.id)">删除</el-button>
+              <el-button type="text" @click="openEditManage(scope.row)" v-if="details.acl.has_manage">编辑</el-button>
+              <el-button type="text" @click="removeManage(scope.row.id)" v-if="details.acl.has_manage">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
     </div>
-    <!-- 基本信息弹出框 -->
-    <el-dialog class="w7-dialog" title="基本信息" :visible.sync="dialogDocInfoVisible" :close-on-click-modal="false" center>
-      <el-form :model="details" :label-width="formLabelWidth">
-        <el-form-item label="文档名称" v-if="docInfoVisible == 'name'">
-          <el-input v-model="name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="文档介绍" v-if="docInfoVisible == 'description'">
-          <el-input type="textarea" :rows="2" v-model="description"></el-input>
+    <!-- 重命名弹出框 -->
+    <el-dialog class="w7-dialog" title="重命名" :visible.sync="dialogRenameVisible" :close-on-click-modal="false" center>
+      <el-form label-width="100px">
+        <el-form-item label="新的文档名称">
+          <el-input v-model="newDocName"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="updateDocument">确 定</el-button>
-        <el-button @click="dialogDocInfoVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editRename">确 定</el-button>
+        <el-button @click="dialogRenameVisible = false">取 消</el-button>
       </div>
     </el-dialog>
     <!-- 操作员弹出框 -->
     <el-dialog class="w7-dialog w7-dialog-user" title="添加账号操作员" :visible.sync="dialogAddManageVisible" :close-on-click-modal="false" center>
-      <!-- <el-form :model="userInfo" :label-width="formLabelWidth">
-        <el-form-item label="用户名">
-          <el-input v-model="userInfo.username" autocomplete="off"></el-input>
-        </el-form-item>
-      </el-form> -->
       <div class="demo-input-suffix">
-        <!-- <span>用户名</span> -->
         <el-input placeholder="搜索用户名" v-model="keyword" @keyup.enter.native="getuserlist">
           <i slot="suffix" class="el-input__icon el-icon-search" @click="getuserlist"></i>
         </el-input>
@@ -86,13 +71,14 @@
         <el-table-column prop="created_at" label="添加时间"></el-table-column>
       </el-table>
       <div class="w7-pagination">
-        <el-pagination class="fr"
+        <el-pagination
           background
           :hide-on-single-page="true"
           @current-change="getuserlist"
           layout="prev, pager, next, total"
           :current-page.sync="currentPageUser"
           :page-count="pageCountUser"
+          :total = "totalUser"
         >
         </el-pagination>
       </div>
@@ -106,8 +92,7 @@
       <el-form style="display:flex;justify-content:center;">
         <span style="margin-right:30px;">操作员权限</span>
         <el-radio-group v-model="radio">
-          <el-radio v-model="radio" label="1">管理员</el-radio>
-          <el-radio v-model="radio" label="2">操作员</el-radio>
+          <el-radio v-for="item in role_list" :label="item.id" :key="item.id">{{item.name}}</el-radio>
         </el-radio-group>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -123,76 +108,109 @@ export default {
   name: 'manageSetting',
   data() {
     return {
-      radio: "1",
-      ownTitle: "公开",
-      iconClass: "el-icon-unlock",
       id: this.$route.params.id,//文档id
-      manageVisible: false,//操作员管理选项卡是否显示
       activeName: 'first',//tabs显示的选项卡名字
       details: '',//文档数据
-      name: '',//弹出框文档名称
-      description: '',//弹出框文档介绍
+      dialogRenameVisible: false,//重命名弹出框
+      newDocName: '',//文档新名称
+      selectRow: '',//选中行的数据
       dialogOpeInfoVisible: false,//编辑操作员弹框
-      dialogDocInfoVisible: false,//基本信息弹弹出框
       formLabelWidth: '90px',
-      docInfoVisible: '',//
       docuserList: [],//操作人数组
       dialogAddManageVisible: false,//添加操作人弹出框
       keyword: '',//添加操作人搜索
       userList: [],//所有用户
       pageCountUser: 0,//总页数
-      currentPageUser: 1//当前页面
+      currentPageUser: 1,//当前页面
+      totalUser: 0,//总个数
+      role_list: [],//操作员的可选权限
+      radio: "1",//操作员权限
     }
   },
+  computed: {
+    iconClass() {
+      return this.details.is_public == 1 ? 'el-icon-unlock' : 'el-icon-lock'
+    }
+  },
+  created() {
+    this.getdetails()
+    this.getuserlist()
+  },
   methods: {
-    modalShow(labelname) {
-      this.docInfoVisible = labelname
-      this.dialogDocInfoVisible = true
-      if (labelname == 'name') {
-        this.name = this.details.name
-      } else {
-        this.description = this.details.description
-      }
-    },
     getdetails() {
       this.$post('/admin/document/detail',{
         document_id : this.id
       })
         .then(res => {
           this.details = res
+          this.role_list = res.role_list
         })
     },
-    updateDocument() {
-      this.$post('/admin/document/update',{
-        id: this.details.id,
-        name: this.name ? this.name : this.details.name,
-        description: this.description ? this.description : this.details.description
+    editIsPublic() {
+      this.$post('/admin/document/update', {
+        document_id: this.details.id,
+        is_public: this.details.acl.has_read ? 2 : 1
       })
         .then(() => {
-          this.$message('修改成功！')
-          this.details.name = this.name ? this.name : this.details.name
-          this.details.description = this.description ? this.description : this.details.description
-          this.dialogDocInfoVisible = false
-          this.name = ''
-          this.description = ''
+          this.$message({ type: 'success', message: '修改成功!'})
+          this.details.is_public = this.details.is_public == 1 ? 2 : 1
         })
+    },
+    editRename() {
+      this.$post('/admin/document/update', {
+        document_id: this.details.id,
+        name: this.newDocName
+      })
+        .then(() => {
+          this.$message({ type: 'success', message: '修改成功!'})
+          this.details.name = this.newDocName
+          this.dialogRenameVisible = false
+          this.newDocName = ''
+        })
+    },
+    delDoc() {
+      this.$confirm('此操作将永久删除该文档, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$post('/admin/document/delete', {
+          document_id: this.details.id
+        })
+          .then(() => {
+            this.$message({ type: 'success', message: '删除成功!'})
+            this.$router.push('/admin/document/')
+          })
+      }).catch(() => {
+      })
     },
     getuserlist() {
       this.$post('/admin/user/search',{
-         username: this.keyword,
-         page: this.currentPageUser
+        username: this.keyword,
+        page: this.currentPageUser
       })
         .then(res => {
           this.userList = res.data
           this.pageCountUser = res.pageCount
+          this.currentPageUser = res.page_current
+          this.totalUser = res.total
         })
     },
-    editOpe() {
-      console.log(233)
-      this.dialogOpeInfoVisible = false
+    openEditManage(row) {
+      this.selectRow = row
+      this.radio = row.acl.role
+      this.dialogOpeInfoVisible = true
     },
-    editManage() {
-
+    editOpe() {
+      this.$post('/admin/document/operator',{
+        user_id: this.selectRow.id,
+        document_id: this.id,
+        permission: this.radio
+      })
+        .then(() => {
+          this.getdetails()
+          this.dialogOpeInfoVisible = false
+        })
     },
     removeManage(id) {
       this.$confirm('确定删除该操作员吗?', '提示', {
@@ -225,10 +243,6 @@ export default {
     rowClick(row) {
       this.addManage(row.id)
     }
-  },
-  created() {
-    this.getdetails()
-    // this.getuserlist()
   }
 }
 </script>
@@ -266,27 +280,19 @@ export default {
   }
   .operation{
     line-height: 100px;
-    padding-right:20px;
-    span{
-      margin-left:40px;
-      color:#3296fa;
-      font-size:14px;
+    padding-right: 20px;
+    .el-button + .el-button {
+        margin-left: 40px;
     }
-  }
-  .el-button {
-    margin: 33px 21px;
-    height: 34px;
-    border-radius: 2px;
-    padding: 10px 20px;
   }
 }
 .operator-management{
-    width:100%;
-    height:76px;
-    font-size:14px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-right: 20px;
+    height:76px;
+    font-size:14px;
   }
 .content {
   font-family: PingFang-SC-Regular;

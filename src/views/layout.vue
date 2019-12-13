@@ -5,7 +5,7 @@
         <img src="~@/assets/img/logo.png" alt />文档控制台
       </router-link>
       <div class="menu">
-        <router-link class="item" to="/admin/document" v-if="isNotRead">文档管理</router-link>
+        <router-link class="item" to="/admin/document" v-if="isNotRead">项目管理</router-link>
         <router-link
           class="item"
           to="/admin/user"

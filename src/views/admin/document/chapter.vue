@@ -2,7 +2,7 @@
   <el-container class="w7-container">
     <el-aside class="w7-aside-chapter" width="202px">
       <div class="w7-aside-chapter-head">
-        <div class="icon"></div>
+        <!-- <div class="icon"></div> -->
         <p>{{ docName }}</p>
       </div>
       <el-input placeholder="请输入关键字搜索" v-model="filterText">
@@ -103,7 +103,7 @@ export default {
       docName: '',
       filterText: '',
       sort: 0,
-      chapters: [],
+      chapters: [],//目录树
       defaultProps: {
         children: 'children',
         label: 'name'
@@ -125,10 +125,19 @@ export default {
       chapterInfo: {}//选中的文档，基本信息
     }
   },
+  watch: {
+    filterText(val) {
+      this.$refs.chaptersTree.filter(val);
+    }
+  },
+  created() {
+    this.init()
+    this.getChapters()
+  },
   methods: {
     init() {
       this.$post('/admin/document/detail', {
-        id: this.$route.params.id
+        document_id: this.$route.params.id
       })
         .then(res => {
           this.docName = res.name
@@ -304,15 +313,6 @@ export default {
       this.addNodeObj.name = ''
       this.dialogVisible = true
     }
-  },
-  watch: {
-    filterText(val) {
-      this.$refs.chaptersTree.filter(val);
-    }
-  },
-  created() {
-    this.init()
-    this.getChapters()
   }
 }
 </script>
@@ -327,11 +327,12 @@ export default {
     border-left: solid 1px #eeeeee;
     border-right: solid 1px #eeeeee;
     .w7-aside-chapter-head {
+      margin-top: 30px;
       .icon {
         width: 33px;
         height: 29px;
         background: url('~@/assets/img/fileFolder-normal.png') no-repeat;
-        margin: 30px auto 10px;
+        margin: 0 auto 10px;
       }
       p {
         font-size: 16px;

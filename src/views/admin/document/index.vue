@@ -14,81 +14,52 @@
           <el-button type="primary" @click="dialogDocInfoVisible = true">创建文档</el-button>
         </div> -->
       </div>
-      <div class="card-box" 
+      <div class="card-box"
         v-loading="loading"
         element-loading-text="拼命加载中"
         element-loading-spinner="el-icon-loading"
         element-loading-background="rgba(0, 0, 0, 0.8)"
       >
-        <el-row :gutter="70" type="flex" justify="start" style="flex-wrap:wrap;">
-          <el-col :span="4" v-for="(item,index) in docList" :key="index">
-            <div class="w7-card" :class="actClass+''+index%3">
-              <div class="w7-card-title">
-                {{item.name}}
-              </div>
-              <div class="icon-box">
-                <i class="el-icon-lock">
-                  <div class="pos-box">
-                    <div class="arr-box">
-                      <div class="arrow"></div>
-                      <span>私有</span>
-                    </div>
-                  </div>
-                </i>
-                <i class="el-icon-view">
-                  <div class="pos-box">
-                    <div class="arr-box">
-                      <div class="arrow"></div>
-                      <span>预览</span>
-                    </div>
-                  </div>
-                </i>
-                <i class="el-icon-s-tools">
-                  <div class="pos-box">
-                    <div class="arr-box">
-                      <div class="arrow"></div>
-                      <span>设置</span>
-                    </div>
-                  </div>
-                </i>
-              </div>
+        <div class="card-warpper">
+          <div class="w7-card" :class="actClass+''+index%3"
+            v-for="(item,index) in docList" :key="index">
+            <div class="w7-card-title">
+              {{item.name}}
             </div>
-          </el-col>
-          <el-col :span="4">
-            <div class="add-btn">
-              新建项目
-              <div class="add-box" @click="dialogDocInfoVisible = true">
-                <i class="el-icon-circle-plus"></i>
-              </div>
-              <div class="icon-box">
-                <i class="el-icon-lock">
-                  <div class="pos-box">
-                    <div class="arr-box">
-                      <div class="arrow"></div>
-                      <span>私有</span>
-                    </div>
+            <div class="icon-box">
+              <i class="el-icon-lock" v-if="item.has_read">
+                <div class="pos-box">
+                  <div class="arr-box">
+                    <div class="arrow"></div>
+                    <span>私有</span>
                   </div>
-                </i>
-                <i class="el-icon-view">
-                  <div class="pos-box">
-                    <div class="arr-box">
-                      <div class="arrow"></div>
-                      <span>预览</span>
-                    </div>
+                </div>
+              </i>
+              <i class="el-icon-view" @click="readDoc(item.id)">
+                <div class="pos-box">
+                  <div class="arr-box">
+                    <div class="arrow"></div>
+                    <span>预览</span>
                   </div>
-                </i>
-                <i class="el-icon-s-tools">
-                  <div class="pos-box">
-                    <div class="arr-box">
-                      <div class="arrow"></div>
-                      <span>设置</span>
-                    </div>
+                </div>
+              </i>
+              <i class="el-icon-s-tools" v-if="item.acl.has_manage" @click="settingDoc(item.id)">
+                <div class="pos-box">
+                  <div class="arr-box">
+                    <div class="arrow"></div>
+                    <span>设置</span>
                   </div>
-                </i>
-              </div>
+                </div>
+              </i>
             </div>
-          </el-col>
-        </el-row>
+          </div>
+          <div class="w7-card add-btn">
+            新建项目
+            <div class="add-box" @click="dialogDocInfoVisible = true">
+              <i class="el-icon-circle-plus"></i>
+            </div>
+          </div>
+        </div>
       </div>
       <el-table class="w7-table" :data="docList" empty-text=""
           v-loading="loading"
@@ -106,19 +77,16 @@
         <el-table-column label="创建时间" prop="created_at"></el-table-column>
         <el-table-column label="操作" align="right">
           <template slot-scope="scope">
-            <el-button type="text" v-if="scope.row.has_creator != 3 || UserInfo.has_privilege == 1" @click="removeDoc(scope.row.id)">删除</el-button>
+            <el-button type="text" v-if="scope.row.acl.has_delete" @click="removeDoc(scope.row.id)">删除</el-button>
             <router-link
               :to="{path: 'document/chapter/' + scope.row.id}"
-              class="el-button el-button--text">编辑</router-link>
+              class="el-button el-button--text"  v-if="scope.row.acl.has_edit">编辑</router-link>
             <router-link
               :to="{path: 'document/'+ scope.row.id}"
-              class="el-button el-button--text" v-if="scope.row.has_creator != 3 || UserInfo.has_privilege == 1">
+              class="el-button el-button--text" v-if="scope.row.acl.has_manage">
               管理设置
             </router-link>
-            <el-button type="text" v-if="scope.row.has_creator != 3 || UserInfo.has_privilege == 1"
-              :class="{redBtn: scope.row.is_show == 1}"
-              @click="updateDoc(scope.row.id, scope.row.is_show)">{{scope.row.is_show == 2 ? "发布" : "取消发布"}}</el-button>
-            <el-button type="text" :class="{'is-disabled': scope.row.is_show == 2}" @click="readDoc(scope.row.id, scope.row.is_show)">阅读文档</el-button>
+            <el-button type="text" @click="readDoc(scope.row.id)">阅读文档</el-button>
           </template>
         </el-table-column>
         <div class="nodata" slot="empty">
@@ -171,7 +139,6 @@ export default {
       pageCount: 0,//总页数
       total: 0,//总数
       name: '',
-      description: '',
       dialogDocInfoVisible: false,//创建文档弹弹出框
       formLabelWidth: '120px',
       actClass:"actClass",
@@ -212,7 +179,7 @@ export default {
     createDoc() {
       this.$post('/admin/document/create', {
         name: this.name,
-        description: this.description
+        is_public: this.radio
       })
         .then(() => {
           this.$message('创建成功！')
@@ -255,6 +222,9 @@ export default {
         path: "/chapter/" + id
       })
       window.open(routeUrl.href, '_blank')
+    },
+    settingDoc(id) {
+      this.$router.push('/admin/document/' + id)
     }
   }
 }
@@ -272,26 +242,39 @@ export default {
 .el-icon-search{
   color:#3f9dfa;
 }
+.card-warpper {
+  display: flex;
+  flex-wrap:wrap;
+  margin: -35px -35px 0 -35px;
+}
 .w7-card{
-  height:120px;
-  color:#fff;
+  margin: 35px;
   padding:20px;
-  margin-bottom:70px;
+  width: 260px;
+	height: 120px;
+  color:#fff;
   border-radius:4px;
   position: relative;
   top:0;
   transition: 0.2s;
+  &:hover{
+    box-shadow:0px 3px 18px 1px	rgba(194, 192, 192, 0.84);
+    position: relative;
+    top:-10px;
+  }
+  i:hover {
+    cursor:pointer;
+    color: #606266;
+  }
+  .el-icon-lock:hover {
+    color: #ffffff;
+  }
 }
 .w7-card-title{
   width:100%;
   overflow: hidden;
   text-overflow:ellipsis;
   white-space: nowrap;
-}
-.w7-card:hover{
-  box-shadow:0px 3px 18px 1px	rgba(194, 192, 192, 0.84);
-  position: relative;
-  top:-10px;
 }
 .actClass0{
   background: #ffae2b;
@@ -316,6 +299,7 @@ export default {
 }
 .icon-box i{
   position: relative;
+  margin-left: 20px;
 }
 .icon-box i:hover .pos-box{
   display:block;
@@ -342,34 +326,26 @@ export default {
   border:2px solid #000;
 }
 .icon-box i .arrow{
-  width: 0px;   
-  height: 0px;   
-  position: absolute;   
+  width: 0px;
+  height: 0px;
+  position: absolute;
   border:5px solid transparent;
   border-bottom-color:#000;
   top:-10px;
   left:30%;
 }
-.el-icon-view{
-  margin:0 20px;
-}
 .add-btn{
-  height:118px;
-  padding:20px;
   background:#fff;
   border:1px solid #eee;
   color:#b6b5b5;
-  border-radius:4px;
   position: relative;
+  i:hover {
+    color: #b6b5b5;
+  }
 }
 .add-btn:hover{
   box-shadow:0px 3px 18px 1px	rgba(194, 192, 192, 0.84);
-  position: relative;
-  top:-10px;
   animation:move 0.2s 1;
-}
-.add-btn:hover .icon-box{
-  display:block;
 }
 .add-box{
   font-size:60px;
