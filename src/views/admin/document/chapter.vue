@@ -131,20 +131,11 @@ export default {
     }
   },
   created() {
-    this.init()
     this.getChapters()
   },
   methods: {
-    init() {
-      this.$post('/admin/document/detail', {
-        document_id: this.$route.params.id
-      })
-        .then(res => {
-          this.docName = res.name
-        })
-    },
     getChapters() {
-      this.$post('/admin/chapter/index', {
+      this.$post('/admin/chapter/detail', {
         document_id: this.$route.params.id
       })
         .then(res => {
