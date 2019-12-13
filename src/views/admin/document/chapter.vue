@@ -139,7 +139,7 @@ export default {
         document_id: this.$route.params.id
       })
         .then(res => {
-          if(!res) { return }
+          this.docName = res.document.name
           //处理数据
           this.chapters = []
           for (const key in res.catalog) {
