@@ -154,6 +154,12 @@ export default {
       // detailsList: [],//详情列表
     }
   },
+  created() {
+    // if(this.$route.params.id) {
+    //   this.getDetailsUser()
+    // }
+    this.getList()
+  },
   methods: {
     getList() {
       this.$post('/admin/document/getlist',{
@@ -209,12 +215,6 @@ export default {
           this.formData.remark = res.remark
         })
     }
-  },
-  created() {
-    // if(this.$route.params.id) {
-    //   this.getDetailsUser()
-    // }
-    this.getList()
   }
 }
 </script>

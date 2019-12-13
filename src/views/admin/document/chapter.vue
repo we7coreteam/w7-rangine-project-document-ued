@@ -144,12 +144,16 @@ export default {
         })
     },
     getChapters() {
-      this.$post('/admin/chapter/index', {
+      this.$post('/admin/chapter/detail', {
         document_id: this.$route.params.id
       })
         .then(res => {
           if(!res) { return }
-          this.chapters = res
+          //处理数据
+          this.chapters = []
+          for (const key in res.catalog) {
+            this.chapters.push(res.catalog[key])
+          }
           if(!this.sort) {
             let maxsort = this.sort
             //找到sort的最大值

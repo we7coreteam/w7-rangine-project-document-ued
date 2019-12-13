@@ -6,10 +6,10 @@
       </router-link>
       <div class="menu">
         <router-link class="item" to="/admin/document" v-if="isNotRead">项目管理</router-link>
+          <!-- v-if="UserInfo.has_privilege == 1 && isNotRead" -->
         <router-link
           class="item"
           to="/admin/user"
-          v-if="UserInfo.has_privilege == 1 && isNotRead"
         >用户管理</router-link>
         <router-link
           class="item"

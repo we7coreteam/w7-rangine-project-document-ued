@@ -56,13 +56,20 @@
       </div>
     </el-dialog>
     <!-- 操作员弹出框 -->
-    <el-dialog class="w7-dialog w7-dialog-user" title="添加账号操作员" :visible.sync="dialogAddManageVisible" :close-on-click-modal="false" center>
+    <el-dialog class="w7-dialog w7-dialog-user" title="添加操作员" :visible.sync="dialogAddManageVisible" :close-on-click-modal="false" center>
       <div class="demo-input-suffix">
-        <el-input placeholder="搜索用户名" v-model="keyword" @keyup.enter.native="getuserlist">
+        <!-- <el-input placeholder="搜索用户名" v-model="keyword" @keyup.enter.native="getuserlist">
           <i slot="suffix" class="el-input__icon el-icon-search" @click="getuserlist"></i>
-        </el-input>
+        </el-input> -->
+        <el-input placeholder="搜索用户名" v-model="keyword"></el-input>
       </div>
-      <el-table class="w7-table-small" height="250"
+      <span style="margin-right:30px;">操作员权限</span>
+      <el-radio-group v-model="radio">
+        <el-radio label="1">管理员</el-radio>
+        <el-radio label="2">操作员</el-radio>
+        <el-radio label="3">阅读者</el-radio>
+      </el-radio-group>
+      <!-- <el-table class="w7-table-small" height="250"
         :data="userList"
         ref="multipleTable"
         :header-cell-style="{background:'#f7f9fc',color:'#606266'}"
@@ -81,9 +88,9 @@
           :total = "totalUser"
         >
         </el-pagination>
-      </div>
+      </div> -->
       <div slot="footer" class="dialog-footer">
-        <!-- <el-button type="primary" @click="addManage">确 定</el-button> -->
+        <el-button type="primary" @click="addManage">确 定</el-button>
         <el-button @click="dialogAddManageVisible = false">取 消</el-button>
       </div>
     </el-dialog>

@@ -22,7 +22,8 @@
       >
         <div class="card-warpper">
           <div class="w7-card" :class="actClass+''+index%3"
-            v-for="(item,index) in docList" :key="index">
+            v-for="(item,index) in docList" :key="index"
+            @click="goChapter(item.id)">
             <div class="w7-card-title">
               {{item.name}}
             </div>
@@ -35,7 +36,7 @@
                   </div>
                 </div>
               </i>
-              <i class="el-icon-view" @click="readDoc(item.id)">
+              <i class="el-icon-view" @click.stop="readDoc(item.id)">
                 <div class="pos-box">
                   <div class="arr-box">
                     <div class="arrow"></div>
@@ -43,7 +44,7 @@
                   </div>
                 </div>
               </i>
-              <i class="el-icon-s-tools" v-if="item.acl.has_manage" @click="settingDoc(item.id)">
+              <i class="el-icon-s-tools" v-if="item.acl.has_manage" @click.stop="settingDoc(item.id)">
                 <div class="pos-box">
                   <div class="arr-box">
                     <div class="arrow"></div>
@@ -225,6 +226,9 @@ export default {
     },
     settingDoc(id) {
       this.$router.push('/admin/document/' + id)
+    },
+    goChapter(id) {
+      this.$router.push('/admin/document/chapter/' + id)
     }
   }
 }
