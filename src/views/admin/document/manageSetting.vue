@@ -27,7 +27,7 @@
     </div>
     <div class="operator-management">
       <div>操作员管理</div>
-      <el-button type="primary" @click="dialogAddManageVisible = true">添加操作员</el-button>
+      <el-button type="primary" @click="openAddmanage">添加操作员</el-button>
     </div>
     <div class="content">
       <div class="tab-content-manage">
@@ -57,38 +57,16 @@
     </el-dialog>
     <!-- 操作员弹出框 -->
     <el-dialog class="w7-dialog w7-dialog-user" title="添加操作员" :visible.sync="dialogAddManageVisible" :close-on-click-modal="false" center>
-      <div class="demo-input-suffix">
-        <!-- <el-input placeholder="搜索用户名" v-model="keyword" @keyup.enter.native="getuserlist">
-          <i slot="suffix" class="el-input__icon el-icon-search" @click="getuserlist"></i>
-        </el-input> -->
-        <el-input placeholder="搜索用户名" v-model="keyword"></el-input>
-      </div>
-      <span style="margin-right:30px;">操作员权限</span>
-      <el-radio-group v-model="radio">
-        <el-radio label="1">管理员</el-radio>
-        <el-radio label="2">操作员</el-radio>
-        <el-radio label="3">阅读者</el-radio>
-      </el-radio-group>
-      <!-- <el-table class="w7-table-small" height="250"
-        :data="userList"
-        ref="multipleTable"
-        :header-cell-style="{background:'#f7f9fc',color:'#606266'}"
-        @row-click="rowClick">
-        <el-table-column prop="username" label="账号"></el-table-column>
-        <el-table-column prop="created_at" label="添加时间"></el-table-column>
-      </el-table>
-      <div class="w7-pagination">
-        <el-pagination
-          background
-          :hide-on-single-page="true"
-          @current-change="getuserlist"
-          layout="prev, pager, next, total"
-          :current-page.sync="currentPageUser"
-          :page-count="pageCountUser"
-          :total = "totalUser"
-        >
-        </el-pagination>
-      </div> -->
+      <el-form label-width="120px">
+        <el-form-item label="用户名">
+          <el-input v-model="addManageName" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="操作员权限">
+          <el-radio-group v-model="radio">
+            <el-radio v-for="item in role_list" :label="item.id" :key="item.id">{{item.name}}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="addManage">确 定</el-button>
         <el-button @click="dialogAddManageVisible = false">取 消</el-button>
@@ -96,11 +74,12 @@
     </el-dialog>
     <!-- 编辑操作员 -->
     <el-dialog class="w7-dialog" title="编辑操作员" :visible.sync="dialogOpeInfoVisible" :close-on-click-modal="false" center>
-      <el-form style="display:flex;justify-content:center;">
-        <span style="margin-right:30px;">操作员权限</span>
-        <el-radio-group v-model="radio">
-          <el-radio v-for="item in role_list" :label="item.id" :key="item.id">{{item.name}}</el-radio>
-        </el-radio-group>
+      <el-form label-width="120px">
+        <el-form-item label="操作员权限">
+          <el-radio-group v-model="radio">
+            <el-radio v-for="item in role_list" :label="item.id" :key="item.id">{{item.name}}</el-radio>
+          </el-radio-group>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="editOpe">确 定</el-button>
@@ -125,11 +104,7 @@ export default {
       formLabelWidth: '90px',
       docuserList: [],//操作人数组
       dialogAddManageVisible: false,//添加操作人弹出框
-      keyword: '',//添加操作人搜索
-      userList: [],//所有用户
-      pageCountUser: 0,//总页数
-      currentPageUser: 1,//当前页面
-      totalUser: 0,//总个数
+      addManageName: '',//添加操作人搜索
       role_list: [],//操作员的可选权限
       radio: "1",//操作员权限
     }
@@ -141,7 +116,6 @@ export default {
   },
   created() {
     this.getdetails()
-    this.getuserlist()
   },
   methods: {
     getdetails() {
@@ -156,11 +130,11 @@ export default {
     editIsPublic() {
       this.$post('/admin/document/update', {
         document_id: this.details.id,
-        is_public: this.details.acl.has_read ? 2 : 1
+        is_public: this.details.is_public == 1 ? 2 : 1
       })
         .then(() => {
           this.$message({ type: 'success', message: '修改成功!'})
-          this.details.is_public = this.details.is_public == 1 ? 2 : 1
+          this.getdetails()
         })
     },
     editRename() {
@@ -190,18 +164,6 @@ export default {
           })
       }).catch(() => {
       })
-    },
-    getuserlist() {
-      this.$post('/admin/user/search',{
-        username: this.keyword,
-        page: this.currentPageUser
-      })
-        .then(res => {
-          this.userList = res.data
-          this.pageCountUser = res.pageCount
-          this.currentPageUser = res.page_current
-          this.totalUser = res.total
-        })
     },
     openEditManage(row) {
       this.selectRow = row
@@ -235,15 +197,23 @@ export default {
           })
       })
     },
-    addManage(userId) {
+    openAddmanage() {
+      this.addManageName = ''
+      this.radio = this.role_list[0].id
+      this.dialogAddManageVisible = true
+    },
+    addManage() {
       this.$post('/admin/document/operator',{
-        user_id: userId,
+        user_name: this.addManageName,
         document_id: this.id,
         permission : 2,
       })
         .then(() => {
           this.getdetails()
           this.$message('添加成功！')
+          this.dialogAddManageVisible = false
+        })
+        .catch(() => {
           this.dialogAddManageVisible = false
         })
     },

@@ -10,19 +10,16 @@
     </div>
     <div class="content">
       <div v-if="firstPage">
-        <el-form ref="form" :model="formData" label-width="80px" :label-position="'left'" style="width:420px;">
-          <el-form-item label="用户账号">
+        <el-form ref="ruleForm" :model="formData" :rules="rules" label-width="80px" :label-position="'left'" style="width:420px;">
+          <el-form-item label="用户账号" prop="username">
             <el-input v-model="formData.username" ></el-input>
           </el-form-item>
-          <el-form-item label="密码">
+          <el-form-item label="密码" prop="userpass">
             <el-input v-model="formData.userpass" ></el-input>
           </el-form-item>
-          <el-form-item label="确认密码">
+          <el-form-item label="确认密码" prop="confirm_userpass">
             <el-input v-model="formData.confirm_userpass" ></el-input>
           </el-form-item>
-          <!-- <el-form-item label="备注">
-            <el-input v-model="formData.remark" type="textarea" :rows="4" ></el-input>
-          </el-form-item> -->
           <el-form-item>
             <el-button type="primary" @click="onSubmit">下一步</el-button>
           </el-form-item>
@@ -32,56 +29,31 @@
         <div class="select-power">
           <div>
             <span style="margin-right:70px">项目权限</span>
-            <el-select v-model="docList.has_creator" placeholder="请选择">
-              <el-option label="全部项目" value="1"></el-option>
-              <el-option label="公有项目" value="2"></el-option>
-              <el-option label="私有项目" value="3"></el-option>
+            <el-select v-model="is_public" placeholder="请选择">
+              <el-option label="全部项目" value="0"></el-option>
+              <el-option label="公有项目" value="1"></el-option>
+              <el-option label="私有项目" value="2"></el-option>
             </el-select>
           </div>
           <div class="more-edit" @click="dialogEditInfoVisible = true">批量修改</div>
         </div>
-        <el-table class="w7-table" :data="docList" empty-text="" ref="table" 
-          :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
-          <el-table-column
-            type="selection"
-            width="55">
-          </el-table-column>
+        <el-table class="w7-table" :data="docList" empty-text="" ref="table" :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
+          <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column label="项目名称">
             <template slot-scope="scope">
               <i class="w7-icon-fileFolder"></i>
               <span style="margin-left: 10px">{{ scope.row.name }}</span>
-              <div style="display:inline-block;padding:0 5px;margin-left: 20px;background:#fff1de;color:#ff8600;">
+              <div v-if="scope.row.is_public == 2" style="display:inline-block;padding:0 5px;margin-left: 20px;background:#fff1de;color:#ff8600;">
                 <i class="el-icon-lock" ><span style="margin-left: 5px;">私有</span></i>
               </div>
             </template>
           </el-table-column>
           <el-table-column label="权限" align="right">
             <template slot-scope="scope">
-              <!-- <el-button type="text" v-if="scope.row.has_creator != 3 || UserInfo.has_privilege == 1" @click="removeDoc(scope.row.id)">删除</el-button>
-              <router-link
-                :to="{path: 'chapter/' + scope.row.id}"
-                class="el-button el-button--text">编辑</router-link>
-              <router-link
-                :to="{path: 'document/'+ scope.row.id}"
-                class="el-button el-button--text" v-if="scope.row.has_creator != 3 || UserInfo.has_privilege == 1">
-                管理设置
-              </router-link>
-              <el-button type="text" v-if="scope.row.has_creator != 3 || UserInfo.has_privilege == 1"
-                :class="{redBtn: scope.row.is_show == 1}"
-                @click="updateDoc(scope.row.id, scope.row.is_show)">{{scope.row.is_show == 2 ? "发布" : "取消发布"}}</el-button>
-              <el-button type="text" :class="{'is-disabled': scope.row.is_show == 2}" @click="readDoc(scope.row.id, scope.row.is_show)">阅读文档</el-button> -->
               <el-radio-group v-model="scope.row.has_creator" class="ownership">
-                <el-radio v-model="scope.row.has_creator" label="1">
-                  <!-- <span class="reader"> -->
-                    阅读者
-                    <!-- <div class="pos-box">
-                      <div class="arr-box">
-                        <div class="arrow"></div>
-                        <span>仅可以阅读</span>
-                      </div>
-                    </div>
-                  </span> -->
-                </el-radio>
+                <el-tooltip class="item" effect="dark" content="Bottom Center 提示文字" placement="bottom">
+                  <el-radio v-model="scope.row.has_creator" label="1">阅读者</el-radio>
+                </el-tooltip>
                 <el-radio v-model="scope.row.has_creator" label="2">操作员</el-radio>
                 <el-radio v-model="scope.row.has_creator" label="3">管理员</el-radio>
               </el-radio-group>
@@ -135,36 +107,65 @@
 <script>
 export default {
   data() {
+    var validatePass = (rule, val, callback) => {
+      if (val === '') {
+        callback(new Error('请输入密码'));
+      } else {
+        if (this.formData.confirm_userpass !== '') {
+          this.$refs.ruleForm.validateField('confirm_userpass');
+        }
+        callback();
+      }
+    };
+    var validatePass2 = (rule, val, callback) => {
+      if (val === '') {
+        callback(new Error('请再次输入密码'));
+      } else if (val !== this.formData.userpass) {
+        callback(new Error('两次输入密码不一致!'));
+      } else {
+        callback();
+      }
+    };
     return {
+      rules: {
+        username: [
+          { required: true, message: '请输入用户账号', trigger: 'blur' }
+        ],
+        userpass: [
+          { required: true, validator: validatePass, trigger: 'blur' }
+        ],
+        confirm_userpass: [
+          { required: true, validator: validatePass2, trigger: 'blur' }
+        ]
+      },
       firstPage: true,
       formData: {
         id : this.$route.params.id,
         username: '',
         userpass: '',
-        confirm_userpass: '',
-        remark: ''
+        confirm_userpass: ''
       },
-      docList: [],//用户列表
-      currentPage: 0,//当前页码
+      user_id: '',//创建用户id
+      docList: [],//项目列表
+      currentPage: 1,//当前页码
       pageCount: 0,//总页数
       total: 0,//总数
       dialogEditInfoVisible: false,
+      is_public: '',
       radio: "1",
       radio1: "1"
       // detailsList: [],//详情列表
     }
   },
   created() {
-    // if(this.$route.params.id) {
-    //   this.getDetailsUser()
-    // }
-    this.getList()
   },
   methods: {
     getList() {
-      this.$post('/admin/document/getlist',{
+      this.$post('/admin/document/all-by-uid',{
+        user_id: this.user_id,
         page: this.currentPage,
-        name: this.keyword
+        name: '',
+        is_public: ''
       })
         .then(res => {
           this.docList = res.data
@@ -178,33 +179,18 @@ export default {
     editInf() {
       this.dialogEditInfoVisible = false;
     },
-    // getDetailsList() {
-    //   this.$post('/admin/document/getdetails ',{
-    //     id: this.currentPage,
-    //   })
-    //     .then(res => {
-    //       this.docList = res.data
-    //       this.pageCount = res.pageCount
-    //       this.total = res.total
-    //     })
-    // },
     onSubmit() {
-      if(this.formData.userpass !== this.formData.confirm_userpass) {
-        this.$message('两次密码不一致，请重新输入！')
-        return
-      }
-      if (this.$route.params.id) {
-        this.$post('/admin/user/update', this.formData)
-          .then(() => {
-            this.$message('修改成功！')
-          })
-      }else {
-        this.$post('/admin/user/add', this.formData)
-          .then(() => {
-            this.$message('保存成功！')
-          })
-        }
-        this.firstPage = false
+      this.$refs['ruleForm'].validate((valid) => {
+          if (valid) {
+            this.$post('/admin/user/add', this.formData)
+              .then((res) => {
+                this.$message('创建成功！')
+                this.user_id = res
+                this.firstPage = false
+                this.getList()
+              })
+          }
+        })
     },
     getDetailsUser() {
       this.$post('/admin/user/detail-by-id',{
