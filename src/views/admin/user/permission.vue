@@ -57,20 +57,20 @@
         <el-form label-width="120" style="margin-left:50px;">
         <el-form-item label="公有项目">
             <el-radio-group v-model="radio" class="ownership">
-            <el-radio v-model="radio" label="1">管理员</el-radio>
-            <el-radio v-model="radio" label="2">操作员</el-radio>
+            <el-radio :label="1">管理员</el-radio>
+            <el-radio :label="2">操作员</el-radio>
             </el-radio-group>
         </el-form-item>
         <el-form-item label="私有项目">
             <el-radio-group v-model="radio1" class="ownership">
-            <el-radio v-model="radio1" label="1">管理员</el-radio>
-            <el-radio v-model="radio1" label="2">操作员</el-radio>
-            <el-radio v-model="radio1" label="3">阅读者</el-radio>
+            <el-radio :label="1">管理员</el-radio>
+            <el-radio :label="2">操作员</el-radio>
+            <el-radio :label="3">阅读者</el-radio>
             </el-radio-group>
         </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="editInf">确 定</el-button>
+        <el-button type="primary" @click="editAll">确 定</el-button>
         <el-button @click="dialogEditInfoVisible = false">取 消</el-button>
         </div>
     </el-dialog>
@@ -88,8 +88,8 @@ export default {
       total: 0,//总数
       dialogEditInfoVisible: false,
       is_public: '',
-      radio: "1",
-      radio1: "1",
+      radio: 1,
+      radio1: 1,
       selectRows: []//所有选中行
     }
   },
@@ -128,8 +128,16 @@ export default {
           this.$router.push('/admin/user')
         })
     },
-    editInf() {
-      this.dialogEditInfoVisible = false;
+    editAll() {
+      let rows = this.$refs.multipleTable.selection
+      for (const i in rows) {
+        if (rows[i].is_public) {
+          rows[i].cur_role = Number(this.radio)
+        } else {
+          rows[i].cur_role = Number(this.radio1)
+        }
+      }
+      this.dialogEditInfoVisible = false
     }
   }
 }
