@@ -47,11 +47,12 @@
         </template>
         </el-table-column>
         <div class="nodata" slot="empty">
-          <p>暂无可以查看管理的文档，请先操作</p>
+          <p>暂无可以查看管理的文档</p>
         </div>
     </el-table>
     <div class="btns">
         <el-button type="primary" @click="save">保存</el-button>
+        <el-button type="primary" @click="getMore">加载更多</el-button>
     </div>
     <!-- 批量修改弹出框 -->
     <el-dialog class="w7-dialog" title="批量修改" :visible.sync="dialogEditInfoVisible" :close-on-click-modal="false" center>
@@ -103,7 +104,11 @@ export default {
       this.currentPage = 1
       this.getList()
     },
-    getList() {
+    getMore() {
+      this.currentPage++
+      this.getList('more')
+    },
+    getList(val) {
       this.$post('/admin/document/all-by-uid',{
         user_id: this.user_id,
         page: this.currentPage,
@@ -111,7 +116,11 @@ export default {
         is_public: this.is_public
       })
         .then(res => {
-          this.docList = res.data
+          if (val == 'more') {
+            this.docList = [...this.docList,...res.data]
+          } else {
+            this.docList = res.data
+          }
           this.pageCount = res.pageCount
           this.total = res.total
         })
