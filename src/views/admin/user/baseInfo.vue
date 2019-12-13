@@ -26,86 +26,18 @@
         </el-form>
       </div>
       <div v-else>
-        <div class="select-power">
-          <div>
-            <span style="margin-right:70px">项目权限</span>
-            <el-select v-model="is_public" placeholder="请选择">
-              <el-option label="全部项目" value="0"></el-option>
-              <el-option label="公有项目" value="1"></el-option>
-              <el-option label="私有项目" value="2"></el-option>
-            </el-select>
-          </div>
-          <div class="more-edit" @click="dialogEditInfoVisible = true">批量修改</div>
-        </div>
-        <el-table class="w7-table" :data="docList" empty-text="" ref="table" :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
-          <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column label="项目名称">
-            <template slot-scope="scope">
-              <i class="w7-icon-fileFolder"></i>
-              <span style="margin-left: 10px">{{ scope.row.name }}</span>
-              <div v-if="scope.row.is_public == 2" style="display:inline-block;padding:0 5px;margin-left: 20px;background:#fff1de;color:#ff8600;">
-                <i class="el-icon-lock" ><span style="margin-left: 5px;">私有</span></i>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="权限" align="right">
-            <template slot-scope="scope">
-              <el-radio-group v-model="scope.row.has_creator" class="ownership">
-                <el-tooltip class="item" effect="dark" content="Bottom Center 提示文字" placement="bottom">
-                  <el-radio v-model="scope.row.has_creator" label="1">阅读者</el-radio>
-                </el-tooltip>
-                <el-radio v-model="scope.row.has_creator" label="2">操作员</el-radio>
-                <el-radio v-model="scope.row.has_creator" label="3">管理员</el-radio>
-              </el-radio-group>
-            </template>
-          </el-table-column>
-          <div class="nodata" slot="empty">
-            <p>暂无可以查看管理的文档，请先操作<el-button type="text" @click="dialogDocInfoVisible = true">创建文档</el-button></p>
-          </div>
-        </el-table>
-        <div class="btns">
-          <el-button type="primary" @click="saveUser">保存</el-button>
-          <el-pagination
-            background
-            @current-change = "getList"
-            layout="prev, pager, next, total"
-            prev-text="上一页"
-            next-text="下一页"
-            :current-page.sync = "currentPage"
-            :page-count="pageCount"
-            :hide-on-single-page = "true"
-          >
-          </el-pagination>
-        </div>
-        <!-- 批量修改弹出框 -->
-        <el-dialog class="w7-dialog" title="批量修改" :visible.sync="dialogEditInfoVisible" :close-on-click-modal="false" center>
-          <el-form label-width="120" style="margin-left:50px;">
-            <el-form-item label="公有项目">
-              <el-radio-group v-model="radio" class="ownership">
-                <el-radio v-model="radio" label="1">管理员</el-radio>
-                <el-radio v-model="radio" label="2">操作员</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="私有项目">
-              <el-radio-group v-model="radio1" class="ownership">
-                <el-radio v-model="radio1" label="1">管理员</el-radio>
-                <el-radio v-model="radio1" label="2">操作员</el-radio>
-                <el-radio v-model="radio1" label="3">阅读者</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="editInf">确 定</el-button>
-            <el-button @click="dialogEditInfoVisible = false">取 消</el-button>
-          </div>
-        </el-dialog>
+        <permission :user_id="user_id"></permission>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import permission from './permission'
 export default {
+  components: {
+    permission
+  },
   data() {
     var validatePass = (rule, val, callback) => {
       if (val === '') {
@@ -145,40 +77,12 @@ export default {
         userpass: '',
         confirm_userpass: ''
       },
-      user_id: '',//创建用户id
-      docList: [],//项目列表
-      currentPage: 1,//当前页码
-      pageCount: 0,//总页数
-      total: 0,//总数
-      dialogEditInfoVisible: false,
-      is_public: '',
-      radio: "1",
-      radio1: "1"
-      // detailsList: [],//详情列表
+      user_id: ''//创建用户id
     }
   },
   created() {
   },
   methods: {
-    getList() {
-      this.$post('/admin/document/all-by-uid',{
-        user_id: this.user_id,
-        page: this.currentPage,
-        name: '',
-        is_public: ''
-      })
-        .then(res => {
-          this.docList = res.data
-          this.pageCount = res.pageCount
-          this.total = res.total
-        })
-    },
-    saveUser() {
-      
-    },
-    editInf() {
-      this.dialogEditInfoVisible = false;
-    },
     onSubmit() {
       this.$refs['ruleForm'].validate((valid) => {
           if (valid) {
@@ -187,18 +91,8 @@ export default {
                 this.$message('创建成功！')
                 this.user_id = res
                 this.firstPage = false
-                this.getList()
               })
           }
-        })
-    },
-    getDetailsUser() {
-      this.$post('/admin/user/detail-by-id',{
-        id: this.formData.id
-      })
-        .then(res => {
-          this.formData.username = res.username
-          this.formData.remark = res.remark
         })
     }
   }
