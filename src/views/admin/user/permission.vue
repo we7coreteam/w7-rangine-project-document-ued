@@ -1,14 +1,15 @@
 <template>
   <div class="permission">
     <div class="select-power">
-        <div>
-            <span style="margin-right:70px">项目权限</span>
-            <el-select v-model="is_public" placeholder="请选择">
-                <el-option label="全部项目" value="0"></el-option>
-                <el-option label="公有项目" value="1"></el-option>
-                <el-option label="私有项目" value="2"></el-option>
-            </el-select>
-        </div>
+        <span class="name">项目权限</span>
+        <el-select v-model="is_public" placeholder="请选择" @change="search">
+            <el-option label="全部项目" value="0"></el-option>
+            <el-option label="公有项目" value="1"></el-option>
+            <el-option label="私有项目" value="2"></el-option>
+        </el-select>
+        <el-input placeholder="请输入项目名称" v-model="keyword" @keyup.enter.native="search">
+          <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
+        </el-input>
         <div class="more-edit" @click="dialogEditInfoVisible = true">批量修改</div>
     </div>
     <el-table class="w7-table" :data="docList" empty-text="" ref="multipleTable" :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
@@ -82,12 +83,13 @@ export default {
   props: ['user_id'],
   data() {
     return {
+      is_public: '',
+      keyword: '',
       docList: [],//项目列表
       currentPage: 1,//当前页码
       pageCount: 0,//总页数
       total: 0,//总数
       dialogEditInfoVisible: false,
-      is_public: '',
       radio: 1,
       radio1: 1,
       selectRows: []//所有选中行
@@ -97,12 +99,16 @@ export default {
     this.getList()
   },
   methods: {
+    search() {
+      this.currentPage = 1
+      this.getList()
+    },
     getList() {
       this.$post('/admin/document/all-by-uid',{
         user_id: this.user_id,
         page: this.currentPage,
-        name: '',
-        is_public: ''
+        name: this.keyword,
+        is_public: this.is_public
       })
         .then(res => {
           this.docList = res.data
@@ -146,9 +152,22 @@ export default {
 <style lang="scss" scoped>
 .select-power{
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  .name, .el-select, .el-input {
+    margin-right: 60px;
+  }
+  .name {
+    width: 80px;
+  }
+  .el-select {
+    width: 200px;
+  }
+  .el-input {
+    width: 300px;
+  }
   .more-edit{
+    flex: 1;
+    text-align: right;
     color:#3296fa;
     cursor:pointer;
   }
