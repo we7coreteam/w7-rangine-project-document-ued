@@ -5,17 +5,9 @@
         <img src="~@/assets/img/logo.png" alt />文档控制台
       </router-link>
       <div class="menu">
-        <router-link class="item" to="/admin/document" v-if="isNotRead">项目管理</router-link>
-          <!-- v-if="UserInfo.has_privilege == 1 && isNotRead" -->
-        <router-link
-          class="item"
-          to="/admin/user"
-        >用户管理</router-link>
-        <router-link
-          class="item"
-          to="/admin/setting"
-          v-if="UserInfo.has_privilege == 1 && isNotRead"
-        >系统设置</router-link>
+        <router-link class="item" to="/admin/document">项目管理</router-link>
+        <router-link class="item" to="/admin/user" v-if="UserInfo.acl && UserInfo.acl.has_manage">用户管理</router-link>
+        <router-link class="item" to="/admin/setting" v-if="UserInfo.acl && UserInfo.acl.has_manage">系统设置</router-link>
       </div>
       <div class="user" v-if="UserInfo.username">
         {{UserInfo.username}}
