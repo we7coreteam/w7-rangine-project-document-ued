@@ -93,16 +93,17 @@ export default {
   },
   methods: {
     init() {
-      this.$post('/admin/setting/show', { key: 'cloud_cosv5' })
+      this.$post('/admin/setting/cos', {})
         .then(res => {
-          this.formData = Object.assign(this.formData, res.value)
+          this.formData = Object.assign(this.formData, res.setting);
+          this.formData.key = res.key
         })
         .catch(() => {})
     },
     onSubmit() {
       this.$refs['form'].validate(valid => {
         if (valid) {
-          this.$post('/admin/setting/save', this.formData)
+          this.$post('/admin/setting/save', {'key': this.formData['key'], 'setting' : this.formData})
             .then(() => {
               this.$message('保存成功！')
             })
