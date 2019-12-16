@@ -62,38 +62,6 @@
           </div>
         </div>
       </div>
-      <el-table class="w7-table" :data="docList" empty-text=""
-          v-loading="loading"
-          element-loading-text="加载中"
-          element-loading-spinner="el-icon-loading"
-          element-loading-background="rgba(0, 0, 0, 0.8)"
-          :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
-        <el-table-column label="名称">
-          <template slot-scope="scope">
-            <i class="w7-icon-fileFolder"></i>
-            <span style="margin-left: 10px">{{ scope.row.name }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="创建者" prop="username"></el-table-column>
-        <el-table-column label="创建时间" prop="created_at"></el-table-column>
-        <el-table-column label="操作" align="right">
-          <template slot-scope="scope">
-            <el-button type="text" v-if="scope.row.acl.has_delete" @click="removeDoc(scope.row.id)">删除</el-button>
-            <router-link
-              :to="{path: 'document/chapter/' + scope.row.id}"
-              class="el-button el-button--text"  v-if="scope.row.acl.has_edit">编辑</router-link>
-            <router-link
-              :to="{path: 'document/'+ scope.row.id}"
-              class="el-button el-button--text" v-if="scope.row.acl.has_manage">
-              管理设置
-            </router-link>
-            <el-button type="text" @click="readDoc(scope.row.id)">阅读文档</el-button>
-          </template>
-        </el-table-column>
-        <div class="nodata" slot="empty">
-          <p>暂无可以查看管理的文档，请先操作<el-button type="text" @click="dialogDocInfoVisible = true">创建文档</el-button></p>
-        </div>
-      </el-table>
       <el-pagination
         background
         @current-change = "getList"
