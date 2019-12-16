@@ -3,63 +3,60 @@
     <h3 class="page-head">
       用户管理
     </h3>
-    <template v-if="!showPermission">
-      <div class="search-box">
-        <div class="demo-input-suffix">
-          <el-input placeholder="请输入用户名称" v-model="keyword" @keyup.enter.native="search">
-          <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
-          </el-input>
-        </div>
-        <div class="demo-input-btn">
-          <router-link to="user/create" type="button" class="el-button el-button--primary">创建用户</router-link>
-        </div>
+    <div class="search-box">
+      <div class="demo-input-suffix">
+        <el-input placeholder="请输入用户名称" v-model="keyword" @keyup.enter.native="search">
+        <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
+        </el-input>
       </div>
-      <el-table class="w7-table" :data="userList" ref="multipleTable" :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
-        <el-table-column label="账号" prop="username"></el-table-column>
-        <el-table-column label="添加时间" prop="created_at" sortable column-key="date">
-          <template slot-scope="scope">
-            <div v-if="UserInfo.id != scope.row.id">{{scope.row.created_at}}</div>
-          </template>
-        </el-table-column>
-        <el-table-column label="身份" prop="role"></el-table-column>
-        <el-table-column label="管理权限">
-          <template slot-scope="scope">
-            <span>{{scope.row.manage_doc_count}}个文档</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作权限">
-          <template slot-scope="scope">
-            <span>{{scope.row.operate_doc_count}}个文档</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="仅阅读">
-          <template slot-scope="scope">
-            <span>{{scope.row.read_doc_count}}个文档</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" align="right">
-          <template slot-scope="scope">
-            <el-button type="text" @click="openEditorUser(scope.row)">设置</el-button>
-            <el-button type="text" @click="openPermission(scope.row.id)">权限管理</el-button>
-            <el-button type="text" v-if="UserInfo.id != scope.row.id" @click="deleteSelectRows(scope.row.id)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="btns">
-        <el-pagination
-          background
-          @current-change = "getuserlist"
-          layout="prev, pager, next, total"
-          prev-text="上一页"
-          next-text="下一页"
-          :current-page.sync = "currentPage"
-          :page-count="pageCount"
-          :total="total"
-        >
-        </el-pagination>
+      <div class="demo-input-btn">
+        <router-link to="user/create" type="button" class="el-button el-button--primary">创建用户</router-link>
       </div>
-    </template>
-    <permission :user_id="userId" v-if="showPermission"></permission>
+    </div>
+    <el-table class="w7-table" :data="userList" ref="multipleTable" :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
+      <el-table-column label="账号" prop="username"></el-table-column>
+      <el-table-column label="添加时间" prop="created_at" sortable column-key="date">
+        <template slot-scope="scope">
+          <div v-if="UserInfo.id != scope.row.id">{{scope.row.created_at}}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="身份" prop="role"></el-table-column>
+      <el-table-column label="管理权限">
+        <template slot-scope="scope">
+          <span>{{scope.row.manage_doc_count}}个文档</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作权限">
+        <template slot-scope="scope">
+          <span>{{scope.row.operate_doc_count}}个文档</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="仅阅读">
+        <template slot-scope="scope">
+          <span>{{scope.row.read_doc_count}}个文档</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="right">
+        <template slot-scope="scope">
+          <el-button type="text" @click="openEditorUser(scope.row)">设置</el-button>
+          <el-button type="text" @click="openPermission(scope.row.id)">权限管理</el-button>
+          <el-button type="text" v-if="UserInfo.id != scope.row.id" @click="deleteSelectRows(scope.row.id)">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div class="btns">
+      <el-pagination
+        background
+        @current-change = "getuserlist"
+        layout="prev, pager, next, total"
+        prev-text="上一页"
+        next-text="下一页"
+        :current-page.sync = "currentPage"
+        :page-count="pageCount"
+        :total="total"
+      >
+      </el-pagination>
+    </div>
     <!-- 设置 -->
     <el-dialog class="w7-dialog" title="账号设置" :visible.sync="dialogEditUserVisible" :close-on-click-modal="false" center>
       <el-form :model="formData" label-width="120px">
@@ -83,11 +80,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import permission from './permission'
 export default {
-  components: {
-    permission
-  },
   data() {
     return {
       keyword: '',
@@ -95,8 +88,8 @@ export default {
       currentPage: 1,//当前页码
       pageCount: 0,//总页数
       total: 0,//总数
-      showPermission: false,//显示权限设置
-      userId: '',//选中的用户id
+      // showPermission: false,//显示权限设置
+      // userId: '',//选中的用户id
       dialogEditUserVisible: false,//账号设置
       formData: {
         id: '',
@@ -144,8 +137,7 @@ export default {
         })
     },
     openPermission(id) {
-      this.userId = id
-      this.showPermission = true
+      this.$router.push('/admin/user/' + id)
     },
     deleteSelectRows(id) {
       this.$confirm('此操作将永久删除用户, 是否继续?', '提示', {

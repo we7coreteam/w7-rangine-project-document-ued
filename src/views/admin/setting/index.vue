@@ -1,10 +1,10 @@
 <template>
   <div>
-    <h3 class="page-head">
+    <!-- <h3 class="page-head">
       <router-link to="/admin/setting">
         <i class="el-icon-arrow-left"></i>系统管理
       </router-link>/存储设置
-    </h3>
+    </h3> -->
     <div class="title">腾讯云存储</div>
     <div class="content">
       <el-form ref="form" :model="formData" :rules="rules" label-width="120px">

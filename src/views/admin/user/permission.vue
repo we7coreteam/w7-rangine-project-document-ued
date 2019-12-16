@@ -12,8 +12,8 @@
         </el-input>
         <div class="more-edit" @click="dialogEditInfoVisible = true">批量修改</div>
     </div>
-    <el-table class="w7-table" :data="docList" empty-text="" ref="multipleTable" :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
-        <el-table-column type="selection" width="55"></el-table-column>
+    <el-table class="w7-table" :data="docList" empty-text="" row-key="id" ref="multipleTable" :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
+        <el-table-column reserve-selection type="selection" width="55"></el-table-column>
         <el-table-column label="项目名称">
         <template slot-scope="scope">
             <i class="w7-icon-fileFolder"></i>
@@ -128,13 +128,14 @@ export default {
         })
     },
     save() {
-      let rows = this.$refs.multipleTable.selection
       let document_permission = []
-      for (const i in rows) {
-        document_permission.push({
-          document_id: rows[i].id,
-					permission: rows[i].cur_role
-        })
+      for (const i in this.docList) {
+        if(this.docList[i].cur_role) {
+          document_permission.push({
+            document_id: this.docList[i].id,
+            permission: this.docList[i].cur_role
+          })
+        }
       }
       this.$post('/admin/user/batch-update-permission',{
         user_id: this.user_id,

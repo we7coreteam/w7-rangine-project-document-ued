@@ -75,6 +75,11 @@ export default new Router({
         },
         {
           path: 'user/:id',
+          name: 'userInfo',
+          component: () => import(/* webpackChunkName: "about" */ './views/admin/user/baseInfo.vue')
+        },
+        {
+          path: 'user/:id',
           name: 'baseInfoId',
           component: () => import(/* webpackChunkName: "about" */ './views/admin/user/baseInfo.vue')
         },

@@ -89,7 +89,7 @@ export default {
       padding: 0 20px;
       margin: 0 6px;
       &:hover,
-      &.active {
+      &.router-link-active {
         color: #3296fa;
       }
     }
