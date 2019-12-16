@@ -9,38 +9,18 @@
         <i slot="suffix" class="el-input__icon el-icon-search" @click="searchDoc" style="color:#3296fa;"></i>
       </el-input>
       <div class="icon-box">
-        <i class="el-icon-document icon1">
-          <div class="pos-box">
-            <div class="arr-box">
-              <div class="arrow"></div>
-              <span>新建文档</span>
-            </div>
-          </div>
-        </i>
-        <i class="el-icon-wallet icon2">
-          <div class="pos-box">
-            <div class="arr-box">
-              <div class="arrow"></div>
-              <span>文件夹</span>
-            </div>
-          </div>
-        </i>
-        <i class="el-icon-view icon3">
-          <div class="pos-box">
-            <div class="arr-box">
-              <div class="arrow"></div>
-              <span>预览</span>
-            </div>
-          </div>
-        </i>
-        <i class="el-icon-s-tools icon4">
-          <div class="pos-box">
-            <div class="arr-box">
-              <div class="arrow"></div>
-              <span>设置</span>
-            </div>
-          </div>
-        </i>
+        <el-tooltip class="item" effect="dark" content="新建文档" placement="bottom">
+          <i class="el-icon-document"></i>
+        </el-tooltip>
+        <el-tooltip class="item" effect="dark" content="文件夹" placement="bottom">
+          <i class="el-icon-wallet"></i>
+        </el-tooltip>
+        <el-tooltip class="item" effect="dark" content="预览" placement="bottom">
+          <i class="el-icon-view"></i>
+        </el-tooltip>
+        <el-tooltip class="item" effect="dark" content="设置" placement="bottom">
+          <i class="el-icon-s-tools"></i>
+        </el-tooltip>
       </div>
       <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text=""
         ref="chaptersTree"
@@ -140,11 +120,7 @@ export default {
       })
         .then(res => {
           this.docName = res.document.name
-          //处理数据
-          this.chapters = []
-          for (const key in res.catalog) {
-            this.chapters.push(res.catalog[key])
-          }
+          this.chapters = res.catalog
           if(!this.sort) {
             let maxsort = this.sort
             //找到sort的最大值
@@ -389,132 +365,6 @@ export default {
   margin-bottom: 35px;
   font-size:14px;
   color:#b6b5b5;
-}
-.icon-box i{
-  position: relative;
-}
-.icon-box i:hover .pos-box{
-  display:block;
-}
-.icon-box .icon1 .pos-box{
-  position: absolute;
-  top:20px;
-  left:-20px;
-  display:none;
-  text-align: center;
-  width:70px;
-  height:20px;
-  line-height:16px;
-  background: #000;
-  color:#fff;
-  font-size:14px;
-}
-.icon-box .icon1 .pos-box .arr-box{
-  position: relative;
-  width:100%;
-  height:100%;
-  box-sizing:border-box;
-  background: #000;
-  border:2px solid #000;
-}
-.icon-box .icon1 .arrow{
-  width: 0px;   
-  height: 0px;   
-  position: absolute;   
-  border:5px solid transparent;
-  border-bottom-color:#000;
-  top:-10px;
-  left:30%;
-}
-.icon-box .icon2 .pos-box{
-  position: absolute;
-  top:20px;
-  left:-20px;
-  display:none;
-  text-align: center;
-  width:50px;
-  height:20px;
-  line-height:16px;
-  background: #000;
-  color:#fff;
-  font-size:14px;
-}
-.icon-box .icon2 .pos-box .arr-box{
-  position: relative;
-  width:100%;
-  height:100%;
-  box-sizing:border-box;
-  background: #000;
-  border:2px solid #000;
-}
-.icon-box .icon2 .arrow{
-  width: 0px;   
-  height: 0px;   
-  position: absolute;   
-  border:5px solid transparent;
-  border-bottom-color:#000;
-  top:-10px;
-  left:45%;
-}
-.icon-box .icon3 .pos-box{
-  position: absolute;
-  top:20px;
-  left:-10px;
-  display:none;
-  text-align: center;
-  width:40px;
-  height:20px;
-  line-height:16px;
-  background: #000;
-  color:#fff;
-  font-size:14px;
-}
-.icon-box .icon3 .pos-box .arr-box{
-  position: relative;
-  width:100%;
-  height:100%;
-  box-sizing:border-box;
-  background: #000;
-  border:2px solid #000;
-}
-.icon-box .icon3 .arrow{
-  width: 0px;   
-  height: 0px;   
-  position: absolute;   
-  border:5px solid transparent;
-  border-bottom-color:#000;
-  top:-10px;
-  left:30%;
-}
-.icon-box .icon4 .pos-box{
-  position: absolute;
-  top:20px;
-  left:-10px;
-  display:none;
-  text-align: center;
-  width:40px;
-  height:20px;
-  line-height:16px;
-  background: #000;
-  color:#fff;
-  font-size:14px;
-}
-.icon-box .icon4 .pos-box .arr-box{
-  position: relative;
-  width:100%;
-  height:100%;
-  box-sizing:border-box;
-  background: #000;
-  border:2px solid #000;
-}
-.icon-box .icon4 .arrow{
-  width: 0px;   
-  height: 0px;   
-  position: absolute;   
-  border:5px solid transparent;
-  border-bottom-color:#000;
-  top:-10px;
-  left:30%;
 }
 .w7-icon-fileFolder:after {
   content:url('~@/assets/img/fileFolder-small.png')

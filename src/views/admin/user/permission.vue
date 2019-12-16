@@ -50,9 +50,11 @@
           <p>暂无可以查看管理的文档</p>
         </div>
     </el-table>
+    <div class="get-more" v-if="currentPage != pageCount">
+      <el-button type="text" @click="getMore">点击加载更多</el-button>
+    </div>
     <div class="btns">
         <el-button type="primary" @click="save">保存</el-button>
-        <el-button type="primary" @click="getMore">加载更多</el-button>
     </div>
     <!-- 批量修改弹出框 -->
     <el-dialog class="w7-dialog" title="批量修改" :visible.sync="dialogEditInfoVisible" :close-on-click-modal="false" center>
@@ -88,7 +90,7 @@ export default {
       keyword: '',
       docList: [],//项目列表
       currentPage: 1,//当前页码
-      pageCount: 0,//总页数
+      pageCount: 1,//总页数
       total: 0,//总数
       dialogEditInfoVisible: false,
       radio: 1,
@@ -196,5 +198,9 @@ export default {
 }
 .el-table .cell{
   overflow:auto!important;
+}
+.get-more {
+  margin: 20px auto;
+  text-align: center;
 }
 </style>
