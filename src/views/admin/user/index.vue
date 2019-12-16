@@ -64,10 +64,10 @@
           <el-input v-model="formData.username"></el-input>
         </el-form-item>
         <el-form-item label="密码">
-          <el-input v-model="formData.userpass"></el-input>
+          <el-input v-model="formData.userpass" type="password"></el-input>
         </el-form-item>
         <el-form-item label="确认密码">
-          <el-input v-model="formData.confirm_userpass"></el-input>
+          <el-input v-model="formData.confirm_userpass" type="password"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
