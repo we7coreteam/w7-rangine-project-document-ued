@@ -68,8 +68,9 @@
     <el-dialog class="w7-dialog" :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false">
       <el-form :model="addNodeObj" label-width="100px">
         <el-form-item :label="dialogFormLabel">
-          <el-input v-model="addNodeObj.name"></el-input>
+          <el-input v-model="addNodeObj.name" @keyup.enter.native="confirmBtn"></el-input>
         </el-form-item>
+        <input type="text" style="display:none;">
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="confirmBtn">确 定</el-button>

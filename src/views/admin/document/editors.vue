@@ -9,7 +9,10 @@
       <button @click="edit">编辑</button>
     </div>
     <div class="editors">
-      <div :class="{'markdown-body': layout == 1}" v-html="content" v-show="!isEdit"></div>
+      <div class="chapter-warpper">
+        <div class="chapter-content" :class="{'markdown-body': layout == 1}" v-html="content" v-show="!isEdit"></div>
+        <div class="chapter-menu" v-if="showMenu"></div>
+      </div>
       <div class="editorBtn" v-show="isEdit">
         <el-button :type="layout == 1 ? 'primary' : ''" @click="layout = 1">Markdown编辑器</el-button>
         <el-button :type="layout == 2 ? 'primary' : ''" @click="layout = 2">UEditor编辑器</el-button>
@@ -61,7 +64,8 @@ export default {
       },
       content: '', //最终显示的html
       contentMd: '', //md格式的内容
-      layout: 1 //1 markdown 2 富文本
+      layout: 1, //1 markdown 2 富文本
+      showMenu: false//是否显示菜单div
     }
   },
   watch: {
@@ -186,6 +190,16 @@ export default {
   width: 100%;
   height: 100%;
   padding: 15px 0;
+  .chapter-warpper {
+    position: relative;
+    display: flex;
+    .chapter-content {
+      flex: 1;
+    }
+    .chapter-menu {
+      flex: 0 0 350px;
+    }
+  }
   .editorBtn {
     padding-bottom: 15px;
     button {
