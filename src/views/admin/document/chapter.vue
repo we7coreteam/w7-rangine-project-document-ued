@@ -5,7 +5,7 @@
         <p>{{ docName }}</p>
       </div>
       <el-input placeholder="请输入关键字搜索" v-model="filterText">
-        <i slot="suffix" class="el-input__icon el-icon-search" @click="searchDoc" style="color:#3296fa;"></i>
+        <i slot="suffix" class="el-input__icon el-icon-search" style="color:#3296fa;"></i>
       </el-input>
       <div class="icon-box">
         <el-tooltip class="item" effect="dark" content="新建文档" placement="bottom">
@@ -162,15 +162,6 @@ export default {
         .then(res => {
           this.docName = res.document.name
           this.chapters = res.catalog
-        })
-    },
-    searchDoc() {
-      this.$post('/admin/chapter/search ', {
-        document_id: this.$route.params.id,
-        keywords: this.keyword
-      })
-        .then(res => {
-           this.chapters = res
         })
     },
     readDoc() {
@@ -472,6 +463,9 @@ export default {
   margin-bottom: 35px;
   font-size:14px;
   color:#b6b5b5;
+  .el-tooltip {
+    cursor: pointer;
+  }
 }
 .w7-icon-fileFolder:after {
   content:url('~@/assets/img/fileFolder-small.png')

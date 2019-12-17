@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h3 class="page-head">
-      <router-link to='/admin/user'><i class="el-icon-arrow-left"></i>用户管理</router-link>/<span style="color:#3296fa;">{{$route.params.id ? '编辑用户' : '添加用户'}}</span>
+      <router-link to='/admin/user'><i class="el-icon-arrow-left"></i><span style="color:#4da4fb">用户管理</span></router-link>/<span>{{$route.params.id ? '编辑用户' : '添加用户'}}</span>
     </h3>
     <div class="title" v-if="!$route.params.id">
       <span class="active">1.添加成员</span>

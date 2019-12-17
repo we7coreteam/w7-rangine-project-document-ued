@@ -54,6 +54,7 @@
         :current-page.sync = "currentPage"
         :page-count="pageCount"
         :total="total"
+        :hide-on-single-page = "true"
       >
       </el-pagination>
     </div>
