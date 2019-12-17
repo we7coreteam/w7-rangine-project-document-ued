@@ -17,7 +17,7 @@
         <el-tooltip class="item" effect="dark" content="预览" placement="bottom">
           <i class="el-icon-view" @click="readDoc"></i>
         </el-tooltip>
-        <el-tooltip class="item" effect="dark" content="设置" placement="bottom">
+        <el-tooltip class="item" effect="dark" content="设置" placement="bottom" v-if="has_manage">
           <i class="el-icon-s-tools" @click="settingDoc"></i>
         </el-tooltip>
       </div>
@@ -115,6 +115,7 @@ export default {
   data() {
     return {
       docName: '',
+      has_manage: true,
       filterText: '',
       chapters: [],//目录树
       defaultProps: {
@@ -161,6 +162,7 @@ export default {
       })
         .then(res => {
           this.docName = res.document.name
+          this.has_manage = res.acl.has_manage
           this.chapters = res.catalog
         })
     },
