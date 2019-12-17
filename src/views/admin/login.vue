@@ -59,7 +59,7 @@ export default {
         }
       }
       this.$post('/common/auth/login', this.formData)
-        .then(res => {
+        .then(() => {
           let msg = this.$message('登录成功')
           setTimeout(() => {
             msg.close()
