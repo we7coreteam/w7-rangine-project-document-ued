@@ -267,9 +267,9 @@ export default {
             let newChild = res
             if(!this.addFirst) {
               let data = this.rightSelectNodeObj
-              // if (!data.children) {
-              //   this.$set(data, 'children', []);
-              // }
+              if (!data.children) {
+                this.$set(data, 'children', []);
+              }
               data.children.push(newChild)
             }else {
               this.chapters.push(newChild)
@@ -329,14 +329,16 @@ export default {
       }).catch(() => {
       })
     },
-    handleDrop(draggingNode, dropNode, dropType, ev) {
-      console.log('tree drop: ', dropNode.label, dropType);
-      console.log(ev)
-      this.$post('/admin/chapter/update', {
+    handleDrop(draggingNode, dropNode, dropType) {
+      console.log(dropNode, dropType)
+      this.$post('/admin/chapter/sort', {
         document_id: this.$route.params.id,
         chapter_id: draggingNode.data.id,
-        parent_id: dropType == 'inner' ? dropNode.data.id :dropNode.data.parent_id,
-        name: draggingNode.data.name
+        target: {
+          chapter_id: dropNode.data.id,
+          parent_id: dropNode.data.parent_id,
+          position: dropType
+        }
       })
         .then(() => {
           this.$message('修改成功！')
@@ -368,7 +370,6 @@ export default {
       })
         .then(res => {
           //去掉所有文档和最后一个children
-          // this.loopDoc(res.catalog)
           this.docChapters =  this.deleteA(this.deleteA(res.catalog))
         })
     },
@@ -385,24 +386,6 @@ export default {
         }
       }
       return arr
-    },
-    loopDoc(arr) {
-      for (let i = 0; i < arr.length; i++) {
-        if (arr[i].is_dir) {
-          let item = {
-            id: arr[i].id,
-            is_dir: arr[i].is_dir,
-            name: arr[i].name,
-            parent_id: arr[i].parent_id,
-          }
-          if(arr[i].children && arr[i].children.length) {
-            item.children = []
-            this.loopDoc(arr[i].children)
-          } else {
-            this.docChapters.push(item)
-          }
-        }
-      }
     },
     moveNode() {
       if(!this.moveDoc || !this.moveClass) {
@@ -430,10 +413,6 @@ export default {
 
 <style lang="scss" scoped>
 .w7-container {
-  width:100%;
-  margin: -30px;
-  padding:30px 40px 0 30px;
-  box-sizing:border-box;
   .w7-aside-chapter {
     border-left: solid 1px #eeeeee;
     border-right: solid 1px #eeeeee;

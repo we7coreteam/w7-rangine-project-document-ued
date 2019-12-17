@@ -10,15 +10,9 @@
             <i slot="suffix" class="el-input__icon el-icon-search" @click="searchDoc"></i>
           </el-input>
         </div>
-        <!-- <div class="demo-input-btn">
-          <el-button type="primary" @click="dialogDocInfoVisible = true">创建文档</el-button>
-        </div> -->
       </div>
       <div class="card-box"
         v-loading="loading"
-        element-loading-text="拼命加载中"
-        element-loading-spinner="el-icon-loading"
-        element-loading-background="rgba(0, 0, 0, 0.8)"
       >
         <div class="card-warpper">
           <div class="w7-card" :class="actClass+''+index%3"
@@ -230,9 +224,9 @@ export default {
   top:0;
   transition: 0.2s;
   &:hover{
-    box-shadow:0px 3px 18px 1px	rgba(194, 192, 192, 0.84);
     position: relative;
     top:-10px;
+    box-shadow:0px 3px 18px 1px	rgba(194, 192, 192, 0.84);
   }
   i:hover {
     cursor:pointer;
