@@ -15,10 +15,10 @@
             <el-input v-model="formData.username" ></el-input>
           </el-form-item>
           <el-form-item label="密码" prop="userpass">
-            <el-input v-model="formData.userpass" ></el-input>
+            <el-input v-model="formData.userpass" type="password"></el-input>
           </el-form-item>
           <el-form-item label="确认密码" prop="confirm_userpass">
-            <el-input v-model="formData.confirm_userpass" ></el-input>
+            <el-input v-model="formData.confirm_userpass" type="password"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">下一步</el-button>

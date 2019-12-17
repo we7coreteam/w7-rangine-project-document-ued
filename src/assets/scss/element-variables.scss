@@ -5,7 +5,9 @@ $--color-primary: #3296fa;
 $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
 @import "~element-ui/packages/theme-chalk/src/index";
-
+.container {
+  min-height: calc(100vh - 120px);
+}
 .el-button--text {
   padding: 0;
 }
