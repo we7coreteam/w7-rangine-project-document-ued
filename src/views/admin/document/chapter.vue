@@ -241,8 +241,8 @@ export default {
     },
     addChildNode(bool) {
       this.addFirst = false
-      if(this.rightSelectNode.level == 3) {
-        this.$message('当前属于第三级，不可以继续添加！')
+      if (this.rightSelectNode.level == 2 && bool) {
+        this.$message('第三级只能为文档！')
         return
       }
       this.dialogTitle = bool ? '新建目录' : '新建文档'
