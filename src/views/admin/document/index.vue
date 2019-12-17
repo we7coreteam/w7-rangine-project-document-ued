@@ -48,9 +48,9 @@
               </i>
             </div>
           </div>
-          <div class="w7-card add-btn">
+          <div class="w7-card add-btn" @click="dialogDocInfoVisible = true">
             新建项目
-            <div class="add-box" @click="dialogDocInfoVisible = true">
+            <div class="add-box">
               <i class="el-icon-circle-plus"></i>
             </div>
           </div>
@@ -224,12 +224,12 @@ export default {
   top:0;
   transition: 0.2s;
   &:hover{
+    cursor:pointer;
     position: relative;
     top:-10px;
     box-shadow:0px 3px 18px 1px	rgba(194, 192, 192, 0.84);
   }
   i:hover {
-    cursor:pointer;
     color: #606266;
   }
   .el-icon-lock:hover {
