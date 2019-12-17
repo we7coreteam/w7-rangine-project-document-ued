@@ -1,53 +1,55 @@
 <template>
-  <el-container class="home-container">
-    <el-aside class="w7-aside-home" width="350px">
-      <p class="w7-aside-home-head">目录</p>
-      <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text=""
-        ref="chaptersTree"
-        node-key="id"
-        :highlight-current="true"
-        :default-expanded-keys="expandIdArray"
-        @node-click="handleNodeClick">
-        <span class="custom-tree-node" slot-scope="{ node }">
-          <span>{{ node.label }}</span>
-        </span>
-      </el-tree>
-    </el-aside>
-    <el-main>
-      <div class="search">
-        <el-input placeholder="请输入关键字搜索" v-model="keyword">
-          <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
-        </el-input>
-      </div>
-      <div class="line" v-if="!articleFlag"></div>
-      <div class="content">
-        <div class="article" v-show="articleFlag">
-          <p class="title">{{ articleContent.name }}</p>
-          <p class="info">
-            <span v-show="articleContent.updated_at">更新时间：{{ articleContent.updated_at }}</span>
-            <span v-show="articleContent.username">作者：{{ articleContent.username }}</span>
-          </p>
-          <div :class="{'markdown-body': articleContent.layout == 1}" v-html="articleContent.content"></div>
-          <mavon-editor ref="mavonEditor" v-show="false"></mavon-editor>
+  <div class="chapter-warpper">
+    <el-container class="home-container">
+      <el-aside class="w7-aside-home" width="220px">
+        <p class="w7-aside-home-head">目录</p>
+        <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text=""
+          ref="chaptersTree"
+          node-key="id"
+          :highlight-current="true"
+          :default-expanded-keys="expandIdArray"
+          @node-click="handleNodeClick">
+          <span class="custom-tree-node" slot-scope="{ node }">
+            <span>{{ node.label }}</span>
+          </span>
+        </el-tree>
+      </el-aside>
+      <el-main>
+        <div class="search">
+          <el-input placeholder="请输入关键字搜索" v-model="keyword">
+            <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
+          </el-input>
         </div>
-        <div class="article-list" v-if="!articleFlag">
-          <el-button class="back" type="text" @click="articleFlag = !articleFlag">返回</el-button>
-          <p class="number-result">{{articleInfoList.length}}条结果"{{keyword}}"</p>
-          <div class="list-content" v-for="articleInfo in articleInfoList" v-bind:key="articleInfo.id" v-show="articleInfoList.length">
-            <div class="header">
-              <p class="title" v-html="articleInfo.name" @click="changeRoute(articleInfo.id, articleInfo.name, true)"></p>
-              <p class="info">
-                <span>作者：{{articleInfo.username}}</span>
-                <span>更新时间：{{articleInfo.updated_at}}</span>
-              </p>
-            </div>
-            <p class="content" v-html="articleInfo.content" @click="changeRoute(articleInfo.id, articleInfo.name, true)"></p>
+        <div class="line" v-if="!articleFlag"></div>
+        <div class="content">
+          <div class="article" v-show="articleFlag">
+            <p class="title">{{ articleContent.name }}</p>
+            <p class="info">
+              <span v-show="articleContent.updated_at">更新时间：{{ articleContent.updated_at }}</span>
+              <span v-show="articleContent.username">作者：{{ articleContent.username }}</span>
+            </p>
+            <div :class="{'markdown-body': articleContent.layout == 1}" v-html="articleContent.content"></div>
+            <mavon-editor ref="mavonEditor" v-show="false"></mavon-editor>
           </div>
-          <p class="no-result" v-if="!articleInfoList.length">没有找到相关内容"{{keyword}}"</p>
+          <div class="article-list" v-if="!articleFlag">
+            <el-button class="back" type="text" @click="articleFlag = !articleFlag">返回</el-button>
+            <p class="number-result">{{articleInfoList.length}}条结果"{{keyword}}"</p>
+            <div class="list-content" v-for="articleInfo in articleInfoList" v-bind:key="articleInfo.id" v-show="articleInfoList.length">
+              <div class="header">
+                <p class="title" v-html="articleInfo.name" @click="changeRoute(articleInfo.id, articleInfo.name, true)"></p>
+                <p class="info">
+                  <span>作者：{{articleInfo.username}}</span>
+                  <span>更新时间：{{articleInfo.updated_at}}</span>
+                </p>
+              </div>
+              <p class="content" v-html="articleInfo.content" @click="changeRoute(articleInfo.id, articleInfo.name, true)"></p>
+            </div>
+            <p class="no-result" v-if="!articleInfoList.length">没有找到相关内容"{{keyword}}"</p>
+          </div>
         </div>
-      </div>
-    </el-main>
-  </el-container>
+      </el-main>
+    </el-container>
+  </div>
 </template>
 
 <script>
@@ -209,10 +211,12 @@ export default {
 </script>
 
 <style lang="scss">
+.chapter-warpper {
+  background: linear-gradient(to right, #f7f8fa 50%, #ffffff 50%);
+}
 .home-container {
-  width: 90%;
-  max-width: 1600px;
-  margin: 50px auto 0;
+  width: 1200px;
+  margin: 0 auto;
   .w7-aside-home {
     background-color: #f7f8fa;
     border-right: #f1f2f3 1px solid;
@@ -240,6 +244,7 @@ export default {
   }
   .el-main {
     padding: 0;
+    background-color: #ffffff;
     .search {
       width: 100%;
       padding-bottom: 20px;
