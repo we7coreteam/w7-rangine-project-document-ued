@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     getDocumentName() {
-      this.$post('/client/document/detail', {
+      this.$post('/document/detail', {
         document_id: this.document_id
       })
         .then(res => {
@@ -80,7 +80,7 @@ export default {
         })
     },
     getChapters() {
-      this.$post('/client/chapters', {
+      this.$post('/document/chapter/list', {
         document_id: this.$route.params.id
       })
         .then(res => {
@@ -133,7 +133,7 @@ export default {
         document.title = name + '-'+ this.document_name
     },
     getArticle() {
-      this.$post('/client/detail', {
+      this.$post('/document/chapter/detail', {
         document_id: this.document_id,
         id: this.selectChapterId
       })

@@ -4,7 +4,7 @@
     <div class="chapter-date" v-show="!isEdit && chapterId">
       <p>
         <span v-if="chapterInfo.updated_at">更新时间：{{ chapterInfo.updated_at }}</span>
-        <span v-if="chapterInfo.username">作者：{{ chapterInfo.username }}</span>
+        <span v-if="chapterInfo.author">作者：{{ chapterInfo.author.username }}</span>
       </p>
       <button @click="edit">编辑</button>
     </div>
@@ -64,9 +64,18 @@ export default {
       layout: 1 //1 markdown 2 富文本
     }
   },
+  watch: {
+    chapterId() {
+      this.init()
+    }
+  },
+  mounted() {
+    this.init()
+  },
   methods: {
     init() {
-      this.$post('/admin/chapter/get_content', {
+      this.$post('/admin/chapter/content', {
+        document_id: this.$route.params.id,
         chapter_id: this.chapterId
       }).then(res => {
         this.isEdit = this.clickSum == 1 ? true : false
@@ -95,12 +104,14 @@ export default {
       // 第一步.将图片上传到服务器.
       var formdata = new FormData()
       formdata.append('file', $file)
+      formdata.append('document_id', this.$route.params.id)
+      formdata.append('chapter_id', this.chapterId)
       this.$post('/admin/upload/image', formdata, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
         .then(res => {
           // 第二步.将返回的url替换到文本原位置![...](0) -> ![...](url)
-          this.$refs.mavonEditor.$img2Url(pos, res.url)
+          this.$refs.mavonEditor.$img2Url(pos, res.data.url)
         })
         .catch(function(error) {
           console.log('发生错误！', error)
@@ -116,35 +127,29 @@ export default {
       }
     },
     save() {
-      this.$post('/admin/chapter/save_content', {
+      this.$post('/admin/chapter/save', {
+        document_id: this.$route.params.id,
         chapter_id: this.chapterId,
         layout: this.layout,
         content: this.layout == 1 ? this.contentMd : this.content
-      }).then(res => {
+      }).then(() => {
         this.$message('保存成功！')
-        this.chapterInfo = res
-        if (this.chapterInfo.layout == 1) {
-          this.content = this.$refs.mavonEditor.markdownIt.render(res.content)
-          this.contentMd = res.content
-        } else if (this.chapterInfo.layout == 2) {
-          this.content = res.content
-        }
+        // this.chapterInfo = res
+        // if (this.chapterInfo.layout == 1) {
+        //   this.content = this.$refs.mavonEditor.markdownIt.render(res.content)
+        //   this.contentMd = res.content
+        // } else if (this.chapterInfo.layout == 2) {
+        //   this.content = res.content
+        // }
       })
     },
     back() {
-      this.isEdit = false
-      if (this.chapterInfo.layout == 1) {
-        this.content = this.$refs.mavonEditor.markdownIt.render(this.contentMd)
-      }
-    }
-  },
-  watch: {
-    chapterId() {
       this.init()
+      this.isEdit = false
+      // if (this.chapterInfo.layout == 1) {
+      //   this.content = this.$refs.mavonEditor.markdownIt.render(this.contentMd)
+      // }
     }
-  },
-  mounted() {
-    this.init()
   }
 }
 </script>
