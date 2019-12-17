@@ -36,8 +36,8 @@
           <el-table-column prop="acl.name" label="身份"></el-table-column>
           <el-table-column align="right">
             <template slot-scope="scope">
-              <el-button type="text" @click="openEditManage(scope.row)" v-if="details.acl.has_manage">编辑</el-button>
-              <el-button type="text" @click="removeManage(scope.row.id)" v-if="details.acl.has_manage">删除</el-button>
+              <el-button type="text" @click="openEditManage(scope.row)" v-if="details.acl.has_manage && scope.row.acl.role != 1">编辑</el-button>
+              <el-button type="text" @click="removeManage(scope.row.id)" v-if="details.acl.has_manage && scope.row.acl.role != 1">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
