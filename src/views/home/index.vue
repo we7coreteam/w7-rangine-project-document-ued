@@ -118,6 +118,7 @@ export default {
         })
     },
     handleNodeClick(obj) {
+      console.log(obj)
       this.changeRoute(obj.id, obj.name)
     },
     changeRoute(id, name, handSelectNode) {
