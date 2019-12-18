@@ -22,30 +22,15 @@
               {{item.name}}
             </div>
             <div class="icon-box">
-              <i class="el-icon-lock" v-if="item.has_read">
-                <div class="pos-box">
-                  <div class="arr-box">
-                    <div class="arrow"></div>
-                    <span>私有</span>
-                  </div>
-                </div>
-              </i>
-              <i class="el-icon-view" @click.stop="readDoc(item.id)">
-                <div class="pos-box">
-                  <div class="arr-box">
-                    <div class="arrow"></div>
-                    <span>预览</span>
-                  </div>
-                </div>
-              </i>
-              <i class="el-icon-s-tools" v-if="item.acl.has_manage" @click.stop="settingDoc(item.id)">
-                <div class="pos-box">
-                  <div class="arr-box">
-                    <div class="arrow"></div>
-                    <span>设置</span>
-                  </div>
-                </div>
-              </i>
+              <el-tooltip class="item" effect="dark" content="私有" placement="bottom" v-if="item.has_read">
+                <i class="el-icon-lock"></i>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="预览" placement="bottom">
+                <i class="el-icon-view" @click.stop="readDoc(item.id)"></i>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="设置" placement="bottom" v-if="item.acl.has_manage">
+                <i class="el-icon-s-tools" @click.stop="settingDoc(item.id)"></i>
+              </el-tooltip>
             </div>
           </div>
           <div class="w7-card add-btn" @click="dialogDocInfoVisible = true">

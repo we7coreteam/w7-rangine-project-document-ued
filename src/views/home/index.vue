@@ -88,38 +88,39 @@ export default {
         .then(res => {
           if(!res.length) {return}
           this.chapters = res
-          this.$nextTick(() => {
-            if (this.$route.query.id) {
-              //F5刷新
-              this.selectChapterId = this.$route.query.id
-              //递归找name
-              let name = '';
-              let getName = function (array, id) {
-                array.forEach(chapters => {
-                  if (!chapters.children.length) {
-                    getName(chapters.children)
-                  }
-                  if (chapters.id == id) {
-                    name = chapters.name
-                    return
-                  }
-                })
-              }
-              getName(this.chapters, this.selectChapterId)
-              this.selectNode(this.selectChapterId)
-              document.title = name + ' — '+ this.document_name
-              this.getArticle()
-            } else {
-              //tree默认选中第一个
-              this.selectChapterId = this.chapters[0].id
-              this.changeRoute(this.selectChapterId, this.chapters[0].name, true)
-            }
-          })
+          // this.$nextTick(() => {
+          //   if (this.$route.query.id) {
+          //     //F5刷新
+          //     this.selectChapterId = this.$route.query.id
+          //     //递归找name
+          //     let name = '';
+          //     let getName = function (array, id) {
+          //       array.forEach(chapters => {
+          //         if (!chapters.children.length) {
+          //           getName(chapters.children)
+          //         }
+          //         if (chapters.id == id) {
+          //           name = chapters.name
+          //           return
+          //         }
+          //       })
+          //     }
+          //     getName(this.chapters, this.selectChapterId)
+          //     this.selectNode(this.selectChapterId)
+          //     document.title = name + ' — '+ this.document_name
+          //     this.getArticle()
+          //   } else {
+          //     //tree默认选中第一个
+          //     this.selectChapterId = this.chapters[0].id
+          //     this.changeRoute(this.selectChapterId, this.chapters[0].name, true)
+          //   }
+          // })
         })
     },
     handleNodeClick(obj) {
-      console.log(obj)
-      this.changeRoute(obj.id, obj.name)
+      if (!obj.is_dir) {
+        this.changeRoute(obj.id, obj.name)
+      }
     },
     changeRoute(id, name, handSelectNode) {
         if(id == this.$route.query.id) {

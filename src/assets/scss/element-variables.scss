@@ -190,3 +190,7 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
       }
   }
 }
+.el-tooltip__popper {
+  border-radius: 0;
+  padding: 4px;
+}
