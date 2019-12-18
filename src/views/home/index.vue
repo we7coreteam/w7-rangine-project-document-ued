@@ -227,7 +227,7 @@ export default {
       padding: 48px 0 48px 40px;
     }
     .w7-tree {
-      font-size: 17px;
+      font-size: 14px;
       background: #f7f8fa;
       .el-tree-node__content {
         padding-top: 10px !important;
