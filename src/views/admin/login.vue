@@ -142,8 +142,7 @@ export default {
         border-top: 0;
         padding: 0;
         img {
-          width: 62px;
-          height: 32px;
+          width: 120px;
           cursor: pointer;
         }
       }
