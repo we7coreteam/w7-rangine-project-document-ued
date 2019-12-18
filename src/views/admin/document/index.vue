@@ -22,18 +22,18 @@
               {{item.name}}
             </div>
             <div class="icon-box">
-              <el-tooltip class="item" effect="dark" content="私有" placement="bottom" v-if="item.has_read">
-                <i class="el-icon-lock"></i>
+              <el-tooltip effect="dark" content="私有" placement="bottom" v-if="item.has_read">
+                <i class="wi wi-lock"></i>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="预览" placement="bottom">
-                <i class="el-icon-view" @click.stop="readDoc(item.id)"></i>
+              <el-tooltip effect="dark" content="预览" placement="bottom">
+                <i class="wi wi-view" @click.stop="readDoc(item.id)"></i>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="设置" placement="bottom" v-if="item.acl.has_manage">
-                <i class="el-icon-s-tools" @click.stop="settingDoc(item.id)"></i>
+              <el-tooltip effect="dark" content="设置" placement="bottom" v-if="item.acl.has_manage">
+                <i class="wi wi-tools" @click.stop="settingDoc(item.id)"></i>
               </el-tooltip>
             </div>
           </div>
-          <div class="w7-card add-btn" @click="dialogDocInfoVisible = true">
+          <div class="w7-card add-btn"  @click="dialogDocInfoVisible = true">
             新建项目
             <div class="add-box">
               <i class="el-icon-circle-plus"></i>

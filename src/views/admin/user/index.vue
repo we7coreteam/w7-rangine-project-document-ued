@@ -13,7 +13,9 @@
         <router-link to="user/create" type="button" class="el-button el-button--primary">创建用户</router-link>
       </div>
     </div>
-    <el-table class="w7-table" :data="userList" ref="multipleTable" :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
+    <el-table class="w7-table" :data="userList" ref="multipleTable"
+      :header-cell-style="{background:'#f7f9fc',color:'#606266'}"
+      empty-text="没有与搜索条件匹配的项">
       <el-table-column label="账号" prop="username"></el-table-column>
       <el-table-column label="添加时间" prop="created_at" sortable column-key="date">
         <template slot-scope="scope">

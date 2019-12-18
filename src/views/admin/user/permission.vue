@@ -27,17 +27,17 @@
         <template slot-scope="scope">
             <el-radio-group v-model="scope.row.cur_role" class="ownership">
               <template v-for="item in scope.row.role_list">
-                <el-tooltip class="item" effect="dark" content="可管理成员、阅读和编辑文档" placement="bottom"
+                <el-tooltip effect="dark" content="可管理成员、阅读和编辑文档" placement="bottom"
                   v-if="item.id == 1"
                   :key="item.id">
                     <el-radio :label="1">{{item.name}}</el-radio>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="可阅读和编辑文档" placement="bottom"
+                <el-tooltip effect="dark" content="可阅读和编辑文档" placement="bottom"
                   v-if="item.id == 2"
                   :key="item.id">
                     <el-radio :label="2">{{item.name}}</el-radio>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="仅可以阅读" placement="bottom"
+                <el-tooltip effect="dark" content="仅可以阅读" placement="bottom"
                   v-if="item.id == 3"
                   :key="item.id">
                     <el-radio :label="3">{{item.name}}</el-radio>

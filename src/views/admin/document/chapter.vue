@@ -8,20 +8,20 @@
         <i slot="suffix" class="el-input__icon el-icon-search" style="color:#3296fa;"></i>
       </el-input>
       <div class="icon-box">
-        <el-tooltip class="item" effect="dark" content="新建文档" placement="bottom">
-          <i class="el-icon-document" @click="clickIconAddNode(false)"></i>
+        <el-tooltip effect="dark" content="新建文档" placement="bottom">
+          <i class="wi wi-document" @click="clickIconAddNode(false)"></i>
         </el-tooltip>
-        <el-tooltip class="item" effect="dark" content="新建目录" placement="bottom">
-          <i class="el-icon-wallet" @click="clickIconAddNode(true)"></i>
+        <el-tooltip effect="dark" content="新建目录" placement="bottom">
+          <i class="wi wi-folder" @click="clickIconAddNode(true)"></i>
         </el-tooltip>
-        <el-tooltip class="item" effect="dark" content="预览" placement="bottom">
-          <i class="el-icon-view" @click="readDoc"></i>
+        <el-tooltip effect="dark" content="预览" placement="bottom">
+          <i class="wi wi-view" @click="readDoc"></i>
         </el-tooltip>
-        <el-tooltip class="item" effect="dark" content="设置" placement="bottom" v-if="has_manage">
-          <i class="el-icon-s-tools" @click="settingDoc"></i>
+        <el-tooltip effect="dark" content="设置" placement="bottom" v-if="has_manage">
+          <i class="wi wi-tools" @click="settingDoc"></i>
         </el-tooltip>
       </div>
-      <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text=""
+      <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text="没有与搜索条件匹配的项"
         ref="chaptersTree"
         node-key="id"
         :expand-on-click-node="true"
@@ -35,8 +35,8 @@
         :allow-drop="allowDrop">
         <span class="custom-tree-node" slot-scope="{ node, data }">
           <span>
-            <i class="w7-icon-fileFolder" v-if="data.is_dir == 1"></i>
-            <i class="el-icon-document" v-if="data.is_dir == 0"></i>
+            <i class="wi wi-folder" v-if="data.is_dir == 1"></i>
+            <i class="wi wi-document" v-if="data.is_dir == 0"></i>
             <span style="margin-left:10px;">{{ node.label }}</span>
           </span>
           <span class="point3" @mousemove='updateXY' @click.stop="rightClick(false, data, node)"><span>...</span></span>
@@ -464,8 +464,11 @@ export default {
       }
     }
   }
-  .el-icon-document {
+  .wi-document {
     color: #3296fa;
+  }
+  .wi-folder {
+    color: #ffcd2c;
   }
 }
 .icon-box{
@@ -478,8 +481,5 @@ export default {
   .el-tooltip {
     cursor: pointer;
   }
-}
-.w7-icon-fileFolder:after {
-  content:url('~@/assets/img/fileFolder-small.png')
 }
 </style>
