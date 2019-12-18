@@ -101,6 +101,14 @@ export default {
         } else if (res.layout == 2) {
           this.layout = 2
           this.content = res.content
+        } else {
+          this.chapterInfo = {
+            updated_at: '',
+            username: '',
+            layout: 1
+          }
+          this.content = ''
+          this.contentMd = ''
         }
       })
     },

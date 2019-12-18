@@ -118,7 +118,10 @@ export default {
         })
     },
     handleNodeClick(obj) {
-      if (!obj.is_dir) {
+      if (obj.is_dir) {
+        console.log()
+        //跳到默认文档
+      } else {
         this.changeRoute(obj.id, obj.name)
       }
     },
@@ -267,7 +270,8 @@ export default {
     .content {
       font-size: 14px;
       color: #333333;
-      margin-left: 50px;
+      padding-top: 48px;
+      padding-left: 50px;
       .article {
         .title {
           font-size: 20px;

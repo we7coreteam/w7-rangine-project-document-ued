@@ -42,14 +42,18 @@ export default {
       this.isNotRead = this.$route.name == 'homeChild' ? false : true
     },
     exit() {
-      this.$router.push({
-        name: 'adminLogin'
-      })
-      //清除cookie
-      var d = new Date()
-      d.setTime(d.getTime() + -1 * 24 * 60 * 60 * 1000)
-      var expires = 'expires=' + d.toUTCString()
-      document.cookie = 'PHPSESSID' + '=' + '' + '; ' + expires + '; path=/' //path=/是根路径
+      this.$post('/common/auth/logout')
+        .then(() => {
+          this.$router.push({
+            name: 'adminLogin'
+          })
+          //清除cookie
+          // var d = new Date()
+          // d.setTime(d.getTime() + -1 * 24 * 60 * 60 * 1000)
+          // var expires = 'expires=' + d.toUTCString()
+          // document.cookie = 'PHPSESSID' + '=' + '' + '; ' + expires + '; path=/' //path=/是根路径
+        }).catch(() => {
+        })
     }
   },
   computed: {

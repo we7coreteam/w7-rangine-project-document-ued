@@ -52,7 +52,7 @@
             <li class="menu__item" @click="removeNode">删除</li>
           </template>
           <template v-if="rightSelectNodeObj.is_dir == 0">
-            <!-- <li class="menu__item" @click="">设为目录默认文档</li> -->
+            <li class="menu__item" @click="defaultFile">设为目录默认文档</li>
             <li class="menu__item" @click="updateNode(false)">重命名</li>
             <!-- <li class="menu__item" @click="openMoveDialog(false)">移动</li> -->
             <!-- <li class="menu__item" @click="">权限</li> -->
@@ -399,6 +399,16 @@ export default {
       })
         .then(() => {
           this.$message('修改成功！')
+        })
+    },
+    defaultFile() {
+      this.$post('/admin/document/default-show', {
+        document_id: this.$route.params.id,
+        chapter_id: this.rightSelectNodeObj.parent_id,
+        show_chapter_id: this.rightSelectNodeObj.id
+      })
+        .then(() => {
+          this.$message('设置默认文档成功！')
         })
     }
   }

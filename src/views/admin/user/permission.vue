@@ -27,7 +27,7 @@
         <template slot-scope="scope">
             <el-radio-group v-model="scope.row.cur_role" class="ownership">
               <template v-for="item in scope.row.role_list">
-                <el-tooltip class="item" effect="dark" content="仅可以阅读" placement="bottom"
+                <el-tooltip class="item" effect="dark" content="可管理成员、阅读和编辑文档" placement="bottom"
                   v-if="item.id == 1"
                   :key="item.id">
                     <el-radio :label="1">{{item.name}}</el-radio>
@@ -37,7 +37,7 @@
                   :key="item.id">
                     <el-radio :label="2">{{item.name}}</el-radio>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="可管理成员、阅读和编辑文档" placement="bottom"
+                <el-tooltip class="item" effect="dark" content="仅可以阅读" placement="bottom"
                   v-if="item.id == 3"
                   :key="item.id">
                     <el-radio :label="3">{{item.name}}</el-radio>
@@ -50,7 +50,7 @@
           <p>暂无可以查看管理的文档</p>
         </div>
     </el-table>
-    <div class="get-more" v-if="currentPage != pageCount">
+    <div class="get-more" v-if="currentPage != pageCount && pageCount > 1">
       <el-button type="text" @click="getMore">点击加载更多</el-button>
     </div>
     <div class="btns">
@@ -123,7 +123,7 @@ export default {
           } else {
             this.docList = res.data
           }
-          this.pageCount = res.pageCount
+          this.pageCount = res.page_count
           this.total = res.total
         })
     },
@@ -137,14 +137,18 @@ export default {
           })
         }
       }
-      this.$post('/admin/user/batch-update-permission',{
-        user_id: this.user_id,
-        document_permission: document_permission
-      })
-        .then(() => {
-          this.$message('保存成功！')
-          this.$router.push('/admin/user')
+      if (document_permission.length) {
+        this.$post('/admin/user/batch-update-permission',{
+          user_id: this.user_id,
+          document_permission: document_permission
         })
+          .then(() => {
+            this.$message('保存成功！')
+            this.$router.push('/admin/user')
+          })
+      } else {
+        this.$router.push('/admin/user')
+      }
     },
     editAll() {
       let rows = this.$refs.multipleTable.selection

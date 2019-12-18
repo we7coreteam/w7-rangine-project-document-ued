@@ -206,7 +206,7 @@ export default {
       this.$post('/admin/document/operator',{
         user_name: this.addManageName,
         document_id: this.id,
-        permission : 2,
+        permission : this.radio,
       })
         .then(() => {
           this.getdetails()

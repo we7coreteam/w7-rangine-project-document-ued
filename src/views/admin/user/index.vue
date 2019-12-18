@@ -149,8 +149,8 @@ export default {
           this.$post('/admin/user/delete-by-ids',{
             ids: id
           })
-            .then(() => {
-              this.$message('删除成功！')
+            .then(res => {
+              this.$message(res)
               this.getuserlist()
               this.selectRowID = ''
             })
