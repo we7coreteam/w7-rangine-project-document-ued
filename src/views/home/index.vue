@@ -15,11 +15,11 @@
         </el-tree>
       </el-aside>
       <el-main>
-        <div class="search">
+        <!-- <div class="search">
           <el-input placeholder="请输入关键字搜索" v-model="keyword" @keyup.enter.native="search">
             <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
           </el-input>
-        </div>
+        </div> -->
         <div class="line" v-if="!articleFlag"></div>
         <div class="content">
           <div class="article" v-show="articleFlag">
