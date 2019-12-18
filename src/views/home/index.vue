@@ -16,7 +16,7 @@
       </el-aside>
       <el-main>
         <div class="search">
-          <el-input placeholder="请输入关键字搜索" v-model="keyword">
+          <el-input placeholder="请输入关键字搜索" v-model="keyword" @keyup.enter.native="search">
             <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
           </el-input>
         </div>
@@ -159,7 +159,7 @@ export default {
         this.$message('搜索关键字不能为空！')
         return
       }
-      this.$post('/client/search', {
+      this.$post('/document/chapter/search', {
         document_id: this.$route.params.id,
         keywords: this.keyword
       })
