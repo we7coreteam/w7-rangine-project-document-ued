@@ -9,7 +9,8 @@
           :highlight-current="true"
           :expand-on-click-node="false"
           :default-expanded-keys="expandIdArray"
-          @node-click="handleNodeClick">
+          @node-click="handleNodeClick"
+          @node-expand="handleNodeExpand">
           <span class="custom-tree-node" v-if="node.label" :class="{doc: !data.is_dir}" slot-scope="{ node, data }">
             <span >{{ node.label }}</span>
           </span>
@@ -137,13 +138,15 @@ export default {
         })
     },
     handleNodeClick(obj) {
-      if (obj.is_dir) {
-        //default_show_chapter_id大于0 则表明有默认文档
-        if (obj.default_show_chapter_id) {
-          this.selectNode(obj.id)
-        }
-      } else {
+      if (!obj.is_dir) {
         this.changeRoute(obj.id, obj.name)
+      }
+    },
+    handleNodeExpand(obj) {
+      //若default_show_chapter_id大于0 则表明有默认文档
+      if (obj.default_show_chapter_id) {
+        this.selectNode(obj.default_show_chapter_id)
+        this.changeRoute(obj.default_show_chapter_id, obj.name)
       }
     },
     changeRoute(id, name, handSelectNode) {
@@ -167,17 +170,9 @@ export default {
       })
         .then(res => {
           this.articleContent = res
-          this.articleContent.content = this.$refs.mavonEditor.markdownIt.render('@[toc]( )\n' + res.content)
+          this.articleContent.content = this.$refs.mavonEditor.markdownIt.render('<div class="markdown-content">\n \n'+res.content+'>\n \n</div>' + '<div class="markdown-menu">\n \n @[toc]( ) \n \n</div>\n \n' )
           this.articleFlag = true
-          this.menuStyle()
         })
-    },
-    //toc目录样式修改
-    menuStyle() {
-      //[title~=flower]
-      // let a = document.querySelector(a[href~="#"])
-
-      // console.log(a)
     },
     selectNode(id) {
       this.$refs.chaptersTree.setCurrentKey(id)
@@ -326,8 +321,46 @@ export default {
     .warpper {
       font-size: 14px;
       color: #333333;
-      padding-top: 48px;
-      padding-left: 50px;
+      margin-top: 48px;
+      margin-left: 50px;
+      .markdown-body {
+        display: flex;
+        .markdown-content {
+          flex: 1;
+        }
+        .markdown-menu {
+          margin-left: 20px;
+          width: 200px;
+          font-size: 14px;
+          line-height: 1;
+          border-left: #eeeeee 1px solid;
+          p:first-child, h3 {
+            margin-top: 0;
+            margin-bottom: 0;
+            font-size: 0;
+          }
+          ul, li {
+            list-style: none;
+            padding: 0;
+          }
+          ul {
+            padding-left: 20px;
+          }
+          li {
+            padding: 15px 0;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+          a {
+            color: #989898;
+            &:hover {
+              color: #3296fa;
+              text-decoration: none;
+            }
+          }
+        }
+      }
       .article {
         .title {
           font-size: 20px;
