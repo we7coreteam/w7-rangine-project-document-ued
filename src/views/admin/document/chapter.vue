@@ -399,12 +399,14 @@ export default {
         document_id: this.$route.params.id,
         chapter_id: this.rightSelectNodeObj.id,
         target: {
-          document_id: id,
+          document_id: this.moveDoc,
+          chapter_id: id,
           position: 'move'
         }
       })
         .then(() => {
           this.$message('移动成功！')
+          this.dialogMoveVisible = false
           this.getChapters()
         })
     },

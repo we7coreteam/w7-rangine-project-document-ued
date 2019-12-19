@@ -22,7 +22,7 @@
           </el-input>
         </div> -->
         <div class="line" v-if="!articleFlag"></div>
-        <div class="content">
+        <div class="warpper">
           <div class="article" v-show="articleFlag">
             <p class="title">{{ articleContent.name }}</p>
             <p class="info">
@@ -72,7 +72,7 @@ export default {
         author:{}
       },
       articleInfoList: []
-      }
+    }
   },
   watch: {
     $route: {
@@ -125,9 +125,9 @@ export default {
               document.title = name + ' — '+ this.document_name
               this.getArticle()
             } else {
-              //判断第一级有没有默认文档,有则选中
+              //判断第一级是否有默认文档,有则选中
               res.forEach(item => {
-                if (item.default_show_chapter_id > 0 && item.default_show_chapter_id == item.id) {
+                if (item.default_show_chapter_id && item.default_show_chapter_id == item.id) {
                   this.selectChapterId = item.id
                   this.changeRoute(this.selectChapterId, item.name, true)
                 }
@@ -138,7 +138,10 @@ export default {
     },
     handleNodeClick(obj) {
       if (obj.is_dir) {
-        //跳到默认文档
+        //default_show_chapter_id大于0 则表明有默认文档
+        if (obj.default_show_chapter_id) {
+          this.selectNode(obj.id)
+        }
       } else {
         this.changeRoute(obj.id, obj.name)
       }
@@ -169,6 +172,7 @@ export default {
           this.menuStyle()
         })
     },
+    //toc目录样式修改
     menuStyle() {
       //[title~=flower]
       // let a = document.querySelector(a[href~="#"])
@@ -319,7 +323,7 @@ export default {
     .line{
       border-bottom: solid 1px #eeeeee;
     }
-    .content {
+    .warpper {
       font-size: 14px;
       color: #333333;
       padding-top: 48px;
