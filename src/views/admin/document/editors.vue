@@ -6,18 +6,14 @@
         <span v-if="chapterInfo.updated_at">更新时间：{{ chapterInfo.updated_at }}</span>
         <span v-if="chapterInfo.author">作者：{{ chapterInfo.author.username }}</span>
       </p>
-      <button @click="edit">编辑</button>
+      <button @click="isEdit = true">编辑</button>
     </div>
     <div class="editors">
       <div class="chapter-warpper">
-        <div class="chapter-content" :class="{'markdown-body': layout == 1}" v-html="content" v-show="!isEdit"></div>
+        <div class="chapter-content markdown-body" v-html="content" v-show="!isEdit"></div>
         <div class="chapter-menu" v-if="showMenu"></div>
       </div>
-      <div class="editorBtn" v-show="isEdit">
-        <el-button :type="layout == 1 ? 'primary' : ''" @click="layout = 1">Markdown编辑器</el-button>
-        <el-button :type="layout == 2 ? 'primary' : ''" @click="layout = 2">UEditor编辑器</el-button>
-      </div>
-      <div class="mavon-editor" v-show="isEdit && layout == 1">
+      <div class="mavon-editor" v-show="isEdit">
         <mavon-editor
           ref="mavonEditor"
           :boxShadow="false"
@@ -31,40 +27,25 @@
         >
         </mavon-editor>
       </div>
-      <div v-show="isEdit && layout == 2">
-        <vue-ueditor-wrap v-model="content" :config="config"></vue-ueditor-wrap>
-      </div>
       <el-button class="saveBtn" type="primary" @click="save" v-if="isEdit">保存</el-button>
-      <el-button class="backBtn" @click="back" v-if="isEdit">返回</el-button>
+      <el-button class="backBtn" @click="isEdit = false" v-if="isEdit">返回</el-button>
     </div>
   </div>
 </template>
 
 <script>
-import VueUeditorWrap from 'vue-ueditor-wrap'
 export default {
-  props: ['chapterId', 'chapterName', 'clickSum'],
-  components: {
-    VueUeditorWrap
-  },
+  props: ['chapterId', 'chapterName'],
   data() {
     return {
       code_style:"tomorrow-night-blue",
       chapterInfo: {
         updated_at: '',
-        username: '',
-        layout: 1
+        username: ''
       },
       isEdit: false,
-      config: {
-        autoHeightEnabled: false, // 编辑器不自动被内容撑高
-        initialFrameHeight: '400', // 初始容器高度
-        initialFrameWidth: '100%', // 初始容器宽度
-        serverUrl: '/admin/upload/image?document_id='+this.$route.params.id+'&chapter_id='+this.chapterId // 上传文件接口
-      },
       content: '', //最终显示的html
       contentMd: '', //md格式的内容
-      layout: 1, //1 markdown 2 富文本
       showMenu: false//是否显示菜单div
     }
   },
@@ -82,34 +63,14 @@ export default {
         document_id: this.$route.params.id,
         chapter_id: this.chapterId
       }).then(res => {
-        this.isEdit = this.clickSum == 1 ? true : false
-        if (!res) {
-          this.chapterInfo = {
-            updated_at: '',
-            username: '',
-            layout: 1
-          }
-          this.content = ' '
-          this.contentMd = ' '
+        if (!res.content) {
+          this.content = ''
+          this.contentMd = ''
           return
         }
         this.chapterInfo = res
-        if (res.layout == 1) {
-          this.layout = 1
-          this.content = this.$refs.mavonEditor.markdownIt.render(res.content)
-          this.contentMd = res.content
-        } else if (res.layout == 2) {
-          this.layout = 2
-          this.content = res.content
-        } else {
-          this.chapterInfo = {
-            updated_at: '',
-            username: '',
-            layout: 1
-          }
-          this.content = ''
-          this.contentMd = ''
-        }
+        this.content = this.$refs.mavonEditor.markdownIt.render(res.content)
+        this.contentMd = res.content
       })
     },
     $imgAdd(pos, $file) {
@@ -129,38 +90,15 @@ export default {
           console.log('发生错误！', error)
         })
     },
-    edit() {
-      this.isEdit = !this.isEdit
-      if (this.layout == 1) {
-        this.content = ''
-      }
-      if (this.layout == 2) {
-        this.contentMd = ''
-      }
-    },
     save() {
       this.$post('/admin/chapter/save', {
         document_id: this.$route.params.id,
         chapter_id: this.chapterId,
-        layout: this.layout,
-        content: this.layout == 1 ? this.contentMd : this.content
+        content: this.contentMd
       }).then(() => {
         this.$message('保存成功！')
-        // this.chapterInfo = res
-        // if (this.chapterInfo.layout == 1) {
-        //   this.content = this.$refs.mavonEditor.markdownIt.render(res.content)
-        //   this.contentMd = res.content
-        // } else if (this.chapterInfo.layout == 2) {
-        //   this.content = res.content
-        // }
+        this.init()
       })
-    },
-    back() {
-      this.init()
-      this.isEdit = false
-      // if (this.chapterInfo.layout == 1) {
-      //   this.content = this.$refs.mavonEditor.markdownIt.render(this.contentMd)
-      // }
     }
   }
 }
@@ -208,29 +146,12 @@ export default {
       flex: 0 0 350px;
     }
   }
-  .editorBtn {
-    padding-bottom: 15px;
-    button {
-      height: 35px;
-      padding: 9px 20px;
-      // background-color: #ddedfd;
-      border-radius: 2px;
-      // border: solid 1px #3296fa;
-      cursor: pointer;
-      &:hover {
-        color: #fff;
-        background-color: #409eff;
-        border-color: #409eff;
-      }
-    }
-  }
   .mavon-editor {
     .v-note-wrapper {
       height: 500px;
     }
   }
-  .saveBtn,
-  .backBtn {
+  .saveBtn, .backBtn {
     margin-top: 10px;
     margin-right: 10px;
     height: 34px;
@@ -243,14 +164,11 @@ export default {
 }
 .hljs{
   background:#eee!important;
-  // color:#fff!important;
 }
 .markdown-body code{
   background-color:#eee!important;
-  // color:#fff;
 }
 .markdown-body .highlight pre, .markdown-body pre{
   background-color:#eee!important;
-  // color:#fff;
 }
 </style>
