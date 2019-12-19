@@ -281,6 +281,9 @@ export default {
           padding-left: 60px;
           z-index: 1;
           height: 26px;
+          &:hover {
+            color: #3296fa;
+          }
           &.doc {
             z-index: 3;
           }
