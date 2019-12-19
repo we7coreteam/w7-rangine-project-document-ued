@@ -3,13 +3,15 @@
     <el-container class="home-container">
       <el-aside class="w7-aside-home" width="220px">
         <p class="w7-aside-home-head">目录</p>
-        <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text=""
+        <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text="1231"
           ref="chaptersTree"
           node-key="id"
+          :highlight-current="true"
+          :expand-on-click-node="false"
           :default-expanded-keys="expandIdArray"
           @node-click="handleNodeClick">
-          <span class="custom-tree-node" slot-scope="{ node }">
-            <span>{{ node.label }}</span>
+          <span class="custom-tree-node" v-if="node.label" :class="{doc: !data.is_dir}" slot-scope="{ node, data }">
+            <span >{{ node.label }}</span>
           </span>
         </el-tree>
       </el-aside>
@@ -98,6 +100,19 @@ export default {
       })
         .then(res => {
           if(!res.length) {return}
+          res.forEach(item => {
+            if(item.is_dir && item.children.length == 0) {
+              item.children.push({is_dir: false})
+            } else {
+              item.children.forEach(child => {
+                if(child.is_dir && child.children.length == 0) {
+                  child.children.push({
+                    is_dir: false
+                  })
+                }
+              })
+            }
+          })
           this.chapters = res
           // this.$nextTick(() => {
           //   if (this.$route.query.id) {
@@ -129,12 +144,11 @@ export default {
         })
     },
     handleNodeClick(obj) {
-      console.log(this.$refs.chaptersTree.$el.getElementsByClassName("is-current")[0].className)
       // let ClassName = this.$refs.chaptersTree.$el.getElementsByClassName("is-current")[0].className
       // let newClassName = ClassName + ' is-current-dir'
       // this.$refs.chaptersTree.$el.getElementsByClassName("is-current")[0].className = newClassName
       if (obj.is_dir) {
-        console.log()
+        console.log(1231)
         //跳到默认文档
       } else {
         this.changeRoute(obj.id, obj.name)
@@ -236,10 +250,47 @@ export default {
       font-size: 14px;
       background: #f7f8fa;
       .el-tree-node__content {
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
+        position: relative;
+        height: auto;
+        overflow: hidden;
         .el-tree-node__expand-icon {
-          margin-left: 40px;
+          padding: 0;
+          padding-left: 40px;
+          width: 100%;
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          z-index: 2;
+          display: inline-block;
+          &::before {
+            top: 50%;
+            transform: translateY(-50%);
+            margin-top: -3px;
+            position: absolute;
+          }
+          &.expanded {
+            transform: unset;
+            &::before {
+              content: '\e790';
+            }
+          }
+        }
+        .custom-tree-node {
+          // position: absolute;
+          padding: 10px 0;
+          padding-left: 60px;
+          z-index: 1;
+          height: 26px;
+          &.doc {
+            z-index: 3;
+          }
+          .el-icon-caret-right {
+            margin-left: -20px;
+            cursor: pointer;
+            color: #C0C4CC;
+            font-size: 12px;
+            padding: 5px;
+          }
         }
       }
       .is-current {
