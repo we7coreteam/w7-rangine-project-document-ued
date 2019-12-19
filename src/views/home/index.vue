@@ -170,7 +170,7 @@ export default {
       })
         .then(res => {
           this.articleContent = res
-          this.articleContent.content = this.$refs.mavonEditor.markdownIt.render('<div class="markdown-content">\n \n'+res.content+'>\n \n</div>' + '<div class="markdown-menu">\n \n @[toc]( ) \n \n</div>\n \n' )
+          this.articleContent.content = this.$refs.mavonEditor.markdownIt.render('<div class="markdown-content">\n \n'+res.content+'\n \n</div>' + '<div class="markdown-menu">\n \n @[toc]( ) \n \n</div>\n \n' )
           this.articleFlag = true
         })
     },
