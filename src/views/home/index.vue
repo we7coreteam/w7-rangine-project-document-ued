@@ -253,6 +253,11 @@ export default {
         position: relative;
         height: auto;
         overflow: hidden;
+        &:hover {
+          .custom-tree-node {
+            color: #3296fa;
+          }
+        }
         .el-tree-node__expand-icon {
           padding: 0;
           padding-left: 40px;
@@ -281,9 +286,6 @@ export default {
           padding-left: 60px;
           z-index: 1;
           height: 26px;
-          &:hover {
-            color: #3296fa;
-          }
           &.doc {
             z-index: 3;
           }
