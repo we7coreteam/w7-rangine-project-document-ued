@@ -6,7 +6,6 @@
         <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text=""
           ref="chaptersTree"
           node-key="id"
-          :highlight-current="true"
           :default-expanded-keys="expandIdArray"
           @node-click="handleNodeClick">
           <span class="custom-tree-node" slot-scope="{ node }">
@@ -71,6 +70,18 @@ export default {
       articleInfoList: []
       }
   },
+  watch: {
+    $route: {
+      handler: function(){
+        this.getArticle()
+      },
+      deep: true
+    },
+
+  },
+  created () {
+    this.getDocumentName()
+  },
   methods: {
     getDocumentName() {
       this.$post('/document/detail', {
@@ -118,6 +129,10 @@ export default {
         })
     },
     handleNodeClick(obj) {
+      console.log(this.$refs.chaptersTree.$el.getElementsByClassName("is-current")[0].className)
+      // let ClassName = this.$refs.chaptersTree.$el.getElementsByClassName("is-current")[0].className
+      // let newClassName = ClassName + ' is-current-dir'
+      // this.$refs.chaptersTree.$el.getElementsByClassName("is-current")[0].className = newClassName
       if (obj.is_dir) {
         console.log()
         //跳到默认文档
@@ -142,7 +157,7 @@ export default {
     getArticle() {
       this.$post('/document/chapter/detail', {
         document_id: this.document_id,
-        id: this.selectChapterId
+        id: this.$route.query.id
       })
         .then(res => {
           this.articleContent = res
@@ -199,18 +214,6 @@ export default {
       var word = html.replace(/<(style|script|iframe)[^>]*?>[\s\S]+?<\/\1\s*>/gi,'').replace(/<[^>]+?>/g,'').replace(/\s+/g,' ').replace(/ /g,' ').replace(/>/g,' ')
       return word
     }
-  },
-  watch: {
-    $route: {
-      handler: function(){
-        this.getArticle()
-      },
-      deep: true// 深度观察监听
-    },
-
-  },
-  created () {
-    this.getDocumentName()
   }
 }
 </script>
