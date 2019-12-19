@@ -48,13 +48,13 @@
             <li class="menu__item" @click="addChildNode(true)">创建目录</li>
             <li class="menu__item" @click="addChildNode(false)">创建文档</li>
             <li class="menu__item" @click="updateNode(true)">重命名</li>
-            <!-- <li class="menu__item" @click="openMoveDialog(true)">移动</li> -->
+            <li class="menu__item" @click="openMoveDialog(true)">移动</li>
             <li class="menu__item" @click="removeNode">删除</li>
           </template>
           <template v-if="rightSelectNodeObj.is_dir == 0">
             <li class="menu__item" @click="defaultFile">设为目录默认文档</li>
             <li class="menu__item" @click="updateNode(false)">重命名</li>
-            <!-- <li class="menu__item" @click="openMoveDialog(false)">移动</li> -->
+            <li class="menu__item" @click="openMoveDialog(false)">移动</li>
             <!-- <li class="menu__item" @click="">权限</li> -->
             <li class="menu__item" @click="removeNode">删除</li>
           </template>
@@ -81,7 +81,12 @@
     <el-dialog class="w7-dialog" :title="dialogMoveTitle" :visible.sync="dialogMoveVisible" :close-on-click-modal="false">
       <el-form label-width="100px">
         <el-form-item label="项目">
-          <el-select v-model="moveDoc" placeholder="请选择" @change="changeDoc">
+          <el-select v-model="moveDoc" placeholder="请选择"
+            filterable
+            remote
+            reserve-keyword
+            :remote-method="remoteMethod"
+            @change="changeDoc">
             <el-option
               v-for="item in docList"
               :key="item.id"
@@ -152,7 +157,6 @@ export default {
   },
   created() {
     this.getChapters()
-    this.getDocList()
   },
   methods: {
     getChapters() {
@@ -344,13 +348,17 @@ export default {
       this.moveClass = ''
       this.dialogMoveVisible = true
     },
-    getDocList() {
-      this.$post('/admin/document/all',{
-        page: 1
-      })
-        .then(res => {
-          this.docList = res.data
+    remoteMethod(query) {
+      if (query !== '') {
+        this.$post('/admin/document/all',{
+          keyword: query
         })
+          .then(res => {
+            this.docList = res.data
+          })
+      } else {
+        this.options = [];
+      }
     },
     changeDoc(id) {
       this.$post('/admin/chapter/detail', {
@@ -377,23 +385,27 @@ export default {
       return arr
     },
     moveNode() {
-      if(!this.moveDoc || !this.moveClass) {
-        this.$message('项目和分类不能为空！')
+      if(!this.moveDoc) {
+        this.$message('项目不能为空！')
         return
       }
-      let parent_id = ''
+      let id = ''
       if (this.moveClass.length == 1) {
-        parent_id = this.moveClass[0]
+        id = this.moveClass[0]
       } else {
-        parent_id = this.moveClass[1]
+        id = this.moveClass[1]
       }
-      this.$post('/admin/chapter/update', {
-        document_id: this.moveDoc,
+      this.$post('/admin/chapter/sort', {
+        document_id: this.$route.params.id,
         chapter_id: this.rightSelectNodeObj.id,
-        parent_id: parent_id
+        target: {
+          document_id: id,
+          position: 'move'
+        }
       })
         .then(() => {
-          this.$message('修改成功！')
+          this.$message('移动成功！')
+          this.getChapters()
         })
     },
     defaultFile() {

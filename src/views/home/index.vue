@@ -3,7 +3,7 @@
     <el-container class="home-container">
       <el-aside class="w7-aside-home" width="220px">
         <p class="w7-aside-home-head">目录</p>
-        <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text="1231"
+        <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text=""
           ref="chaptersTree"
           node-key="id"
           :highlight-current="true"
@@ -27,9 +27,9 @@
             <p class="title">{{ articleContent.name }}</p>
             <p class="info">
               <span v-show="articleContent.updated_at">更新时间：{{ articleContent.updated_at }}</span>
-              <span v-show="articleContent.username">作者：{{ articleContent.username }}</span>
+              <span v-show="articleContent.author.username">作者：{{ articleContent.author.username }}</span>
             </p>
-            <div :class="{'markdown-body': articleContent.layout == 1}" v-html="articleContent.content"></div>
+            <div class="markdown-body" v-html="articleContent.content"></div>
             <mavon-editor ref="mavonEditor" v-show="false"></mavon-editor>
           </div>
           <div class="article-list" v-if="!articleFlag">
@@ -68,7 +68,9 @@ export default {
       expandIdArray:[],//需要展开的节点id
       keyword: '',
       articleFlag: true,//true显示文章内容 false显示搜索列表
-      articleContent: {},
+      articleContent: {
+        author:{}
+      },
       articleInfoList: []
       }
   },
@@ -100,55 +102,42 @@ export default {
       })
         .then(res => {
           if(!res.length) {return}
-          res.forEach(item => {
-            if(item.is_dir && item.children.length == 0) {
-              item.children.push({is_dir: false})
+          this.chapters = res
+          this.$nextTick(() => {
+            if (this.$route.query.id) {
+              //F5刷新
+              this.selectChapterId = this.$route.query.id
+              //递归找name
+              let name = '';
+              let getName = function (array, id) {
+                array.forEach(chapters => {
+                  if (!chapters.children.length) {
+                    getName(chapters.children)
+                  }
+                  if (chapters.id == id) {
+                    name = chapters.name
+                    return
+                  }
+                })
+              }
+              getName(this.chapters, this.selectChapterId)
+              this.selectNode(this.selectChapterId)
+              document.title = name + ' — '+ this.document_name
+              this.getArticle()
             } else {
-              item.children.forEach(child => {
-                if(child.is_dir && child.children.length == 0) {
-                  child.children.push({
-                    is_dir: false
-                  })
+              //判断第一级有没有默认文档,有则选中
+              res.forEach(item => {
+                if (item.default_show_chapter_id > 0 && item.default_show_chapter_id == item.id) {
+                  this.selectChapterId = item.id
+                  this.changeRoute(this.selectChapterId, item.name, true)
                 }
               })
             }
           })
-          this.chapters = res
-          // this.$nextTick(() => {
-          //   if (this.$route.query.id) {
-          //     //F5刷新
-          //     this.selectChapterId = this.$route.query.id
-          //     //递归找name
-          //     let name = '';
-          //     let getName = function (array, id) {
-          //       array.forEach(chapters => {
-          //         if (!chapters.children.length) {
-          //           getName(chapters.children)
-          //         }
-          //         if (chapters.id == id) {
-          //           name = chapters.name
-          //           return
-          //         }
-          //       })
-          //     }
-          //     getName(this.chapters, this.selectChapterId)
-          //     this.selectNode(this.selectChapterId)
-          //     document.title = name + ' — '+ this.document_name
-          //     this.getArticle()
-          //   } else {
-          //     //tree默认选中第一个
-          //     this.selectChapterId = this.chapters[0].id
-          //     this.changeRoute(this.selectChapterId, this.chapters[0].name, true)
-          //   }
-          // })
         })
     },
     handleNodeClick(obj) {
-      // let ClassName = this.$refs.chaptersTree.$el.getElementsByClassName("is-current")[0].className
-      // let newClassName = ClassName + ' is-current-dir'
-      // this.$refs.chaptersTree.$el.getElementsByClassName("is-current")[0].className = newClassName
       if (obj.is_dir) {
-        console.log(1231)
         //跳到默认文档
       } else {
         this.changeRoute(obj.id, obj.name)
@@ -171,15 +160,20 @@ export default {
     getArticle() {
       this.$post('/document/chapter/detail', {
         document_id: this.document_id,
-        id: this.$route.query.id
+        chapter_id: this.$route.query.id
       })
         .then(res => {
           this.articleContent = res
-          if (this.articleContent.layout == 1) {
-            this.articleContent.content = this.$refs.mavonEditor.markdownIt.render(res.content)
-          }
+          this.articleContent.content = this.$refs.mavonEditor.markdownIt.render('@[toc]( )\n' + res.content)
           this.articleFlag = true
+          this.menuStyle()
         })
+    },
+    menuStyle() {
+      //[title~=flower]
+      // let a = document.querySelector(a[href~="#"])
+
+      // console.log(a)
     },
     selectNode(id) {
       this.$refs.chaptersTree.setCurrentKey(id)
@@ -198,9 +192,7 @@ export default {
         .then(res => {
           this.articleFlag = false
           res.forEach(articleInfo => {
-            if (articleInfo.layout == 1) {
-              articleInfo.content = this.$refs.mavonEditor.markdownIt.render(articleInfo.content)
-            }
+            articleInfo.content = this.$refs.mavonEditor.markdownIt.render(articleInfo.content)
             //html转成文字
             articleInfo.content = this.htmlToWord(articleInfo.content)
             //关键字变亮

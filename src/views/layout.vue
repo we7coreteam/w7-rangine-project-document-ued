@@ -75,7 +75,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .page-head {
   font-size: 20px;
   font-weight: 300;
@@ -114,6 +114,9 @@ export default {
   }
   .el-main {
     padding: 30px;
+  }
+  .menu-bar {
+    width: 120px;
   }
 }
 </style>
