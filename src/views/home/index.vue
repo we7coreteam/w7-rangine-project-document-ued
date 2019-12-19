@@ -286,6 +286,7 @@ export default {
           padding-left: 60px;
           z-index: 1;
           height: 26px;
+          line-height: 26px;
           &.doc {
             z-index: 3;
           }
