@@ -62,7 +62,7 @@
       </div>
     </el-aside>
     <el-main>
-      <editors :chapterId="selectNodeObj.id" :chapterName="selectNodeObj.name" :clickSum="clickSum" v-if="selectNodeObj && selectNodeObj.id && selectNodeObj.is_dir == 0"></editors>
+      <editors :chapterId="selectNodeObj.id" :chapterName="selectNodeObj.name" v-if="selectNodeObj && selectNodeObj.id && selectNodeObj.is_dir == 0"></editors>
     </el-main>
     <!-- 新增节点弹出框 -->
     <el-dialog class="w7-dialog" :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false">
@@ -122,7 +122,6 @@ export default {
         children: 'children',
         label: 'name'
       },
-      clickSum: 2,//章节点击次数，每次新建重置为0
       defaultExpanded: [],//默认展开节点的数组
       menuBarVisible: false,
       clientX: '',
@@ -188,7 +187,6 @@ export default {
     handleNodeClick(obj) {
       if(this.menuBarVisible) {this.menuBarVisible = false}
       this.selectNodeObj = obj
-      this.clickSum++
     },
     updateXY(event) {
       this.clientX = event.clientX
@@ -268,10 +266,8 @@ export default {
             }else {
               this.chapters.push(newChild)
             }
-            console.log(this.chapters)
             this.$message('新增成功！')
             this.dialogVisible = false
-            this.clickSum = 0
             this.$nextTick(() => {
               //选中新建章节
               this.$refs.chaptersTree.setCurrentKey( newChild.id )
@@ -324,7 +320,6 @@ export default {
       })
     },
     handleDrop(draggingNode, dropNode, dropType) {
-      console.log(dropNode, dropType)
       this.$post('/admin/chapter/sort', {
         document_id: this.$route.params.id,
         chapter_id: draggingNode.data.id,
@@ -402,7 +397,7 @@ export default {
         })
     },
     defaultFile() {
-      this.$post('/admin/document/default-show', {
+      this.$post('/admin/chapter/default-show', {
         document_id: this.$route.params.id,
         chapter_id: this.rightSelectNodeObj.parent_id,
         show_chapter_id: this.rightSelectNodeObj.id
