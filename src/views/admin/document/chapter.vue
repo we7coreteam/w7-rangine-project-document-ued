@@ -297,6 +297,19 @@ export default {
       }
     },
     removeNode() {
+      var arrId =[]
+      arrId.push(this.rightSelectNodeObj.id)
+      if (this.rightSelectNodeObj.is_dir) {//删除的为目录
+        let getArrId = function(array) {
+          array.forEach(item => {
+            arrId.push(item.id)
+            if (item.children && item.children.length) {
+              getArrId(item.children)
+            }
+          })
+        }
+        getArrId(this.rightSelectNodeObj.children)
+      }
       this.$confirm('确定删除该章节吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -305,7 +318,7 @@ export default {
         //这里鼠标左右键，都是只有右键this.rightSelectNode有值，左键没值
         this.$post('/admin/chapter/delete', {
           document_id: this.$route.params.id,
-          chapter_id: this.rightSelectNodeObj.id
+          chapter_id: arrId
         })
           .then(() => {
             let node = this.rightSelectNode
