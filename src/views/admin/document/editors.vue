@@ -1,34 +1,20 @@
 <template>
-  <div>
+  <div class="editors">
     <div class="chapter-title">{{ chapterName }}</div>
-    <div class="chapter-date" v-show="!isEdit && chapterId">
-      <p>
-        <span v-if="chapterInfo.updated_at">更新时间：{{ chapterInfo.updated_at }}</span>
-        <span v-if="chapterInfo.author">作者：{{ chapterInfo.author.username }}</span>
-      </p>
-      <button @click="isEdit = true">编辑</button>
-    </div>
-    <div class="editors">
-      <div class="chapter-warpper">
-        <div class="chapter-content markdown-body" v-html="content" v-show="!isEdit"></div>
-        <div class="chapter-menu" v-if="showMenu"></div>
-      </div>
-      <div class="mavon-editor" v-show="isEdit">
-        <mavon-editor
-          ref="mavonEditor"
-          :boxShadow="false"
-          :scrollStyle="true"
-          :ishljs="true"
-          :codeStyle="code_style"
-          :navigation="false"
-          v-model="contentMd"
-          @imgAdd="$imgAdd"
-          @save="save"
-        >
-        </mavon-editor>
-      </div>
-      <el-button class="saveBtn" type="primary" @click="save" v-if="isEdit">保存</el-button>
-      <el-button class="backBtn" @click="isEdit = false" v-if="isEdit">返回</el-button>
+    <mavon-editor
+      ref="mavonEditor"
+      :boxShadow="false"
+      :scrollStyle="true"
+      :ishljs="true"
+      :codeStyle="code_style"
+      :navigation="false"
+      v-model="contentMd"
+      @imgAdd="$imgAdd"
+      @save="save"
+    >
+    </mavon-editor>
+    <div>
+      <el-button class="saveBtn" type="primary" @click="save">保存</el-button>
     </div>
   </div>
 </template>
@@ -43,10 +29,8 @@ export default {
         updated_at: '',
         username: ''
       },
-      isEdit: false,
       content: '', //最终显示的html
-      contentMd: '', //md格式的内容
-      showMenu: false//是否显示菜单div
+      contentMd: '' //md格式的内容
     }
   },
   watch: {
@@ -105,62 +89,26 @@ export default {
 </script>
 
 <style lang="scss">
+.editors {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  .v-note-wrapper {
+    display: -webkit-box;
+    flex: 1;
+    padding: 15px 0;
+    -webkit-box-orient: vertical;
+  }
+}
 .chapter-title {
   font-size: 20px;
   letter-spacing: 1px;
   color: #4d4d4d;
 }
-.chapter-date {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 48px;
-  font-size: 14px;
-  p span {
-    padding-right: 40px;
-  }
-  button {
-    width: 120px;
-    height: 35px;
-    background-color: #ddedfd;
-    border-radius: 2px;
-    border: solid 1px #3296fa;
-    cursor: pointer;
-    &:hover {
-      color: #fff;
-      background-color: #409eff;
-      border-color: #409eff;
-    }
-  }
-}
-.editors {
-  width: 100%;
-  height: 100%;
-  padding: 15px 0;
-  .chapter-warpper {
-    position: relative;
-    display: flex;
-    .chapter-content {
-      flex: 1;
-    }
-    .chapter-menu {
-      flex: 0 0 350px;
-    }
-  }
-  .mavon-editor {
-    .v-note-wrapper {
-      height: 500px;
-    }
-  }
-  .saveBtn, .backBtn {
-    margin-top: 10px;
-    margin-right: 10px;
-    height: 34px;
-    border-radius: 2px;
-    padding: 9px 20px;
-  }
-}
-.list-paddingleft-2{
-  list-style-type: circle !important;
+.saveBtn {
+  padding: 9px 20px;
+  height: 34px;
+  border-radius: 2px;
 }
 .hljs{
   background:#eee!important;
