@@ -386,10 +386,10 @@ export default {
         this.$message('项目不能为空！')
         return
       }
-      let id = ''
+      let id = 0
       if (this.moveClass.length == 1) {
         id = this.moveClass[0]
-      } else {
+      } else if (this.moveClass.length == 2) {
         id = this.moveClass[1]
       }
       this.$post('/admin/chapter/sort', {
