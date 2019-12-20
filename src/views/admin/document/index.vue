@@ -6,7 +6,7 @@
     <div class="container-box">
       <div class="search-box">
         <div class="demo-input-suffix">
-          <el-input placeholder="请输入文档名称或创建者名称" v-model="keyword" @keyup.enter.native="searchDoc">
+          <el-input v-model="keyword" placeholder="请输入文档名称或创建者名称" clearable @keyup.enter.native="searchDoc">
             <i slot="suffix" class="el-input__icon el-icon-search" @click="searchDoc"></i>
           </el-input>
         </div>
@@ -184,14 +184,8 @@ export default {
 .container{
   padding:30px 40px 0 40px;
 }
-.page-head{
-  font-weight:400;
-}
 .container-box{
   padding-left:20px;
-}
-.el-icon-search{
-  color:#3f9dfa;
 }
 .card-warpper {
   display: flex;

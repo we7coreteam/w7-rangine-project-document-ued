@@ -1,15 +1,17 @@
 <template>
   <div class="permission">
-    <div class="select-power">
+    <div class="select-power search-box">
         <span class="name">项目权限</span>
         <el-select v-model="is_public" placeholder="请选择" @change="search">
             <el-option label="全部项目" value="0"></el-option>
             <el-option label="公有项目" value="1"></el-option>
             <el-option label="私有项目" value="2"></el-option>
         </el-select>
-        <el-input placeholder="请输入项目名称" v-model="keyword" @keyup.enter.native="search">
-          <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
-        </el-input>
+        <div class="demo-input-suffix">
+          <el-input v-model="keyword" placeholder="请输入项目名称" clearable @keyup.enter.native="search">
+            <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
+          </el-input>
+        </div>
         <div class="more-edit" @click="dialogEditInfoVisible = true">批量修改</div>
     </div>
     <el-table class="w7-table" :data="docList" empty-text="" row-key="id" ref="multipleTable" :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
@@ -181,8 +183,10 @@ export default {
   .el-input {
     width: 300px;
   }
-  .more-edit{
+  .demo-input-suffix {
     flex: 1;
+  }
+  .more-edit{
     text-align: right;
     color:#3296fa;
     cursor:pointer;

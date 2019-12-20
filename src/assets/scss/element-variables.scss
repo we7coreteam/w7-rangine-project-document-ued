@@ -74,19 +74,24 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   height: 34px;
   .demo-input-suffix {
     width: 240px;
-    input {
-      height: 34px;
-      border-radius: 0;
-    }
-    i {
-      line-height: 34px;
-    }
   }
   .demo-input-btn {
     .el-button {
       border-radius: 2px;
       padding: 9px 20px;
     }
+  }
+}
+.el-input {
+  input {
+    height: 34px;
+    border-radius: 0;
+  }
+  i {
+    line-height: 34px;
+  }
+  .el-icon-search{
+    color:#3f9dfa;
   }
 }
 .w7-footer {

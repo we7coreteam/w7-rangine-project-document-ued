@@ -4,8 +4,8 @@
       <div class="w7-aside-chapter-head">
         <p>{{ docName }}</p>
       </div>
-      <el-input placeholder="请输入关键字搜索" v-model="filterText">
-        <i slot="suffix" class="el-input__icon el-icon-search" style="color:#3296fa;"></i>
+      <el-input placeholder="请输入关键字搜索" v-model="filterText" clearable>
+        <i slot="suffix" class="el-input__icon el-icon-search"></i>
       </el-input>
       <div class="icon-box">
         <el-tooltip effect="dark" content="新建文档" placement="bottom">
@@ -99,7 +99,9 @@
           <el-cascader
             v-model="moveClass"
             :options="docChapters"
-            :props="{ value: 'id', label: 'name'}"></el-cascader>
+            :props="{ value: 'id', label: 'name'}"
+            :clearable="true"
+            :change-on-select="true"></el-cascader>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -181,12 +183,6 @@ export default {
     filterNode(value, data) {
       if (!value) return true;
       return data.name.indexOf(value) !== -1;
-    },
-    defaultSelectNode() {
-      //tree默认选中第一个
-      if(!this.chapters.length) { return }
-      this.$refs.chaptersTree.setCurrentKey( this.chapters[0].id )
-      this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode())
     },
     handleNodeClick(obj) {
       if(this.menuBarVisible) {this.menuBarVisible = false}
@@ -319,6 +315,7 @@ export default {
             let index = children.findIndex(d => d.id === data.id)
             children.splice(index, 1)
             this.$message('删除成功！')
+            this.selectNodeObj = {}
           })
       }).catch(() => {
       })
