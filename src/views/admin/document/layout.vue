@@ -18,7 +18,7 @@
 export default {
   data() {
     return {
-      isCollapse: false
+      isCollapse: true
     }
   },
   methods: {

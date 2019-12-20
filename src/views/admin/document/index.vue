@@ -6,7 +6,7 @@
     <div class="container-box">
       <div class="search-box">
         <div class="demo-input-suffix">
-          <el-input v-model="keyword" placeholder="请输入文档名称或创建者名称" clearable @keyup.enter.native="searchDoc">
+          <el-input v-model="keyword" placeholder="请输入文档名称" clearable @keyup.enter.native="searchDoc">
             <i slot="suffix" class="el-input__icon el-icon-search" @click="searchDoc"></i>
           </el-input>
         </div>
