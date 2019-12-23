@@ -430,12 +430,15 @@ export default {
   background:#eee!important;
   // color:#fff!important;
 }
-.markdown-body code{
-  background-color:#eee!important;
-  // color:#fff;
-}
-.markdown-body .highlight pre, .markdown-body pre{
-  background-color:#eee!important;
-  // color:#fff;
+.markdown-body {
+  .markdown-content {
+    width: 0;
+  }
+  code{
+    background-color:#eee!important;
+  }
+  pre, .highlight pre {
+    background-color:#eee!important;
+  }
 }
 </style>
