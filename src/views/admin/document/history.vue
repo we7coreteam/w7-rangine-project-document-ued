@@ -34,7 +34,7 @@
       <el-table-column label="操作" align="right">
         <div class="oper" slot-scope="scope">
           <el-tooltip effect="dark" content="删除记录" placement="bottom">
-            <i class="el-icon-delete" @click="aa(scope.row)"></i>
+            <i class="wi wi-delete" @click="aa(scope.row)"></i>
           </el-tooltip>
         </div>
       </el-table-column>

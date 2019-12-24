@@ -17,6 +17,7 @@
         </div>
       </div>
       <div class="operation">
+        <el-button type="text" @click="dialogShareVisible = true">分享设置</el-button>
         <el-button type="text" v-if="details.acl && details.acl.has_manage" @click="editIsPublic">
           {{this.details.is_public == 1 ? '设为私有项目' : '设为公开项目'}}
         </el-button>
@@ -31,18 +32,40 @@
     </div>
     <div class="content">
       <div class="tab-content-manage">
-        <el-table :header-cell-style="{background:'#f7f9fc',color:'#606266'}" :data="details.operator" ref="docuserTable" style="width: 100%" >
-          <el-table-column prop="username" label="名称"></el-table-column>
-          <el-table-column prop="acl.name" label="身份"></el-table-column>
-          <el-table-column align="right">
+        <el-table class="w7-table" :header-cell-style="{background:'#f7f9fc',color:'#606266'}" :data="details.operator" ref="docuserTable">
+          <el-table-column prop="username" label="名称" width="300px"></el-table-column>
+          <el-table-column label="身份" align="center">
             <template slot-scope="scope">
-              <el-button type="text" @click="openEditManage(scope.row)" v-if="details.acl.has_manage && scope.row.acl.role != 1">编辑</el-button>
-              <el-button type="text" @click="removeManage(scope.row.id)" v-if="details.acl.has_manage && scope.row.acl.role != 1">删除</el-button>
+              <div class="manage" v-if="scope.row.acl.role == 1">{{scope.row.acl.name}}</div>
+              <template v-else>{{scope.row.acl.name}}</template>
             </template>
+          </el-table-column>
+          <el-table-column label="操作" align="right">
+            <div class="oper" slot-scope="scope">
+              <el-tooltip effect="dark" content="编辑" placement="bottom">
+                <i class="wi wi-edit" @click="openEditManage(scope.row)" v-if="details.acl.has_manage && scope.row.acl.role != 1"></i>
+              </el-tooltip>
+              <el-tooltip effect="dark" content="删除" placement="bottom">
+                <i class="wi wi-delete" @click="removeManage(scope.row.id)" v-if="details.acl.has_manage && scope.row.acl.role != 1"></i>
+              </el-tooltip>
+            </div>
           </el-table-column>
         </el-table>
       </div>
     </div>
+    <!-- 分享设置 -->
+    <el-dialog class="w7-dialog" title="分享设置" :visible.sync="dialogShareVisible" :close-on-click-modal="false" center>
+      <el-form label-width="100px">
+        <el-form-item label="私有文档查看">
+          <el-radio v-model="radioShare" label="1">点击链接直接可查看</el-radio>
+          <el-radio v-model="radioShare" label="2">点击链接登录后查看</el-radio>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="editRename">确 定</el-button>
+        <el-button @click="dialogShareVisible = false">取 消</el-button>
+      </div>
+    </el-dialog>
     <!-- 重命名弹出框 -->
     <el-dialog class="w7-dialog" title="重命名" :visible.sync="dialogRenameVisible" :close-on-click-modal="false" center>
       <el-form label-width="100px">
@@ -97,6 +120,8 @@ export default {
       id: this.$route.params.id,//文档id
       activeName: 'first',//tabs显示的选项卡名字
       details: '',//文档数据
+      dialogShareVisible: false,//分享设置弹出框
+      radioShare: '1',
       dialogRenameVisible: false,//重命名弹出框
       newDocName: '',//文档新名称
       selectRow: '',//选中行的数据
@@ -291,24 +316,6 @@ export default {
     border-radius:4px;
   }
 }
-.tab-content-baseInfo {
-  table {
-    width: 100%;
-    tr {
-      height: 78px;
-      border-bottom: #f7f9fc 1px solid !important;
-      td:nth-child(1) {
-        width: 90px;
-      }
-      td:nth-child(2) {
-        width: calc(100% - 140px);
-      }
-      td:nth-child(3) {
-        width: 50px;
-      }
-    }
-  }
-}
 .w7-dialog-user {
   /deep/ .el-dialog__body {
     padding-bottom: 0;
@@ -317,24 +324,23 @@ export default {
     width: 95%;
   }
 }
-.w7-table /deep/ .el-table__header thead tr th:nth-last-child(2) > .cell {
-  padding-right: 0;
-}
-.w7-table-small {
-  // padding: 0 20px;
-  margin: 30px 0;
-  /deep/ th {
-    padding: 5px 0 !important;
-  }
-  /deep/ td {
-    padding: 7px 0 !important;
-  }
-}
 .w7-pagination {
   overflow: hidden;
   .el-pagination {
     margin-top: 10px;
     margin-right: 10px;
+  }
+}
+.w7-table {
+  .manage {
+    margin: 0 auto;
+    width: 78px;
+    line-height: 28px;
+    color: #45bb7f;
+    text-align: center;
+    background-color: #c1fbde;
+    border: 1px solid #4dc88a;
+    border-radius: 4px;
   }
 }
 </style>

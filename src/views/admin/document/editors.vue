@@ -39,6 +39,8 @@ export default {
     }
   },
   mounted() {
+    let clientHeight = document.documentElement.clientHeight
+    this.$refs.mavonEditor.$el.style.height = (clientHeight - 220) + 'px'
     this.init()
   },
   methods: {
@@ -90,14 +92,8 @@ export default {
 
 <style lang="scss">
 .editors {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
   .v-note-wrapper {
-    display: -webkit-box;
-    flex: 1;
     padding: 15px 0;
-    -webkit-box-orient: vertical;
   }
 }
 .chapter-title {

@@ -39,11 +39,17 @@
         </template>
       </el-table-column>
       <el-table-column label="操作" align="right">
-        <template slot-scope="scope">
-          <el-button type="text" @click="openEditorUser(scope.row)">设置</el-button>
-          <el-button type="text" @click="openPermission(scope.row.id)">权限管理</el-button>
-          <el-button type="text" v-if="UserInfo.id != scope.row.id" @click="deleteSelectRows(scope.row.id)">删除</el-button>
-        </template>
+        <div class="oper" slot-scope="scope">
+          <el-tooltip effect="dark" content="设置" placement="bottom">
+            <i class="wi wi-tools" @click="openEditorUser(scope.row)"></i>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="权限管理" placement="bottom">
+            <i class="wi wi-quanxian2" @click="openPermission(scope.row.id)"></i>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="删除" placement="bottom">
+            <i class="wi wi-delete" @click="deleteSelectRows(scope.row.id)" v-if="UserInfo.id != scope.row.id"></i>
+          </el-tooltip>
+        </div>
       </el-table-column>
     </el-table>
     <div class="btns">

@@ -65,12 +65,11 @@
       <editors :chapterId="selectNodeObj.id" :chapterName="selectNodeObj.name" v-if="selectNodeObj && selectNodeObj.id && selectNodeObj.is_dir == 0"></editors>
     </el-main>
     <!-- 新增节点弹出框 -->
-    <el-dialog class="w7-dialog" :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false">
+    <el-dialog class="w7-dialog only-input-dialog" :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false">
       <el-form :model="addNodeObj" label-width="100px">
         <el-form-item :label="dialogFormLabel">
           <el-input v-model="addNodeObj.name" @keyup.enter.native="confirmBtn"></el-input>
         </el-form-item>
-        <input type="text" style="display:none;">
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="confirmBtn">确 定</el-button>
@@ -155,6 +154,13 @@ export default {
   watch: {
     filterText(val) {
       this.$refs.chaptersTree.filter(val);
+    },
+    dialogVisible(val) {
+      if (val) {
+        setTimeout(() => {
+          document.querySelector(".only-input-dialog .el-input__inner").focus()
+        }, 300);
+      }
     }
   },
   created() {

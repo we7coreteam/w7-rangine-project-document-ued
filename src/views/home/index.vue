@@ -78,8 +78,10 @@ export default {
   },
   watch: {
     $route: {
-      handler: function(){
-        this.getArticle()
+      handler: function(to){
+        if (!to.hash) {//点击右侧目录，不重新请求
+          this.getArticle()
+        }
       },
       deep: true
     },
