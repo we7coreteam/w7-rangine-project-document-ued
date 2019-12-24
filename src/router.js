@@ -120,11 +120,6 @@ export default new Router({
       ]
     },
     {
-      path: '/home/doc',
-      name: 'homedoc',
-      component: () => import(/* webpackChunkName: "about" */ './views/home/doc.vue')
-    },
-    {
       path: '*',
       redirect: '/admin/document',
       // component: () => import(/* webpackChunkName: "about" */ './views/admin/layout.vue')

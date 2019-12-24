@@ -7,7 +7,7 @@
           <div class="login-form">
             <el-input v-model="formData.username" prefix-icon="el-icon-user-solid" placeholder="用户名/手机号"></el-input>
             <el-input type="password" v-model="formData.userpass" prefix-icon="el-icon-s-goods" placeholder="输入密码"></el-input>
-            <el-input v-model="formData.code" prefix-icon="el-icon-s-goods" placeholder="输入图形验证码" @keyup.enter.native="login">
+            <el-input v-model="formData.code" prefix-icon="el-icon-s-goods" placeholder="输入图形验证码" clearable @keyup.enter.native="login">
               <img :src="code" @click="getCode" slot="append" alt="">
             </el-input>
           </div>

@@ -8,7 +8,6 @@
         <router-link class="item" to="/admin/document">项目管理</router-link>
         <router-link class="item" to="/admin/user" v-if="UserInfo.acl && UserInfo.acl.has_manage">用户管理</router-link>
         <router-link class="item" to="/admin/setting" v-if="UserInfo.acl && UserInfo.acl.has_manage">系统设置</router-link>
-        <router-link class="item" to="/home/doc">文档首页</router-link>
       </div>
       <div class="user" v-if="UserInfo.username">
         {{UserInfo.username}}
