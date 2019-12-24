@@ -17,13 +17,13 @@
     <el-table class="w7-table" :data="docList" empty-text="" row-key="id" ref="multipleTable" :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
         <el-table-column reserve-selection type="selection" width="55"></el-table-column>
         <el-table-column label="项目名称">
-        <template slot-scope="scope">
-            <i class="w7-icon-fileFolder"></i>
-            <span style="margin-left: 10px">{{ scope.row.name }}</span>
-            <div v-if="!scope.row.is_public" style="display:inline-block;padding:0 5px;margin-left: 20px;background:#fff1de;color:#ff8600;">
-            <i class="el-icon-lock" ><span style="margin-left: 5px;">私有</span></i>
-            </div>
-        </template>
+          <template slot-scope="scope">
+              <i class="wi wi-folder"></i>
+              <span style="margin-left: 10px">{{ scope.row.name }}</span>
+              <div v-if="!scope.row.is_public" style="display:inline-block;padding:0 5px;margin-left: 20px;background:#fff1de;color:#ff8600;">
+              <i class="el-icon-lock" ><span style="margin-left: 5px;">私有</span></i>
+              </div>
+          </template>
         </el-table-column>
         <el-table-column label="权限" align="right">
         <template slot-scope="scope">
@@ -202,11 +202,11 @@ export default {
     margin-top:0;
   }
 }
-.w7-icon-fileFolder:after {
-  content:url('~@/assets/img/fileFolder-small.png')
-}
 .el-table .cell{
   overflow:auto!important;
+  .wi-folder {
+    color: #ffcd2c;
+  }
 }
 .get-more {
   margin: 20px auto;

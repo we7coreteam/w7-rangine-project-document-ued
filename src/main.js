@@ -22,6 +22,7 @@ import { Row,Col } from 'element-ui'
 import { RadioGroup } from 'element-ui'
 import { Radio } from 'element-ui'
 import { Tooltip } from 'element-ui'
+import { Backtop } from 'element-ui'
 import './assets/scss/element-variables.scss'
 import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
@@ -58,6 +59,7 @@ Vue.use(Col)
 Vue.use(RadioGroup)
 Vue.use(Radio)
 Vue.use(Tooltip)
+Vue.use(Backtop)
 Vue.use(mavonEditor)
 
 Vue.prototype.$message = Message;

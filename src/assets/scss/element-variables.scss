@@ -31,6 +31,12 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   }
 }
 
+.color-blue {
+  color: #4096f9;
+}
+.color-yellow {
+  color: #ff9c00;
+}
 .fl {
   float: left;
 }
@@ -109,6 +115,25 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
         font-size: 14px;
         font-weight: normal;
         color: #4d4d4d;
+      }
+    }
+  }
+  .doc-icons {
+    .name {
+      margin-right: 15px;
+      margin-left: 15px;
+    }
+    .wi-star {
+      margin-right: 15px;
+    }
+  }
+  .oper {
+    i {
+      margin-left: 15px;
+      font-size: 16px;
+      cursor: pointer;
+      &:hover {
+        color: #3296fa;
       }
     }
   }
@@ -204,4 +229,15 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   text-align: center;
   font-style: 14px;
   color: #909399;
+}
+.we7-label {
+  display:inline-block;
+  padding:0 5px;
+  color:#ff8600;
+  background:#fff1de;
+  border-radius: 4px;
+  .font {
+    font-size: 14px;
+    margin-left: 5px;
+  }
 }

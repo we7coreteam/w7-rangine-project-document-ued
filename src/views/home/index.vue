@@ -51,6 +51,7 @@
         </div>
       </el-main>
     </el-container>
+    <el-backtop target=".chapter-warpper"></el-backtop>
   </div>
 </template>
 

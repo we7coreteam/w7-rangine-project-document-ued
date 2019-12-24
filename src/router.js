@@ -20,30 +20,40 @@ export default new Router({
       children: [
         {
           path: 'document',
-          name: 'documentIndex',
-          component: () => import(/* webpackChunkName: "about" */ './views/admin/document/index.vue'),
-          // children: [
-          //   {
-          //     path: ':id',
-          //     name: 'manageSetting',
-          //     component: () => import(/* webpackChunkName: "about" */ './views/admin/document/manageSetting.vue')
-          //   },
-          //   {
-          //     path: 'chapter/:id',
-          //     name: 'chapter',
-          //     component: () => import(/* webpackChunkName: "about" */ './views/admin/document/chapter.vue')
-          //   },
-          // ]
-        },
-        {
-          path: 'document/:id',
-          name: 'manageSetting',
-          component: () => import(/* webpackChunkName: "about" */ './views/admin/document/manageSetting.vue')
-        },
-        {
-          path: 'document/chapter/:id',
-          name: 'chapter',
-          component: () => import(/* webpackChunkName: "about" */ './views/admin/document/chapter.vue')
+          name: 'documentLayout',
+          component: () => import(/* webpackChunkName: "about" */ './views/admin/document/layout.vue'),
+          children: [
+            {
+              path: '',
+              name: 'documentIndex',
+              component: () => import(/* webpackChunkName: "about" */ './views/admin/document/manage.vue'),
+            },
+            {
+              path: 'chapter/:id',
+              name: 'chapter',
+              component: () => import(/* webpackChunkName: "about" */ './views/admin/document/chapter.vue')
+            },
+            {
+              path: 'star',
+              name: 'documentStar',
+              component: () => import(/* webpackChunkName: "about" */ './views/admin/document/star.vue'),
+            },
+            {
+              path: 'history',
+              name: 'documentHistory',
+              component: () => import(/* webpackChunkName: "about" */ './views/admin/document/history.vue'),
+            },
+            {
+              path: 'involved',
+              name: 'documentInvolved',
+              component: () => import(/* webpackChunkName: "about" */ './views/admin/document/involved.vue'),
+            },
+            {
+              path: ':id',
+              name: 'manageSetting',
+              component: () => import(/* webpackChunkName: "about" */ './views/admin/document/manageSetting.vue')
+            },
+          ]
         },
         {
           path: 'user',
@@ -108,6 +118,11 @@ export default new Router({
           component: () => import(/* webpackChunkName: "about" */ './views/home/index.vue')
         }
       ]
+    },
+    {
+      path: '/home/doc',
+      name: 'homedoc',
+      component: () => import(/* webpackChunkName: "about" */ './views/home/doc.vue')
     },
     {
       path: '*',

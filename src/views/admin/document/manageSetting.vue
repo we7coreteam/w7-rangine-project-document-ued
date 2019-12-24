@@ -5,7 +5,7 @@
     </h3>
     <div class="doc-title">
       <div class="title-box">
-        <img src="~@/assets/img/fileFolder-big.png" alt="">
+        <i class="wi wi-folder"></i>
         <div class="title-text">
           <div>
             {{ details.name }}
@@ -242,13 +242,13 @@ export default {
     letter-spacing: 1px;
     color: #4d4d4d;
     box-sizing: border-box;
-    img{
-      float:left;
-      vertical-align: middle;
+    .wi-folder {
+      font-size: 40px;
+      color: #ffcd2c;
     }
     .title-text{
+      display: inline-block;
       margin-left: 26px;
-      float:left;
       .icon-own{
         color:#38b677;
         margin-right: 10px;

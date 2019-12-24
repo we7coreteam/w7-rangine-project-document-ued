@@ -74,7 +74,6 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
 export default {
   name: 'docIndex',
   data() {
@@ -91,9 +90,6 @@ export default {
       formLabelWidth: '120px',
       actClass:"actClass",
     }
-  },
-  computed: {
-      ...mapGetters({UserInfo: 'UserInfo'})
   },
   created() {
     this.getList()
@@ -181,9 +177,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.container{
-  padding:30px 40px 0 40px;
-}
 .container-box{
   padding-left:20px;
 }
@@ -193,18 +186,18 @@ export default {
   margin: -35px -35px 0 -35px;
 }
 .w7-card{
+  position: relative;
   margin: 35px;
   padding:20px;
   width: 260px;
 	height: 120px;
   color:#fff;
   border-radius:4px;
-  position: relative;
   top:0;
   transition: 0.2s;
   &:hover{
-    cursor:pointer;
     position: relative;
+    cursor:pointer;
     top:-10px;
     box-shadow:0px 3px 18px 1px	rgba(194, 192, 192, 0.84);
   }
@@ -305,22 +298,7 @@ export default {
 .el-dialog__footer{
   border-top:1px solid #eee;
 }
-.nodata {
-  min-height: 400px;
-  background-color: #fff;
-  background-image:  url('~@/assets/img/nodata-bg.png');
-  background-position:  center;
-  background-repeat: no-repeat;
-  p {
-    padding-top: 280px;
-    font-family: MicrosoftYaHei;
-    font-size: 14px;
-  }
-}
 .redBtn {
   color: #eb2e56;
-}
-.w7-icon-fileFolder:after {
-  content:url('~@/assets/img/fileFolder-small.png')
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <el-container class="w7-container">
+  <el-container class="w7-document-chapter">
     <el-aside class="w7-aside-chapter" width="202px">
       <div class="w7-aside-chapter-head">
         <p>{{ docName }}</p>
@@ -299,7 +299,8 @@ export default {
     removeNode() {
       var arrId =[]
       arrId.push(this.rightSelectNodeObj.id)
-      if (this.rightSelectNodeObj.is_dir) {//删除的为目录
+      //删除的为目录,切存在子节点
+      if (this.rightSelectNodeObj.is_dir && this.rightSelectNodeObj.children && this.rightSelectNodeObj.children.length) {
         let getArrId = function(array) {
           array.forEach(item => {
             arrId.push(item.id)
@@ -434,8 +435,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.w7-container {
+<style lang="scss">
+.w7-document-chapter {
   .w7-aside-chapter {
     border-left: solid 1px #eeeeee;
     border-right: solid 1px #eeeeee;
@@ -458,6 +459,17 @@ export default {
       /deep/ i {
         line-height: 34px;
       }
+    }
+  }
+  .icon-box{
+    width:100%;
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 35px;
+    font-size:14px;
+    color:#b6b5b5;
+    .el-tooltip {
+      cursor: pointer;
     }
   }
 }
@@ -488,17 +500,6 @@ export default {
   }
   .wi-folder {
     color: #ffcd2c;
-  }
-}
-.icon-box{
-  width:100%;
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 35px;
-  font-size:14px;
-  color:#b6b5b5;
-  .el-tooltip {
-    cursor: pointer;
   }
 }
 </style>

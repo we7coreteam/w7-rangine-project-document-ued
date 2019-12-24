@@ -1,0 +1,105 @@
+<template>
+  <div class="we7-document-history">
+    <h3 class="page-head">
+      历史查看
+    </h3>
+    <div class="search-box">
+      <div class="demo-input-suffix">
+        <el-input v-model="keyword" placeholder="请输入文档名称" clearable @keyup.enter.native="getList">
+          <i slot="suffix" class="el-input__icon el-icon-search" @click="getList"></i>
+        </el-input>
+      </div>
+      <el-select v-model="time" placeholder="请选择" @change="getList">
+        <el-option label="全部" value="0"></el-option>
+        <el-option label="一周前" value="7"></el-option>
+        <el-option label="一月前" value="30"></el-option>
+        <el-option label="三月前" value="90"></el-option>
+    </el-select>
+    </div>
+    <el-table class="w7-table" :data="docList" ref="multipleTable"
+      :header-cell-style="{background:'#f7f9fc',color:'#606266'}"
+      empty-text="没有与搜索条件匹配的项">
+      <el-table-column label="文档名称">
+        <div class="doc-icons" slot-scope="scope">
+          <i class="wi wi-document color-blue"></i>
+          <span class="name">{{ scope.row.name }}</span>
+          <i class="wi wi-star color-yellow"></i>
+          <div class="we7-label" v-if="!scope.row.is_public">
+            <i class="wi wi-lock" ><span class="font">私有</span></i>
+          </div>
+        </div>
+      </el-table-column>
+      <el-table-column label="来自" prop="acl.name"></el-table-column>
+      <el-table-column label="时间" prop="name"></el-table-column>
+      <el-table-column label="操作" align="right">
+        <div class="oper" slot-scope="scope">
+          <el-tooltip effect="dark" content="删除记录" placement="bottom">
+            <i class="el-icon-delete" @click="aa(scope.row)"></i>
+          </el-tooltip>
+        </div>
+      </el-table-column>
+    </el-table>
+    <div class="btns">
+      <el-pagination
+        background
+        @current-change = "getList"
+        layout="prev, pager, next, total"
+        prev-text="上一页"
+        next-text="下一页"
+        :current-page.sync = "currentPage"
+        :page-count="pageCount"
+        :total="total"
+        :hide-on-single-page = "true"
+      >
+      </el-pagination>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      keyword: '',
+      time: '',
+      loading: false,
+      docList: [],//数据列表
+      currentPage: 1,//当前页码
+      pageCount: 0,//总页数
+      total: 0//总数
+    }
+  },
+  created() {
+    this.getList()
+  },
+  methods: {
+    getList() {
+      this.loading = true
+      this.$post('/admin/document/all',{
+        page: this.currentPage,
+        name: this.keyword
+      })
+        .then(res => {
+          this.docList = res.data
+          this.pageCount = res.page_count
+          this.total = res.total
+          this.loading = false
+        })
+    },
+    aa() {
+      
+    }
+  }
+}
+</script>
+
+<style lang="scss">
+.we7-document-history {
+  .search-box {
+    justify-content: flex-start;
+    .demo-input-suffix {
+      margin-right: 20px;
+    }
+  }
+}
+</style>
