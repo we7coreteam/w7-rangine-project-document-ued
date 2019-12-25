@@ -66,7 +66,7 @@
     </el-main>
     <!-- 新增节点弹出框 -->
     <el-dialog class="w7-dialog only-input-dialog" :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false">
-      <el-form :model="addNodeObj" label-width="100px">
+      <el-form :model="addNodeObj" label-width="100px" @submit.native.prevent>
         <el-form-item :label="dialogFormLabel">
           <el-input v-model="addNodeObj.name" @keyup.enter.native="confirmBtn"></el-input>
         </el-form-item>
