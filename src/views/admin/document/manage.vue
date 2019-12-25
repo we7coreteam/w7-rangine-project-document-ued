@@ -21,6 +21,9 @@
             <div class="w7-card-title">
               {{item.name}}
             </div>
+            <div class="icon-star" :class="{'add-star': !item.has_star}" @click.stop="operStar(item)">
+              <i class="wi wi-star"></i>
+            </div>
             <div class="icon-box">
               <el-tooltip effect="dark" content="私有" placement="bottom" v-if="item.has_read">
                 <i class="wi wi-lock"></i>
@@ -172,6 +175,22 @@ export default {
     },
     goChapter(id) {
       this.$router.push('/admin/document/chapter/' + id)
+    },
+    operStar(row) {
+      let url = row.has_star ? '/admin/star/delete' : '/admin/star/add'
+      let mes = row.has_star ? '取消成功！' : '添加成功！'
+      this.$post(url, {
+        document_id: row.id
+      })
+        .then(() => {
+          this.$message(mes)
+          this.docList.forEach(doc => {
+            if (doc.id == row.id) {
+              doc.has_star = !doc.has_star
+              return
+            }
+          })
+        })
     }
   }
 }
@@ -195,13 +214,16 @@ export default {
   border-radius:4px;
   top:0;
   transition: 0.2s;
-  &:hover{
+  &:hover {
     position: relative;
     cursor:pointer;
     top:-10px;
     box-shadow:0px 3px 18px 1px	rgba(194, 192, 192, 0.84);
+    .add-star, .icon-box{
+      display:block;
+    }
   }
-  i:hover {
+  .icon-box i:hover {
     color: #606266;
   }
   .el-icon-lock:hover {
@@ -223,11 +245,34 @@ export default {
 .actClass2{
   background: #fa7475;
 }
+.icon-star {
+  position: absolute;
+  top: 0;
+  right:20px;
+  width: 24px;
+  height: 30px;
+  text-align: center;
+  color: #f0b239;
+  background: url('~@/assets/img/star-bg1.png');
+  &:hover {
+    color: #b3b3b3;
+    background: url('~@/assets/img/star-bg2.png');
+  }
+  &.add-star {
+    display: none;
+    color: #b3b3b3;
+    background: url('~@/assets/img/star-bg2.png');
+    &:hover {
+      color: #f0b239;
+      background: url('~@/assets/img/star-bg1.png');
+    }
+  }
+  .wi {
+    font-size: 20px;
+  }
+}
 .card-box{
   margin-top:30px;
-}
-.w7-card:hover .icon-box{
-  display:block;
 }
 .icon-box{
   position:absolute;

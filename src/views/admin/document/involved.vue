@@ -17,20 +17,17 @@
         <div class="doc-icons" slot-scope="scope">
           <i class="wi wi-document color-blue"></i>
           <span class="name">{{ scope.row.name }}</span>
-          <i class="wi wi-star color-yellow"></i>
+          <i class="wi wi-star color-yellow" v-if="scope.row.has_star"></i>
           <div class="we7-label" v-if="!scope.row.is_public">
             <i class="wi wi-lock" ><span class="font">私有</span></i>
           </div>
         </div>
       </el-table-column>
-      <el-table-column label="来自" prop="acl.name"></el-table-column>
+      <el-table-column label="来自" prop="author.name"></el-table-column>
       <el-table-column label="操作" align="right">
         <div class="oper" slot-scope="scope">
-          <el-tooltip effect="dark" :content="true ? '取消星标' : '添加星标'" placement="bottom">
-            <i class="wi wi-star" @click="aa(scope.row)"></i>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="删除" placement="bottom">
-            <i class="wi wi-delete" @click="aa(scope.row.id)"></i>
+          <el-tooltip effect="dark" :content="scope.row.has_star ? '取消星标' : '添加星标'" placement="bottom">
+            <i class="wi wi-star" @click="operStar(scope.row)"></i>
           </el-tooltip>
         </div>
       </el-table-column>
@@ -72,7 +69,8 @@ export default {
       this.loading = true
       this.$post('/admin/document/all',{
         page: this.currentPage,
-        name: this.keyword
+        name: this.keyword,
+        show_all: 1
       })
         .then(res => {
           this.docList = res.data
@@ -81,8 +79,21 @@ export default {
           this.loading = false
         })
     },
-    aa() {
-      
+    operStar(row) {
+      let url = row.has_star ? '/admin/star/delete' : '/admin/star/add'
+      let mes = row.has_star ? '取消成功！' : '添加成功！'
+      this.$post(url, {
+        document_id: row.id
+      })
+        .then(() => {
+          this.$message(mes)
+          this.docList.forEach(doc => {
+            if (doc.id == row.id) {
+              doc.has_star = !doc.has_star
+              return
+            }
+          })
+        })
     }
   }
 }

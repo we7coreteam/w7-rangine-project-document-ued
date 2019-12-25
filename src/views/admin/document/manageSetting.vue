@@ -12,14 +12,14 @@
           </div>
           <div>
             <i :class="iconClass" class="icon-own"></i>
-            <span>{{this.details.is_public == 1 ? '公有' : '私有'}}</span>
+            <span>{{details.is_public == 1 ? '公有' : '私有'}}</span>
           </div>
         </div>
       </div>
       <div class="operation">
-        <el-button type="text" @click="dialogShareVisible = true">分享设置</el-button>
+        <el-button type="text" v-if="details.is_public == 2" @click="dialogShareVisible = true">分享设置</el-button>
         <el-button type="text" v-if="details.acl && details.acl.has_manage" @click="editIsPublic">
-          {{this.details.is_public == 1 ? '设为私有项目' : '设为公开项目'}}
+          {{details.is_public == 1 ? '设为私有项目' : '设为公开项目'}}
         </el-button>
         <el-button type="text" v-if="details.acl && details.acl.has_edit" @click="dialogRenameVisible = true">重命名</el-button>
         <router-link class="el-button el-button--text" v-if="details.acl && details.acl.has_edit" :to="{path: 'chapter/' + this.$route.params.id}"><span>编辑文档</span></router-link>

@@ -36,8 +36,14 @@ export default {
         username: '',
         userpass: '',
         code: ''
-      }
+      },
+      redirect: ''
     }
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.redirect = to.query.redirect
+    })
   },
   created () {
     this.getCode()
@@ -67,7 +73,11 @@ export default {
           let msg = this.$message('登录成功')
           setTimeout(() => {
             msg.close()
-            this.$router.push('/admin/document')
+            if (this.redirect) {
+              window.open(this.redirect, '_self')
+            } else {
+              this.$router.push('/admin/document')
+            }
           }, 500)
         }).catch(() => {
           this.formData.code = ''

@@ -23,18 +23,22 @@
         <div class="doc-icons" slot-scope="scope">
           <i class="wi wi-document color-blue"></i>
           <span class="name">{{ scope.row.name }}</span>
-          <i class="wi wi-star color-yellow"></i>
+          <i class="wi wi-star color-yellow" v-if="scope.row.has_star"></i>
           <div class="we7-label" v-if="!scope.row.is_public">
             <i class="wi wi-lock" ><span class="font">私有</span></i>
           </div>
         </div>
       </el-table-column>
-      <el-table-column label="来自" prop="acl.name"></el-table-column>
-      <el-table-column label="时间" prop="name"></el-table-column>
+      <el-table-column label="来自" prop="author.name"></el-table-column>
+      <el-table-column label="时间">
+        <template slot-scope="scope">
+          {{ timestampFormat(scope.row.time) }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="right">
         <div class="oper" slot-scope="scope">
           <el-tooltip effect="dark" content="删除记录" placement="bottom">
-            <i class="wi wi-delete" @click="aa(scope.row)"></i>
+            <i class="wi wi-delete" @click="del(scope.row.id)"></i>
           </el-tooltip>
         </div>
       </el-table-column>
@@ -75,7 +79,7 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      this.$post('/admin/document/all',{
+      this.$post('/admin/document/operate-log',{
         page: this.currentPage,
         name: this.keyword
       })
@@ -86,8 +90,50 @@ export default {
           this.loading = false
         })
     },
-    aa() {
-      
+    timestampFormat( timeString ) {
+      var timestamp = Date.parse(timeString)/1000
+      function zeroize( num ) {
+          return (String(num).length == 1 ? '0' : '') + num;
+      }
+
+      var curTimestamp = parseInt(new Date().getTime() / 1000); //当前时间戳
+      var timestampDiff = curTimestamp - timestamp; // 参数时间戳与当前时间戳相差秒数
+
+      var curDate = new Date( curTimestamp * 1000 ); // 当前时间日期对象
+      var tmDate = new Date( timestamp * 1000 );  // 参数时间戳转换成的日期对象
+
+      var Y = tmDate.getFullYear(), m = tmDate.getMonth() + 1, d = tmDate.getDate();
+      var H = tmDate.getHours(), i = tmDate.getMinutes();
+
+      if ( timestampDiff < 60 ) { // 一分钟以内
+        return "刚刚";
+      } else if( timestampDiff < 3600 ) { // 一小时前之内
+        return Math.floor( timestampDiff / 60 ) + "分钟前";
+      } else if ( curDate.getFullYear() == Y && curDate.getMonth()+1 == m && curDate.getDate() == d ) {
+        return '今天' + zeroize(H) + ':' + zeroize(i);
+      } else {
+        var oneDayDate = new Date( (curTimestamp - 86400) * 1000 ); // 参数中的时间戳加一天转换成的日期对象
+        if ( oneDayDate.getFullYear() == Y && oneDayDate.getMonth()+1 == m && oneDayDate.getDate() == d ) {
+          return '昨天' + zeroize(H) + ':' + zeroize(i);
+        } else {
+          return  Y + '年' + zeroize(m) + '月' + zeroize(d) + '日 ' + zeroize(H) + ':' + zeroize(i);
+        }
+      }
+    },
+    del(id) {
+      this.$confirm('是否要删除该条记录?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$post('/admin/document/delete-operate-log',{
+          document_id: id
+        })
+          .then(() => {
+            this.getList()
+            this.$message('删除记录成功！')
+          })
+      })
     }
   }
 }

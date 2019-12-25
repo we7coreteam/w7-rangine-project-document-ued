@@ -23,14 +23,11 @@
           </div>
         </div>
       </el-table-column>
-      <el-table-column label="来自" prop="acl.name"></el-table-column>
+      <el-table-column label="来自" prop="author.name"></el-table-column>
       <el-table-column label="操作" align="right">
         <div class="oper" slot-scope="scope">
-          <el-tooltip effect="dark" :content="true ? '取消星标' : '添加星标'" placement="bottom">
-            <i class="wi wi-star" @click="aa(scope.row)"></i>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="删除" placement="bottom">
-            <i class="wi wi-delete" @click="aa(scope.row.id)"></i>
+          <el-tooltip effect="dark" content="取消星标" placement="bottom">
+            <i class="wi wi-star" @click="cancel(scope.row.document_id)"></i>
           </el-tooltip>
         </div>
       </el-table-column>
@@ -70,7 +67,7 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      this.$post('/admin/document/all',{
+      this.$post('/admin/star/all',{
         page: this.currentPage,
         name: this.keyword
       })
@@ -81,8 +78,14 @@ export default {
           this.loading = false
         })
     },
-    aa() {
-
+    cancel(id) {
+       this.$post('/admin/star/delete',{
+        document_id: id
+      })
+        .then(() => {
+          this.getList()
+          this.$message('取消成功！')
+        })
     }
   }
 }
