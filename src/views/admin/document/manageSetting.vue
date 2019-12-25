@@ -12,14 +12,14 @@
           </div>
           <div>
             <i :class="iconClass" class="icon-own"></i>
-            <span>{{details.is_public == 1 ? '公有' : '私有'}}</span>
+            <span>{{details.is_public ? '公有' : '私有'}}</span>
           </div>
         </div>
       </div>
       <div class="operation">
-        <el-button type="text" v-if="details.is_public == 2" @click="dialogShareVisible = true">分享设置</el-button>
+        <el-button type="text" v-if="!details.is_public" @click="dialogShareVisible = true">分享设置</el-button>
         <el-button type="text" v-if="details.acl && details.acl.has_manage" @click="editIsPublic">
-          {{details.is_public == 1 ? '设为私有项目' : '设为公开项目'}}
+          {{details.is_public ? '设为私有项目' : '设为公开项目'}}
         </el-button>
         <el-button type="text" v-if="details.acl && details.acl.has_edit" @click="dialogRenameVisible = true">重命名</el-button>
         <router-link class="el-button el-button--text" v-if="details.acl && details.acl.has_edit" :to="{path: 'chapter/' + this.$route.params.id}"><span>编辑文档</span></router-link>
@@ -57,12 +57,12 @@
     <el-dialog class="w7-dialog" title="分享设置" :visible.sync="dialogShareVisible" :close-on-click-modal="false" center>
       <el-form label-width="100px">
         <el-form-item label="私有文档查看">
-          <el-radio v-model="radioShare" label="1">点击链接直接可查看</el-radio>
-          <el-radio v-model="radioShare" label="2">点击链接登录后查看</el-radio>
+          <el-radio v-model="radioShare" label="0">指定人</el-radio>
+          <el-radio v-model="radioShare" label="1">点击链接登录后查看</el-radio>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="editRename">确 定</el-button>
+        <el-button type="primary" @click="confirmShare">确 定</el-button>
         <el-button @click="dialogShareVisible = false">取 消</el-button>
       </div>
     </el-dialog>
@@ -121,7 +121,7 @@ export default {
       activeName: 'first',//tabs显示的选项卡名字
       details: '',//文档数据
       dialogShareVisible: false,//分享设置弹出框
-      radioShare: '1',
+      radioShare: '0',
       dialogRenameVisible: false,//重命名弹出框
       newDocName: '',//文档新名称
       selectRow: '',//选中行的数据
@@ -136,7 +136,7 @@ export default {
   },
   computed: {
     iconClass() {
-      return this.details.is_public == 1 ? 'el-icon-unlock' : 'el-icon-lock'
+      return this.details.is_public ? 'el-icon-unlock' : 'el-icon-lock'
     }
   },
   created() {
@@ -155,11 +155,21 @@ export default {
     editIsPublic() {
       this.$post('/admin/document/update', {
         document_id: this.details.id,
-        is_public: this.details.is_public == 1 ? 2 : 1
+        is_public: this.details.is_public ? 2 : 1
       })
         .then(() => {
           this.$message({ type: 'success', message: '修改成功!'})
           this.getdetails()
+        })
+    },
+    confirmShare() {
+      this.$post('/admin/document/update', {
+        document_id: this.details.id,
+        login_preview: this.radioShare
+      })
+        .then(() => {
+          this.$message({ type: 'success', message: '修改成功!'})
+          this.dialogShareVisible = false
         })
     },
     editRename() {
