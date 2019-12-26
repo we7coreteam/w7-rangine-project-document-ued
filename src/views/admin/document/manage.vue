@@ -202,11 +202,11 @@ export default {
 .card-warpper {
   display: flex;
   flex-wrap:wrap;
-  margin: -35px -35px 0 -35px;
+  margin-left: -10px;
 }
 .w7-card{
   position: relative;
-  margin: 35px;
+  margin: 10px;
   padding:20px;
   width: 260px;
 	height: 120px;
