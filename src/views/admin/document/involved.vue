@@ -70,7 +70,7 @@ export default {
       this.$post('/admin/document/all',{
         page: this.currentPage,
         name: this.keyword,
-        show_all: 1
+        only_reader: 1
       })
         .then(res => {
           this.docList = res.data
