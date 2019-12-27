@@ -6,6 +6,7 @@
           <i class="wi wi-folder"></i>
           <span slot="title">我的文档管理</span>
         </el-menu-item>
+        <div class="line"></div>
         <el-menu-item index="/admin/document/star">
           <i class="wi wi-star"></i>
           <span slot="title">我的星标</span>
@@ -58,9 +59,6 @@ export default {
     margin: 10px 0;
     height: 40px;
     line-height: 40px;
-    &:first-child {
-      margin-bottom: 40px;
-    }
     &.is-active {
       color: #4096f9;
       background-color: #e6f2ff;
@@ -71,6 +69,11 @@ export default {
       font-size: 18px;
     }
   }
+}
+.line {
+  margin: 18px 0;
+  height: 1px;
+	background-color: #f7f9fc;
 }
 .el-main {
   padding: 0 40px 0 0;

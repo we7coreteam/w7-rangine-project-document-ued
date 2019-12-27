@@ -57,7 +57,7 @@
     <el-dialog class="w7-dialog" title="分享设置" :visible.sync="dialogShareVisible" :close-on-click-modal="false" center>
       <el-form label-width="100px">
         <el-form-item label="私有文档查看">
-          <el-radio v-model="radioShare" label="0">指定人</el-radio>
+          <el-radio v-model="radioShare" label="0">文档参与者可看</el-radio>
           <el-radio v-model="radioShare" label="1">点击链接登录后查看</el-radio>
         </el-form-item>
       </el-form>

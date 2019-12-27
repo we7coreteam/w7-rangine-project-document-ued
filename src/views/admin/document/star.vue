@@ -16,7 +16,7 @@
       <el-table-column label="文档名称">
         <div class="doc-icons" slot-scope="scope">
           <i class="wi wi-document color-blue"></i>
-          <span class="name">{{ scope.row.name }}</span>
+          <span class="name" @click="readDoc(scope.row.id)">{{ scope.row.name }}</span>
           <i class="wi wi-star color-yellow"></i>
           <div class="we7-label" v-if="!scope.row.is_public">
             <i class="wi wi-lock" ><span class="font">私有</span></i>
@@ -27,7 +27,7 @@
       <el-table-column label="操作" align="right">
         <div class="oper" slot-scope="scope">
           <el-tooltip effect="dark" content="取消星标" placement="bottom">
-            <i class="wi wi-star" @click="cancel(scope.row.document_id)"></i>
+            <i class="wi wi-star checked" @click="cancel(scope.row.document_id)"></i>
           </el-tooltip>
         </div>
       </el-table-column>
@@ -86,6 +86,12 @@ export default {
           this.getList()
           this.$message('取消成功！')
         })
+    },
+    readDoc(id) {
+      let routeUrl = this.$router.resolve({
+        path: "/chapter/" + id
+      })
+      window.open(routeUrl.href, '_blank')
     }
   }
 }

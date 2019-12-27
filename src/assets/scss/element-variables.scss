@@ -120,21 +120,31 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   }
   .doc-icons {
     .name {
+      cursor: pointer;
       margin-right: 15px;
       margin-left: 15px;
+      &:hover {
+        color: #3296fa;
+      }
     }
     .wi-star {
       margin-right: 15px;
     }
   }
   .oper {
-    i {
+    .wi {
       margin-left: 15px;
       font-size: 16px;
       color: #b3b3b3;
       cursor: pointer;
       &:hover {
         color: #3296fa;
+      }
+      &.checked {
+        color: #3296fa;
+        &:hover {
+          color: #b3b3b3;
+        }
       }
     }
   }
