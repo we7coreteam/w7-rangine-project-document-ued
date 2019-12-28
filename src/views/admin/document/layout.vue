@@ -42,7 +42,11 @@ export default {
   // },
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      vm.active = to.path
+      if (to.path == '/admin/document/star' || to.path == '/admin/document/history' || to.path == '/admin/document/involved') {
+        vm.active = to.path
+      } else {
+        vm.active = '/admin/document'
+      }
     })
   },
   // watch: {
