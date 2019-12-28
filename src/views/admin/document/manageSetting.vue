@@ -57,8 +57,8 @@
     <el-dialog class="w7-dialog" title="分享设置" :visible.sync="dialogShareVisible" :close-on-click-modal="false" center>
       <el-form label-width="100px">
         <el-form-item label="私有文档查看">
-          <el-radio v-model="radioShare" label="0">文档参与者可看</el-radio>
-          <el-radio v-model="radioShare" label="1">点击链接登录后查看</el-radio>
+          <el-radio v-model="radioShare" label="1">文档参与者可看</el-radio>
+          <el-radio v-model="radioShare" label="2">点击链接登录后查看</el-radio>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -121,7 +121,7 @@ export default {
       activeName: 'first',//tabs显示的选项卡名字
       details: '',//文档数据
       dialogShareVisible: false,//分享设置弹出框
-      radioShare: '0',
+      radioShare: '1',
       dialogRenameVisible: false,//重命名弹出框
       newDocName: '',//文档新名称
       selectRow: '',//选中行的数据
@@ -150,6 +150,7 @@ export default {
         .then(res => {
           this.details = res
           this.role_list = res.role_list
+          this.radioShare = res.login_preview ? '2' : '1'
         })
     },
     editIsPublic() {
