@@ -63,13 +63,13 @@
         <el-form label-width="120" style="margin-left:50px;">
         <el-form-item label="公有项目">
             <el-radio-group v-model="radio" class="ownership">
-            <el-radio :label="1">管理员</el-radio>
+            <!-- <el-radio :label="1">管理员</el-radio> -->
             <el-radio :label="2">操作员</el-radio>
             </el-radio-group>
         </el-form-item>
         <el-form-item label="私有项目">
             <el-radio-group v-model="radio1" class="ownership">
-            <el-radio :label="1">管理员</el-radio>
+            <!-- <el-radio :label="1">管理员</el-radio> -->
             <el-radio :label="2">操作员</el-radio>
             <el-radio :label="3">阅读者</el-radio>
             </el-radio-group>
@@ -95,8 +95,8 @@ export default {
       pageCount: 1,//总页数
       total: 0,//总数
       dialogEditInfoVisible: false,
-      radio: 1,
-      radio1: 1,
+      radio: 2,
+      radio1: 2,
       selectRows: []//所有选中行
     }
   },

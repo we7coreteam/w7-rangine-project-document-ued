@@ -304,7 +304,7 @@ export default {
     justify-content: space-between;
     align-items: center;
     padding-right: 20px;
-    height:76px;
+    height:80px;
     font-size:14px;
   }
 .content {
@@ -343,6 +343,7 @@ export default {
   }
 }
 .w7-table {
+  margin-top: 0;
   .manage {
     margin: 0 auto;
     width: 78px;
