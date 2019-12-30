@@ -28,7 +28,7 @@
     </div>
     <div class="operator-management">
       <div>操作员管理</div>
-      <el-button type="primary" @click="openAddmanage">添加操作员</el-button>
+      <el-button type="primary" @click="openAddmanage">添加操作权限</el-button>
     </div>
     <div class="content">
       <div class="tab-content-manage">
@@ -57,7 +57,7 @@
     <el-dialog class="w7-dialog" title="分享设置" :visible.sync="dialogShareVisible" :close-on-click-modal="false" center>
       <el-form label-width="100px">
         <el-form-item label="私有文档查看">
-          <el-radio v-model="radioShare" label="1">文档参与者可看</el-radio>
+          <el-radio v-model="radioShare" label="1">仅限有权限者查看</el-radio>
           <el-radio v-model="radioShare" label="2">点击链接登录后查看</el-radio>
         </el-form-item>
       </el-form>
