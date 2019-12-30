@@ -22,7 +22,7 @@
               {{item.name}}
             </div>
             <div class="icon-box">
-              <el-tooltip effect="dark" content="私有" placement="bottom" v-if="item.has_read">
+              <el-tooltip effect="dark" content="私有" placement="bottom" v-if="!item.is_public">
                 <i class="wi wi-lock"></i>
               </el-tooltip>
               <el-tooltip effect="dark" content="预览" placement="bottom">

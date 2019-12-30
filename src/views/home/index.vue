@@ -106,6 +106,19 @@ export default {
       })
         .then(res => {
           if(!res.length) {return}
+          res.forEach(item => {
+            if(item.is_dir && item.children.length == 0) {
+              item.children.push({is_dir: false})
+            } else {
+              item.children.forEach(child => {
+                if(child.is_dir && child.children.length == 0) {
+                  child.children.push({
+                    is_dir: false
+                  })
+                }
+              })
+            }
+          })
           this.chapters = res
           this.$nextTick(() => {
             if (this.$route.query.id) {
@@ -350,7 +363,7 @@ export default {
             padding-left: 20px;
           }
           li {
-            padding: 15px 0;
+            padding: 10px 0;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
