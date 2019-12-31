@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-aside class="admin-view-aside" :width="isCollapse ? '65px' : '240px'">
+    <el-aside class="admin-view-aside" :width="isCollapse ? '65px' : '240px'" v-if="showAside">
       <el-menu class="admin-view-menu" :default-active="active" :router="true" :collapse="isCollapse">
         <el-menu-item index="/admin/document">
           <i class="wi wi-folder"></i>
@@ -32,7 +32,8 @@ export default {
   data() {
     return {
       active: '/admin/document',
-      isCollapse: false
+      isCollapse: false,
+      showAside: true
     }
   },
   // methods: {
@@ -40,6 +41,15 @@ export default {
   //     this.isCollapse = this.$route.name === 'chapter' ? true : false
   //   }
   // },
+  watch: {
+    "$route": function(to) {
+      if (to.name === 'manageSetting' || to.name === 'chapter') {
+        this.showAside = false
+      } else {
+        this.showAside = true
+      }
+    }
+  },
   beforeRouteEnter(to, from, next) {
     next(vm => {
       if (to.path == '/admin/document/star' || to.path == '/admin/document/history' || to.path == '/admin/document/involved') {
@@ -47,11 +57,13 @@ export default {
       } else {
         vm.active = '/admin/document'
       }
+      if (to.name === 'manageSetting' || to.name === 'chapter') {
+        vm.showAside = false
+      } else {
+        vm.showAside = true
+      }
     })
-  },
-  // watch: {
-  //   "$route": "setIsCollapse"
-  // }
+  }
 }
 </script>
 
