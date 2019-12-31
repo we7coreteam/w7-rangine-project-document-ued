@@ -71,7 +71,8 @@ export default {
       keyword: '',
       articleFlag: true,//true显示文章内容 false显示搜索列表
       articleContent: {
-        author:{}
+        author:{},
+        content: ''
       },
       articleInfoList: []
     }
@@ -84,8 +85,7 @@ export default {
         }
       },
       deep: true
-    },
-
+    }
   },
   created () {
     this.getDocumentName()
@@ -187,6 +187,17 @@ export default {
         .then(res => {
           this.articleContent = res
           this.articleContent.content = this.$refs.mavonEditor.markdownIt.render('<div class="markdown-content">\n \n'+res.content+'\n \n</div>' + '<div class="markdown-menu">\n \n @[toc]( ) \n \n</div>\n \n' )
+          this.$nextTick(() => {
+            // let id = this.$route.hash.substr(1)
+            // let jump = document.getElementById(id)
+            // let total = jump.offsetTop
+            // window.scroll({
+            //   top: total
+            // })
+            let hash = this.$route.hash
+            window.location.hash = '#'
+            window.location.hash = hash
+          })
           this.articleFlag = true
         })
     },
