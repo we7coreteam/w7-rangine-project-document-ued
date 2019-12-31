@@ -16,7 +16,7 @@
           </span>
         </el-tree>
       </el-aside>
-      <el-main>
+      <el-main id="home-index">
         <!-- <div class="search">
           <el-input placeholder="请输入关键字搜索" v-model="keyword" @keyup.enter.native="search">
             <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
@@ -251,6 +251,9 @@ export default {
 </script>
 
 <style lang="scss">
+#home-index {
+  min-height: calc(100vh - 89px);
+}
 .chapter-warpper {
   background: linear-gradient(to right, #f7f8fa 50%, #ffffff 50%);
 }

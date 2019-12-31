@@ -125,10 +125,10 @@ export default {
         name: this.name,
         is_public: this.radio
       })
-        .then(() => {
+        .then(res => {
           this.$message('创建成功！')
           this.dialogDocInfoVisible = false
-          this.getList()
+          this.goChapter(res)
         })
     },
     removeDoc(id) {
