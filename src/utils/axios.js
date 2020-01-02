@@ -22,7 +22,11 @@ instance.interceptors.response.use(response => {
   } else {
     if (!response.data || !response.data.status) {
       if (response.data.code == '444') {
-        router.push('/login')
+        if (response.data.data && response.data.data.url) {
+          window.open(response.data.data.url)
+        } else {
+          router.push('/login')
+        }
       } else {
         Message({
           message: (response.data && response.data.message) ? response.data.message : '出错了',
