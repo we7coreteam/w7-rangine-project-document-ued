@@ -21,8 +21,6 @@ instance.interceptors.response.use(response => {
     return response.data
   } else {
     if (!response.data || !response.data.status) {
-      response.data.code = '444'
-      response.data.data={url: 'http://www.baidu.com/'}
       if (response.data.code == '444') {
         if (response.data.data && response.data.data.url) {
           window.open(response.data.data.url, '_self')
