@@ -1,7 +1,7 @@
 <template>
   <div class="chapter-warpper">
     <el-container class="home-container">
-      <el-aside class="w7-aside-home" width="220px">
+      <el-aside class="w7-aside-home" width="260px">
         <p class="w7-aside-home-head">目录</p>
         <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text=""
           ref="chaptersTree"
@@ -12,7 +12,9 @@
           @node-click="handleNodeClick"
           @node-expand="handleNodeExpand">
           <span class="custom-tree-node" v-if="node.label" :class="{doc: !data.is_dir}" slot-scope="{ node, data }">
-            <span >{{ node.label }}</span>
+            <div class="text-over">
+              <span :title="node.label">{{ node.label }}</span>
+            </div>
           </span>
         </el-tree>
       </el-aside>
@@ -282,7 +284,6 @@ export default {
         .el-tree-node__expand-icon {
           padding: 0;
           padding-left: 40px;
-          width: 100%;
           position: absolute;
           top: 0;
           bottom: 0;
@@ -302,7 +303,8 @@ export default {
           }
         }
         .custom-tree-node {
-          // position: absolute;
+          flex: 1;
+          display: flex;
           padding: 10px 0;
           padding-left: 60px;
           z-index: 1;
@@ -310,6 +312,12 @@ export default {
           line-height: 26px;
           &.doc {
             z-index: 3;
+          }
+          .text-over {
+            flex: 1;
+            width: 0;
+            margin-left:10px;
+            padding-right: 10px;
           }
           .el-icon-caret-right {
             margin-left: -20px;

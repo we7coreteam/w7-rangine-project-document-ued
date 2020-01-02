@@ -43,6 +43,11 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 .fr {
   float: right;
 }
+.text-over {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .admin-view {
   &>.el-header {
     background-color: #383d41;

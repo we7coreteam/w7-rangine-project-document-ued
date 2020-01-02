@@ -1,6 +1,6 @@
 <template>
   <el-container class="w7-document-chapter">
-    <el-aside class="w7-aside-chapter" width="202px">
+    <el-aside class="w7-aside-chapter" width="260px">
       <div class="w7-aside-chapter-head">
         <p>{{ docName }}</p>
       </div>
@@ -33,14 +33,16 @@
         draggable
         @node-drop="handleDrop"
         :allow-drop="allowDrop">
-        <span class="custom-tree-node" slot-scope="{ node, data }">
-          <span>
+        <div class="custom-tree-node" slot-scope="{ node, data }">
+          <span class="node-info">
             <i class="wi wi-folder" v-if="data.is_dir == 1"></i>
             <i class="wi wi-document" v-if="data.is_dir == 0"></i>
-            <span style="margin-left:10px;">{{ node.label }}</span>
+            <div class="text-over">
+              <span :title="node.label">{{ node.label }}</span>
+            </div>
           </span>
           <span class="point3" @mousemove='updateXY' @click.stop="rightClick(false, data, node)"><span>...</span></span>
-        </span>
+        </div>
       </el-tree>
       <div id="menu-bar" class="menu-bar" v-show="menuBarVisible">
         <ul class="menu">
@@ -446,6 +448,7 @@ export default {
   .w7-aside-chapter {
     border-left: solid 1px #eeeeee;
     border-right: solid 1px #eeeeee;
+    background-color: #f7f8fa;
     .w7-aside-chapter-head {
       margin-top: 30px;
       p {
@@ -455,8 +458,8 @@ export default {
       }
     }
     .el-input {
-      width: 180px;
-      margin: 25px 10px;
+      width: auto;
+      margin: 25px 20px;
       /deep/ input {
         height: 34px;
         border: solid 1px #eeeeee;
@@ -472,14 +475,17 @@ export default {
     display: flex;
     justify-content: space-around;
     margin-bottom: 35px;
-    font-size:14px;
     color:#b6b5b5;
     .el-tooltip {
       cursor: pointer;
     }
+    .wi {
+      font-size: 22px;
+    }
   }
 }
 .w7-tree {
+  background: transparent;
   .el-tree-node__content {
     &:hover .custom-tree-node .point3 {
       display: inline-block;
@@ -489,6 +495,16 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      .node-info {
+        flex: 1;
+        display: flex;
+        .text-over {
+          flex: 1;
+          width: 0;
+          margin-left:10px;
+          padding-right: 10px;
+        }
+      }
       .point3 {
         display: none;
         color: #409eff;
