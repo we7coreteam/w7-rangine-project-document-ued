@@ -10,7 +10,7 @@
         <router-link class="item" to="/admin/setting" v-if="UserInfo.acl && UserInfo.acl.has_manage">系统设置</router-link>
       </div>
       <div class="user" v-if="UserInfo.username">
-        {{UserInfo.username}}
+        <div class="username">{{UserInfo.username}}</div>
         <div id="w7-nav-menu" class="menu-bar">
           <ul class="menu-ul">
             <li class="menu__item" @click="exit">退出系统</li>
@@ -76,12 +76,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.page-head {
-  font-size: 20px;
-  font-weight: 300;
-  margin: 0;
-  padding: 0;
-}
 .admin-view {
   & > .el-header {
     .menu {
@@ -117,6 +111,41 @@ export default {
   }
   .menu-bar {
     width: 120px;
+  }
+  .user {
+    width: 120px;
+    text-align: center;
+    cursor: pointer;
+    &:hover {
+      background: #40485b;
+      #w7-nav-menu {
+        display: block;
+      }
+    }
+    .username:hover {
+      color: #3296fa;
+    }
+    #w7-nav-menu {
+      display: none;
+      position: absolute;
+      top: 60px;
+      right: 50px;
+      background: #40485b;
+      box-shadow: 0px 2px 10px 0px rgba(82,185,198,0.1);
+      border-radius: 0;
+      border: 0;
+      font-size: 14px;
+      color: #fff;
+      text-align: center;
+      ul {
+        border-left: #383d41 3px solid;
+        border-right: #383d41 3px solid;
+        li:hover {
+          color: #3296fa;
+          background: #343b4e;
+        }
+      }
+    }
   }
 }
 </style>
