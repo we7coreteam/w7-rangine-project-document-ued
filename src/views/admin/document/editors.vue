@@ -93,7 +93,7 @@ export default {
 <style lang="scss">
 .editors {
   .v-note-wrapper {
-    padding: 30px 0;
+    margin: 30px 0;
     .v-note-panel {
       .v-note-edit {
         flex: 1 !important;

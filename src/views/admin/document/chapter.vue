@@ -475,9 +475,9 @@ export default {
     }
   }
   .icon-box{
-    width:100%;
+    padding: 0 30px;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     margin-bottom: 30px;
     color:#b6b5b5;
     .el-tooltip {
