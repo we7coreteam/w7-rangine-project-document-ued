@@ -1,8 +1,8 @@
 <template>
   <div class="we7-document-star">
-    <h3 class="page-head">
+    <div class="page-head">
       我的星标
-    </h3>
+    </div>
     <div class="search-box">
       <div class="demo-input-suffix">
         <el-input v-model="keyword" placeholder="请输入文档名称" clearable @keyup.enter.native="getList">
@@ -96,3 +96,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.we7-document-star {
+  .search-box {
+    padding-left: 20px;
+  }
+}
+</style>

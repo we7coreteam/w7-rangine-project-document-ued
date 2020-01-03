@@ -1,8 +1,6 @@
 <template>
   <div class="container">
-    <h3 class="page-head">
-      项目管理
-    </h3>
+    <div class="page-head">项目管理</div>
     <div class="container-box">
       <div class="search-box">
         <div class="demo-input-suffix">
@@ -54,8 +52,8 @@
       >
       </el-pagination>
       <!-- 基本信息弹出框 -->
-      <el-dialog class="w7-dialog" title="创建项目" :visible.sync="dialogDocInfoVisible" :close-on-click-modal="false" center>
-        <el-form :label-width="formLabelWidth">
+      <el-dialog class="we7-dialog" title="创建项目" :visible.sync="dialogDocInfoVisible" :close-on-click-modal="false" center>
+        <el-form label-width="105px" label-position="left">
           <el-form-item label="项目名称">
             <el-input v-model="name" autocomplete="off"></el-input>
           </el-form-item>
@@ -87,7 +85,6 @@ export default {
       total: 0,//总数
       name: '',
       dialogDocInfoVisible: false,//创建文档弹弹出框
-      formLabelWidth: '120px',
       actClass:"actClass",
     }
   },
@@ -195,6 +192,9 @@ export default {
   border-radius:4px;
   top:0;
   transition: 0.2s;
+  .wi {
+    font-size: 20px;
+  }
   &:hover {
     position: relative;
     cursor:pointer;

@@ -130,16 +130,10 @@ export default {
   width: 900px;
   margin-top: 69px;
   input {
-    border-radius: 2px;
     border: solid 1px #eeeeee;
   }
   /deep/ .el-input__inner {
     height: 35px;
-  }
-  button {
-    width: 120px;
-    height: 35px;
-    padding: 9px 20px;
   }
 }
 </style>

@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <h3 class="page-head">
+    <div class="page-head">
       <router-link to='/admin/document'><i class="el-icon-arrow-left"></i><span style="color:#4da4fb">项目管理</span></router-link>/设置
-    </h3>
+    </div>
     <div class="doc-title">
       <div class="title-box">
         <i class="wi wi-folder"></i>
@@ -28,7 +28,7 @@
     </div>
     <div class="operator-management">
       <div>操作员管理</div>
-      <el-button type="primary" @click="openAddmanage">添加操作权限</el-button>
+      <el-button class="we7-button-normal" type="primary" @click="openAddmanage">添加操作权限</el-button>
     </div>
     <div class="content">
       <div class="tab-content-manage">
@@ -54,8 +54,8 @@
       </div>
     </div>
     <!-- 分享设置 -->
-    <el-dialog class="w7-dialog" title="分享设置" :visible.sync="dialogShareVisible" :close-on-click-modal="false" center>
-      <el-form label-width="100px">
+    <el-dialog class="we7-dialog" title="分享设置" :visible.sync="dialogShareVisible" :close-on-click-modal="false" center>
+      <el-form label-width="105px" label-position="left">
         <el-form-item label="私有文档查看">
           <el-radio v-model="radioShare" label="1">仅限有权限者查看</el-radio>
           <el-radio v-model="radioShare" label="2">点击链接登录后查看</el-radio>
@@ -67,8 +67,8 @@
       </div>
     </el-dialog>
     <!-- 重命名弹出框 -->
-    <el-dialog class="w7-dialog" title="重命名" :visible.sync="dialogRenameVisible" :close-on-click-modal="false" center>
-      <el-form label-width="100px">
+    <el-dialog class="we7-dialog" title="重命名" :visible.sync="dialogRenameVisible" :close-on-click-modal="false" center>
+      <el-form label-width="105px" label-position="left">
         <el-form-item label="新的文档名称">
           <el-input v-model="newDocName"></el-input>
         </el-form-item>
@@ -79,8 +79,8 @@
       </div>
     </el-dialog>
     <!-- 操作员弹出框 -->
-    <el-dialog class="w7-dialog w7-dialog-user" title="添加操作员" :visible.sync="dialogAddManageVisible" :close-on-click-modal="false" center>
-      <el-form label-width="120px">
+    <el-dialog class="we7-dialog we7-dialog-user" title="添加操作员" :visible.sync="dialogAddManageVisible" :close-on-click-modal="false" center>
+      <el-form label-width="105px" label-position="left">
         <el-form-item label="用户名">
           <el-input v-model="addManageName" autocomplete="off"></el-input>
         </el-form-item>
@@ -96,8 +96,8 @@
       </div>
     </el-dialog>
     <!-- 编辑操作员 -->
-    <el-dialog class="w7-dialog" title="编辑操作员" :visible.sync="dialogOpeInfoVisible" :close-on-click-modal="false" center>
-      <el-form label-width="120px">
+    <el-dialog class="we7-dialog" title="编辑操作员" :visible.sync="dialogOpeInfoVisible" :close-on-click-modal="false" center>
+      <el-form label-width="105px" label-position="left">
         <el-form-item label="操作员权限">
           <el-radio-group v-model="radio">
             <el-radio v-for="item in role_list" :label="item.id" :key="item.id">{{item.name}}</el-radio>
@@ -262,7 +262,7 @@ export default {
 
 <style lang="scss" scoped>
 .container{
-  padding:30px 40px 0 40px;
+  padding:0 15px 0 25px;
 }
 .doc-title {
   display: flex;
@@ -327,7 +327,7 @@ export default {
     border-radius:4px;
   }
 }
-.w7-dialog-user {
+.we7-dialog-user {
   /deep/ .el-dialog__body {
     padding-bottom: 0;
   }

@@ -188,7 +188,7 @@ export default {
       })
         .then(res => {
           this.articleContent = res
-          this.articleContent.content = this.$refs.mavonEditor.markdownIt.render('<div class="markdown-content">\n \n'+res.content+'\n \n</div>' + '<div class="markdown-menu">\n \n @[toc]( ) \n \n</div>\n \n' )
+          this.articleContent.content = res.content ? this.$refs.mavonEditor.markdownIt.render('<div class="markdown-content">\n \n'+res.content+'\n \n</div>' + '<div class="markdown-menu">\n \n @[toc]( ) \n \n</div>\n \n' ) : ''
           this.$nextTick(() => {
             // let id = this.$route.hash.substr(1)
             // let jump = document.getElementById(id)
@@ -305,11 +305,10 @@ export default {
         .custom-tree-node {
           flex: 1;
           display: flex;
-          padding: 10px 0;
+          align-items: center;
           padding-left: 60px;
           z-index: 1;
-          height: 26px;
-          line-height: 26px;
+          height: 40px;
           &.doc {
             z-index: 3;
           }

@@ -92,6 +92,6 @@ export default {
 	background-color: #f7f9fc;
 }
 .el-main {
-  padding: 0 40px 0 0;
+  padding: 0 25px 0 15px;
 }
 </style>

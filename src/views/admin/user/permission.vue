@@ -59,7 +59,7 @@
         <el-button type="primary" @click="save">保存</el-button>
     </div>
     <!-- 批量修改弹出框 -->
-    <el-dialog class="w7-dialog" title="批量修改" :visible.sync="dialogEditInfoVisible" :close-on-click-modal="false" center>
+    <el-dialog class="we7-dialog" title="批量修改" :visible.sync="dialogEditInfoVisible" :close-on-click-modal="false" center>
         <el-form label-width="120" style="margin-left:50px;">
         <el-form-item label="公有项目">
             <el-radio-group v-model="radio" class="ownership">
@@ -196,7 +196,6 @@ export default {
   margin-top: 20px;
   button {
     margin: 0 20px;
-    padding: 12px 30px;
   }
   .el-pagination {
     margin-top:0;

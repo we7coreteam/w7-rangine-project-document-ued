@@ -67,8 +67,8 @@
       <editors :chapterId="selectNodeObj.id" :chapterName="selectNodeObj.name" v-if="selectNodeObj && selectNodeObj.id && selectNodeObj.is_dir == 0"></editors>
     </el-main>
     <!-- 新增节点弹出框 -->
-    <el-dialog class="w7-dialog only-input-dialog" :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false">
-      <el-form :model="addNodeObj" label-width="100px" @submit.native.prevent>
+    <el-dialog class="we7-dialog only-input-dialog" :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false" center>
+      <el-form :model="addNodeObj" label-width="105px" label-position="left" @submit.native.prevent>
         <el-form-item :label="dialogFormLabel">
           <el-input v-model="addNodeObj.name" @keyup.enter.native="confirmBtn"></el-input>
         </el-form-item>
@@ -79,8 +79,8 @@
       </div>
     </el-dialog>
     <!-- 弹出框移动tree节点 -->
-    <el-dialog class="w7-dialog" :title="dialogMoveTitle" :visible.sync="dialogMoveVisible" :close-on-click-modal="false">
-      <el-form label-width="100px">
+    <el-dialog class="we7-dialog" :title="dialogMoveTitle" :visible.sync="dialogMoveVisible" :close-on-click-modal="false" center>
+      <el-form label-width="105px" label-position="left">
         <el-form-item label="项目">
           <el-select v-model="moveDoc" placeholder="请选择"
             filterable
@@ -445,12 +445,16 @@ export default {
 
 <style lang="scss">
 .w7-document-chapter {
+  margin-left: -15px;
+  .el-main {
+    min-height: calc(100vh - 90px);
+  }
   .w7-aside-chapter {
     border-left: solid 1px #eeeeee;
     border-right: solid 1px #eeeeee;
     background-color: #f7f8fa;
     .w7-aside-chapter-head {
-      margin-top: 30px;
+      margin: 40px 0;
       p {
         font-size: 16px;
         color: #4d4d4d;
@@ -459,7 +463,7 @@ export default {
     }
     .el-input {
       width: auto;
-      margin: 25px 20px;
+      margin: 0 20px 20px;
       /deep/ input {
         height: 34px;
         border: solid 1px #eeeeee;
@@ -474,13 +478,34 @@ export default {
     width:100%;
     display: flex;
     justify-content: space-around;
-    margin-bottom: 35px;
+    margin-bottom: 30px;
     color:#b6b5b5;
     .el-tooltip {
       cursor: pointer;
     }
     .wi {
       font-size: 22px;
+    }
+  }
+  .menu-bar {
+    position: absolute;
+    font-size: 14px;
+    color: #4d4d4d;
+    background-color: #ffffff;
+    box-shadow: 0px 3px 7px 0px	rgba(219, 219, 219, 0.53);
+    z-index: 10000;
+    ul {
+      margin: 10px 0;
+    }
+    li {
+      padding: 0 14px;
+      width: 150px;
+      line-height: 34px;
+      box-sizing: border-box;
+      &:hover {
+        color: #3296fa;
+        cursor: pointer;
+      }
     }
   }
 }

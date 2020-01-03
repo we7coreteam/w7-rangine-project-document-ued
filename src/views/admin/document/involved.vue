@@ -1,8 +1,8 @@
 <template>
   <div class="we7-document-involved">
-    <h3 class="page-head">
+    <div class="page-head">
       我参与的
-    </h3>
+    </div>
     <div class="search-box">
       <div class="demo-input-suffix">
         <el-input v-model="keyword" placeholder="请输入文档名称" clearable @keyup.enter.native="getList">
@@ -104,3 +104,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.we7-document-involved {
+  .search-box {
+    padding-left: 20px;
+  }
+}
+</style>

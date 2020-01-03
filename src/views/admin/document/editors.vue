@@ -40,7 +40,7 @@ export default {
   },
   mounted() {
     let clientHeight = document.documentElement.clientHeight
-    this.$refs.mavonEditor.$el.style.height = (clientHeight - 220) + 'px'
+    this.$refs.mavonEditor.$el.style.height = (clientHeight - 260) + 'px'
     this.init()
   },
   methods: {
@@ -93,7 +93,7 @@ export default {
 <style lang="scss">
 .editors {
   .v-note-wrapper {
-    padding: 15px 0;
+    padding: 30px 0;
     .v-note-panel {
       .v-note-edit {
         flex: 1 !important;
@@ -107,14 +107,10 @@ export default {
   }
 }
 .chapter-title {
+  padding-top: 10px;
   font-size: 20px;
   letter-spacing: 1px;
   color: #4d4d4d;
-}
-.saveBtn {
-  padding: 9px 20px;
-  height: 34px;
-  border-radius: 2px;
 }
 .hljs{
   background:#eee!important;

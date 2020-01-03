@@ -1,8 +1,8 @@
 <template>
   <div class="we7-document-history">
-    <h3 class="page-head">
+    <div class="page-head">
       历史查看
-    </h3>
+    </div>
     <div class="search-box">
       <div class="demo-input-suffix">
         <el-input v-model="keyword" placeholder="请输入文档名称" clearable @keyup.enter.native="getList">
@@ -149,6 +149,7 @@ export default {
 <style lang="scss">
 .we7-document-history {
   .search-box {
+    padding-left: 20px;
     justify-content: flex-start;
     .demo-input-suffix {
       margin-right: 20px;

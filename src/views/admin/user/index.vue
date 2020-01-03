@@ -1,8 +1,6 @@
 <template>
   <div class="container">
-    <h3 class="page-head">
-      用户管理
-    </h3>
+    <div class="page-head">用户管理</div>
     <div class="search-box">
       <div class="demo-input-suffix">
         <el-input v-model="keyword" placeholder="请输入用户名称" clearable @keyup.enter.native="search">
@@ -10,7 +8,7 @@
         </el-input>
       </div>
       <div class="demo-input-btn">
-        <router-link to="user/create" type="button" class="el-button el-button--primary">创建用户</router-link>
+        <router-link to="user/create" type="button" class="el-button el-button--primary we7-button-normal">创建用户</router-link>
       </div>
     </div>
     <el-table class="w7-table" :data="userList" ref="multipleTable"
@@ -67,8 +65,8 @@
       </el-pagination>
     </div>
     <!-- 设置 -->
-    <el-dialog class="w7-dialog" title="账号设置" :visible.sync="dialogEditUserVisible" :close-on-click-modal="false" center>
-      <el-form :model="formData" label-width="120px">
+    <el-dialog class="we7-dialog" title="账号设置" :visible.sync="dialogEditUserVisible" :close-on-click-modal="false" center>
+      <el-form :model="formData" label-width="105px" label-position="left">
         <el-form-item label="用户名">
           <el-input v-model="formData.username"></el-input>
         </el-form-item>
@@ -170,7 +168,7 @@ export default {
 
 <style lang="scss" scoped>
 .container{
-  padding:30px 40px 0 40px;
+  padding: 0 40px;
 }
 .el-input__icon{
   color:#3296fa;
