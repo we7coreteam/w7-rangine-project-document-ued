@@ -112,7 +112,7 @@ export default {
   width: 100%;
   height: 30px;
   font-size: 14px ;
-  background-color: #f4f5f9;
+  background-color: #fcfcfc;
   display: flex;
   justify-content: center;
   align-items: center;

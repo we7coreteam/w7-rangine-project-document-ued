@@ -82,7 +82,7 @@
     <el-dialog class="we7-dialog" :title="dialogMoveTitle" :visible.sync="dialogMoveVisible" :close-on-click-modal="false" center>
       <el-form label-width="105px" label-position="left">
         <el-form-item label="项目">
-          <el-select v-model="moveDoc" placeholder="请选择"
+          <el-select v-model="moveDoc" placeholder="请输入文档名称进行搜索"
             filterable
             remote
             reserve-keyword
@@ -209,11 +209,11 @@ export default {
       this.menuBarVisible = true  // 显示模态窗口，跳出自定义菜单栏
       const menuBar = document.querySelector('#menu-bar')
       if(!MouseEvent) {
-        menuBar.style.left = this.clientX + 'px'
-        menuBar.style.top = this.clientY + 'px'
+        menuBar.style.left = (this.clientX - 50) + 'px'
+        menuBar.style.top = (this.clientY + 20) + 'px'
       }
-      menuBar.style.left = MouseEvent.clientX + 'px'
-      menuBar.style.top = MouseEvent.clientY + 'px'
+      menuBar.style.left = (MouseEvent.clientX - 50) + 'px'
+      menuBar.style.top = (MouseEvent.clientY + 20) + 'px'
       this.rightSelectNodeObj = object
       this.rightSelectNode = Node
       // 给整个document添加监听鼠标事件，点击任何位置执行removeRightClickEvent
@@ -492,8 +492,22 @@ export default {
     font-size: 14px;
     color: #4d4d4d;
     background-color: #ffffff;
-    box-shadow: 0px 3px 7px 0px	rgba(219, 219, 219, 0.53);
+    box-shadow: 2px 0px 10px 4px	rgba(219, 219, 219, 0.53);
     z-index: 10000;
+    &::before {
+      content: " ";
+      position: absolute;
+      display: block;
+      top: -8px;
+      left: 50px;
+      width: 0;
+      height: 0;
+      border-color: transparent;
+      border-style: solid;
+      border-width: 8px;
+      border-top-width: 0;
+      border-bottom-color: #fff;
+    }
     ul {
       margin: 10px 0;
     }
