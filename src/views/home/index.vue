@@ -285,6 +285,7 @@ export default {
           padding: 0;
           padding-left: 40px;
           position: absolute;
+          width: 100%;
           top: 0;
           bottom: 0;
           z-index: 2;
