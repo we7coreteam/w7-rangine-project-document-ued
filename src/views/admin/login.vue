@@ -12,7 +12,8 @@
             </el-input>
           </div>
           <div class="login-action">
-            <el-button type="text" @click="showFind">找回密码?</el-button>
+            <!-- <el-button type="text" @click="showFind">找回密码?</el-button> -->
+            <el-button type="text" @click="otherLoginMethod">第三方登录</el-button>
           </div>
           <el-button class="login-btn" @click="login">登录</el-button>
         </el-tab-pane>
@@ -25,6 +26,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'adminLogin',
   data() {
@@ -41,9 +43,27 @@ export default {
     }
   },
   beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.redirect = to.query.redirect
-    })
+    //判断
+    let redirect_url = to.query.redirect_url
+    let code = redirect_url.split('code=')[1]
+    if (code) {//第三方登录成功之后，跳转到redirect_url
+      axios.post('/common/auth/third-party-login', {
+        code
+      })
+        .then(() => {
+          window.open(redirect_url, '_self')
+        })
+        .catch(() => {
+          this.$message('登录失败！')
+          this.$router.push('/login')
+        })
+    } else {
+      next(vm => {
+        if (to.query.redirect) {//正常登录跳转到redirect
+          vm.redirect = to.query.redirect
+        }
+      })
+    }
   },
   created () {
     this.getCode()
@@ -57,7 +77,6 @@ export default {
         .then(res => {
           if(res.img) {
             this.code = res.img
-            // this.formData.imgcodeKey = res.imgcodeKey
           }
         })
     },
@@ -84,6 +103,24 @@ export default {
           document.getElementsByClassName("el-input__inner")[2].focus()
           this.getCode()
         })
+    },
+    otherLoginMethod() {
+      this.$post('/common/auth/method')
+        .then(res => {
+          let url = res['third-party-login'].url
+          if (url) {
+            let redirect_url = this.$route.query.redirect_url || window.location.href.replace('/login', '/admin/document')
+            let lastUrl = this.replaceParamVal(url, 'redirect_url', redirect_url)
+            window.open(lastUrl, '_self')
+          }
+        })
+    },
+    //替换指定传入参数的值,paramName为参数,replaceVal为新值
+    replaceParamVal(url, paramName, replaceVal) {
+      var oUrl = url.toString()
+      var re=eval('/('+ paramName+'=)([^&]*)/gi')
+      var nUrl = oUrl.replace(re,paramName+'='+replaceVal)
+      return nUrl
     }
   }
 }
@@ -189,5 +226,3 @@ export default {
   }
 }
 </style>
-
-
