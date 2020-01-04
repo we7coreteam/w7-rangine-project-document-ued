@@ -54,7 +54,7 @@ export default {
         code
       })
         .then(() => {
-          if (to.path == '/login') {
+          if (!redirect_url) {
             router.push('/admin/document')
           } else {
             window.open(redirect_url, '_self')
