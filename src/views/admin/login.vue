@@ -150,13 +150,13 @@ export default {
       .el-input-group__append {
         background-color: unset;
         border-radius: 0;
-        border-left: 0;
-        border-right: 0;
-        border-top: 0;
         padding: 0;
+        font-size: 0;
+        border: 0;
         img {
           width: 120px;
           cursor: pointer;
+          height: 32px;
         }
       }
     }
