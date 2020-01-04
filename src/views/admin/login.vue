@@ -26,7 +26,9 @@
 </template>
 
 <script>
-import axios from 'axios'
+import router from '@/router'
+import axios from '@/utils/axios'
+import {getUrlParam, replaceParamVal} from '@/utils/utils'
 export default {
   name: 'adminLogin',
   data() {
@@ -43,23 +45,27 @@ export default {
     }
   },
   beforeRouteEnter(to, from, next) {
-    //判断
-    let redirect_url = to.query.redirect_url
-    let code = redirect_url.split('code=')[1]
-    if (code) {//第三方登录成功之后，跳转到redirect_url
+    let codeAA = to.query.code//第三方已经登陆（文档系统退出，但是可能在别的地方并没有退出）
+    let redirect_url = to.query.redirect_url//需要跳转的url
+    let codeBB = getUrlParam(redirect_url, 'code')//第三方登录返回的code
+    if ((redirect_url && codeBB) || codeAA) {//第三方登录成功之后，跳转
+      let code = codeAA || codeBB
       axios.post('/common/auth/third-party-login', {
         code
       })
         .then(() => {
-          window.open(redirect_url, '_self')
+          if (to.path == '/login') {
+            router.push('/admin/document')
+          } else {
+            window.open(redirect_url, '_self')
+          }
         })
         .catch(() => {
-          this.$message('登录失败！')
-          this.$router.push('/login')
+          router.push('/login')
         })
     } else {
       next(vm => {
-        if (to.query.redirect) {//正常登录跳转到redirect
+        if (to.query.redirect) {//正常登录跳转
           vm.redirect = to.query.redirect
         }
       })
@@ -109,18 +115,10 @@ export default {
         .then(res => {
           let url = res['third-party-login'].url
           if (url) {
-            let redirect_url = this.$route.query.redirect_url || window.location.href.replace('/login', '/admin/document')
-            let lastUrl = this.replaceParamVal(url, 'redirect_url', redirect_url)
+            let lastUrl = replaceParamVal(url, 'redirect_url', window.location.href)
             window.open(lastUrl, '_self')
           }
         })
-    },
-    //替换指定传入参数的值,paramName为参数,replaceVal为新值
-    replaceParamVal(url, paramName, replaceVal) {
-      var oUrl = url.toString()
-      var re=eval('/('+ paramName+'=)([^&]*)/gi')
-      var nUrl = oUrl.replace(re,paramName+'='+replaceVal)
-      return nUrl
     }
   }
 }
