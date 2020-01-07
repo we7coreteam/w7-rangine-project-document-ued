@@ -9,9 +9,7 @@
           </el-input>
         </div>
       </div>
-      <div class="card-box"
-        v-loading="loading"
-      >
+      <div class="card-box" v-loading="loading">
         <div class="card-warpper">
           <div class="w7-card" :class="actClass+''+index%3"
             v-for="(item,index) in docList" :key="index"
@@ -125,7 +123,7 @@ export default {
         .then(res => {
           this.$message('创建成功！')
           this.dialogDocInfoVisible = false
-          this.goChapter(res)
+          this.goChapter(res, true)
         })
     },
     removeDoc(id) {
@@ -165,10 +163,22 @@ export default {
       window.open(routeUrl.href, '_blank')
     },
     settingDoc(id) {
-      this.$router.push('/admin/document/' + id)
+      let routeUrl = this.$router.resolve({
+        path: "/admin/document/" + id
+      })
+      window.open(routeUrl.href, '_blank')
     },
-    goChapter(id) {
-      this.$router.push('/admin/document/chapter/' + id)
+    goChapter(id, bool) {
+      let routeData = {
+        name: 'chapter',
+        params: {
+          id: id
+        }
+      }
+      if (bool) {
+        routeData['query'] = { type: 'add'}
+      }
+      this.$router.push(routeData)
     }
   }
 }

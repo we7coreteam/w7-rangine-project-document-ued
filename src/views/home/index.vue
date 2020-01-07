@@ -197,8 +197,14 @@ export default {
             //   top: total
             // })
             let hash = this.$route.hash
-            window.location.hash = '#'
-            window.location.hash = hash
+            if (hash) {
+              window.location.hash = '#'
+              window.location.hash = hash
+            } else {
+              window.scroll({
+                top: 0
+              })
+            }
           })
           this.articleFlag = true
         })

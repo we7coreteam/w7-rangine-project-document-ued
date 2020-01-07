@@ -68,7 +68,7 @@
     </el-dialog>
     <!-- 重命名弹出框 -->
     <el-dialog class="we7-dialog" title="重命名" :visible.sync="dialogRenameVisible" :close-on-click-modal="false" center>
-      <el-form label-width="105px" label-position="left">
+      <el-form label-width="105px" label-position="left" @submit.native.prevent>
         <el-form-item label="新的文档名称">
           <el-input v-model="newDocName"></el-input>
         </el-form-item>
@@ -295,7 +295,7 @@ export default {
     line-height: 100px;
     padding-right: 20px;
     .el-button + .el-button {
-        margin-left: 40px;
+      margin-left: 0;
     }
   }
 }

@@ -21,50 +21,54 @@
           <i class="wi wi-tools" @click="settingDoc"></i>
         </el-tooltip>
       </div>
-      <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text="没有与搜索条件匹配的项"
-        ref="chaptersTree"
-        node-key="id"
-        :expand-on-click-node="true"
-        :highlight-current="true"
-        :default-expanded-keys="defaultExpanded"
-        :filter-node-method="filterNode"
-        @node-contextmenu="rightClick"
-        @node-click="handleNodeClick"
-        draggable
-        @node-drop="handleDrop"
-        :allow-drop="allowDrop">
-        <div class="custom-tree-node" slot-scope="{ node, data }">
-          <span class="node-info">
-            <i class="wi wi-folder" v-if="data.is_dir == 1"></i>
-            <i class="wi wi-document" v-if="data.is_dir == 0"></i>
-            <div class="text-over">
-              <span :title="node.label">{{ node.label }}</span>
+      <div class="tree-warpper">
+        <el-scrollbar style="height: 100%">
+          <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text="没有与搜索条件匹配的项"
+            ref="chaptersTree"
+            node-key="id"
+            :expand-on-click-node="true"
+            :highlight-current="true"
+            :default-expanded-keys="defaultExpanded"
+            :filter-node-method="filterNode"
+            @node-contextmenu="rightClick"
+            @node-click="handleNodeClick"
+            draggable
+            @node-drop="handleDrop"
+            :allow-drop="allowDrop">
+            <div class="custom-tree-node" slot-scope="{ node, data }">
+              <span class="node-info">
+                <i class="wi wi-folder" v-if="data.is_dir == 1"></i>
+                <i class="wi wi-document" v-if="data.is_dir == 0"></i>
+                <div class="text-over">
+                  <span :title="node.label">{{ node.label }}</span>
+                </div>
+              </span>
+              <span class="point3" @mousemove='updateXY' @click.stop="leftClick(data, node)"><span>...</span></span>
             </div>
-          </span>
-          <span class="point3" @mousemove='updateXY' @click.stop="rightClick(false, data, node)"><span>...</span></span>
-        </div>
-      </el-tree>
-      <div id="menu-bar" class="menu-bar" v-show="menuBarVisible">
-        <ul class="menu">
-          <template v-if="rightSelectNodeObj.is_dir == 1">
-            <li class="menu__item" @click="addChildNode(true)">创建目录</li>
-            <li class="menu__item" @click="addChildNode(false)">创建文档</li>
-            <li class="menu__item" @click="updateNode(true)">重命名</li>
-            <li class="menu__item" @click="openMoveDialog(true)">移动</li>
-            <li class="menu__item" @click="removeNode">删除</li>
-          </template>
-          <template v-if="rightSelectNodeObj.is_dir == 0">
-            <li class="menu__item" @click="defaultFile">设为目录默认文档</li>
-            <li class="menu__item" @click="updateNode(false)">重命名</li>
-            <li class="menu__item" @click="openMoveDialog(false)">移动</li>
-            <!-- <li class="menu__item" @click="">权限</li> -->
-            <li class="menu__item" @click="removeNode">删除</li>
-          </template>
-        </ul>
+          </el-tree>
+          <div id="menu-bar" class="menu-bar" v-show="menuBarVisible">
+            <ul class="menu">
+              <template v-if="rightSelectNodeObj.is_dir == 1">
+                <li class="menu__item" @click="addChildNode(true)">创建目录</li>
+                <li class="menu__item" @click="addChildNode(false)">创建文档</li>
+                <li class="menu__item" @click="updateNode(true)">重命名</li>
+                <li class="menu__item" @click="openMoveDialog(true)">移动</li>
+                <li class="menu__item" @click="removeNode">删除</li>
+              </template>
+              <template v-if="rightSelectNodeObj.is_dir == 0">
+                <li class="menu__item" @click="defaultFile">设为目录默认文档</li>
+                <li class="menu__item" @click="updateNode(false)">重命名</li>
+                <li class="menu__item" @click="openMoveDialog(false)">移动</li>
+                <!-- <li class="menu__item" @click="">权限</li> -->
+                <li class="menu__item" @click="removeNode">删除</li>
+              </template>
+            </ul>
+          </div>
+        </el-scrollbar>
       </div>
     </el-aside>
     <el-main>
-      <editors :chapterId="selectNodeObj.id" :chapterName="selectNodeObj.name" v-if="selectNodeObj && selectNodeObj.id && selectNodeObj.is_dir == 0"></editors>
+      <editors :chapterId="selectNodeObj.id" :chapterName="selectNodeObj.name" :chapterIsDir="selectNodeObj.is_dir" v-if="selectNodeObj && selectNodeObj.id"></editors>
     </el-main>
     <!-- 新增节点弹出框 -->
     <el-dialog class="we7-dialog only-input-dialog" :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false" center>
@@ -114,6 +118,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import editors from './editors.vue'
 export default {
   name: 'chapter',
@@ -131,6 +136,7 @@ export default {
         label: 'name'
       },
       defaultExpanded: [],//默认展开节点的数组
+      defaultSelect: '',//默认选中的节点
       menuBarVisible: false,
       clientX: '',
       clientY: '',
@@ -153,9 +159,12 @@ export default {
       docChapters: []
     }
   },
+  computed: {
+    ...mapGetters({ UserInfo: 'UserInfo' })
+  },
   watch: {
     filterText(val) {
-      this.$refs.chaptersTree.filter(val);
+      this.$refs.chaptersTree.filter(val)
     },
     dialogVisible(val) {
       if (val) {
@@ -163,12 +172,60 @@ export default {
           document.querySelector(".only-input-dialog .el-input__inner").focus()
         }, 300);
       }
+    },
+    UserInfo(val) {
+      if (val) {
+        this.defaultOpenNode()
+      }
     }
   },
   created() {
-    this.getChapters()
+    if (this.$route.query && this.$route.query.type == 'add') {//新增项目
+      this.clickIconAddNode(true)
+    } else {
+      if (this.UserInfo) {
+        this.defaultOpenNode()
+      }
+      this.getChapters()
+    }
   },
   methods: {
+    /**
+     * @打开操作记录
+     * localStorage记录的操作节点的数据结构
+     * we7_doc_user_1: {
+     *  document_10: {
+     *    defaultExpanded: [22, 33],
+     *    defaultSelect: 11
+     *  }
+     * }
+    */
+    defaultOpenNode() {
+      var docUserKey = 'we7_doc_user_' + this.UserInfo.id//用户
+      var docUserValue = JSON.parse(localStorage.getItem(docUserKey))
+      var documentKey = 'document_' + this.$route.params.id//项目
+      var data = {}
+      data[documentKey] = {
+        defaultExpanded: [],
+        defaultSelect: ''
+      }
+      //判断当前用户名下存在记录
+      if (docUserValue) {
+        //判断是否存在当前项目的记录
+        if (docUserValue[documentKey]) {
+          this.defaultExpanded = docUserValue[documentKey].defaultExpanded
+          this.defaultSelect = docUserValue[documentKey].defaultSelect
+        } else {
+          docUserValue[documentKey] = {
+            defaultExpanded: [],
+            defaultSelect: ''
+          }
+          localStorage.setItem(docUserKey, JSON.stringify(docUserValue))
+        }
+      } else {
+        localStorage.setItem(docUserKey, JSON.stringify(data))
+      }
+    },
     getChapters() {
       this.$post('/admin/chapter/detail', {
         document_id: this.$route.params.id
@@ -177,6 +234,13 @@ export default {
           this.docName = res.document.name
           this.has_manage = res.acl.has_manage
           this.chapters = res.catalog
+          //如果有记录的默认文档节点，则选中
+          if (this.defaultSelect) {
+            this.$nextTick(() => {
+              this.$refs.chaptersTree.setCurrentKey(this.defaultSelect)
+              this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode())
+            })
+          }
         })
     },
     readDoc() {
@@ -195,27 +259,65 @@ export default {
     handleNodeClick(obj) {
       if(this.menuBarVisible) {this.menuBarVisible = false}
       this.selectNodeObj = obj
+      //当前用户下的所有项目tree记录
+      let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
+      let record = allRecords['document_' + this.$route.params.id]
+      if (obj.is_dir) {//如果是目录
+        let index = record.defaultExpanded.findIndex( item => item == obj.id)
+        if (index > -1) {
+          record.defaultExpanded.splice(index, 1)
+        } else {
+          record.defaultExpanded.push(obj.id)
+        }
+      } else {
+        record.defaultSelect = obj.id
+      }
+      localStorage.setItem('we7_doc_user_' + this.UserInfo.id, JSON.stringify(allRecords))
     },
     updateXY(event) {
       this.clientX = event.clientX
       this.clientY = event.clientY
+    },
+    leftClick(object, Node) {
+      if (this.menuBarVisible == true) {
+        this.menuBarVisible = false
+        return
+      }
+      this.rightClick(false, object, Node)
     },
     rightClick(MouseEvent, object, Node) {
       // console.log('右键被点击---event:', MouseEvent)
       // console.log('右键被点击---传递给 data 属性的数组中该节点所对应的对象:', object)
       // console.log('右键被点击---节点对应的 Node:', Node)
       // console.log('右键被点击---节点组件本身:', element)
-      this.menuBarVisible = false // 先把模态框关死，目的是 第二次或者第n次右键鼠标的时候 它默认的是true
-      this.menuBarVisible = true  // 显示模态窗口，跳出自定义菜单栏
-      const menuBar = document.querySelector('#menu-bar')
-      if(!MouseEvent) {
-        menuBar.style.left = (this.clientX - 50) + 'px'
-        menuBar.style.top = (this.clientY + 20) + 'px'
-      }
-      menuBar.style.left = (MouseEvent.clientX - 50) + 'px'
-      menuBar.style.top = (MouseEvent.clientY + 20) + 'px'
       this.rightSelectNodeObj = object
       this.rightSelectNode = Node
+      this.menuBarVisible = false // 先把模态框关死，目的是 第二次或者第n次右键鼠标的时候 它默认的是true
+      this.menuBarVisible = true  // 显示模态窗口，跳出自定义菜单栏
+      this.$nextTick(() => {
+        const menuBar = document.querySelector('#menu-bar')
+        let height = window.innerHeight
+        let menuHeight = menuBar.offsetHeight
+        if(!MouseEvent) {//鼠标左键
+          if (height - this.clientY > menuHeight) {
+            menuBar.style.top = (this.clientY + 20) + 'px'
+            menuBar.className = 'menu-bar bottom'
+          } else {
+            menuBar.style.top = (this.clientY - menuHeight - 20) + 'px'
+            menuBar.className = 'menu-bar top'
+          }
+          menuBar.style.left = (this.clientX - 50) + 'px'
+        } else {//鼠标右键
+          if (height - MouseEvent.clientY > menuHeight) {
+            menuBar.style.top = (MouseEvent.clientY + 20) + 'px'
+            menuBar.className = 'menu-bar bottom'
+          } else {
+            menuBar.style.top = (MouseEvent.clientY - menuHeight - 10) + 'px'
+            menuBar.className = 'menu-bar top'
+          }
+          menuBar.style.left = (MouseEvent.clientX - 50) + 'px'
+        }
+      })
       // 给整个document添加监听鼠标事件，点击任何位置执行removeRightClickEvent
       document.addEventListener('click', this.removeRightClickEvent)
     },
@@ -487,14 +589,20 @@ export default {
       font-size: 22px;
     }
   }
+  .tree-warpper {
+    height: calc(100vh - 300px);
+    .el-scrollbar__wrap {
+      overflow-x: auto;
+    }
+  }
   .menu-bar {
-    position: absolute;
+    position: fixed;
     font-size: 14px;
     color: #4d4d4d;
     background-color: #ffffff;
     box-shadow: 2px 0px 10px 4px	rgba(219, 219, 219, 0.53);
     z-index: 10000;
-    &::before {
+    &.bottom::after {
       content: " ";
       position: absolute;
       display: block;
@@ -507,6 +615,19 @@ export default {
       border-width: 8px;
       border-top-width: 0;
       border-bottom-color: #fff;
+    }
+    &.top::after {
+      content: " ";
+      position: absolute;
+      display: block;
+      left: 50px;
+      width: 0;
+      height: 0;
+      border-color: transparent;
+      border-style: solid;
+      border-width: 8px;
+      border-bottom-width: 0;
+      border-top-color: #fff;
     }
     ul {
       margin: 10px 0;

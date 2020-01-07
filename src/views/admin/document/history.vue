@@ -37,6 +37,9 @@
       </el-table-column>
       <el-table-column label="操作" align="right">
         <div class="oper" slot-scope="scope">
+          <el-tooltip effect="dark" :content="scope.row.has_star ? '取消星标' : '添加星标'" placement="bottom">
+            <i class="wi wi-star" :class="{'checked': scope.row.has_star}" @click="operStar(scope.row)"></i>
+          </el-tooltip>
           <el-tooltip effect="dark" content="删除记录" placement="bottom">
             <i class="wi wi-delete" @click="del(scope.row.id)"></i>
           </el-tooltip>
@@ -135,6 +138,22 @@ export default {
             this.$message('删除记录成功！')
           })
       })
+    },
+    operStar(row) {
+      let url = row.has_star ? '/admin/star/delete' : '/admin/star/add'
+      let mes = row.has_star ? '取消成功！' : '添加成功！'
+      this.$post(url, {
+        document_id: row.id
+      })
+        .then(() => {
+          this.$message(mes)
+          this.docList.forEach(doc => {
+            if (doc.id == row.id) {
+              doc.has_star = !doc.has_star
+              return
+            }
+          })
+        })
     },
     readDoc(id) {
       let routeUrl = this.$router.resolve({

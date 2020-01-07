@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <el-container class="layout-container">
     <el-aside class="admin-view-aside" :width="isCollapse ? '65px' : '240px'" v-if="showAside">
       <el-menu class="admin-view-menu" :default-active="active" :router="true" :collapse="isCollapse">
         <el-menu-item index="/admin/document">
@@ -68,6 +68,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.layout-container {
+  height: calc(100vh - 90px);
+}
 .el-menu {
   margin: 25px 20px;
   border-right: 0;

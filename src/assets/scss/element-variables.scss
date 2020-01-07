@@ -71,9 +71,12 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
       color: #999999;
     }
     .el-dialog__body {
-      padding: 0 96px 38px 96px;
+      padding: 0 96px 70px 96px;
       .el-select, .el-cascader {
         width: 100%;
+      }
+      .el-form .el-form-item:last-child {
+        margin-bottom: 0;
       }
     }
     .el-dialog__footer {
@@ -214,6 +217,11 @@ ul, li {
   height: 34px;
   .demo-input-suffix {
     width: 240px;
+  }
+  .el-input__icon {
+    &:hover {
+      cursor: pointer;
+    }
   }
 }
 .w7-footer {

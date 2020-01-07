@@ -21,7 +21,7 @@
 
 <script>
 export default {
-  props: ['chapterId', 'chapterName'],
+  props: ['chapterId', 'chapterName', 'chapterIsDir'],
   data() {
     return {
       code_style:"tomorrow-night-blue",
@@ -36,6 +36,11 @@ export default {
   watch: {
     chapterId() {
       this.init()
+    },
+    chapterName(newVal, oldVal) {
+      if (this.chapterIsDir != 0) {
+        this.chapterName = oldVal
+      }
     }
   },
   mounted() {
@@ -45,6 +50,9 @@ export default {
   },
   methods: {
     init() {
+      if (this.chapterIsDir != 0) {
+        return
+      }
       this.$post('/admin/chapter/content', {
         document_id: this.$route.params.id,
         chapter_id: this.chapterId

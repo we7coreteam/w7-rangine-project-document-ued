@@ -13,7 +13,7 @@
           </div>
           <div class="login-action">
             <!-- <el-button type="text" @click="showFind">找回密码?</el-button> -->
-            <el-button type="text" @click="otherLoginMethod">第三方登录</el-button>
+            <el-button type="text" @click="thirdPartyLogin" v-if="thirdPartyLoginURL">第三方登录</el-button>
           </div>
           <el-button class="login-btn" @click="login">登录</el-button>
         </el-tab-pane>
@@ -26,9 +26,8 @@
 </template>
 
 <script>
-import router from '@/router'
 import axios from '@/utils/axios'
-import {getUrlParam, replaceParamVal} from '@/utils/utils'
+import {replaceParamVal} from '@/utils/utils'
 export default {
   name: 'adminLogin',
   data() {
@@ -41,38 +40,37 @@ export default {
         userpass: '',
         code: ''
       },
-      redirect: ''
+      redirect: '',
+      thirdPartyLoginURL: ''
     }
   },
   beforeRouteEnter(to, from, next) {
-    let codeAA = to.query.code//第三方已经登陆（文档系统退出，但是可能在别的地方并没有退出）
+    let code = to.query.code//第三方登录成功之后返回的code
     let redirect_url = to.query.redirect_url//需要跳转的url
-    let codeBB = getUrlParam(redirect_url, 'code')//第三方登录返回的code
-    if ((redirect_url && codeBB) || codeAA) {//第三方登录成功之后，跳转
-      let code = codeAA || codeBB
+    if (code) {
       axios.post('/common/auth/third-party-login', {
         code
       })
         .then(() => {
           if (!redirect_url) {
-            router.push('/admin/document')
+            next('/admin/document')
           } else {
             window.open(redirect_url, '_self')
           }
         })
         .catch(() => {
-          router.push('/login')
+          next('/login')
         })
     } else {
-      next(vm => {
-        if (to.query.redirect) {//正常登录跳转
-          vm.redirect = to.query.redirect
-        }
-      })
+      next()
     }
   },
   created () {
+    if (this.$route.query && this.$route.query.redirect) {//正常登录跳转
+      this.redirect = this.$route.query.redirect
+    }
     this.getCode()
+    this.getThirdPartyLoginURl()
   },
   methods: {
     showFind() {
@@ -110,15 +108,17 @@ export default {
           this.getCode()
         })
     },
-    otherLoginMethod() {
+    getThirdPartyLoginURl() {
       this.$post('/common/auth/method')
         .then(res => {
-          let url = res['third-party-login'].url
-          if (url) {
-            let lastUrl = replaceParamVal(url, 'redirect_url', window.location.href)
-            window.open(lastUrl, '_self')
+          if (res['third-party-login']) {
+            let url = res['third-party-login'].url
+            this.thirdPartyLoginURL = replaceParamVal(url, 'redirect_url', window.location.href)
           }
         })
+    },
+    thirdPartyLogin() {
+      window.open(this.thirdPartyLoginURL, '_self')
     }
   }
 }
