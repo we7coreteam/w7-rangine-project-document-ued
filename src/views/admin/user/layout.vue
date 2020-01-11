@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <el-container class="layout-container">
     <el-aside class="admin-view-aside" :width="isCollapse ? '64px' : '200px'">
       <el-menu class="admin-view-menu" :default-active="'/admin/user'" :router="true" :collapse="isCollapse">
         <el-menu-item index="/admin/user">

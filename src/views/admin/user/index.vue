@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="layout-container container">
     <div class="page-head">用户管理</div>
     <div class="search-box">
       <div class="demo-input-suffix">

@@ -1,6 +1,6 @@
 <template>
   <div class="editors">
-    <div class="chapter-title">{{ chapterName }}</div>
+    <div class="chapter-title">{{ chapterInfo.name }}</div>
     <mavon-editor
       ref="mavonEditor"
       :boxShadow="false"
@@ -21,50 +21,38 @@
 
 <script>
 export default {
-  props: ['chapterId', 'chapterName', 'chapterIsDir'],
+  props: ['chapterId', 'chapterIsDir', 'firstClickDoc'],
   data() {
     return {
       code_style:"tomorrow-night-blue",
       chapterInfo: {
+        name: '',
         updated_at: '',
         username: ''
       },
-      content: '', //最终显示的html
       contentMd: '' //md格式的内容
     }
   },
   watch: {
     chapterId() {
       this.init()
-    },
-    chapterName(newVal, oldVal) {
-      if (this.chapterIsDir != 0) {
-        this.chapterName = oldVal
-      }
     }
   },
   mounted() {
     let clientHeight = document.documentElement.clientHeight
-    this.$refs.mavonEditor.$el.style.height = (clientHeight - 260) + 'px'
-    this.init()
+    this.$refs.mavonEditor.$el.style.height = (clientHeight - 310) + 'px'
   },
   methods: {
     init() {
-      if (this.chapterIsDir != 0) {
+      if (this.chapterIsDir) {
         return
       }
       this.$post('/admin/chapter/content', {
         document_id: this.$route.params.id,
         chapter_id: this.chapterId
       }).then(res => {
-        if (!res.content) {
-          this.content = ''
-          this.contentMd = ''
-          return
-        }
         this.chapterInfo = res
-        this.content = this.$refs.mavonEditor.markdownIt.render(res.content)
-        this.contentMd = res.content
+        this.contentMd = res.content || ''
       })
     },
     $imgAdd(pos, $file) {
@@ -119,14 +107,5 @@ export default {
   font-size: 20px;
   letter-spacing: 1px;
   color: #4d4d4d;
-}
-.hljs{
-  background:#eee!important;
-}
-.markdown-body code{
-  background-color:#eee!important;
-}
-.markdown-body .highlight pre, .markdown-body pre{
-  background-color:#eee!important;
 }
 </style>

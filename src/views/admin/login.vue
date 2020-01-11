@@ -40,7 +40,6 @@ export default {
         userpass: '',
         code: ''
       },
-      redirect: '',
       thirdPartyLoginURL: ''
     }
   },
@@ -66,9 +65,6 @@ export default {
     }
   },
   created () {
-    if (this.$route.query && this.$route.query.redirect) {//正常登录跳转
-      this.redirect = this.$route.query.redirect
-    }
     this.getCode()
     this.getThirdPartyLoginURl()
   },
@@ -96,8 +92,8 @@ export default {
           let msg = this.$message('登录成功')
           setTimeout(() => {
             msg.close()
-            if (this.redirect) {
-              window.open(this.redirect, '_self')
+            if (this.$route.query && this.$route.query.redirect_url) {
+              window.open(this.$route.query.redirect_url, '_self')
             } else {
               this.$router.push('/admin/document')
             }

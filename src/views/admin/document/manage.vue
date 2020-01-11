@@ -4,8 +4,8 @@
     <div class="container-box">
       <div class="search-box">
         <div class="demo-input-suffix">
-          <el-input v-model="keyword" placeholder="请输入文档名称" clearable @keyup.enter.native="searchDoc">
-            <i slot="suffix" class="el-input__icon el-icon-search" @click="searchDoc"></i>
+          <el-input v-model="keyword" placeholder="请输入文档名称" clearable @keyup.enter.native="getList">
+            <i slot="suffix" class="el-input__icon el-icon-search" @click="getList"></i>
           </el-input>
         </div>
       </div>
@@ -79,6 +79,7 @@ export default {
       keyword: '',
       docList: [],
       currentPage: 0,//当前页码
+      page_size: 29,
       pageCount: 0,//总页数
       total: 0,//总数
       name: '',
@@ -94,19 +95,8 @@ export default {
       this.loading = true
       this.$post('/admin/document/all',{
         page: this.currentPage,
-        name: this.keyword
-      })
-        .then(res => {
-          this.docList = res.data
-          this.pageCount = res.page_count
-          this.total = res.total
-          this.loading = false
-        })
-    },
-    searchDoc() {
-      this.loading = true
-      this.$post('/admin/document/all',{
-          keyword: this.keyword
+        page_size: this.page_size,
+        keyword: this.keyword
       })
         .then(res => {
           this.docList = res.data

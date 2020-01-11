@@ -1,5 +1,5 @@
 <template>
-  <el-container class="setting">
+  <el-container class="layout-container setting">
     <el-aside class="admin-view-aside" :width="isCollapse ? '64px' : '200px'">
       <el-menu
         class="admin-view-menu"
@@ -31,7 +31,6 @@ export default {
 
 <style lang="scss">
 .setting {
-  height: calc(100vh - 90px);
   .admin-view-aside {
     border-right: solid 1px #e6e6e6;
     .el-menu {

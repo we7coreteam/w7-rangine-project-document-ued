@@ -68,9 +68,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.layout-container {
-  height: calc(100vh - 90px);
-}
 .el-menu {
   margin: 25px 20px;
   border-right: 0;

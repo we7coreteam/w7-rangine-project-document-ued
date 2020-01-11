@@ -4,9 +4,11 @@
       <div class="w7-aside-chapter-head">
         <p>{{ docName }}</p>
       </div>
-      <el-input placeholder="请输入关键字搜索" v-model="filterText" clearable>
-        <i slot="suffix" class="el-input__icon el-icon-search"></i>
-      </el-input>
+      <div class="search-box">
+        <el-input placeholder="请输入关键字搜索" v-model="filterText" clearable>
+          <i slot="suffix" class="el-input__icon el-icon-search"></i>
+        </el-input>
+      </div>
       <div class="icon-box">
         <el-tooltip effect="dark" content="新建文档" placement="bottom">
           <i class="wi wi-document" @click="clickIconAddNode(false)"></i>
@@ -68,7 +70,7 @@
       </div>
     </el-aside>
     <el-main>
-      <editors :chapterId="selectNodeObj.id" :chapterName="selectNodeObj.name" :chapterIsDir="selectNodeObj.is_dir" v-if="selectNodeObj && selectNodeObj.id"></editors>
+      <editors :chapterId="selectNodeObj.id" :chapterIsDir="selectNodeObj.is_dir"></editors>
     </el-main>
     <!-- 新增节点弹出框 -->
     <el-dialog class="we7-dialog only-input-dialog" :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false" center>
@@ -175,7 +177,7 @@ export default {
     },
     UserInfo(val) {
       if (val) {
-        this.defaultOpenNode()
+        this.getOperRecord()
       }
     }
   },
@@ -184,7 +186,7 @@ export default {
       this.clickIconAddNode(true)
     } else {
       if (this.UserInfo) {
-        this.defaultOpenNode()
+        this.getOperRecord()
       }
       this.getChapters()
     }
@@ -199,8 +201,10 @@ export default {
      *    defaultSelect: 11
      *  }
      * }
+     * 注意：默认打开目录的时候，如果有默认选中的文档，需要在手动修改this.defaultExpanded，
+     *      把defaultSelect（默认选中文档）push进去，但是不可以保存在localStorage中
     */
-    defaultOpenNode() {
+    getOperRecord() {
       var docUserKey = 'we7_doc_user_' + this.UserInfo.id//用户
       var docUserValue = JSON.parse(localStorage.getItem(docUserKey))
       var documentKey = 'document_' + this.$route.params.id//项目
@@ -226,6 +230,23 @@ export default {
         localStorage.setItem(docUserKey, JSON.stringify(data))
       }
     },
+    //保存操作记录
+    setOperRecord (obj) {
+      //当前用户下的所有项目tree记录
+      let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
+      let record = allRecords['document_' + this.$route.params.id]
+      if (obj.is_dir) {//如果是目录
+        let index = record.defaultExpanded.findIndex( item => item == obj.id)
+        if (index > -1) {
+          record.defaultExpanded.splice(index, 1)
+        } else {
+          record.defaultExpanded.push(obj.id)
+        }
+      } else {
+        record.defaultSelect = obj.id
+      }
+      localStorage.setItem('we7_doc_user_' + this.UserInfo.id, JSON.stringify(allRecords))
+    },
     getChapters() {
       this.$post('/admin/chapter/detail', {
         document_id: this.$route.params.id
@@ -239,6 +260,11 @@ export default {
             this.$nextTick(() => {
               this.$refs.chaptersTree.setCurrentKey(this.defaultSelect)
               this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode())
+              //展开
+              let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
+              let record = allRecords['document_' + this.$route.params.id]
+              this.defaultExpanded = record.defaultExpanded
+              this.defaultExpanded.push(this.$refs.chaptersTree.getCurrentNode().id)
             })
           }
         })
@@ -259,20 +285,7 @@ export default {
     handleNodeClick(obj) {
       if(this.menuBarVisible) {this.menuBarVisible = false}
       this.selectNodeObj = obj
-      //当前用户下的所有项目tree记录
-      let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
-      let record = allRecords['document_' + this.$route.params.id]
-      if (obj.is_dir) {//如果是目录
-        let index = record.defaultExpanded.findIndex( item => item == obj.id)
-        if (index > -1) {
-          record.defaultExpanded.splice(index, 1)
-        } else {
-          record.defaultExpanded.push(obj.id)
-        }
-      } else {
-        record.defaultSelect = obj.id
-      }
-      localStorage.setItem('we7_doc_user_' + this.UserInfo.id, JSON.stringify(allRecords))
+      this.setOperRecord(obj)
     },
     updateXY(event) {
       this.clientX = event.clientX
@@ -383,6 +396,9 @@ export default {
               this.$refs.chaptersTree.setCurrentKey( newChild.id )
               this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode())
               //展开
+              let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
+              let record = allRecords['document_' + this.$route.params.id]
+              this.defaultExpanded = record.defaultExpanded
               this.defaultExpanded.push(newChild.id)
             })
           })
@@ -548,9 +564,6 @@ export default {
 <style lang="scss">
 .w7-document-chapter {
   margin-left: -15px;
-  .el-main {
-    min-height: calc(100vh - 90px);
-  }
   .w7-aside-chapter {
     border-left: solid 1px #eeeeee;
     border-right: solid 1px #eeeeee;
@@ -563,17 +576,8 @@ export default {
         text-align: center;
       }
     }
-    .el-input {
-      width: auto;
+    .search-box {
       margin: 0 20px 20px;
-      /deep/ input {
-        height: 34px;
-        border: solid 1px #eeeeee;
-        border-radius: 0;
-      }
-      /deep/ i {
-        line-height: 34px;
-      }
     }
   }
   .icon-box{
@@ -590,7 +594,7 @@ export default {
     }
   }
   .tree-warpper {
-    height: calc(100vh - 300px);
+    height: calc(100vh - 350px);
     .el-scrollbar__wrap {
       overflow-x: auto;
     }
