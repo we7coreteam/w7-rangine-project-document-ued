@@ -127,5 +127,18 @@ export default new Router({
       redirect: '/admin/document',
       // component: () => import(/* webpackChunkName: "about" */ './views/admin/layout.vue')
     }
-  ]
+  ],
+  scrollBehavior: (to) => {
+    if (to.hash) {
+      return {
+        // 通过 to.hash 的值來找到对应的元素
+        selector: to.hash
+      }
+    } else {
+      return {
+        x: 0,
+        y: 0
+      }
+    }
+  }
 })

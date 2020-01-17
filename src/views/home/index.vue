@@ -272,8 +272,8 @@ export default {
             this.initToc()
             let hash = this.$route.hash
             if (hash) {
-              window.location.hash = '#'
-              window.location.hash = hash
+              window.location.hash = ''
+              window.location.hash = decodeURIComponent(hash)
             } else {
               window.scroll({
                 top: 0
@@ -289,8 +289,7 @@ export default {
         var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
         var headingMap = {}
         Array.prototype.forEach.call(headings, function (heading) {
-          var id = heading.id ? heading.id : heading.textContent.trim().toLowerCase()
-              .split(' ').join('-').replace(/[\!\@\#\$\%\^\&\*\(\)\:]/ig, '')
+          var id = heading.id ? heading.id : ('h' + heading.querySelector('a').id.replace(/[\!\@\#\$\%\^\&\*\(\)\:]/ig, ''))
           headingMap[id] = !isNaN(headingMap[id]) ? ++headingMap[id] : 0
           if (headingMap[id]) {
             heading.id = id + '-' + headingMap[id]
@@ -303,17 +302,20 @@ export default {
           tocSelector:'.js-toc',
           headingSelector: 'h1, h2, h3 ',
           // scrollSmooth: !0,
-          scrollSmoothDuration: 500,
+          // scrollSmoothDuration: 500,
           // scrollContainer: '.js-toc',
           // scrollSmoothOffset: -80,
           // headingsOffset: -500,
-          hasInnerContainers: true,
+          // hasInnerContainers: true,
           scrollEndCallback: () => {
-            document.querySelector('.markdown-menu .el-scrollbar__wrap').scrollTop = document.querySelector('.is-active-li') && (document.querySelector('.is-active-li').offsetTop - 200) > 0 ? (document.querySelector('.is-active-li').offsetTop - 200) : 0
+            document.body.style.paddingBottom = '1px'
+            document.querySelector('.markdown-menu .el-scrollbar__wrap').scrollTop = document.querySelector('.is-active-li') ? (document.querySelector('.is-active-li').offsetTop - 200) : 0
+            setTimeout(() => {
+              document.body.style.paddingBottom = 0
+            }, 100)
           }
         }
         option = Object.assign(defaultOption, option)
-        console.log(option)
         tocbot.init(option)
       })
     },
@@ -723,6 +725,9 @@ a.toc-link {
 .markdown-body {
   .markdown-content {
     width: 0;
+    *:focus {
+      outline: none;
+    }
   }
   code{
     background-color:#eee!important;
