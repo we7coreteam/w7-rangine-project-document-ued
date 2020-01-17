@@ -31,6 +31,9 @@ export default new Router({
             {
               path: 'chapter/:id',
               name: 'chapter',
+              meta:{
+                footerClass: 'float'
+              },
               component: () => import(/* webpackChunkName: "about" */ './views/admin/document/chapter.vue')
             },
             {
@@ -110,7 +113,7 @@ export default new Router({
       path: '/chapter/:id',
       name: 'home',
       redirect: 'home',
-      component: () => import(/* webpackChunkName: "about" */ './views/layout.vue'),
+      component: () => import(/* webpackChunkName: "about" */ './views/home/layout.vue'),
       children: [
         {
           path: '',

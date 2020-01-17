@@ -1,13 +1,15 @@
 <template>
   <el-container class="admin-view">
     <el-header>
-      <router-link to="/admin" class="logo">
+      <router-link :to="UserInfo.username ? '/admin' : ''" class="logo">
         <img src="~@/assets/img/logo.png" alt />文档控制台
       </router-link>
-      <div class="menu">
-        <router-link class="item" to="/admin/document">项目管理</router-link>
-        <router-link class="item" to="/admin/user" v-if="UserInfo.acl && UserInfo.acl.has_manage">用户管理</router-link>
-        <router-link class="item" to="/admin/setting" v-if="UserInfo.acl && UserInfo.acl.has_manage">系统设置</router-link>
+      <div class="menu" >
+        <template v-if="UserInfo.username">
+          <router-link class="item" to="/admin/document">项目管理</router-link>
+          <router-link class="item" to="/admin/user" v-if="UserInfo.acl && UserInfo.acl.has_manage">用户管理</router-link>
+          <router-link class="item" to="/admin/setting" v-if="UserInfo.acl && UserInfo.acl.has_manage">系统设置</router-link>
+        </template>
       </div>
       <div class="user" v-if="UserInfo.username">
         <div class="username">{{UserInfo.username}}</div>
@@ -20,7 +22,7 @@
       <router-link class="item" to="/admin/login" v-if="!UserInfo.username">登录</router-link>
     </el-header>
     <router-view></router-view>
-    <el-footer class="w7-footer" :class="$route.meta.footerClass" height="80px">
+    <el-footer class="w7-footer float" height="80px">
       Powered by<a href="https://www.w7.cc">微擎云计算©www.w7.cc</a>
     </el-footer>
   </el-container>
@@ -75,6 +77,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.el-header {
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  z-index: 1;
+}
 .admin-view {
   & > .el-header {
     .menu {

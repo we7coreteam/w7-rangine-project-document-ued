@@ -5,7 +5,7 @@ import store from './store'
 import axios from './utils/axios'
 import { Form, FormItem } from 'element-ui'
 import { Tabs, TabPane } from 'element-ui'
-import { Input } from 'element-ui'
+import { Input, Autocomplete } from 'element-ui'
 import { Checkbox } from 'element-ui'
 import { Select, Option, Cascader } from 'element-ui'
 import { Button, Link } from 'element-ui'
@@ -33,6 +33,7 @@ Vue.use(FormItem)
 Vue.use(Tabs)
 Vue.use(TabPane)
 Vue.use(Input)
+Vue.use(Autocomplete)
 Vue.use(Select)
 Vue.use(Option)
 Vue.use(Cascader)

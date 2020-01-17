@@ -7,8 +7,8 @@ module.exports = {
   outputDir: resolve('../document-apiserver/public'), // 构建目录
   assetsDir: '', //静态资源目录
   devServer: {
-    proxy: 'http://wiki.ngrok.ibanzhuan.cn'
-    // proxy: 'https://wiki.w7.cc/'
+    // proxy: 'http://wiki.ngrok.ibanzhuan.cn'
+    proxy: 'https://wiki.w7.cc/'
   },
   chainWebpack: config => {
     config.resolve.alias.set('@', resolve('src'))

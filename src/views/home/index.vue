@@ -1,63 +1,102 @@
 <template>
   <div class="chapter-warpper">
-    <el-container class="home-container">
-      <el-aside class="w7-aside-home" width="260px">
-        <p class="w7-aside-home-head">目录</p>
-        <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text=""
-          ref="chaptersTree"
-          node-key="id"
-          :highlight-current="true"
-          :expand-on-click-node="false"
-          :default-expanded-keys="expandIdArray"
-          @node-click="handleNodeClick"
-          @node-expand="handleNodeExpand">
-          <span class="custom-tree-node" v-if="node.label" :class="{doc: !data.is_dir}" slot-scope="{ node, data }">
-            <div class="text-over">
-              <span :title="node.label">{{ node.label }}</span>
+    <el-scrollbar>
+      <el-container class="home-container">
+        <el-aside class="w7-aside-home" width="220px">
+          <div class="w7-aside-home-box">
+            <p class="w7-aside-home-head">目录</p>
+            <div class="w7-aside-home-search">
+              <el-autocomplete
+                popper-class="my-autocomplete"
+                v-model="filterWord"
+                :fetch-suggestions="querySearch"
+                :trigger-on-focus="false"
+                placeholder="搜索文档"
+                @select="handleSelect">
+                <i
+                  class="el-icon-search el-input__icon"
+                  slot="suffix"
+                  >
+                </i>
+                <template slot-scope="{ item }">
+                  <div class="name text-over">{{ item.name }}</div>
+                </template>
+              </el-autocomplete>
             </div>
-          </span>
-        </el-tree>
-      </el-aside>
-      <el-main id="home-index">
-        <!-- <div class="search">
-          <el-input placeholder="请输入关键字搜索" v-model="keyword" @keyup.enter.native="search">
-            <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
-          </el-input>
-        </div> -->
-        <div class="line" v-if="!articleFlag"></div>
-        <div class="warpper">
-          <div class="article" v-show="articleFlag">
-            <p class="title">{{ articleContent.name }}</p>
-            <p class="info">
-              <span v-show="articleContent.updated_at">更新时间：{{ articleContent.updated_at }}</span>
-              <span v-show="articleContent.author.username">作者：{{ articleContent.author.username }}</span>
-            </p>
-            <div class="markdown-body" v-html="articleContent.content"></div>
-            <mavon-editor ref="mavonEditor" v-show="false"></mavon-editor>
+            <el-scrollbar class="w7-aside-home-content">
+              <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text=""
+                ref="chaptersTree"
+                node-key="id"
+                :highlight-current="true"
+                :expand-on-click-node="false"
+                :default-expanded-keys="expandIdArray"
+                @node-click="handleNodeClick"
+                @node-expand="handleNodeExpand">
+                <span class="custom-tree-node" v-if="node.label" :class="{doc: !data.is_dir}" slot-scope="{ node, data }">
+                  <div class="text-over">
+                    <span :title="node.label">{{ node.label }}</span>
+                  </div>
+                </span>
+              </el-tree>
+            </el-scrollbar>
           </div>
-          <div class="article-list" v-if="!articleFlag">
-            <el-button class="back" type="text" @click="articleFlag = !articleFlag">返回</el-button>
-            <p class="number-result">{{articleInfoList.length}}条结果"{{keyword}}"</p>
-            <div class="list-content" v-for="articleInfo in articleInfoList" v-bind:key="articleInfo.id" v-show="articleInfoList.length">
-              <div class="header">
-                <p class="title" v-html="articleInfo.name" @click="changeRoute(articleInfo.id, articleInfo.name, true)"></p>
-                <p class="info">
-                  <span>作者：{{articleInfo.username}}</span>
-                  <span>更新时间：{{articleInfo.updated_at}}</span>
-                </p>
+        </el-aside>
+        <el-main id="home-index">
+          <!-- <div class="search">
+            <el-input placeholder="请输入关键字搜索" v-model="keyword" @keyup.enter.native="search">
+              <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
+            </el-input>
+          </div> -->
+          <div class="line" v-if="!articleFlag"></div>
+          <div class="warpper">
+            <div class="article" v-show="articleFlag">
+              <p class="title">{{ articleContent.name }}</p>
+              <p class="info">
+                <span v-show="articleContent.updated_at">更新时间：{{ articleContent.updated_at }}</span>
+                <span v-show="articleContent.author.username">作者：{{ articleContent.author.username }}</span>
+              </p>
+              <div class="markdown-body" >
+                <div class="markdown-content" v-html="articleContent.content"></div>
+                <el-scrollbar class="markdown-menu ">
+                  <div class="js-toc toc toc-right"></div>
+                </el-scrollbar>
               </div>
-              <p class="content" v-html="articleInfo.content" @click="changeRoute(articleInfo.id, articleInfo.name, true)"></p>
+              <!-- <div class="markdown-bottom">
+                <router-link class="prev item" v-if=""></router-link>
+                <router-link class="nxet item"></router-link>
+              </div> -->
+              <mavon-editor ref="mavonEditor" v-show="false"></mavon-editor>
             </div>
-            <p class="no-result" v-if="!articleInfoList.length">没有找到相关内容"{{keyword}}"</p>
+            <div class="article-list" v-if="!articleFlag">
+              <el-button class="back" type="text" @click="articleFlag = !articleFlag">返回</el-button>
+              <p class="number-result">{{articleInfoList.length}}条结果"{{keyword}}"</p>
+              <div class="list-content" v-for="articleInfo in articleInfoList" v-bind:key="articleInfo.id" v-show="articleInfoList.length">
+                <div class="header">
+                  <p class="title" v-html="articleInfo.name" @click="changeRoute(articleInfo.id, articleInfo.name, true)"></p>
+                  <p class="info">
+                    <span>作者：{{articleInfo.username}}</span>
+                    <span>更新时间：{{articleInfo.updated_at}}</span>
+                  </p>
+                </div>
+                <p class="content" v-html="articleInfo.content" @click="changeRoute(articleInfo.id, articleInfo.name, true)"></p>
+              </div>
+              <p class="no-result" v-if="!articleInfoList.length">没有找到相关内容"{{keyword}}"</p>
+            </div>
           </div>
-        </div>
-      </el-main>
-    </el-container>
-    <el-backtop target=".chapter-warpper"></el-backtop>
+        </el-main>
+      </el-container>
+    </el-scrollbar>
+    <el-backtop :bottom="100">
+      <div class="w7-top">
+        <i class="el-icon-arrow-up"></i>
+        <p>TOP</p>
+      </div>
+    </el-backtop>
   </div>
 </template>
 
 <script>
+import tocbot from 'tocbot'
 export default {
   data() {
     return {
@@ -76,7 +115,8 @@ export default {
         author:{},
         content: ''
       },
-      articleInfoList: []
+      articleInfoList: [],
+      filterWord: ''
     }
   },
   watch: {
@@ -93,6 +133,38 @@ export default {
     this.getDocumentName()
   },
   methods: {
+    querySearch(queryString, cb) {
+      // var restaurants = this.restaurants;
+      console.log(queryString, this.getFilterList(queryString))
+      var results = queryString ? this.getFilterList(queryString) : [];
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    getFilterList(name) {
+      let array = this.chapters
+      let filterList = []
+      let ss = function(array) {
+        array.forEach(chapter => {
+          if (chapter.name && chapter.name.indexOf(name) > -1) {
+            filterList.push({
+              id: chapter.id,
+              name: chapter.name
+            })
+          }
+          if (chapter.children && chapter.children.length) {
+            ss(chapter.children)
+          }
+        })
+      }
+      ss(array)
+      return filterList
+    },
+    handleSelect(item) {
+      this.$refs.chaptersTree.setCurrentKey(item.id)
+      this.handleNodeClick(item)
+      this.filterWord = ''
+      this.filterList = []
+    },
     getDocumentName() {
       this.$post('/document/detail', {
         document_id: this.document_id
@@ -188,7 +260,8 @@ export default {
       })
         .then(res => {
           this.articleContent = res
-          this.articleContent.content = res.content ? this.$refs.mavonEditor.markdownIt.render('<div class="markdown-content">\n \n'+res.content+'\n \n</div>' + '<div class="markdown-menu">\n \n @[toc]( ) \n \n</div>\n \n' ) : ''
+          // this.articleContent.content = res.content ? this.$refs.mavonEditor.markdownIt.render('<div class="markdown-content">\n \n'+res.content+'\n \n</div>' + '<div class="markdown-menu"><el-scrollbar>\n \n @[toc]( ) \n \n</el-scrollbar></div>\n \n' ) : ''
+          this.articleContent.content = res.content ? this.$refs.mavonEditor.markdownIt.render(res.content) : ''
           this.$nextTick(() => {
             // let id = this.$route.hash.substr(1)
             // let jump = document.getElementById(id)
@@ -196,6 +269,7 @@ export default {
             // window.scroll({
             //   top: total
             // })
+            this.initToc()
             let hash = this.$route.hash
             if (hash) {
               window.location.hash = '#'
@@ -208,6 +282,40 @@ export default {
           })
           this.articleFlag = true
         })
+    },
+    initToc(option) {
+      this.$nextTick(() => {
+        var content = document.querySelector('.markdown-content')
+        var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
+        var headingMap = {}
+        Array.prototype.forEach.call(headings, function (heading) {
+          var id = heading.id ? heading.id : heading.textContent.trim().toLowerCase()
+              .split(' ').join('-').replace(/[\!\@\#\$\%\^\&\*\(\)\:]/ig, '')
+          headingMap[id] = !isNaN(headingMap[id]) ? ++headingMap[id] : 0
+          if (headingMap[id]) {
+            heading.id = id + '-' + headingMap[id]
+          } else {
+            heading.id = id
+          }
+        })
+        let defaultOption = {
+          contentSelector: '.markdown-content',
+          tocSelector:'.js-toc',
+          headingSelector: 'h1, h2, h3 ',
+          // scrollSmooth: !0,
+          scrollSmoothDuration: 500,
+          // scrollContainer: '.js-toc',
+          // scrollSmoothOffset: -80,
+          // headingsOffset: -500,
+          hasInnerContainers: true,
+          scrollEndCallback: () => {
+            document.querySelector('.markdown-menu .el-scrollbar__wrap').scrollTop = document.querySelector('.is-active-li') && (document.querySelector('.is-active-li').offsetTop - 200) > 0 ? (document.querySelector('.is-active-li').offsetTop - 200) : 0
+          }
+        }
+        option = Object.assign(defaultOption, option)
+        console.log(option)
+        tocbot.init(option)
+      })
     },
     selectNode(id) {
       this.$refs.chaptersTree.setCurrentKey(id)
@@ -259,25 +367,141 @@ export default {
 </script>
 
 <style lang="scss">
+body {
+    background-color: #FFF
+}
+
+.transition--300 {
+    transition: all 300ms ease-in-out
+}
+
+
+.toc {
+    overflow-y: auto
+}
+
+.toc>.toc-list {
+    overflow: hidden;
+    position: relative
+}
+
+.toc>.toc-list li {
+    list-style: none
+}
+
+.toc-list {
+    margin: 0;
+    padding-left: 10px
+}
+
+a.toc-link {
+    color: currentColor;
+    height: 100%
+}
+
+.is-collapsible {
+    // max-height: 1000px;
+    overflow: hidden;
+    transition: all 300ms ease-in-out
+}
+
+.is-collapsed {
+    max-height: 0
+}
+
+.is-position-fixed {
+    position: fixed !important;
+    top: 0
+}
+
+.is-active-link {
+    // font-weight: 700
+    color: #3296fa !important;
+}
+
+.toc-link::before {
+    background-color: #EEE;
+    content: ' ';
+    display: inline-block;
+    height: inherit;
+    left: 0;
+    margin-top: -8px;
+    position: absolute;
+    width: 2px
+}
+
+.is-active-link::before {
+    background-color: #3296fa;
+}
+
 #home-index {
-  min-height: calc(100vh - 89px);
+  min-height: calc(100vh - 140px);
 }
 .chapter-warpper {
   background: linear-gradient(to right, #f7f8fa 50%, #ffffff 50%);
 }
 .home-container {
-  width: 1200px;
-  margin: 0 auto;
+  position: relative;
+  padding-top: 60px;
   .w7-aside-home {
     background-color: #f7f8fa;
     border-right: #f1f2f3 1px solid;
+    min-width: 221px;
+    width: calc(50% - 700px + 220px) !important;
+    position: fixed;
+    height: calc(100vh - 60px);
+    .w7-aside-home-box {
+      padding-left: calc(100% - 220px);
+    }
     .w7-aside-home-head {
-      font-size: 23px;
-      padding: 48px 0 48px 40px;
+      font-size: 24px;
+      padding: 40px 0 30px ;
+    }
+    .w7-aside-home-search {
+      position: relative;
+      padding-bottom: 30px;
+      margin-bottom: 20px;
+      margin-right: 20px;
+      border-bottom: 1px solid #e1e3e6;
+    }
+    .w7-aside-home-content {
+      margin-top: 10px;
+      height: calc(100vh - 280px);
+      .el-scrollbar__wrap {
+        overflow-x: auto;
+      }
     }
     .w7-tree {
       font-size: 14px;
       background: #f7f8fa;
+      .el-tree-node {
+        &.is-expanded {
+          .el-tree-node {
+            .doc {
+              &::before {
+                content: '';
+                width: 4px;
+                height: 4px;
+                border-radius: 50%;
+                background-color: #C0C4CC;
+                margin-left: -4px;
+              }
+              &:hover {
+                &::before {
+                  background-color: #3296fa;
+                }
+              }
+            }
+            &.is-current {
+              .doc {
+                &::before {
+                  background-color: #3296fa;
+                }
+              }
+            }
+          }
+        }
+      }
       .el-tree-node__content {
         position: relative;
         height: auto;
@@ -289,13 +513,14 @@ export default {
         }
         .el-tree-node__expand-icon {
           padding: 0;
-          padding-left: 40px;
+          padding-left: 5px;
           position: absolute;
           width: 100%;
-          top: 0;
+          top: 8px;
           bottom: 0;
           z-index: 2;
           display: inline-block;
+          font-size: 20px;
           &::before {
             top: 50%;
             transform: translateY(-50%);
@@ -313,7 +538,7 @@ export default {
           flex: 1;
           display: flex;
           align-items: center;
-          padding-left: 60px;
+          padding-left: 20px;
           z-index: 1;
           height: 40px;
           &.doc {
@@ -344,7 +569,12 @@ export default {
   }
   .el-main {
     padding: 0;
+    padding-left: calc(50% - 700px + 220px);
     background-color: #ffffff;
+    height: 100%;
+    @media (max-width: 1420px) {
+      padding-left: 220px;
+    }
     .search {
       width: 100%;
       padding-bottom: 20px;
@@ -367,17 +597,30 @@ export default {
       color: #333333;
       margin-top: 48px;
       margin-left: 50px;
+      max-width: 1200px;
       .markdown-body {
-        display: flex;
         .markdown-content {
-          flex: 1;
+          margin-right: 30px;
+          padding-right: 290px;
+          width: 100%;
         }
         .markdown-menu {
-          margin-left: 20px;
-          width: 200px;
+          width: 240px;
           font-size: 14px;
           line-height: 1;
-          border-left: #eeeeee 1px solid;
+          background-color: #fff;
+          top: 100px;
+          bottom: 160px;
+          box-sizing: border-box;
+          position: fixed;
+          right: 26px;
+          @media (min-width: 1600px) {
+            left: calc(50% + 500px );
+            right: unset;
+          }
+          .el-scrollbar__wrap {
+            overflow-x: auto;
+          }
           p:first-child, h3 {
             margin-top: 0;
             margin-bottom: 0;
@@ -386,18 +629,21 @@ export default {
           ul, li {
             list-style: none;
             padding: 0;
+            margin-top: 0;
           }
           ul {
             padding-left: 20px;
           }
           li {
-            padding: 10px 0;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
           }
           a {
             color: #989898;
+            padding: 8px 0;
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            width: 100%;
             &:hover {
               color: #3296fa;
               text-decoration: none;
@@ -483,6 +729,19 @@ export default {
   }
   pre, .highlight pre {
     background-color:#eee!important;
+  }
+}
+.w7-top {
+  width: 40px;
+  height: 42px;
+  padding-top: 8px;
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+  font-size: 10px;
+  line-height: 1;
+  i {
+    font-size: 20px;
   }
 }
 </style>

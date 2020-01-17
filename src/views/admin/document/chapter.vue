@@ -564,10 +564,17 @@ export default {
 <style lang="scss">
 .w7-document-chapter {
   margin-left: -15px;
+  padding-left: 260px;
+  position: relative;
   .w7-aside-chapter {
     border-left: solid 1px #eeeeee;
     border-right: solid 1px #eeeeee;
     background-color: #f7f8fa;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    top: 60px;
+    z-index: 1501;
     .w7-aside-chapter-head {
       margin: 40px 0;
       p {
@@ -594,7 +601,7 @@ export default {
     }
   }
   .tree-warpper {
-    height: calc(100vh - 350px);
+    height: calc(100vh - 300px);
     .el-scrollbar__wrap {
       overflow-x: auto;
     }
