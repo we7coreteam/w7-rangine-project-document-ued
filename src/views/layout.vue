@@ -13,6 +13,7 @@
         <div class="username">{{UserInfo.username}}</div>
         <div id="w7-nav-menu" class="menu-bar">
           <ul class="menu-ul">
+            <li class="menu__item" @click="goto">个人中心</li>
             <li class="menu__item" @click="exit">退出系统</li>
           </ul>
         </div>
@@ -35,26 +36,6 @@ export default {
       isNotRead: true //false表示阅读模式，隐藏菜单
     }
   },
-  methods: {
-    isNotReadFnc() {
-      //F5刷新
-      this.isNotRead = this.$route.name == 'homeChild' ? false : true
-    },
-    exit() {
-      this.$post('/common/auth/logout')
-        .then(() => {
-          this.$router.push({
-            name: 'adminLogin'
-          })
-          //清除cookie
-          // var d = new Date()
-          // d.setTime(d.getTime() + -1 * 24 * 60 * 60 * 1000)
-          // var expires = 'expires=' + d.toUTCString()
-          // document.cookie = 'PHPSESSID' + '=' + '' + '; ' + expires + '; path=/' //path=/是根路径
-        }).catch(() => {
-        })
-    }
-  },
   computed: {
     ...mapGetters({ UserInfo: 'UserInfo' })
   },
@@ -70,6 +51,31 @@ export default {
   created() {
     this.$store.dispatch('getUserInfo')
     this.isNotReadFnc()
+  },
+  methods: {
+    isNotReadFnc() {
+      //F5刷新
+      this.isNotRead = this.$route.name == 'homeChild' ? false : true
+    },
+    goto() {
+      this.$router.push({
+        name: 'accountInfo'
+      })
+    },
+    exit() {
+      this.$post('/common/auth/logout')
+        .then(() => {
+          this.$router.push({
+            name: 'adminLogin'
+          })
+          //清除cookie
+          // var d = new Date()
+          // d.setTime(d.getTime() + -1 * 24 * 60 * 60 * 1000)
+          // var expires = 'expires=' + d.toUTCString()
+          // document.cookie = 'PHPSESSID' + '=' + '' + '; ' + expires + '; path=/' //path=/是根路径
+        }).catch(() => {
+        })
+    }
   }
 }
 </script>

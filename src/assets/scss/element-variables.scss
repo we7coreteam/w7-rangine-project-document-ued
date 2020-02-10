@@ -155,6 +155,49 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   border-radius: 0;
   padding: 4px;
 }
+.admin-view-menu {
+  &.el-menu {
+    margin: 25px 20px;
+    border-right: 0;
+    .el-menu-item {
+      margin: 10px 0;
+      height: 40px;
+      line-height: 40px;
+      &.is-active {
+        color: #4096f9;
+        background-color: #e6f2ff;
+        border-radius: 4px;
+      }
+      i {
+        margin-right: 20px;
+        font-size: 18px;
+      }
+    }
+    .el-submenu {
+      .el-submenu__title {
+        height: 40px;
+        line-height: 40px;
+        &:hover {
+          color: #4096f9;
+          background-color: #e6f2ff;
+          border-radius: 4px;
+        }
+        .wi {
+          margin-right: 20px;
+          font-size: 18px;
+        }
+      }
+      .el-menu-item {
+        padding-left: 60px !important;
+      }
+    }
+  }
+  .line {
+    margin: 18px 0;
+    height: 1px;
+    background-color: #f7f9fc;
+  }
+}
 /* 重写element-ui样式 -- end */
 
 /* 公共样式 */
@@ -248,6 +291,87 @@ ul, li {
     font-size: 14px;
     margin-left: 5px;
   }
+}
+.we7-panel-form {
+  margin-bottom: 30px;
+  font-size: 14px;
+  &__header {
+    margin-top: 30px;
+    padding: 15px;
+    color: #999;
+    line-height: 1;
+    background-color:#f7f8fa;
+    border-bottom: 1px solid #e8e9eb;
+    .el-button--text {
+      float: right;
+      padding: 0;
+    }
+  }
+  &__body {
+    .el-form-item {
+      margin-bottom: 0;
+      padding: 15px 20px;
+      border-bottom: 1px solid #e8e9eb;
+      &__error {
+        padding-top: 0;
+      }
+    }
+    .avatar-uploader .el-upload {
+      border-radius: 50%;
+      border: 1px dashed #999;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .avatar-uploader-icon {
+      width: 55px;
+      height: 55px;
+      color: #000;
+      font-size: 20px;
+      line-height: 55px;
+      text-align: center;
+    }
+    .avatar {
+      width: 55px;
+      height: 55px;
+      display: block;
+      border-radius: 50%;
+    }
+  }
+  &__item {
+    display: table;
+    width: 100%;
+    padding: 20px;
+    align-items: center;
+    vertical-align: middle;
+    background-color: #fff;
+    border-bottom: 1px solid #e8e9eb;
+    box-sizing: border-box;
+    &:hover {
+      box-sizing: border-box;
+      background-color: #f4f6f9;
+    }
+  }
+  &__label {
+    display: table-cell;
+    min-width: 220px;
+    vertical-align: middle;
+  }
+  &__value {
+    display: table-cell;
+    width: 100%;
+    color: #999;
+    vertical-align: middle;
+  }
+  &__action {
+    text-align: right;
+    display: table-cell;
+    min-width: 200px;
+    vertical-align: middle;
+  }
+}
+.we7-help-block {
+  color: #999;
+  line-height: 1.5;
 }
 
 //markdown

@@ -8,7 +8,8 @@ module.exports = {
   assetsDir: '', //静态资源目录
   devServer: {
     // proxy: 'http://wiki.ngrok.ibanzhuan.cn'
-    proxy: 'https://wiki.w7.cc/'
+    // proxy: 'https://wiki.w7.cc/'
+    proxy: 'http://111.229.106.40:89/'
   },
   chainWebpack: config => {
     config.resolve.alias.set('@', resolve('src'))

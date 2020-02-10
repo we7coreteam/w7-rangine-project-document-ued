@@ -118,6 +118,7 @@ export default {
 
 <style lang="scss" scoped>
 .title {
+  margin-top: 20px;
   width: 100%;
   height: 30px;
   font-size: 14px;

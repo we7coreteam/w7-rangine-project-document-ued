@@ -11,9 +11,18 @@
               <img :src="code" @click="getCode" slot="append" alt="">
             </el-input>
           </div>
-          <div class="login-action">
-            <!-- <el-button type="text" @click="showFind">找回密码?</el-button> -->
-            <el-button type="text" @click="thirdPartyLogin" v-if="thirdPartyLoginURL">第三方登录</el-button>
+          <!-- <div class="login-action">
+            <el-button type="text" @click="showFind">找回密码?</el-button>
+          </div> -->
+          <div class="login-thirdParty" v-if="thirdPartyList.length">
+            <span class="title">第三方账号登录</span>
+            <div class="icon-list">
+              <img class="icon-block"
+                v-for="icon in thirdPartyList" :key="icon.name" 
+                :src="icon.logo"
+                :title="icon.name"
+                @click="thirdPartyIconClick(icon.redirect_url)">
+            </div>
           </div>
           <el-button class="login-btn" @click="login">登录</el-button>
         </el-tab-pane>
@@ -40,21 +49,27 @@ export default {
         userpass: '',
         code: ''
       },
-      thirdPartyLoginURL: ''
+      thirdPartyList: []
     }
   },
   beforeRouteEnter(to, from, next) {
     let code = to.query.code//第三方登录成功之后返回的code
     let redirect_url = to.query.redirect_url//需要跳转的url
+    let id = to.query.id
     if (code) {
       axios.post('/common/auth/third-party-login', {
-        code
+        code,
+        id
       })
-        .then(() => {
-          if (!redirect_url) {
-            next('/admin/document')
+        .then(res => {
+          if (res && res.is_need_bind) {//跳转到绑定
+            next('/bind')
           } else {
-            window.open(redirect_url, '_self')
+            if (!redirect_url) {
+              next('/admin/document')
+            } else {
+              window.open(redirect_url, '_self')
+            }
           }
         })
         .catch(() => {
@@ -66,7 +81,7 @@ export default {
   },
   created () {
     this.getCode()
-    this.getThirdPartyLoginURl()
+    this.getThirdParty()
   },
   methods: {
     showFind() {
@@ -104,17 +119,16 @@ export default {
           this.getCode()
         })
     },
-    getThirdPartyLoginURl() {
-      this.$post('/common/auth/method')
+    getThirdParty() {
+      this.$post('/common/auth/method', {
+        redirect_url: this.$route.query.redirect_url
+      })
         .then(res => {
-          if (res['third-party-login']) {
-            let url = res['third-party-login'].url
-            this.thirdPartyLoginURL = replaceParamVal(url, 'redirect_url', window.location.href)
-          }
+          this.thirdPartyList = res || []
         })
     },
-    thirdPartyLogin() {
-      window.open(this.thirdPartyLoginURL, '_self')
+    thirdPartyIconClick(url) {
+      window.open(url, '_self')
     }
   }
 }
@@ -194,7 +208,24 @@ export default {
   }
   .login-action {
     text-align: right;
-    margin-top: 60px;
+    margin-top: 40px;
+    border-bottom: 1px solid #DCDFE6;
+  }
+  .login-thirdParty {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    .title {
+      line-height: 40px;
+    }
+    .icon-list {
+      .icon-block {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+    }
   }
   .login-btn {
     display: block;

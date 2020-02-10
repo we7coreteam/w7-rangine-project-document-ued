@@ -1,15 +1,27 @@
 <template>
-  <el-container class="layout-container setting">
-    <el-aside class="admin-view-aside" :width="isCollapse ? '64px' : '200px'">
-      <el-menu
-        class="admin-view-menu"
-        :default-active="'/admin/setting'"
+  <el-container class="layout-container">
+    <el-aside class="admin-view-aside" :width="isCollapse ? '64px' : '240px'">
+      <el-menu class="admin-view-menu"
+        :default-active="active"
         :router="true"
-        :collapse="isCollapse"
-      >
+        :collapse="isCollapse">
         <el-menu-item index="/admin/setting">
-          <i class="el-icon-document"></i>
+          <i class="wi wi-cunchushebei"></i>
           <span slot="title">存储设置</span>
+        </el-menu-item>
+        <el-submenu index="1">
+          <template slot="title">
+            <i class="wi wi-system-login-settings"></i>
+            <span>第三方登录设置</span>
+          </template>
+          <template v-for="(menu, index) in thirdPartyLoginMenu">
+            <el-menu-item :index="'/admin/setting/thirdParty?id='+ menu.id" :key="index">{{menu.name}}授权配置</el-menu-item>
+          </template>
+          <el-menu-item index="/admin/setting/thirdPartyCustom">自定义授权配置</el-menu-item>
+        </el-submenu>
+        <el-menu-item index="/admin/setting/login">
+          <i class="wi wi-system-login-settings"></i>
+          <span slot="title">登录设置</span>
         </el-menu-item>
       </el-menu>
     </el-aside>
@@ -23,19 +35,32 @@
 export default {
   data() {
     return {
-      isCollapse: false
+      active: '/admin/setting',
+      isCollapse: false,
+      thirdPartyLoginMenu: []
+    }
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.active = to.path
+    })
+  },
+  created() {
+    this.init()
+  },
+  methods: {
+    init() {
+      this.$post('/admin/third-party-login/all')
+        .then(res => {
+          this.thirdPartyLoginMenu = res
+        })
     }
   }
 }
 </script>
 
-<style lang="scss">
-.setting {
-  .admin-view-aside {
-    border-right: solid 1px #e6e6e6;
-    .el-menu {
-      border-right: 0;
-    }
-  }
+<style lang="scss" scoped>
+.el-main {
+  padding: 0 25px 0 15px;
 }
 </style>

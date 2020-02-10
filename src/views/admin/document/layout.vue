@@ -68,29 +68,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.el-menu {
-  margin: 25px 20px;
-  border-right: 0;
-  .el-menu-item {
-    margin: 10px 0;
-    height: 40px;
-    line-height: 40px;
-    &.is-active {
-      color: #4096f9;
-      background-color: #e6f2ff;
-      border-radius: 4px;
-    }
-    i {
-      margin-right: 20px;
-      font-size: 18px;
-    }
-  }
-}
-.line {
-  margin: 18px 0;
-  height: 1px;
-	background-color: #f7f9fc;
-}
 .el-main {
   padding: 0 25px 0 15px;
 }

@@ -13,6 +13,11 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/admin/login.vue')
     },
     {
+      path: '/bind',
+      name: 'adminBind',
+      component: () => import(/* webpackChunkName: "about" */ './views/admin/bind.vue')
+    },
+    {
       path: '/admin',
       name: 'admin',
       redirect: '/admin/document',
@@ -104,9 +109,29 @@ export default new Router({
               path: '',
               name: 'settingIndex',
               component: () => import(/* webpackChunkName: "about" */ './views/admin/setting/index.vue')
+            },
+            {
+              path: 'thirdParty',
+              name: 'settingThirdParty',
+              component: () => import(/* webpackChunkName: "about" */ './views/admin/setting/thirdParty.vue')
+            },
+            {
+              path: 'thirdPartyCustom',
+              name: 'settingThirdPartyCustom',
+              component: () => import(/* webpackChunkName: "about" */ './views/admin/setting/thirdPartyCustom.vue')
+            },
+            {
+              path: 'login',
+              name: 'settingLogin',
+              component: () => import(/* webpackChunkName: "about" */ './views/admin/setting/login.vue')
             }
           ]
         },
+        {
+          path: 'accountInfo',
+          name: 'accountInfo',
+          component: () => import(/* webpackChunkName: "about" */ './views/admin/accountInfo.vue')
+        }
       ]
     },
     {
