@@ -55,11 +55,11 @@ export default {
   beforeRouteEnter(to, from, next) {
     let code = to.query.code//第三方登录成功之后返回的code
     let redirect_url = to.query.redirect_url//需要跳转的url
-    let id = to.query.id
+    let app_id = to.query.app_id
     if (code) {
       axios.post('/common/auth/third-party-login', {
         code,
-        id
+        app_id
       })
         .then(res => {
           if (res && res.is_need_bind) {//跳转到绑定
