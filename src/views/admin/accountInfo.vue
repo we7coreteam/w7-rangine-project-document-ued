@@ -47,9 +47,12 @@
             <el-form-item label="账号" prop="username">
               <el-input v-model="formData.username"></el-input>
             </el-form-item>
+            <el-form-item label="旧密码" prop="old_userpass" v-if="!UserInfo.no_password">
+              <el-input v-model="formData.old_userpass"></el-input>
+            </el-form-item>
           </template>
           <template v-if="dialogType == 'pass'">
-            <el-form-item label="旧密码" prop="old_userpass" v-if="UserInfo.no_password">
+            <el-form-item label="旧密码" prop="old_userpass" v-if="!UserInfo.no_password">
               <el-input v-model="formData.old_userpass"></el-input>
             </el-form-item>
             <el-form-item label="新密码" prop="userpass">
@@ -147,9 +150,9 @@ export default {
             data = {
               userpass: this.formData.userpass
             }
-            if (this.UserInfo.no_password) {
-              data['old_userpass'] = this.formData.old_userpass
-            }
+          }
+          if (!this.UserInfo.no_password) {
+            data['old_userpass'] = this.formData.old_userpass
           }
           this.$post('/common/auth/user/update', data)
             .then(() => {

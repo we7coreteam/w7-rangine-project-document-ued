@@ -220,6 +220,7 @@ export default {
     }
     .icon-list {
       .icon-block {
+        margin-left: 10px;
         width: 40px;
         height: 40px;
         border-radius: 50%;

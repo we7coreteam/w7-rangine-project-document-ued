@@ -7,7 +7,12 @@
         <div class="we7-panel-form__item">
           <div class="we7-panel-form__label">登录方式</div>
             <div class="we7-panel-form__value">
-              文档系统登录；第三方登录时需绑定用户自己创建的已有账号
+              <template v-if="loginMethod == 1">
+                依赖第三方登录：{{default_login_name}}
+              </template>
+              <template v-else>
+                文档系统登录：{{is_need_bind == '1' ? '第三方登录时需绑定用户自己创建的已有账号' : '第三方登录时系统自动创建一个账号对应'}}
+              </template>
             </div>
             <div class="we7-panel-form__action">
               <el-tooltip effect="dark" content="编辑" placement="bottom">
@@ -60,8 +65,9 @@ export default {
     return {
       dialogVisible: false,
       loginMethod: 0,
-      is_need_bind: '',
+      is_need_bind: '0',
       default_login_channel: '',
+      default_login_name: '',
       thirdParty: [],
       thirdPartyFisrtId: ''//第一个第三方配置的id，用于所有授权登录为false的时候跳转
     }
@@ -94,8 +100,17 @@ export default {
             if (i == 0) {
               this.thirdPartyFisrtId = res[i].id
             }
+            if (this.default_login_channel == res[i].id) {
+              this.default_login_name = res[i].name
+            }
             if (res[i].enable) {
-              this.thirdParty.push(res[i])
+              this.thirdParty.push({
+                id: res[i].id + '',
+                name: res[i].name
+              })
+              if (!this.default_login_channel) {
+                this.default_login_channel = res[i].id + ''
+              }
             }
           }
         })
@@ -121,6 +136,9 @@ export default {
       this.$post('/admin/third-party-login/set-default-channel', data)
         .then(res => {
           this.$message('修改成功！')
+          if (this.loginMethod == 1) {
+            
+          }
           this.dialogVisible = false
         })
     }
