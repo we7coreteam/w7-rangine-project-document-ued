@@ -13,6 +13,11 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/admin/login.vue')
     },
     {
+      path: '/admin-login',
+      name: 'adminLoginPage',
+      component: () => import(/* webpackChunkName: "about" */ './views/admin/adminLogin.vue')
+    },
+    {
       path: '/bind',
       name: 'adminBind',
       component: () => import(/* webpackChunkName: "about" */ './views/admin/bind.vue')

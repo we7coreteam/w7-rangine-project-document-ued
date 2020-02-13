@@ -373,7 +373,123 @@ ul, li {
   color: #999;
   line-height: 1.5;
 }
-
+//登录页
+.admin-login {
+  min-height: 100vh;
+  background-color: #fff;
+  background-image:  url('~@/assets/img/login-bg.png');
+  background-position:  center;
+  background-size: cover;
+  background-repeat: space;
+  position: relative;
+  font-size: 14px;
+  line-height: 1;
+  .login-box {
+    width: 470px;
+    margin: 0 auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    h2 {
+      margin: 0;
+      color: #4d4d4d;
+      font-size: 56px;
+      font-weight: 100;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+  }
+  .el-tabs {
+    &__header {
+      text-align: center;
+      margin-bottom: 0;
+    }
+    &__nav-wrap {
+      display: inline-block;
+      &::after {
+        display: none;
+      }
+    }
+  }
+  .login-form {
+    .el-input {
+      margin-top: 30px;
+      input {
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+        border-top: 0;
+        outline: 0;
+        color: #a1a1a1;
+        padding-left: 50px;
+        &:focus {
+          border-color: #DCDFE6;
+        }
+      }
+      &__icon {
+        color: #a1a1a1;
+        font-size: 20px;
+      }
+      .el-input-group__append {
+        background-color: unset;
+        border-radius: 0;
+        padding: 0;
+        font-size: 0;
+        border: 0;
+        img {
+          width: 120px;
+          cursor: pointer;
+          height: 32px;
+        }
+      }
+    }
+  }
+  .login-action {
+    text-align: right;
+    margin-top: 40px;
+    border-bottom: 1px solid #DCDFE6;
+  }
+  .login-thirdParty {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    .title {
+      line-height: 40px;
+    }
+    .icon-list {
+      .icon-block {
+        margin-left: 10px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+    }
+  }
+  .login-btn {
+    display: block;
+    width: 100%;
+    border-radius: 25px;
+    color: #4d4d4d;
+    padding: 0;
+    height: 50px;
+    line-height: 50px;
+    margin-top: 50px;
+  }
+  .footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 30px;
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+    // a {
+    //   color: #4d4d4d;
+    // }
+  }
+}
 //markdown
 .hljs{
   background:#eee!important;

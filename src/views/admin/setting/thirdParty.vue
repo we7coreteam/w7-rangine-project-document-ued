@@ -13,7 +13,8 @@
         <el-form-item :label="formData.setting.name + '授权登录'" label-width="290px">
           <el-switch v-model="formData.setting.enable"
             :active-value="1"
-            :inactive-value="0">
+            :inactive-value="0"
+            :disabled="!editStatus">
           </el-switch>
         </el-form-item>
         <el-form-item label="第三方名称" label-width="290px" prop="setting.name">
