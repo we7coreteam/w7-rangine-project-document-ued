@@ -25,7 +25,7 @@
             <div class="we7-panel-form__value">{{accountName}}</div>
             <div class="we7-panel-form__action">
               <el-tooltip effect="dark" content="编辑" placement="bottom">
-                <i class="wi wi-edit" @click="openDialog('name')"></i>
+                <i class="wi wi-edit wi-oper" @click="openDialog('name')"></i>
               </el-tooltip>
             </div>
           </div>
@@ -34,7 +34,7 @@
             <div class="we7-panel-form__value">******</div>
             <div class="we7-panel-form__action">
               <el-tooltip effect="dark" content="编辑" placement="bottom">
-                <i class="wi wi-edit" @click="openDialog('pass')"></i>
+                <i class="wi wi-edit wi-oper" @click="openDialog('pass')"></i>
               </el-tooltip>
             </div>
           </div>
@@ -47,19 +47,19 @@
             <el-form-item label="账号" prop="username">
               <el-input v-model="formData.username"></el-input>
             </el-form-item>
-            <el-form-item label="旧密码" prop="old_userpass" v-if="!UserInfo.no_password">
-              <el-input v-model="formData.old_userpass"></el-input>
+            <el-form-item label="密码" prop="old_userpass" v-if="!UserInfo.no_password">
+              <el-input v-model="formData.old_userpass" show-password></el-input>
             </el-form-item>
           </template>
           <template v-if="dialogType == 'pass'">
             <el-form-item label="旧密码" prop="old_userpass" v-if="!UserInfo.no_password">
-              <el-input v-model="formData.old_userpass"></el-input>
+              <el-input v-model="formData.old_userpass" show-password></el-input>
             </el-form-item>
             <el-form-item label="新密码" prop="userpass">
-              <el-input v-model="formData.userpass"></el-input>
+              <el-input v-model="formData.userpass" show-password></el-input>
             </el-form-item>
             <el-form-item label="确认密码" prop="confirm_userpass">
-              <el-input v-model="formData.confirm_userpass"></el-input>
+              <el-input v-model="formData.confirm_userpass" show-password></el-input>
             </el-form-item>
           </template>
         </el-form>

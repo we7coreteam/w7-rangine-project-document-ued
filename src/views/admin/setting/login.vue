@@ -16,7 +16,7 @@
             </div>
             <div class="we7-panel-form__action">
               <el-tooltip effect="dark" content="编辑" placement="bottom">
-                <i class="wi wi-edit" @click="dialogVisible = true"></i>
+                <i class="wi wi-edit wi-oper" @click="dialogVisible = true"></i>
               </el-tooltip>
             </div>
         </div>

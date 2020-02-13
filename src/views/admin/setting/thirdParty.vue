@@ -66,8 +66,10 @@
         </div>
       </template>
     </el-form>
-    <el-button type="primary" @click="save">保存</el-button>
-    <el-button @click="editStatus = false">取消</el-button>
+    <template v-if="editStatus">
+      <el-button type="primary" @click="save">保存</el-button>
+      <el-button @click="editStatus = false">取消</el-button>
+    </template>
   </div>
 </template>
 

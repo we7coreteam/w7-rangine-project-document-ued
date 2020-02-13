@@ -223,6 +223,16 @@ ul, li {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+//可操作的图标
+.wi {
+  &.wi-oper {
+    color: #b3b3b3;
+    cursor: pointer;
+    &:hover {
+      color: #3296fa;
+    }
+  }
+}
 .layout-container {
   min-height: calc(100vh - 140px);
 }
