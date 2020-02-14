@@ -7,13 +7,25 @@
           自定义第三方授权配置
           <el-button type="text" @click="del(index)" v-if="index > 0">删除</el-button>
         </div>
-        <div class="we7-panel-form__body">
+        <div class="we7-panel-form__body edit">
           <el-form-item label="授权登录" label-width="290px">
             <el-switch v-model="item.setting.enable"
               :active-value="1"
               :inactive-value="0">
             </el-switch>
           </el-form-item>
+        </div>
+        <div class="we7-panel-form__header">
+          自定义第三方登陆配置
+          <!-- <el-button type="text" @click="del(index)" v-if="index > 0">删除</el-button> -->
+        </div>
+        <div class="we7-panel-form__body edit">
+          <!-- <el-form-item label="授权登录" label-width="290px">
+            <el-switch v-model="item.setting.enable"
+              :active-value="1"
+              :inactive-value="0">
+            </el-switch>
+          </el-form-item> -->
           <el-form-item label="第三方名称" label-width="290px"
             :prop="'customList.' + index + '.setting.name'"
             :rules="rules.name">
@@ -54,7 +66,7 @@
           </el-form-item>
         </div>
         <div class="we7-panel-form__header">转换功能</div>
-        <div class="we7-panel-form__body">
+        <div class="we7-panel-form__body edit">
           <el-form-item label="uid" label-width="290px">
             <el-input v-model="item.convert.uid"></el-input>
           </el-form-item>

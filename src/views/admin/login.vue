@@ -36,7 +36,6 @@
 
 <script>
 import axios from '@/utils/axios'
-import {replaceParamVal} from '@/utils/utils'
 export default {
   name: 'adminLogin',
   data() {

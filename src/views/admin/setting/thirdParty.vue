@@ -1,22 +1,36 @@
 <template>
   <div class="setting-thirdParty">
     <div class="page-head">{{formData.setting.name}}授权设置</div>
+    <el-form class="we7-panel-form" label-position="left">
+       <div class="we7-panel-form__header">
+        授权配置
+      </div>
+      <div class="we7-panel-form__body" >
+        <el-form-item :label="formData.setting.name + '授权登录'" label-width="290px">
+          <el-switch v-model="formData.setting.enable"
+            @change="save"
+            :active-value="1"
+            :inactive-value="0">
+          </el-switch>
+        </el-form-item>
+      </div>
+    </el-form>
     <el-form class="we7-panel-form" status-icon label-position="left"
       :model="formData"
       ref="thirdPartyForm"
       :rules="rules">
       <div class="we7-panel-form__header">
         {{formData.setting.name}}登录配置
-        <el-button type="text" @click="editStatus = true">编辑</el-button>
+        <el-button type="text" @click="editStatus = !editStatus">{{!editStatus ? '编辑' : '取消'}}</el-button>
       </div>
-      <div class="we7-panel-form__body">
-        <el-form-item :label="formData.setting.name + '授权登录'" label-width="290px">
+      <div class="we7-panel-form__body" :class="{edit: editStatus}">
+        <!-- <el-form-item :label="formData.setting.name + '授权登录'" label-width="290px">
           <el-switch v-model="formData.setting.enable"
             :active-value="1"
             :inactive-value="0"
             :disabled="!editStatus">
           </el-switch>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="第三方名称" label-width="290px" prop="setting.name">
           <el-input v-model="formData.setting.name" v-if="editStatus"></el-input>
           <span v-else>{{formData.setting.name}}</span>
@@ -54,7 +68,7 @@
       </div>
       <template v-if="!formData.is_default">
         <div class="we7-panel-form__header">转换功能</div>
-        <div class="we7-panel-form__body">
+        <div class="we7-panel-form__body" :class="{edit: editStatus}">
           <el-form-item label="uid" label-width="290px">
             <el-input v-model="formData.convert.uid" v-if="editStatus"></el-input>
             <span v-else>{{formData.convert.uid}}</span>
@@ -193,6 +207,16 @@ export default {
 .setting-thirdParty {
   .page-head {
     padding-bottom: 0;
+  }
+  .we7-panel-form {
+    &__body {
+      &.edit {
+        .el-form-item {
+          border-bottom: 0;
+          padding: 10px 20px;
+        }
+      }
+    }
   }
 }
 </style>
