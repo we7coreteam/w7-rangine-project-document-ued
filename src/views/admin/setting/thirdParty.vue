@@ -1,27 +1,32 @@
 <template>
   <div class="setting-thirdParty">
     <div class="page-head">{{formData.setting.name}}授权设置</div>
-    <el-form class="we7-panel-form" status-icon label-position="left" label-width="290px"
+    <el-form class="we7-panel-form" :class="{'edit': editStatus}" status-icon label-position="left" label-width="290px"
       :model="formData"
       ref="thirdPartyForm"
       :rules="rules">
       <div class="we7-panel-form__header">
-        {{formData.setting.name}}登录配置
-        <el-button type="text" @click="editStatus = true">编辑</el-button>
+        授权配置
       </div>
-      <div class="we7-panel-form__body">
-        <el-form-item :label="formData.setting.name + '授权登录'" :class="{'no-border-bottom': editStatus}">
+      <div class="we7-panel-form__body edit">
+        <el-form-item :label="formData.setting.name + '授权登录'">
           <el-switch v-model="formData.setting.enable"
             :active-value="1"
             :inactive-value="0"
             @change="change">
           </el-switch>
         </el-form-item>
-        <el-form-item label="第三方名称" :class="{'no-border-bottom': editStatus}" prop="setting.name">
+      </div>
+      <div class="we7-panel-form__header">
+        登录配置
+        <el-button type="text" @click="editStatus = true">编辑</el-button>
+      </div>
+      <div class="we7-panel-form__body">
+        <el-form-item label="第三方名称" prop="setting.name">
           <el-input v-model="formData.setting.name" v-if="editStatus"></el-input>
           <span v-else>{{formData.setting.name}}</span>
         </el-form-item>
-        <el-form-item label="LOGO" :class="{'no-border-bottom': editStatus}" prop="setting.logo"
+        <el-form-item label="LOGO" prop="setting.logo"
           v-if="!formData.is_default">
           <el-upload
             class="avatar-uploader"
@@ -35,19 +40,19 @@
           </el-upload>
           <img :src="formData.setting.logo" class="avatar" v-else>
         </el-form-item>
-        <el-form-item label="APPID" :class="{'no-border-bottom': editStatus}" prop="setting.app_id">
+        <el-form-item label="APPID" prop="setting.app_id">
           <el-input v-model="formData.setting.app_id" v-if="editStatus"></el-input>
           <span v-else>{{formData.setting.app_id}}</span>
         </el-form-item>
-        <el-form-item label="SERCETkey" :class="{'no-border-bottom': editStatus}" prop="setting.secret_key">
+        <el-form-item label="SERCETkey" prop="setting.secret_key">
           <el-input v-model="formData.setting.secret_key" v-if="editStatus"></el-input>
           <span v-else>{{formData.setting.secret_key}}</span>
         </el-form-item>
-        <el-form-item label="ACCESSTOKEN  API地址" :class="{'no-border-bottom': editStatus}" prop="setting.access_token_url">
+        <el-form-item label="ACCESSTOKEN  API地址" prop="setting.access_token_url">
           <el-input v-model="formData.setting.access_token_url" v-if="editStatus"></el-input>
           <span v-else>{{formData.setting.access_token_url}}</span>
         </el-form-item>
-        <el-form-item label="获取用户信息  API地址" :class="{'no-border-bottom': editStatus}" prop="setting.user_info_url">
+        <el-form-item label="获取用户信息  API地址" prop="setting.user_info_url">
           <el-input v-model="formData.setting.user_info_url" v-if="editStatus"></el-input>
           <span v-else>{{formData.setting.user_info_url}}</span>
         </el-form-item>
@@ -55,11 +60,11 @@
       <template v-if="!formData.is_default">
         <div class="we7-panel-form__header">转换功能</div>
         <div class="we7-panel-form__body">
-          <el-form-item label="uid" :class="{'no-border-bottom': editStatus}">
+          <el-form-item label="uid">
             <el-input v-model="formData.convert.uid" v-if="editStatus"></el-input>
             <span v-else>{{formData.convert.uid}}</span>
           </el-form-item>
-          <el-form-item label="username" :class="{'no-border-bottom': editStatus}">
+          <el-form-item label="username">
             <el-input v-model="formData.convert.username" v-if="editStatus"></el-input>
             <span v-else>{{formData.convert.username}}</span>
           </el-form-item>
@@ -223,7 +228,7 @@ export default {
   .page-head {
     padding-bottom: 0;
   }
-  .no-border-bottom {
+  .edit .el-form-item {
     border-bottom: 0;
   }
 }
