@@ -161,6 +161,9 @@ export default {
                 this.accountName = this.formData.username
               }
               this.dialogVisible = false
+              if (this.UserInfo.no_password) {
+                this.UserInfo.no_password = false
+              }
             })
         }
       })

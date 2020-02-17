@@ -1,7 +1,7 @@
 <template>
   <div class="setting-thirdParty">
     <div class="page-head">{{formData.setting.name}}授权设置</div>
-    <el-form class="we7-panel-form" status-icon label-position="left"
+    <el-form class="we7-panel-form" status-icon label-position="left" label-width="290px"
       :model="formData"
       ref="thirdPartyForm"
       :rules="rules">
@@ -10,18 +10,18 @@
         <el-button type="text" @click="editStatus = true">编辑</el-button>
       </div>
       <div class="we7-panel-form__body">
-        <el-form-item :label="formData.setting.name + '授权登录'" label-width="290px">
+        <el-form-item :label="formData.setting.name + '授权登录'" :class="{'no-border-bottom': editStatus}">
           <el-switch v-model="formData.setting.enable"
             :active-value="1"
             :inactive-value="0"
-            :disabled="!editStatus">
+            @change="change">
           </el-switch>
         </el-form-item>
-        <el-form-item label="第三方名称" label-width="290px" prop="setting.name">
+        <el-form-item label="第三方名称" :class="{'no-border-bottom': editStatus}" prop="setting.name">
           <el-input v-model="formData.setting.name" v-if="editStatus"></el-input>
           <span v-else>{{formData.setting.name}}</span>
         </el-form-item>
-        <el-form-item label="LOGO" label-width="290px" prop="setting.logo"
+        <el-form-item label="LOGO" :class="{'no-border-bottom': editStatus}" prop="setting.logo"
           v-if="!formData.is_default">
           <el-upload
             class="avatar-uploader"
@@ -35,19 +35,19 @@
           </el-upload>
           <img :src="formData.setting.logo" class="avatar" v-else>
         </el-form-item>
-        <el-form-item label="APPID" label-width="290px" prop="setting.app_id">
+        <el-form-item label="APPID" :class="{'no-border-bottom': editStatus}" prop="setting.app_id">
           <el-input v-model="formData.setting.app_id" v-if="editStatus"></el-input>
           <span v-else>{{formData.setting.app_id}}</span>
         </el-form-item>
-        <el-form-item label="SERCETkey" label-width="290px" prop="setting.secret_key">
+        <el-form-item label="SERCETkey" :class="{'no-border-bottom': editStatus}" prop="setting.secret_key">
           <el-input v-model="formData.setting.secret_key" v-if="editStatus"></el-input>
           <span v-else>{{formData.setting.secret_key}}</span>
         </el-form-item>
-        <el-form-item label="ACCESSTOKEN  API地址" label-width="290px" prop="setting.access_token_url">
+        <el-form-item label="ACCESSTOKEN  API地址" :class="{'no-border-bottom': editStatus}" prop="setting.access_token_url">
           <el-input v-model="formData.setting.access_token_url" v-if="editStatus"></el-input>
           <span v-else>{{formData.setting.access_token_url}}</span>
         </el-form-item>
-        <el-form-item label="获取用户信息  API地址" label-width="290px" prop="setting.user_info_url">
+        <el-form-item label="获取用户信息  API地址" :class="{'no-border-bottom': editStatus}" prop="setting.user_info_url">
           <el-input v-model="formData.setting.user_info_url" v-if="editStatus"></el-input>
           <span v-else>{{formData.setting.user_info_url}}</span>
         </el-form-item>
@@ -55,11 +55,11 @@
       <template v-if="!formData.is_default">
         <div class="we7-panel-form__header">转换功能</div>
         <div class="we7-panel-form__body">
-          <el-form-item label="uid" label-width="290px">
+          <el-form-item label="uid" :class="{'no-border-bottom': editStatus}">
             <el-input v-model="formData.convert.uid" v-if="editStatus"></el-input>
             <span v-else>{{formData.convert.uid}}</span>
           </el-form-item>
-          <el-form-item label="username" label-width="290px">
+          <el-form-item label="username" :class="{'no-border-bottom': editStatus}">
             <el-input v-model="formData.convert.username" v-if="editStatus"></el-input>
             <span v-else>{{formData.convert.username}}</span>
           </el-form-item>
@@ -161,6 +161,35 @@ export default {
       }
       return isJPG && isLt2M;
     },
+    change() {
+      let flag = false
+      for (const key in this.formData.setting) {
+        if (!this.formData.setting[key] && key != 'enable') {
+          flag = true
+          break
+        }
+      }
+      if (flag) {
+        this.$message('请填写必填项！')
+        this.formData.setting.enable = this.formData.setting.enable == 1 ? 0 : 1
+        return
+      }
+      let data = {
+        id: this.$route.query.id,
+        setting: {
+          ...this.formData.setting
+        }
+      }
+      if (!this.formData.is_default) {
+        data['convert'] = {
+          ...this.formData.convert
+        }
+      }
+      this.$post('/admin/third-party-login/update', data)
+        .then(() => {
+          this.$message('修改成功！')
+        })
+    },
     save() {
       this.$refs.thirdPartyForm.validate((valid) => {
         if (valid) {
@@ -193,6 +222,9 @@ export default {
 .setting-thirdParty {
   .page-head {
     padding-bottom: 0;
+  }
+  .no-border-bottom {
+    border-bottom: 0;
   }
 }
 </style>
