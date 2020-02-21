@@ -91,13 +91,8 @@ export default {
   .v-note-wrapper {
     margin: 30px 0;
     .v-note-panel {
-      .v-note-edit {
-        flex: 1 !important;
-        width: 0 !important;;
-      }
       .v-note-show {
-        width: 760px;
-        flex: 0 0 760px;
+        max-width: 760px;
       }
     }
   }
