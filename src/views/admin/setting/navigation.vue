@@ -127,7 +127,7 @@ export default {
       getStyle() {
         this.$post('/admin/menu/get-theme')
           .then(res => {
-            this.style = res || 'black'
+            this.style = res || 'white'
           })
       },
       getMenuData() {

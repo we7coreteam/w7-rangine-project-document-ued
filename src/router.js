@@ -144,24 +144,11 @@ export default new Router({
         }
       ]
     },
-    {
-      path: '/chapter/:id',
-      name: 'home',
-      redirect: 'home',
-      component: () => import(/* webpackChunkName: "about" */ './views/home/layout.vue'),
-      children: [
-        {
-          path: '',
-          name: 'homeChild',
-          component: () => import(/* webpackChunkName: "about" */ './views/home/index.vue')
-        }
-      ]
-    },
     // {
     //   path: '/chapter/:id',
     //   name: 'home',
     //   redirect: 'home',
-    //   component: () => import(/* webpackChunkName: "about" */ './views/layout.vue'),
+    //   component: () => import(/* webpackChunkName: "about" */ './views/home/layout.vue'),
     //   children: [
     //     {
     //       path: '',
@@ -170,6 +157,19 @@ export default new Router({
     //     }
     //   ]
     // },
+    {
+      path: '/chapter/:id',
+      name: 'home',
+      redirect: 'home',
+      component: () => import(/* webpackChunkName: "about" */ './views/layout.vue'),
+      children: [
+        {
+          path: '',
+          name: 'homeChild',
+          component: () => import(/* webpackChunkName: "about" */ './views/home/index.vue')
+        }
+      ]
+    },
     {
       path: '*',
       redirect: '/admin/document',

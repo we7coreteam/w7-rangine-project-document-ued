@@ -3,10 +3,20 @@
     <div class="page-head">项目管理</div>
     <div class="container-box">
       <div class="search-box">
-        <div class="demo-input-suffix">
-          <el-input v-model="keyword" placeholder="请输入文档名称" clearable @keyup.enter.native="getList">
+        <div class="search-box-input">
+          <el-input v-model="searchData.keyword" class="demo-input-suffix" placeholder="请输入文档名称" clearable @keyup.enter.native="getList">
             <i slot="suffix" class="el-input__icon el-icon-search" @click="getList"></i>
           </el-input>
+          <el-select v-model="searchData.is_public" @change="getList">
+            <el-option label="全部" value=""></el-option>
+            <el-option label="公有" value="1"></el-option>
+            <el-option label="私有" value="2"></el-option>
+          </el-select>
+          <el-select v-model="searchData.role" @change="getList">
+            <el-option label="全部" value=""></el-option>
+            <el-option label="我创建的" value="1"></el-option>
+            <el-option label="我参与的" value="2"></el-option>
+          </el-select>
         </div>
       </div>
       <div class="card-box" v-loading="loading">
@@ -15,7 +25,7 @@
             v-for="(item,index) in docList" :key="index"
             @click="goChapter(item.id)">
             <div class="w7-card-title">{{item.name}}</div>
-            <!-- <div class="w7-card-time">今天12：12 创建</div> -->
+            <div class="w7-card-time">{{format(item.operator.time)}} {{item.operator.name}}</div>
             <div class="icon-box">
               <el-tooltip effect="dark" content="私有" placement="bottom" v-if="!item.is_public">
                 <i class="wi wi-lock"></i>
@@ -32,7 +42,7 @@
             </div>
           </div>
           <div class="w7-card add-btn"  @click="dialogDocInfoVisible = true">
-            新建项目
+            <div class="add-text">新建项目</div>
             <div class="add-box">
               <i class="el-icon-circle-plus"></i>
             </div>
@@ -86,13 +96,18 @@
 </template>
 
 <script>
+import { timestampFormat } from '@/utils/utils'
 export default {
   name: 'docIndex',
   data() {
     return {
       radio: '1',
       loading: false,
-      keyword: '',
+      searchData: {
+        keyword: '',
+        role: '',
+        is_public: ''
+      },
       docList: [],
       currentPage: 0,//当前页码
       page_size: 29,
@@ -115,7 +130,7 @@ export default {
       this.$post('/admin/document/all',{
         page: this.currentPage,
         page_size: this.page_size,
-        keyword: this.keyword
+        ...this.searchData
       })
         .then(res => {
           this.docList = res.data
@@ -204,6 +219,16 @@ export default {
         routeData['query'] = { type: 'add'}
       }
       this.$router.push(routeData)
+    },
+    format(time) {
+      if (time) {
+        let result = timestampFormat(time)
+        if (result.length > 8) {
+          return timestampFormat(time).slice(5)
+        } else {
+          return timestampFormat(time)
+        }
+      }
     }
   }
 }
@@ -320,13 +345,15 @@ export default {
   border:1px solid #eee;
   color:#b6b5b5;
   position: relative;
+  .add-text {
+    padding-top: 30px;
+    padding-left: 30px;
+    font-size: 16px;
+    color: #4d4d4d;
+  }
   i:hover {
     color: #b6b5b5;
   }
-}
-.add-btn:hover{
-  box-shadow:0px 3px 18px 1px	rgba(194, 192, 192, 0.84);
-  animation:move 0.2s 1;
 }
 .add-box{
   font-size:60px;

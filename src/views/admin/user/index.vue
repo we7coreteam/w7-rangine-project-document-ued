@@ -2,9 +2,9 @@
   <div class="layout-container container">
     <div class="page-head">用户管理</div>
     <div class="search-box">
-      <div class="demo-input-suffix">
-        <el-input v-model="keyword" placeholder="请输入用户名称" clearable @keyup.enter.native="search">
-        <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
+      <div class="search-box-input">
+        <el-input v-model="keyword" class="demo-input-suffix" placeholder="请输入用户名称" clearable @keyup.enter.native="search">
+          <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
         </el-input>
       </div>
       <div class="demo-input-btn">
