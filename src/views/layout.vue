@@ -1,13 +1,25 @@
 <template>
   <el-container class="admin-view">
-    <el-header>
+    <el-header :class="theme">
       <router-link :to="UserInfo.username ? '/admin' : ''" class="logo">
-        <img src="~@/assets/img/logo.png" alt />文档控制台
+        <i class="wi wi-wendang-logo"></i>文档控制台
       </router-link>
+      <div class="menu-line"></div>
+      <div class="menu-icon"><i class="wi wi-shouye"></i></div>
+      <i class="el-icon-arrow-right"></i>
       <div class="menu">
-        <router-link class="item" to="/admin/document">项目管理</router-link>
-        <router-link class="item" to="/admin/user" v-if="UserInfo.acl && UserInfo.acl.has_manage">用户管理</router-link>
-        <router-link class="item" to="/admin/setting" v-if="UserInfo.acl && UserInfo.acl.has_manage">系统设置</router-link>
+        <template v-if="!isRead">
+          <router-link class="item" to="/admin/document">项目管理</router-link>
+          <router-link class="item" to="/admin/user" v-if="UserInfo.acl && UserInfo.acl.has_manage">用户管理</router-link>
+          <router-link class="item" to="/admin/setting" v-if="UserInfo.acl && UserInfo.acl.has_manage">系统设置</router-link>
+          </template>
+        <template v-else>
+          <a :underline="false" class="item"
+            v-for="(item, index) in menuList" :key="index"
+            :href="item.url" target="_blank">
+            {{item.name}}
+          </a>
+        </template>
       </div>
       <div class="user" v-if="UserInfo.username">
         <div class="username">{{UserInfo.username}}</div>
@@ -33,7 +45,9 @@ export default {
   name: 'admin',
   data() {
     return {
-      isNotRead: true //false表示阅读模式，隐藏菜单
+      isRead: false, //true表示阅读模式，显示自定义菜单
+      theme: '',
+      menuList: []
     }
   },
   computed: {
@@ -41,21 +55,34 @@ export default {
   },
   watch: {
     $route(to, from) {
-      if (to.name == 'documentIndex' && from.name == 'homeChild') {
-        this.isNotRead = true
-      } else if (to.name == 'homeChild') {
-        this.isNotRead = false
+      // if (to.name == 'documentIndex' && from.name == 'homeChild') {
+      //   this.isRead = false
+      // }
+      if (to.name == 'homeChild') {
+        this.isRead = true
+      } else {
+        this.isRead = false
       }
+      this.getCustomMenu()
     }
   },
   created() {
     this.$store.dispatch('getUserInfo')
-    this.isNotReadFnc()
+    this.isReadFnc()
   },
   methods: {
-    isNotReadFnc() {
-      //F5刷新
-      this.isNotRead = this.$route.name == 'homeChild' ? false : true
+    isReadFnc() {//F5刷新
+      if (this.$route.name == 'homeChild') {
+        this.isRead = true
+      }
+      this.getCustomMenu()
+    },
+    getCustomMenu() {
+      this.$post('/menu/setting')
+        .then(res => {
+          this.theme = res.theme
+          this.menuList = res.list
+        })
     },
     goto() {
       this.$router.push({
@@ -82,7 +109,71 @@ export default {
 
 <style lang="scss" scoped>
 .admin-view {
-  & > .el-header {
+  &>.el-header {
+    display: flex;
+    align-items: center;
+    padding: 0 50px;
+    font-size: 14px;
+    .logo {
+      display: flex;
+      font-size: 24px;
+      .wi {
+        font-size: 30px;
+        padding-right: 20px;
+      }
+    }
+    &.white {
+      color: #4d4d4d;
+      background-color: #ffffff;
+      border-bottom: 1px solid #e5e5e5;
+      .logo .wi {
+        color: #3296fa;
+      }
+    }
+    &.black {
+      color: #fff;
+      background-color: #383d41;
+      .logo .wi{
+        color: #f7f8fa;
+      }
+      .user {
+        &:hover {
+          background: #40485b;
+        }
+        #w7-nav-menu {
+          color: #fff;
+          background: #40485b;
+          ul {
+            border-left: #383d41 3px solid;
+            border-right: #383d41 3px solid;
+            li:hover {
+              color: #3296fa;
+              background: #343b4e;
+            }
+          }
+        }
+      }
+    }
+    .menu-line {
+      margin-left: 30px;
+      margin-right: 28px;
+      width: 1px;
+      height: 24px;
+      background-color: #e5e5e5;
+    }
+    .menu-icon {
+      margin-right: 10px;
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      color: #999999;
+      background-color: #f2f3f5;
+      text-align: center;
+      border-radius: 4px;
+    }
+    .el-icon-arrow-right {
+      color: #d6d6d6;
+    }
     .menu {
       flex: 1;
       width: 0;
@@ -91,12 +182,42 @@ export default {
       display: inline-block;
       padding: 0 20px;
       margin: 0 6px;
-      &:hover,
-      &.router-link-active {
+      &:hover, &.router-link-active {
         color: #3296fa;
       }
     }
+    .user {
+      width: 120px;
+      line-height: 60px;
+      text-align: center;
+      cursor: pointer;
+      &:hover {
+        #w7-nav-menu {
+          display: block;
+        }
+      }
+      .username:hover {
+        color: #3296fa;
+      }
+      #w7-nav-menu {
+        display: none;
+        position: absolute;
+        top: 60px;
+        right: 50px;
+        font-size: 14px;
+        text-align: center;
+        box-shadow: 0px 2px 10px 0px rgba(82,185,198,0.1);
+        border-radius: 0;
+        border: 0;
+        z-index: 9;
+        ul li:hover {
+          color: #3296fa;
+        }
+      }
+    }
   }
+}
+.admin-view {
   .admin-view-aside {
     background-color: #f7f8fa;
   }
@@ -116,41 +237,6 @@ export default {
   }
   .menu-bar {
     width: 120px;
-  }
-  .user {
-    width: 120px;
-    text-align: center;
-    cursor: pointer;
-    &:hover {
-      background: #40485b;
-      #w7-nav-menu {
-        display: block;
-      }
-    }
-    .username:hover {
-      color: #3296fa;
-    }
-    #w7-nav-menu {
-      display: none;
-      position: absolute;
-      top: 60px;
-      right: 50px;
-      background: #40485b;
-      box-shadow: 0px 2px 10px 0px rgba(82,185,198,0.1);
-      border-radius: 0;
-      border: 0;
-      font-size: 14px;
-      color: #fff;
-      text-align: center;
-      ul {
-        border-left: #383d41 3px solid;
-        border-right: #383d41 3px solid;
-        li:hover {
-          color: #3296fa;
-          background: #343b4e;
-        }
-      }
-    }
   }
   .w7-footer {
     &.float {
