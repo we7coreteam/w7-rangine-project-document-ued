@@ -236,6 +236,9 @@ export default {
     cursor:pointer;
     top:-10px;
     border-color: #bdddfd;
+    .w7-card-title {
+      color: #3296fa;
+    }
     .icon-box{
       display:block;
     }
