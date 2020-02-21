@@ -120,7 +120,7 @@ export default {
     align-items: center;
     padding: 0 50px;
     font-size: 14px;
-    z-index: 9999;
+    z-index: 999;
     .logo {
       display: flex;
       font-size: 24px;
@@ -135,6 +135,9 @@ export default {
       border-bottom: 1px solid #e5e5e5;
       .logo .wi {
         color: #3296fa;
+      }
+      #w7-nav-menu {
+        background-color: #ffffff;
       }
     }
     &.black {
@@ -153,6 +156,7 @@ export default {
           ul {
             border-left: #383d41 3px solid;
             border-right: #383d41 3px solid;
+            background-color: #40485b;
             li:hover {
               color: #3296fa;
               background: #343b4e;
@@ -208,7 +212,7 @@ export default {
       }
       #w7-nav-menu {
         display: none;
-        position: absolute;
+        position: fixed;
         top: 60px;
         right: 50px;
         font-size: 14px;

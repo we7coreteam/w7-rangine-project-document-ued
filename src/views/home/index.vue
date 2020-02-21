@@ -635,8 +635,6 @@ a.toc-link {
           ul {
             padding-left: 20px;
           }
-          li {
-          }
           a {
             color: #989898;
             padding: 8px 0;
