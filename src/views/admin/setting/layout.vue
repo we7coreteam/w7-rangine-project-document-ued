@@ -23,6 +23,10 @@
           <i class="wi wi-system-login-settings"></i>
           <span slot="title">登录设置</span>
         </el-menu-item>
+        <el-menu-item index="/admin/setting/nav">
+          <i class="wi wi-system-login-settings"></i>
+          <span slot="title">导航设置</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
     <el-main>

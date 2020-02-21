@@ -41,7 +41,7 @@
         </div>
       </div>
       <!-- 弹出框 -->
-      <el-dialog class="we7-dialog" title="账号设置" :visible.sync="dialogVisible" :close-on-click-modal="false" center>
+      <el-dialog class="we7-dialog" :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false" center>
         <el-form :model="formData" ref="ruleForm" :rules="rules" status-icon label-width="105px" label-position="left">
           <template v-if="dialogType == 'name'">
             <el-form-item label="账号" prop="username">
@@ -99,6 +99,7 @@ export default {
       isCollapse: false,
       dialogVisible: false,
       dialogType: '',
+      dialogTitle: '',
       formData: {
         username: '',
         old_userpass: '',
@@ -131,7 +132,10 @@ export default {
     openDialog(type) {
       this.dialogType = type
       if (type == 'name') {
+        this.dialogTitle = '账号设置'
         this.formData.username = this.accountName
+      } else {
+        this.dialogTitle = '密码设置'
       }
       this.dialogVisible = true
       this.$nextTick(() => {

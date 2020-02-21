@@ -17,10 +17,7 @@
           </el-switch>
         </el-form-item>
       </div>
-      <div class="we7-panel-form__header">
-        登录配置
-        <el-button type="text" @click="editStatus = true">编辑</el-button>
-      </div>
+      <div class="we7-panel-form__header">登录配置</div>
       <div class="we7-panel-form__body">
         <el-form-item label="第三方名称" prop="setting.name">
           <el-input v-model="formData.setting.name" v-if="editStatus"></el-input>
@@ -71,6 +68,7 @@
         </div>
       </template>
     </el-form>
+    <el-button type="primary" @click="editStatus = true" v-if="!editStatus">编辑</el-button>
     <template v-if="editStatus">
       <el-button type="primary" @click="save">保存</el-button>
       <el-button @click="editStatus = false">取消</el-button>
@@ -227,9 +225,6 @@ export default {
 .setting-thirdParty {
   .page-head {
     padding-bottom: 0;
-  }
-  .edit .el-form-item {
-    border-bottom: 0;
   }
 }
 </style>

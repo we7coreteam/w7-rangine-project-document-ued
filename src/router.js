@@ -129,6 +129,11 @@ export default new Router({
               path: 'login',
               name: 'settingLogin',
               component: () => import(/* webpackChunkName: "about" */ './views/admin/setting/login.vue')
+            },
+            {
+              path: 'nav',
+              name: 'settingNav',
+              component: () => import(/* webpackChunkName: "about" */ './views/admin/setting/navigation.vue')
             }
           ]
         },
@@ -152,6 +157,19 @@ export default new Router({
         }
       ]
     },
+    // {
+    //   path: '/chapter/:id',
+    //   name: 'home',
+    //   redirect: 'home',
+    //   component: () => import(/* webpackChunkName: "about" */ './views/layout.vue'),
+    //   children: [
+    //     {
+    //       path: '',
+    //       name: 'homeChild',
+    //       component: () => import(/* webpackChunkName: "about" */ './views/home/index.vue')
+    //     }
+    //   ]
+    // },
     {
       path: '*',
       redirect: '/admin/document',

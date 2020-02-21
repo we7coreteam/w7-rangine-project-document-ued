@@ -1,11 +1,8 @@
 <template>
   <div class="setting-store">
     <div class="page-head">腾讯云存储</div>
-    <el-form ref="form" :model="formData" :rules="rules" label-position="left" class="we7-panel-form"  label-width="120px">
-      <div class="we7-panel-form__header">
-        腾讯云存储
-        <el-button type="text" @click="editStatus = true">编辑</el-button>
-      </div>
+    <el-form ref="form" :model="formData" :rules="rules" label-position="left" class="we7-panel-form" :class="{'edit': editStatus}" label-width="120px">
+      <div class="we7-panel-form__header">腾讯云存储</div>
       <div class="we7-panel-form__body">
         <el-form-item label="APPID" prop="app_id">
           <el-input v-model="formData.app_id" placeholder="APPID 是您项目的唯一ID" v-if="editStatus"></el-input>
@@ -42,6 +39,7 @@
         </el-form-item>
       </div>
     </el-form>
+    <el-button type="primary" @click="editStatus = true" v-if="!editStatus">编辑</el-button>
     <template v-if="editStatus">
       <el-button type="primary" @click="onSubmit">保存</el-button>
       <el-button @click="editStatus = false">取消</el-button>

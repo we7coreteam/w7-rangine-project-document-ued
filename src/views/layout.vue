@@ -1,7 +1,7 @@
 <template>
   <el-container class="admin-view">
     <el-header>
-      <router-link to="/admin" class="logo">
+      <router-link :to="UserInfo.username ? '/admin' : ''" class="logo">
         <img src="~@/assets/img/logo.png" alt />文档控制台
       </router-link>
       <div class="menu">

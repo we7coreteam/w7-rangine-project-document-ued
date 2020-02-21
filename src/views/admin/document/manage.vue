@@ -11,21 +11,23 @@
       </div>
       <div class="card-box" v-loading="loading">
         <div class="card-warpper">
-          <div class="w7-card" :class="actClass+''+index%3"
+          <div class="w7-card"
             v-for="(item,index) in docList" :key="index"
             @click="goChapter(item.id)">
-            <div class="w7-card-title">
-              {{item.name}}
-            </div>
+            <div class="w7-card-title">{{item.name}}</div>
+            <!-- <div class="w7-card-time">今天12：12 创建</div> -->
             <div class="icon-box">
               <el-tooltip effect="dark" content="私有" placement="bottom" v-if="!item.is_public">
                 <i class="wi wi-lock"></i>
               </el-tooltip>
+              <el-tooltip effect="dark" content="转让项目" placement="bottom" v-if="item.acl.has_manage">
+                <i class="wi wi-transfer" @click.stop="transferDoc(item.id)"></i>
+              </el-tooltip>
               <el-tooltip effect="dark" content="预览" placement="bottom">
                 <i class="wi wi-view" @click.stop="readDoc(item.id)"></i>
               </el-tooltip>
-              <el-tooltip effect="dark" content="设置" placement="bottom" v-if="item.acl.has_manage">
-                <i class="wi wi-tools" @click.stop="settingDoc(item.id)"></i>
+              <el-tooltip effect="dark" content="进入管理" placement="bottom" v-if="item.acl.has_manage">
+                <i class="wi wi-guanli" @click.stop="settingDoc(item.id)"></i>
               </el-tooltip>
             </div>
           </div>
@@ -65,6 +67,20 @@
           <el-button @click="dialogDocInfoVisible = false">取 消</el-button>
         </div>
       </el-dialog>
+      <el-dialog class="we7-dialog" title="管理员转让" :visible.sync="dialogTransferDoc" :close-on-click-modal="false" center>
+        <div class="transfer-tip">
+          <i class="el-icon-warning"></i>转让管理员权限后您将成为操作员，不再是管理员，请谨慎操作。
+        </div>
+        <el-form label-width="115px" label-position="left">
+          <el-form-item label="选择新的管理员">
+            <el-input v-model="transferUsername" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="transfer">确 定</el-button>
+          <el-button @click="dialogTransferDoc = false">取 消</el-button>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -85,6 +101,9 @@ export default {
       name: '',
       dialogDocInfoVisible: false,//创建文档弹弹出框
       actClass:"actClass",
+      dialogTransferDoc: false,
+      transferUsername: '',
+      selectDocId: ''
     }
   },
   created() {
@@ -158,6 +177,22 @@ export default {
       })
       window.open(routeUrl.href, '_blank')
     },
+    transferDoc(id) {
+      this.selectDocId = id
+      this.transferUsername = ''
+      this.dialogTransferDoc = true
+    },
+    transfer() {
+      this.$post('/admin/document/change-founder',{
+          document_id: this.selectDocId,
+          username: this.transferUsername
+        })
+          .then(() => {
+            this.getList()
+            this.$message('转让成功！')
+            this.dialogTransferDoc = false
+          })
+    },
     goChapter(id, bool) {
       let routeData = {
         name: 'chapter',
@@ -184,56 +219,61 @@ export default {
 }
 .w7-card{
   position: relative;
-  margin: 10px;
-  padding:20px;
-  width: 260px;
-	height: 120px;
-  color:#fff;
-  border-radius:4px;
   top:0;
+  margin: 10px;
+  width: 300px;
+	height: 160px;
   transition: 0.2s;
+  background: #e6f2ff;
+  border: 1px solid #eeeeee;
+  box-sizing: border-box;
   .wi {
     font-size: 20px;
+    color: #989898;
   }
   &:hover {
     position: relative;
     cursor:pointer;
     top:-10px;
-    box-shadow:0px 3px 18px 1px	rgba(194, 192, 192, 0.84);
+    border-color: #bdddfd;
     .icon-box{
       display:block;
     }
   }
+  &-title {
+    padding-top: 30px;
+    padding-left: 30px;
+    font-size: 16px;
+    color: #4d4d4d;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+  }
+  &-time {
+    padding-top: 10px;
+    padding-left: 30px;
+    font-size: 12px;
+    color: #a4a6a9;
+  }
   .icon-box i:hover {
-    color: #606266;
+    color: #3296fa;
   }
   .el-icon-lock:hover {
     color: #ffffff;
   }
 }
-.w7-card-title{
-  width:100%;
-  overflow: hidden;
-  text-overflow:ellipsis;
-  white-space: nowrap;
-}
-.actClass0{
-  background: #ffae2b;
-}
-.actClass1{
-  background: #4096f9;
-}
-.actClass2{
-  background: #fa7475;
-}
 .card-box{
   margin-top:30px;
 }
 .icon-box{
-  position:absolute;
-  right:20px;
-  bottom:20px;
   display:none;
+  position:absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 8px 7px;
+  text-align: right;
+  background-color: #d8e7ff;
 }
 .icon-box i{
   position: relative;
@@ -300,5 +340,16 @@ export default {
 }
 .redBtn {
   color: #eb2e56;
+}
+.transfer-tip {
+  display: flex;
+  align-items: center;
+  margin-top: -10px;
+  margin-bottom: 15px;
+  i {
+    margin-right: 10px;
+    font-size: 18px;
+    color: #f76260;
+  }
 }
 </style>

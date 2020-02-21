@@ -305,6 +305,21 @@ ul, li {
 .we7-panel-form {
   margin-bottom: 30px;
   font-size: 14px;
+  &.edit {
+    .el-form-item {
+      padding-bottom: 0;
+      border-bottom: 0;
+      .el-select {
+        width: 50%;
+        .el-input {
+          width: 100%;
+        }
+      }
+      .el-input {
+        width: 50%;
+      }
+    }
+  }
   &__header {
     margin-top: 30px;
     padding: 15px;
