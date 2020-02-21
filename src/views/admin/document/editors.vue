@@ -90,6 +90,7 @@ export default {
 .editors {
   .v-note-wrapper {
     margin: 30px 0;
+    z-index: 10;
     .v-note-panel {
       .v-note-show {
         max-width: 760px;

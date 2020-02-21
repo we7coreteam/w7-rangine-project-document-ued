@@ -220,7 +220,7 @@ export default {
         box-shadow: 0px 2px 10px 0px rgba(82,185,198,0.1);
         border-radius: 0;
         border: 0;
-        z-index: 9;
+        z-index: 9999;
         ul li:hover {
           color: #3296fa;
         }
