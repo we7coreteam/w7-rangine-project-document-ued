@@ -444,7 +444,6 @@ a.toc-link {
 }
 .home-container {
   position: relative;
-  padding-top: 60px;
   .w7-aside-home {
     background-color: #f7f8fa;
     border-right: #f1f2f3 1px solid;
@@ -453,7 +452,7 @@ a.toc-link {
     position: fixed;
     height: calc(100vh - 60px);
     .w7-aside-home-box {
-      padding-left: calc(100% - 220px);
+      padding-left: calc(100% - 200px);
     }
     .w7-aside-home-head {
       font-size: 24px;

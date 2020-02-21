@@ -32,7 +32,9 @@
       </div>
       <router-link class="item" to="/admin/login" v-if="!UserInfo.username">登录</router-link>
     </el-header>
-    <router-view></router-view>
+    <div style="padding-top: 60px;">
+      <router-view></router-view>
+    </div>
     <el-footer class="w7-footer" :class="$route.meta.footerClass" height="80px">
       Powered by<a href="https://www.w7.cc">微擎云计算©www.w7.cc</a>
     </el-footer>
@@ -110,10 +112,15 @@ export default {
 <style lang="scss" scoped>
 .admin-view {
   &>.el-header {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
     display: flex;
     align-items: center;
     padding: 0 50px;
     font-size: 14px;
+    z-index: 9999;
     .logo {
       display: flex;
       font-size: 24px;

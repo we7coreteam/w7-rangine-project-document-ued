@@ -55,6 +55,7 @@
         layout="prev, pager, next, total"
         prev-text="上一页"
         next-text="下一页"
+        :page-size="page_size"
         :current-page.sync = "currentPage"
         :page-count="pageCount"
         :hide-on-single-page = "true"
@@ -234,9 +235,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.container-box{
-  padding-left:20px;
-}
 .card-warpper {
   display: flex;
   flex-wrap:wrap;

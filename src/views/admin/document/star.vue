@@ -39,6 +39,7 @@
         layout="prev, pager, next, total"
         prev-text="上一页"
         next-text="下一页"
+        :page-size="15"
         :current-page.sync = "currentPage"
         :page-count="pageCount"
         :total="total"
@@ -98,9 +99,4 @@ export default {
 </script>
 
 <style lang="scss">
-.we7-document-star {
-  .search-box {
-    padding-left: 20px;
-  }
-}
 </style>
