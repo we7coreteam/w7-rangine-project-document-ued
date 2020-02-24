@@ -4,15 +4,20 @@
       <router-link :to="UserInfo.username ? '/admin' : ''" class="logo">
         <i class="wi wi-wendang-logo"></i>文档控制台
       </router-link>
-      <div class="menu-line"></div>
-      <div class="menu-icon"><i class="wi wi-shouye"></i></div>
-      <i class="el-icon-arrow-right"></i>
+      <template v-if="docName">
+        <div class="menu-line"></div>
+        <div class="menu-icon"><i class="wi wi-shouye"></i></div>
+        <i class="el-icon-arrow-right"></i>
+      </template>
       <div class="menu">
-        <template v-if="!isRead">
+        <template v-if="!isRead && !docName">
           <router-link class="item" to="/admin/document">项目管理</router-link>
           <router-link class="item" to="/admin/user" v-if="UserInfo.acl && UserInfo.acl.has_manage">用户管理</router-link>
           <router-link class="item" to="/admin/setting" v-if="UserInfo.acl && UserInfo.acl.has_manage">系统设置</router-link>
-          </template>
+        </template>
+        <template v-else-if="!isRead && docName">
+          <span class="doc-name">{{docName}}</span>
+        </template>
         <template v-else>
           <a :underline="false" class="item"
             v-for="(item, index) in menuList" :key="index"
@@ -49,7 +54,8 @@ export default {
     return {
       isRead: false, //true表示阅读模式，显示自定义菜单
       theme: '',
-      menuList: []
+      menuList: [],
+      docName: '',
     }
   },
   computed: {
@@ -64,6 +70,11 @@ export default {
         this.isRead = true
       } else {
         this.isRead = false
+        if (to.name == 'manageSetting' || to.name == 'chapter') {
+          this.getDocName()
+        } else {
+          this.docName = ''
+        }
       }
       this.getCustomMenu()
     }
@@ -77,6 +88,11 @@ export default {
       if (this.$route.name == 'homeChild') {
         this.isRead = true
       }
+      if (this.$route.name == 'manageSetting' || this.$route.name == 'chapter') {
+        this.getDocName()
+      } else {
+        this.docName = ''
+      }
       this.getCustomMenu()
     },
     getCustomMenu() {
@@ -84,6 +100,14 @@ export default {
         .then(res => {
           this.theme = res.theme
           this.menuList = res.list
+        })
+    },
+    getDocName() {
+      this.$post('/admin/document/detail', {
+        document_id: this.$route.params.id
+      })
+        .then(res => {
+          this.docName = res.name
         })
     },
     goto() {
@@ -122,6 +146,7 @@ export default {
     font-size: 14px;
     z-index: 999;
     .logo {
+      margin-right: 20px;
       display: flex;
       font-size: 24px;
       .wi {
@@ -166,7 +191,7 @@ export default {
       }
     }
     .menu-line {
-      margin-left: 30px;
+      margin-left: 10px;
       margin-right: 28px;
       width: 1px;
       height: 24px;
@@ -188,6 +213,9 @@ export default {
     .menu {
       flex: 1;
       width: 0;
+      .doc-name {
+        margin-left: 10px;
+      }
     }
     .item {
       display: inline-block;
