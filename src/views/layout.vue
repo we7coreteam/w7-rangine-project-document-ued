@@ -6,7 +6,7 @@
       </router-link>
       <template v-if="docName">
         <div class="menu-line"></div>
-        <div class="menu-icon"><i class="wi wi-shouye"></i></div>
+        <div class="menu-icon" @click="goto('admin')"><i class="wi wi-shouye"></i></div>
         <i class="el-icon-arrow-right"></i>
       </template>
       <div class="menu">
@@ -30,7 +30,7 @@
         <div class="username">{{UserInfo.username}}</div>
         <div id="w7-nav-menu" class="menu-bar">
           <ul class="menu-ul">
-            <li class="menu__item" @click="goto">个人中心</li>
+            <li class="menu__item" @click="goto('accountInfo')">个人中心</li>
             <li class="menu__item" @click="exit">退出系统</li>
           </ul>
         </div>
@@ -110,9 +110,9 @@ export default {
           this.docName = res.name
         })
     },
-    goto() {
+    goto(name) {
       this.$router.push({
-        name: 'accountInfo'
+        name: name
       })
     },
     exit() {
@@ -206,6 +206,11 @@ export default {
       background-color: #f2f3f5;
       text-align: center;
       border-radius: 4px;
+      cursor: pointer;
+      &:hover {
+        color: #ffffff;
+        background-color: #3296fa;
+      }
     }
     .el-icon-arrow-right {
       color: #d6d6d6;
