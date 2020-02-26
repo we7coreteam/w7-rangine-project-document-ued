@@ -1,6 +1,6 @@
 <template>
   <el-container class="admin-view">
-    <el-header :class="theme">
+    <el-header :class="NavMenu.theme">
       <router-link :to="UserInfo.username ? '/admin' : ''" class="logo">
         <i class="wi wi-wendang-logo"></i>文档控制台
       </router-link>
@@ -20,7 +20,7 @@
         </template>
         <template v-else>
           <a :underline="false" class="item"
-            v-for="(item, index) in menuList" :key="index"
+            v-for="(item, index) in NavMenu.list" :key="index"
             :href="item.url" target="_blank">
             {{item.name}}
           </a>
@@ -53,13 +53,11 @@ export default {
   data() {
     return {
       isRead: false, //true表示阅读模式，显示自定义菜单
-      theme: '',
-      menuList: [],
       docName: '',
     }
   },
   computed: {
-    ...mapGetters({ UserInfo: 'UserInfo' })
+    ...mapGetters(['UserInfo', 'NavMenu'])
   },
   watch: {
     $route(to, from) {
@@ -76,11 +74,12 @@ export default {
           this.docName = ''
         }
       }
-      this.getCustomMenu()
+      // this.getCustomMenu()
     }
   },
   created() {
     this.$store.dispatch('getUserInfo')
+    this.$store.dispatch('getNavMenu')
     this.isReadFnc()
   },
   methods: {
@@ -93,14 +92,6 @@ export default {
       } else {
         this.docName = ''
       }
-      this.getCustomMenu()
-    },
-    getCustomMenu() {
-      this.$post('/menu/setting')
-        .then(res => {
-          this.theme = res.theme
-          this.menuList = res.list
-        })
     },
     getDocName() {
       this.$post('/admin/document/detail', {

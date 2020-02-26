@@ -159,6 +159,7 @@ export default {
           this.$post('/admin/third-party-login/add', data)
             .then(() => {
               this.$message('添加成功！')
+              this.$emit('refreshMenu', true)
             })
         }
       })

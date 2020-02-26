@@ -211,6 +211,7 @@ export default {
             .then(() => {
               this.$message('修改成功！')
               this.editStatus = false
+              this.$emit('refreshMenu', true)
             })
         } else {
           this.editStatus = true

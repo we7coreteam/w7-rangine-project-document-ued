@@ -143,6 +143,7 @@ export default {
           .then(() => {
             this.$message('修改成功！')
             this.dialogStyle = false
+            this.$store.dispatch('getNavMenu')
           })
       },
       openDialogMenu(type, row) {

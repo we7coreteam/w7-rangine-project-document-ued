@@ -22,7 +22,7 @@
           </div>
           <div class="we7-panel-form__item">
             <div class="we7-panel-form__label">账号</div>
-            <div class="we7-panel-form__value">{{accountName}}</div>
+            <div class="we7-panel-form__value">{{UserInfo.username}}</div>
             <div class="we7-panel-form__action">
               <el-tooltip effect="dark" content="编辑" placement="bottom">
                 <i class="wi wi-edit wi-oper" @click="openDialog('name')"></i>
@@ -123,17 +123,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({ UserInfo: 'UserInfo' }),
-    accountName() {
-      return this.UserInfo.username
-    }
+    ...mapGetters({ UserInfo: 'UserInfo' })
   },
   methods: {
     openDialog(type) {
       this.dialogType = type
       if (type == 'name') {
         this.dialogTitle = '账号设置'
-        this.formData.username = this.accountName
+        this.formData.username = this.UserInfo.username
       } else {
         this.dialogTitle = '密码设置'
       }
@@ -162,7 +159,7 @@ export default {
             .then(() => {
               this.$message('修改成功！')
               if (this.dialogType == 'name') {
-                this.accountName = this.formData.username
+                this.$store.dispatch('getUserInfo')
               }
               this.dialogVisible = false
               if (this.UserInfo.no_password) {

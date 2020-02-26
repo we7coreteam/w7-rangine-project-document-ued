@@ -30,7 +30,7 @@
       </el-menu>
     </el-aside>
     <el-main>
-      <router-view></router-view>
+      <router-view @refreshMenu="refreshMenu"></router-view>
     </el-main>
   </el-container>
 </template>
@@ -58,6 +58,11 @@ export default {
         .then(res => {
           this.thirdPartyLoginMenu = res
         })
+    },
+    refreshMenu(bool) {
+      if (bool) {
+        this.init()
+      }
     }
   }
 }
