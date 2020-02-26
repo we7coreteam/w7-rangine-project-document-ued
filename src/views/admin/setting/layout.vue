@@ -1,5 +1,5 @@
 <template>
-  <el-container class="layout-container">
+  <el-container class="layout-container admin-setting">
     <el-aside class="admin-view-aside" :width="isCollapse ? '64px' : '240px'">
       <el-menu class="admin-view-menu"
         :default-active="active"
@@ -15,7 +15,9 @@
             <span>第三方登录设置</span>
           </template>
           <template v-for="(menu, index) in thirdPartyLoginMenu">
-            <el-menu-item :index="'/admin/setting/thirdParty?id='+ menu.id" :key="index">{{menu.name}}授权配置</el-menu-item>
+            <el-menu-item :index="'/admin/setting/thirdParty?id='+ menu.id" :key="index">
+              <span class="menu-name">{{menu.name}}授权配置</span>
+            </el-menu-item>
           </template>
           <el-menu-item index="/admin/setting/thirdPartyCustom">自定义授权配置</el-menu-item>
         </el-submenu>
@@ -68,8 +70,19 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.el-main {
-  padding: 0 25px 0 15px;
+<style lang="scss">
+.admin-setting {
+  .el-menu-item {
+    .menu-name {
+      display: inline-block;
+      max-width: 130px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  .el-main {
+    padding: 0 25px 0 15px;
+  }
 }
 </style>

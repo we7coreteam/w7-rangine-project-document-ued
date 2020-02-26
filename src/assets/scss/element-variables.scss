@@ -469,6 +469,8 @@ ul, li {
       line-height: 40px;
     }
     .icon-list {
+      max-width: 360px;
+      overflow: hidden;
       .icon-block {
         margin-left: 10px;
         width: 40px;
