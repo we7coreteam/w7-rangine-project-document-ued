@@ -54,7 +54,7 @@
       </div>
     </div>
     <!-- 分享设置 -->
-    <el-dialog class="we7-dialog" title="分享设置" :visible.sync="dialogShareVisible" :close-on-click-modal="false" center>
+    <el-dialog class="w7-dialog" title="分享设置" :visible.sync="dialogShareVisible" :close-on-click-modal="false" center>
       <el-form label-width="105px" label-position="left">
         <el-form-item label="私有文档查看">
           <el-radio v-model="radioShare" label="1">仅限有权限者查看</el-radio>
@@ -67,7 +67,7 @@
       </div>
     </el-dialog>
     <!-- 重命名弹出框 -->
-    <el-dialog class="we7-dialog" title="重命名" :visible.sync="dialogRenameVisible" :close-on-click-modal="false" center>
+    <el-dialog class="w7-dialog" title="重命名" :visible.sync="dialogRenameVisible" :close-on-click-modal="false" center>
       <el-form label-width="105px" label-position="left" @submit.native.prevent>
         <el-form-item label="新的文档名称">
           <el-input v-model="newDocName"></el-input>
@@ -79,7 +79,7 @@
       </div>
     </el-dialog>
     <!-- 操作员弹出框 -->
-    <el-dialog class="we7-dialog we7-dialog-user" title="添加操作员" :visible.sync="dialogAddManageVisible" :close-on-click-modal="false" center>
+    <el-dialog class="w7-dialog w7-dialog-user" title="添加操作员" :visible.sync="dialogAddManageVisible" :close-on-click-modal="false" center>
       <el-form label-width="105px" label-position="left">
         <el-form-item label="用户名">
           <el-input v-model="addManageName" autocomplete="off"></el-input>
@@ -96,7 +96,7 @@
       </div>
     </el-dialog>
     <!-- 编辑操作员 -->
-    <el-dialog class="we7-dialog" title="编辑操作员" :visible.sync="dialogOpeInfoVisible" :close-on-click-modal="false" center>
+    <el-dialog class="w7-dialog" title="编辑操作员" :visible.sync="dialogOpeInfoVisible" :close-on-click-modal="false" center>
       <el-form label-width="105px" label-position="left">
         <el-form-item label="操作员权限">
           <el-radio-group v-model="radio">
@@ -327,7 +327,7 @@ export default {
     border-radius:4px;
   }
 }
-.we7-dialog-user {
+.w7-dialog-user {
   /deep/ .el-dialog__body {
     padding-bottom: 0;
   }

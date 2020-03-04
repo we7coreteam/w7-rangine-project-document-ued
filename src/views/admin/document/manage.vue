@@ -21,8 +21,9 @@
       </div>
       <div class="card-box" v-loading="loading">
         <div class="card-warpper">
-          <div class="w7-card"
+          <div class="w7-card" :class="{'has-cover': item.cover}"
             v-for="(item,index) in docList" :key="index"
+            :style="{backgroundImage: 'url('+ item.cover +')'}"
             @click="goChapter(item.id)">
             <div class="w7-card-title">{{item.name}}</div>
             <div class="w7-card-time">{{format(item.operator.time)}} {{item.operator.name}}</div>
@@ -63,7 +64,7 @@
       >
       </el-pagination>
       <!-- 基本信息弹出框 -->
-      <el-dialog class="we7-dialog" title="创建项目" :visible.sync="dialogDocInfoVisible" :close-on-click-modal="false" center>
+      <el-dialog class="w7-dialog" title="创建项目" :visible.sync="dialogDocInfoVisible" :close-on-click-modal="false" center>
         <el-form label-width="105px" label-position="left">
           <el-form-item label="项目名称">
             <el-input v-model="name" autocomplete="off"></el-input>
@@ -78,7 +79,7 @@
           <el-button @click="dialogDocInfoVisible = false">取 消</el-button>
         </div>
       </el-dialog>
-      <el-dialog class="we7-dialog" title="管理员转让" :visible.sync="dialogTransferDoc" :close-on-click-modal="false" center>
+      <el-dialog class="w7-dialog" title="管理员转让" :visible.sync="dialogTransferDoc" :close-on-click-modal="false" center>
         <div class="transfer-tip">
           <i class="el-icon-warning"></i>转让管理员权限后您将成为操作员，不再是管理员，请谨慎操作。
         </div>
@@ -280,6 +281,9 @@ export default {
     padding-left: 30px;
     font-size: 12px;
     color: #a4a6a9;
+  }
+  &.has-cover .icon-box {
+    background-color: rgba(0, 0, 0, 0.4);
   }
   .icon-box i:hover {
     color: #3296fa;

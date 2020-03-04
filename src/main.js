@@ -29,6 +29,7 @@ import { Upload } from 'element-ui'
 import './assets/scss/element-variables.scss'
 import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
+import VueClipboard from 'vue-clipboard2'
 
 Vue.use(Form)
 Vue.use(FormItem)
@@ -69,6 +70,7 @@ Vue.use(Backtop)
 Vue.use(Scrollbar)
 Vue.use(Upload)
 Vue.use(mavonEditor)
+Vue.use(VueClipboard)
 
 Vue.prototype.$message = Message;
 Vue.prototype.$confirm = MessageBox.confirm;

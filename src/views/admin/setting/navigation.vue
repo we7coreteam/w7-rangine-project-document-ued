@@ -42,7 +42,7 @@
         </el-tab-pane>
       </el-tabs>
       <!-- 弹出框 -->
-      <el-dialog class="we7-dialog" title="导航风格设置" :visible.sync="dialogStyle" :close-on-click-modal="false" center>
+      <el-dialog class="w7-dialog" title="导航风格设置" :visible.sync="dialogStyle" :close-on-click-modal="false" center>
         <el-form label-width="120px" label-position="left">
           <el-form-item label="导航风格">
             <el-select v-model="style">
@@ -60,7 +60,7 @@
           <el-button @click="dialogStyle = false">取 消</el-button>
         </div>
       </el-dialog>
-      <el-dialog class="we7-dialog" :title="dialogMenuTitle" :visible.sync="dialogMenu" :close-on-click-modal="false" center>
+      <el-dialog class="w7-dialog" :title="dialogMenuTitle" :visible.sync="dialogMenu" :close-on-click-modal="false" center>
         <el-form ref="menuForm" :model="menuData" :rules="rules" label-width="120px" label-position="left">
           <el-form-item label="菜单名称" prop="name">
             <el-input v-model="menuData.name"></el-input>

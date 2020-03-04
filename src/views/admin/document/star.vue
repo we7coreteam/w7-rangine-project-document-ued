@@ -16,7 +16,7 @@
       <el-table-column label="文档名称">
         <div class="doc-icons" slot-scope="scope">
           <i class="wi wi-document color-blue"></i>
-          <span class="name" @click="readDoc(scope.row.id)">{{ scope.row.name }}</span>
+          <span class="name" @click="readDoc(scope.row.document_id)">{{ scope.row.name }}</span>
           <i class="wi wi-star color-yellow"></i>
           <div class="we7-label" v-if="!scope.row.is_public">
             <i class="wi wi-lock" ><span class="font">私有</span></i>

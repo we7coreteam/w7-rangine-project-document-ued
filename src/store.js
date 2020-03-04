@@ -42,7 +42,6 @@ export default new Vuex.Store({
     getNavMenu(context) {
       Axios.post('/menu/setting')
         .then(res => {
-          console.log(111)
           if (res.data.code == '444') {
             context.commit('setNavMenu', {
               theme: '',

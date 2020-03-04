@@ -84,7 +84,7 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      this.$post('/admin/document/operate-log',{
+      this.$post('/admin/operate-log/all',{
         page: this.currentPage,
         name: this.keyword,
         time: this.time
@@ -107,7 +107,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$post('/admin/document/delete-operate-log',{
+        this.$post('/admin/operate-log/delete-by-documentid',{
           document_id: id
         })
           .then(() => {

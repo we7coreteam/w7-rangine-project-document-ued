@@ -41,7 +41,7 @@
         </div>
       </div>
       <!-- 弹出框 -->
-      <el-dialog class="we7-dialog" :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false" center>
+      <el-dialog class="w7-dialog" :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false" center>
         <el-form :model="formData" ref="ruleForm" :rules="rules" status-icon label-width="105px" label-position="left">
           <template v-if="dialogType == 'name'">
             <el-form-item label="账号" prop="username">
@@ -155,7 +155,7 @@ export default {
           if (!this.UserInfo.no_password) {
             data['old_userpass'] = this.formData.old_userpass
           }
-          this.$post('/common/auth/user/update', data)
+          this.$post('/admin/user/update-self', data)
             .then(() => {
               this.$message('修改成功！')
               if (this.dialogType == 'name') {

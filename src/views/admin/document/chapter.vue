@@ -20,7 +20,7 @@
           <i class="wi wi-view" @click="readDoc"></i>
         </el-tooltip>
         <el-tooltip effect="dark" content="设置" placement="bottom" v-if="has_manage">
-          <i class="wi wi-tools" @click="settingDoc"></i>
+          <i class="wi wi-guanli" @click="showSetting = true"></i>
         </el-tooltip>
       </div>
       <div class="tree-warpper">
@@ -116,16 +116,22 @@
         <el-button @click="dialogMoveVisible = false">取 消</el-button>
       </div>
     </el-dialog>
+    <!-- 文档设置 -->
+    <el-dialog class="we7-dialog dialog-setting" title="项目设置" width="1000px" :visible.sync="showSetting" :close-on-click-modal="false">
+      <setting :id="$route.params.id"></setting>
+    </el-dialog>
   </el-container>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import editors from './editors.vue'
+import setting from './setting.vue'
 export default {
   name: 'chapter',
   components: {
-    editors
+    editors,
+    setting
   },
   data() {
     return {
@@ -158,7 +164,8 @@ export default {
       moveDoc: '',
       moveClass: '',
       docList: [],
-      docChapters: []
+      docChapters: [],
+      showSetting: false
     }
   },
   computed: {
@@ -274,9 +281,6 @@ export default {
         path: "/chapter/" + this.$route.params.id
       })
       window.open(routeUrl.href, '_blank')
-    },
-    settingDoc() {
-      this.$router.push('/admin/document/' + this.$route.params.id)
     },
     filterNode(value, data) {
       if (!value) return true;
@@ -651,6 +655,23 @@ export default {
       &:hover {
         color: #3296fa;
         cursor: pointer;
+      }
+    }
+  }
+  .dialog-setting {
+    .el-dialog {
+      border-radius: 0;
+      .el-dialog__header {
+        padding: 30px 20px;
+        padding-bottom: 30px;
+        .el-dialog__headerbtn {
+          top: 31px;
+          right: 20px;
+          font-size: 20px;
+        }
+      }
+      .el-dialog__body {
+        padding: 0;
       }
     }
   }

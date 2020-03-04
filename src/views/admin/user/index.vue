@@ -65,7 +65,7 @@
       </el-pagination>
     </div>
     <!-- 设置 -->
-    <el-dialog class="we7-dialog" title="账号设置" :visible.sync="dialogEditUserVisible" :close-on-click-modal="false" center>
+    <el-dialog class="w7-dialog" title="账号设置" :visible.sync="dialogEditUserVisible" :close-on-click-modal="false" center>
       <el-form :model="formData" label-width="105px" label-position="left">
         <el-form-item label="用户名">
           <el-input v-model="formData.username"></el-input>
@@ -74,7 +74,7 @@
           <el-input v-model="formData.userpass" type="password"></el-input>
         </el-form-item>
         <el-form-item label="确认密码">
-          <el-input v-model="formData.confirm_userpass" type="password"></el-input>
+          <el-input v-model="formData.userpass_confirmation" type="password"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -102,7 +102,7 @@ export default {
         id: '',
         username: '',
         userpass: '',
-        confirm_userpass: ''
+        userpass_confirmation: ''
       }
     }
   },
@@ -136,7 +136,7 @@ export default {
       this.dialogEditUserVisible = true
     },
     editorUser() {
-      this.$post('/admin/user/update', this.formData)
+      this.$post('/admin/user/update-by-id', this.formData)
         .then(() => {
           this.$message('修改成功！')
           this.getuserlist()

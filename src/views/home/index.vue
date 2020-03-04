@@ -51,10 +51,31 @@
           <div class="warpper">
             <div class="article" v-show="articleFlag">
               <p class="title">{{ articleContent.name }}</p>
-              <p class="info">
-                <span v-show="articleContent.updated_at">更新时间：{{ articleContent.updated_at }}</span>
-                <span v-show="articleContent.author.username">作者：{{ articleContent.author.username }}</span>
-              </p>
+              <div class="info">
+                <span class="time" v-show="articleContent.updated_at">更新时间：{{ articleContent.updated_at }}</span>
+                <span class="author" v-show="articleContent.author.username">作者：{{ articleContent.author.username }}</span>
+                <div class="share">
+                  <el-tooltip effect="dark" content="分享到新浪微博" placement="bottom">
+                    <div class="share-block"><i class="wi wi-star"></i></div>
+                  </el-tooltip>
+                  <el-tooltip effect="dark" content="分享到微信" placement="bottom">
+                    <div class="share-block"><i class="wi wi-star"></i></div>
+                  </el-tooltip>
+                  <el-tooltip effect="dark" content="分享到QQ" placement="bottom">
+                    <div class="share-block"><i class="wi wi-star"></i></div>
+                  </el-tooltip>
+                  <el-tooltip effect="dark" content="复制链接" placement="bottom">
+                    <div class="share-block"
+                    v-clipboard:copy="shareUrl"
+                    v-clipboard:success="onCopy">
+                    <i class="wi wi-star"></i>
+                  </div>
+                  </el-tooltip>
+                  <el-tooltip effect="dark" content="添加星标" placement="bottom">
+                    <div class="share-block"><i class="wi wi-star"></i></div>
+                  </el-tooltip>
+                </div>
+              </div>
               <div class="markdown-body" >
                 <div class="markdown-content" v-html="articleContent.content"></div>
                 <el-scrollbar class="markdown-menu ">
@@ -116,7 +137,8 @@ export default {
         content: ''
       },
       articleInfoList: [],
-      filterWord: ''
+      filterWord: '',
+      shareUrl: ''
     }
   },
   watch: {
@@ -254,10 +276,14 @@ export default {
         document.title = name + '-'+ this.document_name
     },
     getArticle() {
-      this.$post('/document/chapter/detail', {
+      let data = {
         document_id: this.document_id,
         chapter_id: this.$route.query.id
-      })
+      }
+      if (this.$route.query.share_key) {
+        data['share_key'] = this.$route.query.share_key
+      }
+      this.$post('/document/chapter/detail', data)
         .then(res => {
           this.articleContent = res
           // this.articleContent.content = res.content ? this.$refs.mavonEditor.markdownIt.render('<div class="markdown-content">\n \n'+res.content+'\n \n</div>' + '<div class="markdown-menu"><el-scrollbar>\n \n @[toc]( ) \n \n</el-scrollbar></div>\n \n' ) : ''
@@ -281,6 +307,7 @@ export default {
             }
           })
           this.articleFlag = true
+          this.getShareKey()
         })
     },
     initToc(option) {
@@ -363,6 +390,17 @@ export default {
     htmlToWord(html) {
       var word = html.replace(/<(style|script|iframe)[^>]*?>[\s\S]+?<\/\1\s*>/gi,'').replace(/<[^>]+?>/g,'').replace(/\s+/g,' ').replace(/ /g,' ').replace(/>/g,' ')
       return word
+    },
+    getShareKey() {
+      this.$post('/admin/share/url', {
+        chapter_id: this.$route.query.id
+      })
+        .then(res => {
+          this.shareUrl = res
+        })  
+    },
+    onCopy() {
+      this.$message('复制成功！')
     }
   }
 }
@@ -655,9 +693,47 @@ a.toc-link {
           font-size: 20px;
         }
         .info {
+          display: flex;
+          align-items: center;
           margin: 15px 0 25px 0;
-          span {
+          padding-right: 290px;
+          .time {
             margin-right: 40px;
+          }
+          .author {
+            flex: 1;
+          }
+          .share {
+            display: flex;
+            &-block {
+              margin-left: 5px; 
+              width: 30px;
+              height: 30px;
+              color: #989898;
+              line-height: 27px;
+              text-align: center;
+              border: 1px solid #eeeeee;
+              box-sizing: border-box;
+              cursor: pointer;
+              &:first-child {
+                margin-left: 0;
+              }
+              &:hover {
+                color: #ffffff;
+                background-color: #3296fa;
+                border-color: #3296fa;
+              }
+              &.checked {
+                color: #ffffff;
+                background-color: #3296fa;
+                border-color: #3296fa;
+                &:hover {
+                  color: #989898;
+                  background-color: #ffffff;
+                  border-color: #eeeeee;
+                }
+              }
+            }
           }
         }
       }

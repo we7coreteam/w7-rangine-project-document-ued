@@ -134,16 +134,16 @@ export default {
       this.$set(this.formData.customList[index].setting, 'logo', response.data.url)
     },
     beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg';
+      const isFormat = file.type === 'image/jpg' || file.type === 'image/jpeg' || file.type === 'image/png';
       const isLt2M = file.size / 1024 / 1024 < 2;
 
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!');
+      if (!isFormat) {
+        this.$message.error('上传LOGO只支持jpg、jpeg、png格式!');
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!');
+        this.$message.error('上传LOGO大小不能超过 2MB!');
       }
-      return isJPG && isLt2M;
+      return isFormat && isLt2M;
     },
     save() {
       this.$refs.customForm.validate((valid) => {

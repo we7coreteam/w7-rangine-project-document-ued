@@ -23,7 +23,7 @@
       </div>
     </div>
     <!-- 弹出框 -->
-    <el-dialog class="we7-dialog" title="登录方式设置" :visible.sync="dialogVisible" :close-on-click-modal="false" center>
+    <el-dialog class="w7-dialog" title="登录方式设置" :visible.sync="dialogVisible" :close-on-click-modal="false" center>
       <el-form label-width="120px" label-position="left">
         <el-form-item label="登录方式">
           <el-radio-group v-model="loginMethod" @change="change">

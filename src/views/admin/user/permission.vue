@@ -61,7 +61,7 @@
       </div>
     </el-main>
     <!-- 批量修改弹出框 -->
-    <el-dialog class="we7-dialog" title="批量修改" :visible.sync="dialogEditInfoVisible" :close-on-click-modal="false" center>
+    <el-dialog class="w7-dialog" title="批量修改" :visible.sync="dialogEditInfoVisible" :close-on-click-modal="false" center>
         <el-form label-width="120" style="margin-left:50px;">
         <el-form-item label="公有项目">
             <el-radio-group v-model="radio" class="ownership">
