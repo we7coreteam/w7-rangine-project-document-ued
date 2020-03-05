@@ -393,7 +393,8 @@ export default {
     },
     getShareKey() {
       this.$post('/admin/share/url', {
-        chapter_id: this.$route.query.id
+          chapter_id: this.$route.query.id,
+          document_id: this.$route.params.id
       })
         .then(res => {
           this.shareUrl = res
