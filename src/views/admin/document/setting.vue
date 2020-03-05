@@ -84,7 +84,7 @@
           <el-table class="w7-table" :data="historyList" key="historyTable">
             <el-table-column label="描述">
               <template slot-scope="scope">
-                {{scope.row.sharer_name}}分享链接{{scope.row.sharer_url}}给{{scope.row.user_name}}
+                {{scope.row.sharer_name}}分享链接{{scope.row.share_url}}给{{scope.row.user_name}}
               </template>
             </el-table-column>
             <el-table-column prop="time" label="时间" align="right"></el-table-column>
