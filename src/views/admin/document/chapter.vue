@@ -60,6 +60,7 @@
               <template v-if="rightSelectNodeObj.is_dir == 0">
                 <li class="menu__item" @click="defaultFile">设为目录默认文档</li>
                 <li class="menu__item" @click="updateNode(false)">重命名</li>
+                <li class="menu__item" @click="copyNode()">复制文档</li>
                 <li class="menu__item" @click="openMoveDialog(false)">移动</li>
                 <!-- <li class="menu__item" @click="">权限</li> -->
                 <li class="menu__item" @click="removeNode">删除</li>
@@ -116,6 +117,18 @@
         <el-button @click="dialogMoveVisible = false">取 消</el-button>
       </div>
     </el-dialog>
+    <!-- 复制节点弹出框 -->
+    <el-dialog class="we7-dialog only-input-dialog" title="复制章节" :visible.sync="dialogVisibleCopy" :close-on-click-modal="false" center>
+      <el-form label-width="105px" label-position="left" @submit.native.prevent>
+        <el-form-item label="文档名称">
+          <el-input v-model="copyNodeName" @keyup.enter.native="confirmBtnCopy"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="confirmBtnCopy">确 定</el-button>
+        <el-button @click="dialogVisibleCopy = false">取 消</el-button>
+      </div>
+    </el-dialog>
     <!-- 文档设置 -->
     <el-dialog class="we7-dialog dialog-setting" title="项目设置" width="1000px" :visible.sync="showSetting" :close-on-click-modal="false">
       <setting :id="$route.params.id"></setting>
@@ -165,7 +178,9 @@ export default {
       moveClass: '',
       docList: [],
       docChapters: [],
-      showSetting: false
+      showSetting: false,
+      dialogVisibleCopy: false,
+      copyNodeName: ''
     }
   },
   computed: {
@@ -358,6 +373,10 @@ export default {
       this.dialogFormLabel = bool ? '新的目录名称' : '新的文档名称'
       this.dialogVisible = true
     },
+    copyNode() {
+      this.copyNodeName = this.rightSelectNodeObj.name
+      this.dialogVisibleCopy = true
+    },
     addChildNode(bool) {
       this.addFirst = false
       if (this.rightSelectNode.level == 2 && bool) {
@@ -369,6 +388,40 @@ export default {
       this.addNodeObj.name = ''
       this.addNodeObj.is_dir = bool ? 1 : 0
       this.dialogVisible = true
+    },
+    confirmBtnCopy() {
+      if(!this.copyNodeName) {
+        this.$message('章节名称不能为空！')
+        return
+      }
+      this.$post('/admin/chapter/copy', {
+          document_id: this.$route.params.id,
+          chapter_id: this.rightSelectNodeObj.id,
+          parent_id: this.rightSelectNodeObj.parent_id,
+          name: this.copyNodeName
+        })
+          .then(res => {
+            let newChild = res
+            if(this.rightSelectNodeObj.parent_id != 0) {
+              let node = this.rightSelectNode
+              let parent = node.parent
+              parent.data.children.push(newChild)
+            }else {
+              this.chapters.push(newChild)
+            }
+            this.$message('复制成功！')
+            this.dialogVisibleCopy = false
+            this.$nextTick(() => {
+              //选中新建章节
+              this.$refs.chaptersTree.setCurrentKey( newChild.id )
+              this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode())
+              //展开
+              let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
+              let record = allRecords['document_' + this.$route.params.id]
+              this.defaultExpanded = record.defaultExpanded
+              this.defaultExpanded.push(newChild.id)
+            })
+          })
     },
     confirmBtn() {
       if(!this.addNodeObj.name) {

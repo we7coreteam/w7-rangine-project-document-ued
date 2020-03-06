@@ -56,13 +56,13 @@
                 <span class="author" v-show="articleContent.author.username">作者：{{ articleContent.author.username }}</span>
                 <div class="share">
                   <el-tooltip effect="dark" content="分享到新浪微博" placement="bottom">
-                    <div class="share-block"><i class="wi wi-star"></i></div>
+                    <div class="share-block" @click="shareToWeibo"><i class="wi wi-star"></i></div>
                   </el-tooltip>
                   <el-tooltip effect="dark" content="分享到微信" placement="bottom">
-                    <div class="share-block"><i class="wi wi-star"></i></div>
+                    <div class="share-block" @click="showShareWechat = true"><i class="wi wi-star"></i></div>
                   </el-tooltip>
                   <el-tooltip effect="dark" content="分享到QQ" placement="bottom">
-                    <div class="share-block"><i class="wi wi-star"></i></div>
+                    <div class="share-block" @click="shareToQQ"><i class="wi wi-star"></i></div>
                   </el-tooltip>
                   <el-tooltip effect="dark" content="复制链接" placement="bottom">
                     <div class="share-block"
@@ -72,7 +72,11 @@
                   </div>
                   </el-tooltip>
                   <el-tooltip effect="dark" content="添加星标" placement="bottom">
-                    <div class="share-block"><i class="wi wi-star"></i></div>
+                    <div class="share-block"
+                      :class="{'checked': articleContent.has_star}"
+                      @click="operStar()">
+                      <i class="wi wi-star"></i>
+                    </div>
                   </el-tooltip>
                 </div>
               </div>
@@ -113,10 +117,22 @@
         <p>TOP</p>
       </div>
     </el-backtop>
+    <!-- 二维码 -->
+    <div class="share-wechat" v-if="showShareWechat">
+      <div class="head">
+        <span>分享到微信朋友圈</span>
+        <i class="el-icon-close" @click="showShareWechat = false"></i>
+      </div>
+      <qrcode-vue class="content" :value="shareUrl" :size="160" level="H"></qrcode-vue>
+      <div class="foot">
+        打开微信，点击底部的“发现”，<br/>使用“扫一扫”即可将网页分享至朋友圈。
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import QrcodeVue from 'qrcode.vue'
 import tocbot from 'tocbot'
 export default {
   data() {
@@ -138,8 +154,12 @@ export default {
       },
       articleInfoList: [],
       filterWord: '',
-      shareUrl: ''
+      shareUrl: '',
+      showShareWechat: false
     }
+  },
+  components: {
+    QrcodeVue
   },
   watch: {
     $route: {
@@ -400,8 +420,30 @@ export default {
           this.shareUrl = res
         })  
     },
+    shareToWeibo() {
+      var url = 'http://v.t.sina.com.cn/share/share.php?'
+              + 'url=' + this.shareUrl
+              + '&title=' + this.articleContent.name
+      window.open(url, '_blank')
+    },
+    shareToQQ() {
+      var url = 'https://connect.qq.com/widget/shareqq/iframe_index.html?'
+              + 'url=' + this.shareUrl
+              + '&title=' + this.articleContent.name
+      window.open(url, '_blank')
+    },
     onCopy() {
       this.$message('复制成功！')
+    },
+    operStar() {
+      let url = this.articleContent.has_star ? '/admin/star/delete' : '/admin/star/add'
+      this.$post(url, {
+        chapter_id: this.$route.query.id,
+        document_id: this.$route.params.id
+      })
+        .then(() => {
+          this.articleContent.has_star = !this.articleContent.has_star
+        })
     }
   }
 }
@@ -480,6 +522,39 @@ a.toc-link {
 }
 .chapter-warpper {
   background: linear-gradient(to right, #f7f8fa 50%, #ffffff 50%);
+  .share-wechat {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    padding: 10px;
+    width: 240px;
+    background: #fff;
+    border: 1px solid #d8d8d8;
+    z-index: 10000;
+    font-size: 12px;
+    .head {
+      position: relative;
+      height: 16px;
+      font-weight: 700;
+      line-height: 16px;
+      color: #000;
+      .el-icon-close {
+        position: absolute;
+        right: 0;
+        top: 0;
+        font-size: 16px;
+        cursor: pointer;
+      }
+    }
+    .content {
+      padding: 20px 40px;
+    }
+    .foot {
+      line-height: 22px;
+      color: #666;
+    }
+  }
 }
 .home-container {
   position: relative;
