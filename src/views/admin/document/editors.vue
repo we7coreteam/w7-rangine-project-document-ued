@@ -30,7 +30,9 @@ export default {
         updated_at: '',
         username: ''
       },
-      contentMd: '' //md格式的内容
+      contentMd: '', //md格式的内容
+      old_contentMd: '',
+      timer: '' //定时器
     }
   },
   watch: {
@@ -41,6 +43,10 @@ export default {
   mounted() {
     let clientHeight = document.documentElement.clientHeight
     this.$refs.mavonEditor.$el.style.height = (clientHeight - 310) + 'px'
+  },
+  destroyed() {
+    //清除定时器
+    clearInterval(this.timer)
   },
   methods: {
     init() {
@@ -53,6 +59,15 @@ export default {
       }).then(res => {
         this.chapterInfo = res
         this.contentMd = res.content || ''
+        this.old_contentMd = res.content || ''
+        clearInterval(this.timer) //清除定时器
+        this.$nextTick(() => {
+          this.timer = setInterval(() => {
+            if (this.old_contentMd != this.contentMd) {
+              this.save()
+            }
+          }, 3 * 60 * 1000);
+        })
       })
     },
     $imgAdd(pos, $file) {
@@ -79,7 +94,7 @@ export default {
         content: this.contentMd
       }).then(() => {
         this.$message('保存成功！')
-        this.init()
+        this.old_contentMd = this.contentMd
       })
     }
   }
