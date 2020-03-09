@@ -189,10 +189,20 @@ export default {
       window.open(routeUrl.href, '_blank')
     },
     settingDoc(id) {
-      let routeUrl = this.$router.resolve({
-        path: "/admin/document/" + id
-      })
-      window.open(routeUrl.href, '_blank')
+      // let routeUrl = this.$router.resolve({
+      //   path: "/admin/document/" + id
+      // })
+      // window.open(routeUrl.href, '_blank')
+      let routeData = {
+        name: 'chapter',
+        params: {
+          id: id
+        },
+        query: {
+          type: 'setting'
+        }
+      }
+      this.$router.push(routeData)
     },
     transferDoc(id) {
       this.selectDocId = id

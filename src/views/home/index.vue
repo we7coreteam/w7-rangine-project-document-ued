@@ -255,7 +255,7 @@ export default {
               }
               getName(this.chapters, this.selectChapterId)
               this.selectNode(this.selectChapterId)
-              document.title = name + ' — '+ this.document_name
+              document.title = name ? (name + ' — '+ this.document_name) : this.document_name
               this.getArticle()
             } else {
               //判断第一级是否有默认文档,有则选中

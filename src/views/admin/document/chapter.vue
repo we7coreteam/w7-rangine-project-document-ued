@@ -49,6 +49,7 @@
                 <i class="wi wi-document" v-if="data.is_dir == 1"></i>
               </span>
               <span class="point3" @mousemove='updateXY' @click.stop="leftClick(data, node)"><span>...</span></span>
+              <div class="doc-default" v-if="data.is_default"></div>
             </div>
           </el-tree>
           <div id="menu-bar" class="menu-bar" v-show="menuBarVisible">
@@ -215,6 +216,9 @@ export default {
       }
       this.getChapters()
     }
+    if (this.$route.query && this.$route.query.type == 'setting') {
+      this.showSetting = true
+    }
   },
   methods: {
     /**
@@ -279,7 +283,7 @@ export default {
         .then(res => {
           this.docName = res.document.name
           this.has_manage = res.acl.has_manage
-          this.chapters = res.catalog
+          this.chapters = this.initTreeData(res.catalog)
           //如果有记录的默认文档节点，则选中
           if (this.defaultSelect) {
             this.$nextTick(() => {
@@ -293,6 +297,20 @@ export default {
             })
           }
         })
+    },
+    //重新遍历树数据，给每个文档节点添加is_default属性
+    initTreeData(treeData) {
+      function loopData(data, defaultId) {
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].is_dir) {
+            loopData(data[i].children, data[i].default_show_chapter_id)
+          } else {
+            data[i]['is_default'] = data[i].default_show_chapter_id == data[i].id || data[i].id == defaultId
+          }
+        }
+      }
+      loopData(treeData)
+      return treeData
     },
     readDoc() {
       let routeUrl = this.$router.resolve({
@@ -619,6 +637,7 @@ export default {
         show_chapter_id: this.rightSelectNodeObj.id
       })
         .then(() => {
+          this.getChapters()
           this.$message('设置默认文档成功！')
         })
     }
@@ -740,6 +759,7 @@ export default {
 .w7-tree {
   background: transparent;
   .el-tree-node__content {
+    position: relative;
     &:hover .custom-tree-node .point3, &:hover .custom-tree-node .shortcut {
       display: inline-block;
     }
@@ -779,6 +799,14 @@ export default {
           margin-top: -23px;
           margin-right: 10px;
         }
+      }
+      .doc-default {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 26px;
+        height: 26px;
+        background-image: url('~@/assets/img/doc-default.png');
       }
     }
   }
