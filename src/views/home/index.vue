@@ -54,21 +54,21 @@
               <div class="info">
                 <span class="time" v-show="articleContent.updated_at">更新时间：{{ articleContent.updated_at }}</span>
                 <span class="author" v-show="articleContent.author.username">作者：{{ articleContent.author.username }}</span>
-                <div class="share">
+                <div class="share" v-show="articleFlag">
                   <el-tooltip effect="dark" content="分享到新浪微博" placement="bottom">
-                    <div class="share-block" @click="shareToWeibo"><i class="wi wi-star"></i></div>
+                    <div class="share-block" @click="shareToWeibo"><i class="wi wi-weibo"></i></div>
                   </el-tooltip>
                   <el-tooltip effect="dark" content="分享到微信" placement="bottom">
-                    <div class="share-block" @click="showShareWechat = true"><i class="wi wi-star"></i></div>
+                    <div class="share-block" @click="showShareWechat = true"><i class="wi wi-weixin"></i></div>
                   </el-tooltip>
                   <el-tooltip effect="dark" content="分享到QQ" placement="bottom">
-                    <div class="share-block" @click="shareToQQ"><i class="wi wi-star"></i></div>
+                    <div class="share-block" @click="shareToQQ"><i class="wi wi-qq"></i></div>
                   </el-tooltip>
                   <el-tooltip effect="dark" content="复制链接" placement="bottom">
                     <div class="share-block"
                     v-clipboard:copy="shareUrl"
                     v-clipboard:success="onCopy">
-                    <i class="wi wi-star"></i>
+                    <i class="wi wi-link"></i>
                   </div>
                   </el-tooltip>
                   <el-tooltip effect="dark" content="添加星标" placement="bottom">

@@ -45,6 +45,9 @@
                   <span :title="node.label">{{ node.label }}</span>
                 </div>
               </span>
+              <span class="shortcut" @click.stop="shortcut(data, node)">
+                <i class="wi wi-document" v-if="data.is_dir == 1"></i>
+              </span>
               <span class="point3" @mousemove='updateXY' @click.stop="leftClick(data, node)"><span>...</span></span>
             </div>
           </el-tree>
@@ -310,6 +313,11 @@ export default {
       this.clientX = event.clientX
       this.clientY = event.clientY
     },
+    shortcut(object, Node) {
+      this.rightSelectNodeObj = object
+      this.rightSelectNode = Node
+      this.addChildNode(false)
+    },
     leftClick(object, Node) {
       if (this.menuBarVisible == true) {
         this.menuBarVisible = false
@@ -379,6 +387,7 @@ export default {
     },
     addChildNode(bool) {
       this.addFirst = false
+      console.log(this.rightSelectNode)
       if (this.rightSelectNode.level == 2 && bool) {
         this.$message('第三级只能为文档！')
         return
@@ -557,7 +566,6 @@ export default {
     changeDoc(id) {
       this.$post('/admin/chapter/detail', {
         document_id: id
-
       })
         .then(res => {
           //去掉所有文档和最后一个children
@@ -732,14 +740,13 @@ export default {
 .w7-tree {
   background: transparent;
   .el-tree-node__content {
-    &:hover .custom-tree-node .point3 {
+    &:hover .custom-tree-node .point3, &:hover .custom-tree-node .shortcut {
       display: inline-block;
     }
     .custom-tree-node {
       flex: 1;
       display: flex;
       align-items: center;
-      justify-content: space-between;
       .node-info {
         flex: 1;
         display: flex;
@@ -750,9 +757,22 @@ export default {
           padding-right: 10px;
         }
       }
+      .shortcut {
+        display: none;
+        margin-right: 10px;
+        .wi {
+          color: #b6b5b5;
+          &:hover {
+            color: #3296fa;
+          }
+        }
+      }
       .point3 {
         display: none;
-        color: #409eff;
+        color: #b6b5b5;
+        &:hover {
+          color: #3296fa;
+        }
         span {
           display: block;
           font-size: 30px;
