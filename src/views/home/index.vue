@@ -258,16 +258,27 @@ export default {
               document.title = name ? (name + ' — '+ this.document_name) : this.document_name
               this.getArticle()
             } else {
-              //判断第一级是否有默认文档,有则选中
-              res.forEach(item => {
-                if (item.default_show_chapter_id && item.default_show_chapter_id == item.id) {
-                  this.selectChapterId = item.id
-                  this.changeRoute(this.selectChapterId, item.name, true)
-                }
-              })
+              this.goDefaultChaper(res)
             }
           })
         })
+    },
+    //判断是否有默认文档,有则选中
+    goDefaultChaper(data, defaultId) {
+      for (let i = 0; i < data.length; i++) {
+        if (!data[i].is_dir) {
+          if (data[i].default_show_chapter_id == data[i].id || defaultId == data[i].id) {
+            this.selectChapterId = data[i].id
+            this.changeRoute(this.selectChapterId, data[i].name, true)
+            return
+          }
+        }
+      }
+      for (let j = 0; j < data.length; j++) {
+        if (data[j].is_dir && data[j].children.length && data[j].children[0].id) {
+          this.goDefaultChaper(data[j].children, data[j].default_show_chapter_id)
+        }
+      }
     },
     handleNodeClick(obj) {
       if (!obj.is_dir) {
