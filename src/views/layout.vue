@@ -245,6 +245,13 @@ export default {
         border-radius: 0;
         border: 0;
         z-index: 9999;
+        ul {
+          margin: 0;
+          padding: 0;
+        }
+        li {
+          list-style: none;
+        }
         ul li:hover {
           color: #3296fa;
         }
