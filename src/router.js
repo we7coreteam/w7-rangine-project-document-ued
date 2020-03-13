@@ -116,12 +116,12 @@ export default new Router({
               component: () => import(/* webpackChunkName: "about" */ './views/admin/setting/index.vue')
             },
             {
-              path: 'thirdParty',
+              path: 'third-party',
               name: 'settingThirdParty',
               component: () => import(/* webpackChunkName: "about" */ './views/admin/setting/thirdParty.vue')
             },
             {
-              path: 'thirdPartyCustom',
+              path: 'third-party-custom',
               name: 'settingThirdPartyCustom',
               component: () => import(/* webpackChunkName: "about" */ './views/admin/setting/thirdPartyCustom.vue')
             },
@@ -138,7 +138,7 @@ export default new Router({
           ]
         },
         {
-          path: 'accountInfo',
+          path: 'account-info',
           name: 'accountInfo',
           component: () => import(/* webpackChunkName: "about" */ './views/admin/accountInfo.vue')
         }

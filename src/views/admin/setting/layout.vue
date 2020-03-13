@@ -15,11 +15,11 @@
             <span>第三方登录设置</span>
           </template>
           <template v-for="(menu, index) in thirdPartyLoginMenu">
-            <el-menu-item :index="'/admin/setting/thirdParty?id='+ menu.id" :key="index">
+            <el-menu-item :index="'/admin/setting/third-party?id='+ menu.id" :key="index">
               <span class="menu-name">{{menu.name}}授权配置</span>
             </el-menu-item>
           </template>
-          <el-menu-item index="/admin/setting/thirdPartyCustom">自定义授权配置</el-menu-item>
+          <el-menu-item index="/admin/setting/third-party-custom">自定义授权配置</el-menu-item>
         </el-submenu>
         <el-menu-item index="/admin/setting/login">
           <i class="wi wi-system-login-settings"></i>
