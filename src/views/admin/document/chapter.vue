@@ -725,13 +725,15 @@ export default {
       border-top-color: #fff;
     }
     ul {
-      margin: 10px 0;
+      margin: 0;
+      padding: 10px 0;
     }
     li {
       padding: 0 14px;
       width: 150px;
       line-height: 34px;
       box-sizing: border-box;
+      list-style: none;
       &:hover {
         color: #3296fa;
         cursor: pointer;

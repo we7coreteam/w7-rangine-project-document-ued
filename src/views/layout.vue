@@ -27,7 +27,7 @@
         </template>
       </div>
       <div class="user" v-if="UserInfo.username">
-        <div class="username">{{UserInfo.username}}</div>
+        <div class="username text-over" :title="UserInfo.username">{{UserInfo.username}}</div>
         <div id="w7-nav-menu" class="menu-bar">
           <ul class="menu-ul">
             <li class="menu__item" @click="goto('accountInfo')">个人中心</li>
@@ -152,7 +152,7 @@ export default {
       .logo .wi {
         color: #3296fa;
       }
-      #w7-nav-menu {
+      #w7-nav-menu, #w7-nav-menu ul {
         background-color: #ffffff;
       }
     }
