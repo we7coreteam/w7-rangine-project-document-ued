@@ -71,7 +71,7 @@
                     <i class="wi wi-link"></i>
                   </div>
                   </el-tooltip>
-                  <el-tooltip effect="dark" content="添加星标" placement="bottom">
+                  <el-tooltip effect="dark" :content="articleContent.has_star ? '删除星标' : '添加星标'" placement="bottom">
                     <div class="share-block"
                       :class="{'checked': articleContent.has_star}"
                       @click="operStar()">
