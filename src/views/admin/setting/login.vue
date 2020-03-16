@@ -122,7 +122,7 @@ export default {
     },
     goto() {
       let routeUrl = this.$router.resolve({
-        path: "/admin/setting/thirdParty?id=" + this.thirdPartyFisrtId
+        path: "/admin/setting/third-party?id=" + this.thirdPartyFisrtId
       })
       window.open(routeUrl.href, '_blank')
     },

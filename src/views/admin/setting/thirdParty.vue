@@ -20,7 +20,7 @@
       <div class="we7-panel-form__header">登录配置</div>
       <div class="we7-panel-form__body">
         <el-form-item label="第三方名称" prop="setting.name">
-          <el-input v-model="formData.setting.name" v-if="editStatus"></el-input>
+          <el-input v-model="formData.setting.name" v-if="editStatus && !formData.is_default"></el-input>
           <span v-else>{{formData.setting.name}}</span>
         </el-form-item>
         <el-form-item label="LOGO" prop="setting.logo"
@@ -46,11 +46,11 @@
           <span v-else>{{formData.setting.secret_key}}</span>
         </el-form-item>
         <el-form-item label="ACCESSTOKEN  API地址" prop="setting.access_token_url">
-          <el-input v-model="formData.setting.access_token_url" v-if="editStatus"></el-input>
+          <el-input v-model="formData.setting.access_token_url" v-if="editStatus && !formData.is_default"></el-input>
           <span v-else>{{formData.setting.access_token_url}}</span>
         </el-form-item>
         <el-form-item label="获取用户信息  API地址" prop="setting.user_info_url">
-          <el-input v-model="formData.setting.user_info_url" v-if="editStatus"></el-input>
+          <el-input v-model="formData.setting.user_info_url" v-if="editStatus && !formData.is_default"></el-input>
           <span v-else>{{formData.setting.user_info_url}}</span>
         </el-form-item>
       </div>

@@ -58,7 +58,7 @@
         </div>
         <div class="manage" v-if="active == 1">
           <div class="top">
-            <el-button type="primary" plain @click="showAddManage = true">添加权限</el-button>
+            <el-button type="primary" plain @click="openAddManage">添加权限</el-button>
           </div>
           <el-table class="w7-table" :data="details.operator" key="manageTable" :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
             <el-table-column prop="username" label="名称" width="300px"></el-table-column>
@@ -98,8 +98,8 @@
             :page-size="5"
             :current-page.sync = "currentPageHistory"
             :page-count="pageCountHistory"
+            :hide-on-single-page = "true"
           >
-          <!-- :hide-on-single-page = "true" -->
           </el-pagination>
         </div>
       </div>
@@ -127,7 +127,7 @@
       </el-form>
       <div class="add-manage-footer">
         <el-button type="primary" @click="addManage">确 定</el-button>
-        <el-button>取 消</el-button>
+        <el-button @click="showAddManage = false">取 消</el-button>
       </div>
     </div>
   </div>
@@ -262,7 +262,23 @@ export default {
           })
       })
     },
+    openAddManage() {
+      this.addManageData = {
+        username: '',
+        role: this.role_list[0].id || ''
+      }
+      this.showAddManage = true
+    },
     addManage() {
+      let flag = true
+      for (const i in this.details.operator) {
+        if(this.details.operator[i].username == this.addManageData.username) {
+            this.$message('用户已存在')
+            flag = false
+            return
+          }
+      }
+      if (!flag) { return }
       this.$post('/admin/document/operator',{
         user_name: this.addManageData.username,
         document_id: this.id,
