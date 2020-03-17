@@ -6,6 +6,10 @@
           <i class="wi wi-folder"></i>
           <span slot="title">我的文档管理</span>
         </el-menu-item>
+        <el-menu-item index="/admin/document/recycle">
+          <i class="wi wi-delete"></i>
+          <span slot="title">回收站</span>
+        </el-menu-item>
         <div class="line"></div>
         <el-menu-item index="/admin/document/star">
           <i class="wi wi-star"></i>

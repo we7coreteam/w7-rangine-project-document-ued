@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="page-head">项目管理</div>
+    <div class="page-head">我的文档管理</div>
     <div class="container-box">
       <div class="search-box">
         <div class="search-box-input">
@@ -94,13 +94,21 @@
         </div>
       </el-dialog>
     </div>
+    <!-- 文档设置 -->
+    <el-dialog class="we7-dialog dialog-setting" title="项目设置" width="1000px" :visible.sync="showSetting" :close-on-click-modal="false">
+      <setting :id="settingDocId"></setting>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { timestampFormat } from '@/utils/utils'
+import setting from './setting.vue'
 export default {
   name: 'docIndex',
+  components: {
+    setting
+  },
   data() {
     return {
       radio: '1',
@@ -120,7 +128,9 @@ export default {
       actClass:"actClass",
       dialogTransferDoc: false,
       transferUsername: '',
-      selectDocId: ''
+      selectDocId: '',
+      showSetting: false,
+      settingDocId: ''
     }
   },
   created() {
@@ -189,20 +199,8 @@ export default {
       window.open(routeUrl.href, '_blank')
     },
     settingDoc(id) {
-      // let routeUrl = this.$router.resolve({
-      //   path: "/admin/document/" + id
-      // })
-      // window.open(routeUrl.href, '_blank')
-      let routeData = {
-        name: 'chapter',
-        params: {
-          id: id
-        },
-        query: {
-          type: 'setting'
-        }
-      }
-      this.$router.push(routeData)
+      this.settingDocId = id
+      this.showSetting = true
     },
     transferDoc(id) {
       this.selectDocId = id

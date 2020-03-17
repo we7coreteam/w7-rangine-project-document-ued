@@ -27,7 +27,7 @@
       <el-table-column label="操作" align="right">
         <div class="oper" slot-scope="scope">
           <el-tooltip effect="dark" content="取消星标" placement="bottom">
-            <i class="wi wi-star checked" @click="cancel(scope.row.document_id)"></i>
+            <i class="wi wi-star checked" @click="cancel(scope.row)"></i>
           </el-tooltip>
         </div>
       </el-table-column>
@@ -79,9 +79,10 @@ export default {
           this.loading = false
         })
     },
-    cancel(id) {
+    cancel(item) {
        this.$post('/admin/star/delete',{
-        document_id: id
+        document_id: item.document_id,
+        chapter_id: item.chapter_id
       })
         .then(() => {
           this.getList()

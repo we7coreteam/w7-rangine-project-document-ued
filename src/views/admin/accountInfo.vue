@@ -162,8 +162,16 @@ export default {
                 this.$store.dispatch('getUserInfo')
               }
               this.dialogVisible = false
-              if (this.UserInfo.no_password) {
-                this.UserInfo.no_password = false
+              // if (this.UserInfo.no_password) {
+              //   this.UserInfo.no_password = false
+              // }
+              if (this.dialogType == 'pass') {
+                this.$post('/common/auth/logout')
+                  .then(() => {
+                    this.$router.push({
+                      name: 'adminLogin'
+                    })
+                  })
               }
             })
         }

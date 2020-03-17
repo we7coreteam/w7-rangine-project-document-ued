@@ -71,11 +71,28 @@
             <el-table-column label="操作" align="right">
               <div class="oper" slot-scope="scope">
                 <el-tooltip effect="dark" content="编辑" placement="bottom">
-                  <i class="wi wi-edit" @click="removeManage" v-if="details.acl.has_manage && scope.row.acl.role != 1"></i>
+                  <i class="wi wi-edit" @click="editManage(scope.row)" v-if="details.acl.has_manage && scope.row.acl.role != 1"></i>
                 </el-tooltip>
                 <el-tooltip effect="dark" content="删除" placement="bottom">
                   <i class="wi wi-delete" @click="removeManage(scope.row.id)" v-if="details.acl.has_manage && scope.row.acl.role != 1"></i>
                 </el-tooltip>
+                <div class="edit-role" v-if="shwoEditRole && selectUserId == scope.row.id">
+                  <div class="edit-role-content">
+                    <div class="label">权限:</div>
+                    <el-select v-model="selectUserRole">
+                      <el-option
+                        v-for="item in role_list"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
+                      </el-option>
+                    </el-select>
+                  </div>
+                  <div class="edit-role-foot">
+                    <el-button type="primary" @click="editRole">确定</el-button>
+                    <el-button @click="shwoEditRole = false">取消</el-button>
+                  </div>
+                </div>
               </div>
             </el-table-column>
           </el-table>
@@ -160,10 +177,19 @@ export default {
       addManageData: {},
       role_list: [],//操作员的可选权限
       showAddManage: false,
+      shwoEditRole: false,
+      selectUserId: '',
+      selectUserRole: '',
       historyList: [],
       currentPageHistory: 1,//当前页码
       pageCountHistory: 0,//总页数
       totalHistory: 0//总数
+    }
+  },
+  watch: {
+    id(newVal, oldVal) {
+      console.log(newVal, oldVal)
+      this.getdetails()
     }
   },
   created() {
@@ -245,6 +271,22 @@ export default {
             this.$router.push('/admin/document/')
           })
       })
+    },
+    editManage(item) {
+      this.selectUserId = item.id
+      this.selectUserRole = item.acl.role
+      this.shwoEditRole = true
+    },
+    editRole() {
+      this.$post('/admin/document/operator',{
+        user_id: this.selectUserId,
+        document_id: this.id,
+        permission: this.selectUserRole
+      })
+        .then(() => {
+          this.getdetails()
+          this.shwoEditRole = false
+        })
     },
     removeManage(id) {
       this.$confirm('确定删除该操作员吗?', '提示', {
@@ -385,8 +427,12 @@ export default {
       }
       .w7-table {
         margin-top: 0;
+        overflow: inherit;
         .el-table th, .el-table td {
           padding: 6px 0;
+        }
+        .el-table__body-wrapper, .cell {
+          overflow: inherit;
         }
         .identity {
           margin: 0 auto;
@@ -397,6 +443,50 @@ export default {
           background-color: #c1fbde;
           border: 1px solid #4dc88a;
           border-radius: 4px;
+        }
+        .oper {
+          position: relative;
+          .edit-role {
+            position: absolute;
+            top: 35px;
+            right: -70px;
+            width: 360px;
+            height: 150px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow:0px 3px 18px 1px	rgba(194, 192, 192, 0.84);
+            z-index: 3000;
+            &::before {
+              content: '';
+              position: absolute;
+              top: -10px;
+              right: 98px;
+              width: 0;
+              height: 0;
+              border-color: transparent;
+              border-style: solid;
+              border-width: 10px;
+              border-top-width: 0;
+              border-bottom-color: #ffffff;
+            }
+            &-content {
+              padding: 28px 25px 28px 23px;
+              .label {
+                display: inline-block;
+                width: 40px;
+                text-align: left;
+              }
+              .el-select {
+                width: 270px;
+              }
+            }
+            &-foot {
+              text-align: center;
+              .el-button {
+                padding: 9px 34px;
+              }
+            }
+          }
         }
       }
     }

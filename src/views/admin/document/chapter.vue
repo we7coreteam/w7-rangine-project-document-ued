@@ -216,9 +216,6 @@ export default {
       }
       this.getChapters()
     }
-    if (this.$route.query && this.$route.query.type == 'setting') {
-      this.showSetting = true
-    }
   },
   methods: {
     /**
@@ -737,23 +734,6 @@ export default {
       &:hover {
         color: #3296fa;
         cursor: pointer;
-      }
-    }
-  }
-  .dialog-setting {
-    .el-dialog {
-      border-radius: 0;
-      .el-dialog__header {
-        padding: 30px 20px;
-        padding-bottom: 30px;
-        .el-dialog__headerbtn {
-          top: 31px;
-          right: 20px;
-          font-size: 20px;
-        }
-      }
-      .el-dialog__body {
-        padding: 0;
       }
     }
   }

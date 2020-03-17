@@ -47,6 +47,11 @@ export default new Router({
               component: () => import(/* webpackChunkName: "about" */ './views/admin/document/chapter.vue')
             },
             {
+              path: 'recycle',
+              name: 'documentRecycle',
+              component: () => import(/* webpackChunkName: "about" */ './views/admin/document/recycle.vue'),
+            },
+            {
               path: 'star',
               name: 'documentStar',
               component: () => import(/* webpackChunkName: "about" */ './views/admin/document/star.vue'),
