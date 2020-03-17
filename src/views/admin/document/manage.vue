@@ -27,6 +27,9 @@
             @click="goChapter(item.id)">
             <div class="w7-card-title">{{item.name}}</div>
             <div class="w7-card-time">{{format(item.operator.time)}} {{item.operator.name}}</div>
+            <div class="icon-show" v-if="!item.is_public">
+              <i class="wi wi-lock"></i>
+            </div>
             <div class="icon-box">
               <el-tooltip effect="dark" content="私有" placement="bottom" v-if="!item.is_public">
                 <i class="wi wi-lock"></i>
@@ -271,6 +274,9 @@ export default {
     .w7-card-title {
       color: #3296fa;
     }
+    .icon-show {
+      display: none;
+    }
     .icon-box{
       display:block;
     }
@@ -291,7 +297,7 @@ export default {
     color: #a4a6a9;
   }
   &.has-cover .icon-box {
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.2);
   }
   .icon-box i:hover {
     color: #3296fa;
@@ -302,6 +308,14 @@ export default {
 }
 .card-box{
   margin-top:30px;
+}
+.icon-show {
+  position:absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 8px 7px;
+  text-align: right;
 }
 .icon-box{
   display:none;

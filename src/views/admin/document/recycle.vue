@@ -19,10 +19,10 @@
       </el-table-column>
       <el-table-column label="操作" align="right">
         <div class="oper" slot-scope="scope">
-          <el-tooltip effect="dark" content="撤销" placement="bottom">
-            <i class="wi wi-star" @click="revocation(scope.row.id)"></i>
+          <el-tooltip effect="dark" content="恢复" placement="bottom">
+            <i class="wi wi-huifu" @click="recover(scope.row.id)"></i>
           </el-tooltip>
-          <el-tooltip effect="dark" content="删除记录" placement="bottom">
+          <el-tooltip effect="dark" content="删除" placement="bottom">
             <i class="wi wi-delete" @click="del(scope.row.id)"></i>
           </el-tooltip>
         </div>
@@ -75,7 +75,7 @@ export default {
           this.loading = false
         })
     },
-    revocation(id) {
+    recover(id) {
       
     },
     del(id) {

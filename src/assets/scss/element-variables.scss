@@ -312,6 +312,12 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
     line-height: 1;
     background-color:#f7f8fa;
     border-bottom: 1px solid #e8e9eb;
+    span:first-child {
+      margin-right: 20px;
+    }
+    .el-icon-info {
+      margin-right: 5px;
+    }
     .el-button--text {
       float: right;
       padding: 0;

@@ -39,7 +39,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="选择第三方" v-if="loginMethod == 1">
-          <el-select v-model="default_login_channel" placeholder="请选择">
+          <el-select v-model="default_login_channel" placeholder="请选择" v-if="thirdParty.length">
             <el-option
               v-for="item in thirdParty"
               :key="item.id"

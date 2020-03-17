@@ -53,9 +53,15 @@
           <el-input v-model="formData.setting.user_info_url" v-if="editStatus && !formData.is_default"></el-input>
           <span v-else>{{formData.setting.user_info_url}}</span>
         </el-form-item>
+        <el-form-item label="回调地址" v-if="formData.setting.name == 'QQ'">
+          <span>{{callbackUrl}}</span>
+        </el-form-item>
       </div>
       <template v-if="!formData.is_default">
-        <div class="we7-panel-form__header">转换功能</div>
+        <div class="we7-panel-form__header">
+          <span>转换功能</span>
+          <span><i class="el-icon-info"></i>文档系统需要用户名，id的字段名是username、uid，请根据第三方系统对应的字段名进行转换。</span>
+        </div>
         <div class="we7-panel-form__body">
           <el-form-item label="uid">
             <el-input v-model="formData.convert.uid" v-if="editStatus"></el-input>
@@ -116,7 +122,8 @@ export default {
         'setting.user_info_url': [
           { required: true, message: '请填写获取用户信息', trigger: 'blur' }
         ]
-      }
+      },
+      callbackUrl: ''
     }
   },
   watch: {
@@ -129,6 +136,7 @@ export default {
   },
   created() {
     this.init()
+    this.callbackUrl = 'http://' + window.location.host + '/common/auth/third-party-login'
   },
   methods: {
     init() {

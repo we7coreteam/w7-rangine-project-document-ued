@@ -65,7 +65,10 @@
             <el-input v-model="item.setting.user_info_url"></el-input>
           </el-form-item>
         </div>
-        <div class="we7-panel-form__header">转换功能</div>
+        <div class="we7-panel-form__header">
+          <span>转换功能</span>
+          <span><i class="el-icon-info"></i>文档系统需要用户名，id的字段名是username、uid，请根据第三方系统对应的字段名进行转换。</span>
+        </div>
         <div class="we7-panel-form__body edit">
           <el-form-item label="uid" label-width="290px">
             <el-input v-model="item.convert.uid"></el-input>

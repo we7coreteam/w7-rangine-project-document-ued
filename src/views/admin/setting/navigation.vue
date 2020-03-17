@@ -164,7 +164,7 @@ export default {
                 ...this.menuData
               })
                 .then(() => {
-                  this.getData()
+                  this.getMenuData()
                   this.$message('新增成功！')
                   this.dialogMenu = false
                 })
@@ -173,7 +173,7 @@ export default {
                 ...this.menuData
               })
                 .then(() => {
-                  this.getData()
+                  this.getMenuData()
                   this.$message('修改成功！')
                   this.dialogMenu = false
                 })

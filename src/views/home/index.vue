@@ -432,13 +432,13 @@ export default {
         })  
     },
     shareToWeibo() {
-      var url = 'http://v.t.sina.com.cn/share/share.php?'
+      var url = 'http://service.weibo.com/share/share.php?'
               + 'url=' + this.shareUrl
               + '&title=' + this.articleContent.name
       window.open(url, '_blank')
     },
     shareToQQ() {
-      var url = 'https://connect.qq.com/widget/shareqq/iframe_index.html?'
+      var url = 'https://connect.qq.com/widget/shareqq/index.html?'
               + 'url=' + this.shareUrl
               + '&title=' + this.articleContent.name
       window.open(url, '_blank')
