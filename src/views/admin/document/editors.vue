@@ -63,9 +63,9 @@ export default {
         clearInterval(this.timer) //清除定时器
         this.$nextTick(() => {
           this.timer = setInterval(() => {
-            if (this.old_contentMd != this.contentMd) {
+            // if (this.old_contentMd != this.contentMd) {
               this.save()
-            }
+            // }
           }, 3 * 60 * 1000);
         })
       })
