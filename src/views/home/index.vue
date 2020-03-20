@@ -54,7 +54,7 @@
               <div class="info">
                 <span class="time" v-show="articleContent.updated_at">更新时间：{{ articleContent.updated_at }}</span>
                 <span class="author" v-show="articleContent.author.username">作者：{{ articleContent.author.username }}</span>
-                <div class="share" v-show="articleFlag">
+                <div class="share" v-show="articleContent.content">
                   <el-tooltip effect="dark" content="分享到新浪微博" placement="bottom">
                     <div class="share-block" @click="shareToWeibo"><i class="wi wi-weibo"></i></div>
                   </el-tooltip>
@@ -71,7 +71,7 @@
                     <i class="wi wi-link"></i>
                   </div>
                   </el-tooltip>
-                  <el-tooltip effect="dark" :content="articleContent.has_star ? '删除星标' : '添加星标'" placement="bottom">
+                  <el-tooltip effect="dark" :content="articleContent.has_star ? '取消星标' : '添加星标'" placement="bottom">
                     <div class="share-block"
                       :class="{'checked': articleContent.has_star}"
                       @click="operStar()">
@@ -909,4 +909,31 @@ a.toc-link {
     font-size: 20px;
   }
 }
+/* 简单适配手机端 */
+@media screen and (max-width: 500px) { 
+  .admin-view > .el-header, .w7-aside-home, .markdown-menu, .share{
+    display: none !important;
+  }
+  .admin-content {
+    padding-top: 0 !important;
+  }
+  .home-container .el-main {
+    padding-left: 0;
+  }
+  .chapter-warpper .warpper {
+    margin-top: 0!important;
+    margin-left: 0!important;
+    padding: 20px;
+  }
+  .home-container .el-main .warpper .article .info {
+    justify-content: space-between;
+    padding-right: 0;
+  }
+  .home-container .el-main .warpper .article .info .time {
+    margin-right: 0;
+  }
+  .home-container .el-main .warpper .article .info .author {
+    text-align: right;
+  }
+} 
 </style>

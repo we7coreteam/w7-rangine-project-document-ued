@@ -123,7 +123,7 @@ export default {
       },
       docList: [],
       currentPage: 0,//当前页码
-      page_size: 29,
+      page_size: 19,
       pageCount: 0,//总页数
       total: 0,//总数
       name: '',
@@ -316,6 +316,9 @@ export default {
   bottom: 0;
   padding: 8px 7px;
   text-align: right;
+  .wi {
+    color: #3296fa;
+  }
 }
 .icon-box{
   display:none;

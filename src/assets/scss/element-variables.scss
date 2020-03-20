@@ -203,6 +203,9 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
     content: '';
   }
 }
+.el-form-item.is-required:not(.is-no-asterisk) > .el-form-item__label:before, .el-form-item.is-required:not(.is-no-asterisk) .el-form-item__label-wrap > .el-form-item__label:before {
+  margin-left: -10px;
+}
 /* 重写element-ui样式 -- end */
 
 /* 公共样式 */

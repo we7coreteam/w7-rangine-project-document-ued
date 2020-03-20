@@ -37,7 +37,7 @@
       </div>
       <router-link class="item" to="/admin/login" v-if="!UserInfo.username">登录</router-link>
     </el-header>
-    <div style="padding-top: 60px;">
+    <div class="admin-content">
       <router-view></router-view>
     </div>
     <el-footer class="w7-footer" :class="$route.meta.footerClass" height="80px">
@@ -279,6 +279,9 @@ export default {
   }
   .menu-bar {
     width: 120px;
+  }
+  .admin-content {
+    padding-top: 60px;
   }
   .w7-footer {
     &.float {

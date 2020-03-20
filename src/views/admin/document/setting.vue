@@ -127,7 +127,7 @@
       <el-link :underline="false" @click="showAddManage = false"><i class="el-icon-close"></i></el-link>
     </div>
     <div class="add-manage-body" v-if="showAddManage">
-      <el-form :model="addManageData" ref="addManageForm" key="addManage" :rules="rules2" class="w7-form__no-required-icon" label-width="85px" label-position="left">
+      <el-form :model="addManageData" ref="addManageForm" key="addManage" :rules="rules" class="w7-form__no-required-icon" label-width="85px" label-position="left">
         <el-form-item label="用户名" prop="username">
           <el-input v-model="addManageData.username"></el-input>
         </el-form-item>
@@ -167,9 +167,7 @@ export default {
       rules: {
         name: [
           { required: true, message: '请输入项目名称', trigger: 'change' }
-        ]
-      },
-      rules2: {
+        ],
         username: [
           { required: true, message: '请输入用户名', trigger: 'change' }
         ]
@@ -189,6 +187,7 @@ export default {
   watch: {
     id(newVal, oldVal) {
       console.log(newVal, oldVal)
+      this.active = 0
       this.getdetails()
     }
   },
@@ -321,16 +320,20 @@ export default {
           }
       }
       if (!flag) { return }
-      this.$post('/admin/document/operator',{
-        user_name: this.addManageData.username,
-        document_id: this.id,
-        permission : this.addManageData.role,
+      this.$refs['addManageForm'].validate((valid) => {
+        if (valid) {
+          this.$post('/admin/document/operator',{
+            user_name: this.addManageData.username,
+            document_id: this.id,
+            permission : this.addManageData.role,
+          })
+            .then(() => {
+              this.getdetails()
+              this.$message('添加成功！')
+              this.showAddManage = false
+            })
+        }
       })
-        .then(() => {
-          this.getdetails()
-          this.$message('添加成功！')
-          this.showAddManage = false
-        })
     }
   }
 }
