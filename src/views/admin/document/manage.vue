@@ -25,15 +25,12 @@
             v-for="(item,index) in docList" :key="index"
             :style="{backgroundImage: 'url('+ item.cover +')'}"
             @click="goChapter(item.id)">
-            <div class="w7-card-title">{{item.name}}</div>
-            <div class="w7-card-time">{{format(item.operator.time)}} {{item.operator.name}}</div>
-            <div class="icon-show" v-if="!item.is_public">
-              <i class="wi wi-lock"></i>
+            <div class="w7-card-title">
+              {{item.name}}
+              <i class="wi wi-lock" v-if="!item.is_public"></i>
             </div>
+            <div class="w7-card-time">{{format(item.operator.time)}} {{item.operator.name}}</div>
             <div class="icon-box">
-              <el-tooltip effect="dark" content="私有" placement="bottom" v-if="!item.is_public">
-                <i class="wi wi-lock"></i>
-              </el-tooltip>
               <el-tooltip effect="dark" content="转让项目" placement="bottom" v-if="item.acl.has_manage">
                 <i class="wi wi-transfer" @click.stop="transferDoc(item.id)"></i>
               </el-tooltip>
@@ -274,9 +271,6 @@ export default {
     .w7-card-title {
       color: #3296fa;
     }
-    .icon-show {
-      display: none;
-    }
     .icon-box{
       display:block;
     }
@@ -289,6 +283,10 @@ export default {
     overflow: hidden;
     text-overflow:ellipsis;
     white-space: nowrap;
+    .wi-lock {
+      font-size: 16px;
+      color: #3296fa;
+    }
   }
   &-time {
     padding-top: 10px;
@@ -308,17 +306,6 @@ export default {
 }
 .card-box{
   margin-top:30px;
-}
-.icon-show {
-  position:absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 8px 7px;
-  text-align: right;
-  .wi {
-    color: #3296fa;
-  }
 }
 .icon-box{
   display:none;

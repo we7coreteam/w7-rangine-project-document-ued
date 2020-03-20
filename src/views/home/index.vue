@@ -805,20 +805,8 @@ a.toc-link {
               &:first-child {
                 margin-left: 0;
               }
-              &:hover {
-                color: #ffffff;
-                background-color: #3296fa;
+              &:hover, &.checked {
                 border-color: #3296fa;
-              }
-              &.checked {
-                color: #ffffff;
-                background-color: #3296fa;
-                border-color: #3296fa;
-                &:hover {
-                  color: #989898;
-                  background-color: #ffffff;
-                  border-color: #eeeeee;
-                }
               }
             }
           }
