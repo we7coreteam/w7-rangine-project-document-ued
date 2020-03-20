@@ -95,7 +95,7 @@
       </el-dialog>
     </div>
     <!-- 文档设置 -->
-    <el-dialog class="we7-dialog dialog-setting" title="项目设置" width="1000px" :visible.sync="showSetting" :close-on-click-modal="false">
+    <el-dialog class="we7-dialog dialog-setting" title="项目设置" width="1000px" :visible.sync="showSetting" :close-on-click-modal="false" :before-close="handleClose">
       <setting :id="settingDocId"></setting>
     </el-dialog>
   </div>
@@ -239,6 +239,10 @@ export default {
           return timestampFormat(time)
         }
       }
+    },
+    handleClose() {
+      this.getList()
+      this.showSetting = false
     }
   }
 }
@@ -259,6 +263,9 @@ export default {
   background: #e6f2ff;
   border: 1px solid #eeeeee;
   box-sizing: border-box;
+  background-position:  center;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   .wi {
     font-size: 20px;
     color: #989898;

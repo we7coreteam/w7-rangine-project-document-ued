@@ -134,7 +134,7 @@
       </div>
     </el-dialog>
     <!-- 文档设置 -->
-    <el-dialog class="we7-dialog dialog-setting" title="项目设置" width="1000px" :visible.sync="showSetting" :close-on-click-modal="false">
+    <el-dialog class="we7-dialog dialog-setting" title="项目设置" width="1000px" :visible.sync="showSetting" :close-on-click-modal="false" :before-close="handleClose">
       <setting :id="$route.params.id"></setting>
     </el-dialog>
   </el-container>
@@ -637,6 +637,10 @@ export default {
           this.getChapters()
           this.$message('设置默认文档成功！')
         })
+    },
+    handleClose() {
+      this.getChapters()
+      this.showSetting = false
     }
   }
 }
