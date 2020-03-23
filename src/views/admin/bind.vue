@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import axios from '@/utils/axios'
 export default {
   name: 'adminBind',
   data() {
