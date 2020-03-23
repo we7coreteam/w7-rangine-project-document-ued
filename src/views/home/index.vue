@@ -641,7 +641,6 @@ a.toc-link {
           padding: 0;
           padding-left: 5px;
           position: absolute;
-          width: 100%;
           top: 8px;
           bottom: 0;
           z-index: 2;
