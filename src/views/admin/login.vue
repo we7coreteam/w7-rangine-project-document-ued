@@ -18,7 +18,7 @@
             <span class="title">第三方账号登录</span>
             <div class="icon-list">
               <img class="icon-block"
-                v-for="icon in thirdPartyList" :key="icon.name" 
+                v-for="icon in thirdPartyList" :key="icon.name"
                 :src="icon.logo"
                 :title="icon.name"
                 @click="thirdPartyIconClick(icon.redirect_url)">
@@ -80,7 +80,11 @@ export default {
           if (res) {
             window.open(res, '_self')
           } else {
-            next()
+            if (!redirect_url) {
+              next()
+            } else {
+              window.open(redirect_url, '_self')
+            }
           }
         })
     }

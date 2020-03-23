@@ -42,7 +42,7 @@
       </div>
       <!-- 弹出框 -->
       <el-dialog class="w7-dialog" :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false" center>
-        <el-form :model="formData" ref="ruleForm" :rules="rules" status-icon label-width="105px" label-position="left">
+        <el-form :model="formData" ref="ruleForm" :rules="rules" class="w7-form__no-required-icon" status-icon label-width="105px" label-position="left">
           <template v-if="dialogType == 'name'">
             <el-form-item label="账号" prop="username">
               <el-input v-model="formData.username"></el-input>

@@ -60,7 +60,7 @@
           <div class="top">
             <el-button type="primary" plain @click="openAddManage">添加权限</el-button>
           </div>
-          <el-table class="w7-table" :data="details.operator" key="manageTable" :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
+          <el-table class="w7-table" :data="details.operator" key="manageTable" :header-cell-style="{background:'#f7f9fc',color:'#606266'}" max-height="390">
             <el-table-column prop="username" label="名称" width="300px"></el-table-column>
             <el-table-column label="身份" align="center">
               <template slot-scope="scope">
@@ -98,7 +98,7 @@
           </el-table>
         </div>
         <div class="history" v-if="active == 2">
-          <el-table class="w7-table" :data="historyList" key="historyTable">
+          <el-table class="w7-table" :data="historyList" key="historyTable" max-height="370">
             <el-table-column prop="remark" label="描述"></el-table-column>
             <el-table-column prop="time" label="时间" align="right"></el-table-column>
           </el-table>

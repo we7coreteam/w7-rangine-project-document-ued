@@ -25,7 +25,8 @@
             </div>
           </div>
           <el-table class="w7-table" :data="menuList" ref="multipleTable"
-            :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
+            :header-cell-style="{background:'#f7f9fc',color:'#606266'}"
+            :default-sort = "{prop: 'sort', order: 'ascending'}">
             <el-table-column label="菜单名称" prop="name"></el-table-column>
             <el-table-column label="排序" prop="sort"></el-table-column>
             <el-table-column label="操作" align="right">
@@ -65,7 +66,7 @@
           <el-form-item label="菜单名称" prop="name">
             <el-input v-model="menuData.name"></el-input>
           </el-form-item>
-          <el-form-item label="排序" prop="name">
+          <el-form-item label="排序" prop="sort">
             <el-input v-model="menuData.sort"></el-input>
             <div class="we7-help-block">排序为升序排序，数字越小，排名越靠前</div>
           </el-form-item>
@@ -152,9 +153,14 @@ export default {
           this.menuData = {}
         } else {
           this.dialogMenuTitle = '编辑菜单'
-          this.menuData = row
+          this.menuData = {
+            ...row
+          }
         }
         this.dialogMenu = true
+        this.$nextTick(()=>{
+          this.$refs.menuForm.resetFields()
+        })
       },
       confirm() {
         this.$refs.menuForm.validate((valid) => {
