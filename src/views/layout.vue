@@ -91,11 +91,11 @@ export default {
       }
     },
     getDocName() {
-      this.$post('/admin/document/detail', {
+      this.$post('/admin/chapter/detail', {
         document_id: this.$route.params.id
       })
         .then(res => {
-          this.docName = res.name
+          this.docName = res.document.name
         })
     },
     goto(name) {
