@@ -99,11 +99,7 @@
         </div>
         <div class="history" v-if="active == 2">
           <el-table class="w7-table" :data="historyList" key="historyTable">
-            <el-table-column label="描述">
-              <template slot-scope="scope">
-                {{scope.row.sharer_name}}分享链接{{scope.row.share_url}}给{{scope.row.user_name}}
-              </template>
-            </el-table-column>
+            <el-table-column prop="remark" label="描述"></el-table-column>
             <el-table-column prop="time" label="时间" align="right"></el-table-column>
           </el-table>
           <el-pagination
@@ -218,12 +214,12 @@ export default {
         })
     },
     getHistory() {
-      this.$post('/admin/share/all',{
+      this.$post('/admin/operate-log/get-by-document ',{
         document_id : this.id,
         page: this.currentPageHistory
       })
         .then(res => {
-          this.historyList = res.data
+          this.historyList = res.data || []
           this.pageCountHistory = res.page_count
           this.totalHistory = res.total
         })
