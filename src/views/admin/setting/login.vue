@@ -134,11 +134,10 @@ export default {
         data = {default_login_channel: this.default_login_channel}
       }
       this.$post('/admin/third-party-login/set-default-channel', data)
-        .then(res => {
+        .then(() => {
           this.$message('修改成功！')
-          if (this.loginMethod == 1) {
-            
-          }
+          // if (this.loginMethod == 1) {
+          // }
           this.dialogVisible = false
         })
     }

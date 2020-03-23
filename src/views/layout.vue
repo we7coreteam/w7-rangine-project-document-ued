@@ -60,10 +60,7 @@ export default {
     ...mapGetters(['UserInfo', 'NavMenu'])
   },
   watch: {
-    $route(to, from) {
-      // if (to.name == 'documentIndex' && from.name == 'homeChild') {
-      //   this.isRead = false
-      // }
+    $route(to) {
       if (to.name == 'homeChild') {
         this.isRead = true
       } else {
