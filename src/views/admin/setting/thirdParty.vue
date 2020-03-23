@@ -19,6 +19,9 @@
       </div>
       <div class="we7-panel-form__header">登录配置</div>
       <div class="we7-panel-form__body">
+        <el-form-item label="unionid">
+          <span>{{$route.query.id}}</span>
+        </el-form-item>
         <el-form-item label="第三方名称" prop="setting.name">
           <el-input v-model="formData.setting.name" v-if="editStatus && !formData.is_default"></el-input>
           <span v-else>{{formData.setting.name}}</span>
