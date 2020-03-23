@@ -41,7 +41,7 @@
             <i class="wi wi-star" :class="{'checked': scope.row.has_star}" @click="operStar(scope.row)"></i>
           </el-tooltip>
           <el-tooltip effect="dark" content="删除记录" placement="bottom">
-            <i class="wi wi-delete" @click="del(scope.row.id)"></i>
+            <i class="wi wi-delete" @click="del(scope.row.id, scope.row.document_id)"></i>
           </el-tooltip>
         </div>
       </el-table-column>
@@ -84,7 +84,7 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      this.$post('/admin/operate-log/all',{
+      this.$post('/admin/operate-log/get-by-user',{
         page: this.currentPage,
         name: this.keyword,
         time: this.time
@@ -101,14 +101,15 @@ export default {
         return timestampFormat(time)
       }
     },
-    del(id) {
+    del(id, document_id) {
       this.$confirm('是否要删除该条记录?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$post('/admin/operate-log/delete-by-documentid',{
-          document_id: id
+        this.$post('/admin/operate-log/delete-by-id',{
+          document_id: document_id,
+          operate_log_id: id
         })
           .then(() => {
             this.getList()
