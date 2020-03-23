@@ -65,12 +65,7 @@ export default new Router({
               path: 'involved',
               name: 'documentInvolved',
               component: () => import(/* webpackChunkName: "about" */ './views/admin/document/involved.vue'),
-            },
-            {
-              path: ':id',
-              name: 'manageSetting',
-              component: () => import(/* webpackChunkName: "about" */ './views/admin/document/manageSetting.vue')
-            },
+            }
           ]
         },
         {
