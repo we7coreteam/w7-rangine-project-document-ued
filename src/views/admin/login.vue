@@ -80,11 +80,7 @@ export default {
           if (res) {
             window.open(res, '_self')
           } else {
-            if (!redirect_url) {
-              next()
-            } else {
-              window.open(redirect_url, '_self')
-            }
+            next()
           }
         })
     }
