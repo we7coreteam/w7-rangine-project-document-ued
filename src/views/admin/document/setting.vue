@@ -98,13 +98,13 @@
           </el-table>
         </div>
         <div class="history" v-if="active == 2">
-          <el-table class="w7-table" :data="historyList" key="historyTable" max-height="370">
+          <el-table class="w7-table" ref="historyTableRef" :data="historyList" key="historyTable" max-height="370">
             <el-table-column prop="remark" label="描述"></el-table-column>
             <el-table-column prop="time" label="时间" align="right"></el-table-column>
           </el-table>
           <el-pagination
             background
-            @current-change = "historyList"
+            @current-change = "getHistory"
             layout="prev, pager, next, total"
             prev-text="上一页"
             next-text="下一页"
@@ -222,6 +222,7 @@ export default {
           this.historyList = res.data || []
           this.pageCountHistory = res.page_count
           this.totalHistory = res.total
+          this.$refs.historyTableRef.bodyWrapper.scrollTop = 0
         })
     },
     handleAvatarSuccess(res) {
