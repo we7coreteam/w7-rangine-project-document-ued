@@ -165,9 +165,6 @@ export default {
               if (this.dialogType == 'pass') {
                 this.$post('/common/auth/logout')
                   .then(() => {
-                    this.$router.push({
-                      name: 'adminLogin'
-                    })
                   })
               }
             })
