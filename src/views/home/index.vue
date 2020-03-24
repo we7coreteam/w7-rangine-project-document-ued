@@ -71,9 +71,9 @@
                     <i class="wi wi-link"></i>
                   </div>
                   </el-tooltip>
-                  <el-tooltip effect="dark" :content="articleContent.has_star ? '取消星标' : '添加星标'" placement="bottom">
+                  <el-tooltip effect="dark" :content="articleContent.star_id ? '取消星标' : '添加星标'" placement="bottom">
                     <div class="share-block"
-                      :class="{'checked': articleContent.has_star}"
+                      :class="{'checked': articleContent.star_id}"
                       @click="operStar()">
                       <i class="wi wi-star"></i>
                     </div>
@@ -429,7 +429,7 @@ export default {
       })
         .then(res => {
           this.shareUrl = res
-        })  
+        })
     },
     shareToWeibo() {
       var url = 'http://service.weibo.com/share/share.php?'
@@ -447,13 +447,18 @@ export default {
       this.$message('复制成功！')
     },
     operStar() {
-      let url = this.articleContent.has_star ? '/admin/star/delete' : '/admin/star/add'
-      this.$post(url, {
-        chapter_id: this.$route.query.id,
+      let url = this.articleContent.star_id ? '/admin/star/delete' : '/admin/star/add'
+      let data = {
         document_id: this.$route.params.id
-      })
-        .then(() => {
-          this.articleContent.has_star = !this.articleContent.has_star
+      }
+      if (this.articleContent.star_id) {
+        data['id'] = this.articleContent.star_id
+      } else {
+        data['chapter_id'] = this.$route.query.id
+      }
+      this.$post(url, data)
+        .then(res => {
+          this.articleContent.star_id = res.star_id || ''
         })
     }
   }

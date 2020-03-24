@@ -82,7 +82,7 @@ export default {
     cancel(item) {
        this.$post('/admin/star/delete',{
         document_id: item.document_id,
-        chapter_id: item.chapter_id
+        id: item.id
       })
         .then(() => {
           this.getList()

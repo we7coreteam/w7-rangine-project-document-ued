@@ -62,7 +62,7 @@
         </div>
       </el-dialog>
       <el-dialog class="w7-dialog" :title="dialogMenuTitle" :visible.sync="dialogMenu" :close-on-click-modal="false" center>
-        <el-form ref="menuForm" :model="menuData" :rules="rules" label-width="120px" label-position="left">
+        <el-form ref="menuForm" :model="menuData" :rules="rules" class="w7-form__no-required-icon" label-width="120px" label-position="left">
           <el-form-item label="菜单名称" prop="name">
             <el-input v-model="menuData.name"></el-input>
           </el-form-item>
@@ -153,9 +153,10 @@ export default {
           this.menuData = {}
         } else {
           this.dialogMenuTitle = '编辑菜单'
-          this.menuData = {
-            ...row
-          }
+          this.menuData['id'] = row.id
+          this.menuData['name'] = row.name
+          this.menuData['sort'] = row.sort
+          this.menuData['url'] = row.url
         }
         this.dialogMenu = true
         this.$nextTick(()=>{
