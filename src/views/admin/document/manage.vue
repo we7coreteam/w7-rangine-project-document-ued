@@ -15,7 +15,7 @@
           <el-select v-model="searchData.role" @change="getList">
             <el-option label="全部" value=""></el-option>
             <el-option label="我创建的" value="1"></el-option>
-            <el-option label="我参与的" value="2"></el-option>
+            <el-option label="我操作的" value="2"></el-option>
           </el-select>
         </div>
       </div>

@@ -61,7 +61,7 @@
           <el-button @click="dialogStyle = false">取 消</el-button>
         </div>
       </el-dialog>
-      <el-dialog class="w7-dialog" :title="dialogMenuTitle" :visible.sync="dialogMenu" :close-on-click-modal="false" center>
+      <el-dialog class="w7-dialog" :title="dialogMenuTitle" :visible.sync="dialogMenu" @close="closeDialogMenu" :close-on-click-modal="false" center>
         <el-form ref="menuForm" :model="menuData" :rules="rules" class="w7-form__no-required-icon" label-width="120px" label-position="left">
           <el-form-item label="菜单名称" prop="name">
             <el-input v-model="menuData.name"></el-input>
@@ -77,7 +77,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="confirm">确 定</el-button>
-          <el-button @click="dialogMenu = false">取 消</el-button>
+          <el-button @click="closeDialogMenu">取 消</el-button>
         </div>
       </el-dialog>
     </div>
@@ -106,7 +106,12 @@ export default {
         ],
         dialogMenu: false,
         dialogMenuTitle: '',
-        menuData: {},
+        menuData: {
+          id: '',
+          name: '',
+          sort: '',
+          url: ''
+        },
         rules: {
           name: [
             { required: true, message: '请填写菜单名称', trigger: 'blur' }
@@ -150,18 +155,27 @@ export default {
       openDialogMenu(type, row) {
         if (type == 'add') {
           this.dialogMenuTitle = '新增菜单'
-          this.menuData = {}
+          this.menuData = {
+            id: '',
+            name: '',
+            sort: '',
+            url: ''
+          }
         } else {
           this.dialogMenuTitle = '编辑菜单'
-          this.menuData['id'] = row.id
-          this.menuData['name'] = row.name
-          this.menuData['sort'] = row.sort
-          this.menuData['url'] = row.url
+          let newdata = JSON.parse(JSON.stringify(row))
+          this.menuData = {
+            id: newdata.id,
+            name:  newdata.name,
+            sort:  newdata.sort,
+            url:  newdata.url
+          }
         }
         this.dialogMenu = true
-        this.$nextTick(()=>{
-          this.$refs.menuForm.resetFields()
-        })
+      },
+      closeDialogMenu() {
+        this.$refs.menuForm.resetFields()
+        this.dialogMenu = false
       },
       confirm() {
         this.$refs.menuForm.validate((valid) => {
@@ -204,7 +218,6 @@ export default {
         })
       },
       handleClick() {
-
       }
     }
 }
