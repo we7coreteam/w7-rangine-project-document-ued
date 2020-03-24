@@ -132,9 +132,13 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import QrcodeVue from 'qrcode.vue'
 import tocbot from 'tocbot'
 export default {
+  components: {
+    QrcodeVue
+  },
   data() {
     return {
       document_id: this.$route.params.id,
@@ -158,8 +162,8 @@ export default {
       showShareWechat: false
     }
   },
-  components: {
-    QrcodeVue
+  computed: {
+    ...mapGetters({ UserInfo: 'UserInfo' })
   },
   watch: {
     $route: {
@@ -338,7 +342,11 @@ export default {
             }
           })
           this.articleFlag = true
-          this.getShareKey()
+          if (this.UserInfo.username) {
+            this.getShareKey()
+          } else {
+            this.shareUrl = window.location.href
+          }
         })
     },
     initToc(option) {
