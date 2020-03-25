@@ -84,7 +84,7 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      this.$post('/admin/operate-log/get-by-user',{
+      this.$post('/admin/operate-log/get-user-read-log',{
         page: this.currentPage,
         name: this.keyword,
         time: this.time
