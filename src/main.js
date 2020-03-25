@@ -26,9 +26,7 @@ import { Tooltip } from 'element-ui'
 import { Backtop } from 'element-ui'
 import { Scrollbar } from 'element-ui'
 import { Upload } from 'element-ui'
-import mavonEditor from 'mavon-editor'
 import VueClipboard from 'vue-clipboard2'
-import 'mavon-editor/dist/css/index.css'
 import './assets/scss/element-variables.scss'
 
 Vue.use(Form)
@@ -69,7 +67,6 @@ Vue.use(Tooltip)
 Vue.use(Backtop)
 Vue.use(Scrollbar)
 Vue.use(Upload)
-Vue.use(mavonEditor)
 Vue.use(VueClipboard)
 
 Vue.prototype.$message = Message;

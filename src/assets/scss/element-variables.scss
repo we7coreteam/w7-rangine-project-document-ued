@@ -532,19 +532,17 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   }
 }
 
-//markdown
-.hljs{
-  background:#eee!important;
-}
-.markdown-body {
+//tui.editor 显示样式修改
+.te-md-container .CodeMirror {
   font-size: 14px!important;
-  pre, textarea {
-    font-size: 14px!important;
-  }
-  code{
-    background-color:#eee!important;
-  }
-  pre, .highlight pre {
-    background-color:#eee!important;
+}
+.tui-editor-contents {
+  font-size: 14px!important;
+  a {
+    text-decoration: none!important;
+    color: #3296fa!important;
+    &:hover {
+      text-decoration: underline!important;
+    }
   }
 }

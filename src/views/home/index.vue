@@ -51,7 +51,7 @@
           <div class="warpper">
             <div class="article" v-show="articleFlag">
               <p class="title">{{ articleContent.name }}</p>
-              <div class="info">
+              <div class="info" :class="{'paddding-right290': isPaddingRight}">
                 <span class="time" v-show="articleContent.updated_at">更新时间：{{ articleContent.updated_at }}</span>
                 <span class="author" v-show="articleContent.author.username">作者：{{ articleContent.author.username }}</span>
                 <div class="share" v-show="articleContent.content">
@@ -81,8 +81,8 @@
                 </div>
               </div>
               <div class="markdown-body" >
-                <div class="markdown-content" v-html="articleContent.content"></div>
-                <el-scrollbar class="markdown-menu ">
+                <div id="viewer" :class="{'paddding-right290': isPaddingRight}"></div>
+                <el-scrollbar class="markdown-menu" v-show="isPaddingRight">
                   <div class="js-toc toc toc-right"></div>
                 </el-scrollbar>
               </div>
@@ -90,7 +90,6 @@
                 <router-link class="prev item" v-if=""></router-link>
                 <router-link class="nxet item"></router-link>
               </div> -->
-              <mavon-editor ref="mavonEditor" v-show="false"></mavon-editor>
             </div>
             <div class="article-list" v-if="!articleFlag">
               <el-button class="back" type="text" @click="articleFlag = !articleFlag">返回</el-button>
@@ -132,6 +131,11 @@
 </template>
 
 <script>
+import '@toast-ui/editor/dist/toastui-editor-viewer.css';
+import Viewer from '@toast-ui/editor/dist/toastui-editor-viewer';
+import 'highlight.js/styles/github.css';
+import codeSyntaxHightlight from '@toast-ui/editor-plugin-code-syntax-highlight';
+import hljs from 'highlight.js';
 import { mapGetters } from 'vuex'
 import QrcodeVue from 'qrcode.vue'
 import tocbot from 'tocbot'
@@ -159,8 +163,16 @@ export default {
       articleInfoList: [],
       filterWord: '',
       shareUrl: '',
-      showShareWechat: false
+      showShareWechat: false,
+      viewer: '',
+      isPaddingRight: false
     }
+  },
+  mounted () {
+    this.viewer = new Viewer({
+      el: document.querySelector('#viewer'),
+      plugins: [[codeSyntaxHightlight, { hljs }]]
+    })
   },
   computed: {
     ...mapGetters({ UserInfo: 'UserInfo' })
@@ -321,15 +333,8 @@ export default {
       this.$post('/document/chapter/detail', data)
         .then(res => {
           this.articleContent = res
-          // this.articleContent.content = res.content ? this.$refs.mavonEditor.markdownIt.render('<div class="markdown-content">\n \n'+res.content+'\n \n</div>' + '<div class="markdown-menu"><el-scrollbar>\n \n @[toc]( ) \n \n</el-scrollbar></div>\n \n' ) : ''
-          this.articleContent.content = res.content ? this.$refs.mavonEditor.markdownIt.render(res.content) : ''
+          this.viewer.setMarkdown(this.articleContent.content)
           this.$nextTick(() => {
-            // let id = this.$route.hash.substr(1)
-            // let jump = document.getElementById(id)
-            // let total = jump.offsetTop
-            // window.scroll({
-            //   top: total
-            // })
             this.initToc()
             let hash = this.$route.hash
             if (hash) {
@@ -351,38 +356,41 @@ export default {
     },
     initToc(option) {
       this.$nextTick(() => {
-        var content = document.querySelector('.markdown-content')
+        var content = document.querySelector('.tui-editor-contents')
         var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
-        var headingMap = {}
-        Array.prototype.forEach.call(headings, function (heading) {
-          var id = heading.id ? heading.id : ('h' + heading.querySelector('a').id.replace(/[\!\@\#\$\%\^\&\*\(\)\:]/ig, ''))
-          headingMap[id] = !isNaN(headingMap[id]) ? ++headingMap[id] : 0
-          if (headingMap[id]) {
-            heading.id = id + '-' + headingMap[id]
-          } else {
-            heading.id = id
+        this.isPaddingRight = headings.length > 0
+        if (headings.length) {
+          var headingMap = {}
+          Array.prototype.forEach.call(headings, function (heading) {
+            var id = heading.id ? heading.id : ('h' + heading.id.replace(/[\!\@\#\$\%\^\&\*\(\)\:]/ig, ''))
+            headingMap[id] = !isNaN(headingMap[id]) ? ++headingMap[id] : 0
+            if (headingMap[id]) {
+              heading.id = id + '-' + headingMap[id]
+            } else {
+              heading.id = id
+            }
+          })
+          let defaultOption = {
+            contentSelector: '.tui-editor-contents',
+            tocSelector:'.js-toc',
+            headingSelector: 'h1, h2, h3 ',
+            // scrollSmooth: !0,
+            // scrollSmoothDuration: 500,
+            // scrollContainer: '.js-toc',
+            // scrollSmoothOffset: -80,
+            // headingsOffset: -500,
+            // hasInnerContainers: true,
+            scrollEndCallback: () => {
+              document.body.style.paddingBottom = '1px'
+              document.querySelector('.markdown-menu .el-scrollbar__wrap').scrollTop = document.querySelector('.is-active-li') ? (document.querySelector('.is-active-li').offsetTop - 200) : 0
+              setTimeout(() => {
+                document.body.style.paddingBottom = 0
+              }, 100)
+            }
           }
-        })
-        let defaultOption = {
-          contentSelector: '.markdown-content',
-          tocSelector:'.js-toc',
-          headingSelector: 'h1, h2, h3 ',
-          // scrollSmooth: !0,
-          // scrollSmoothDuration: 500,
-          // scrollContainer: '.js-toc',
-          // scrollSmoothOffset: -80,
-          // headingsOffset: -500,
-          // hasInnerContainers: true,
-          scrollEndCallback: () => {
-            document.body.style.paddingBottom = '1px'
-            document.querySelector('.markdown-menu .el-scrollbar__wrap').scrollTop = document.querySelector('.is-active-li') ? (document.querySelector('.is-active-li').offsetTop - 200) : 0
-            setTimeout(() => {
-              document.body.style.paddingBottom = 0
-            }, 100)
-          }
+          option = Object.assign(defaultOption, option)
+          tocbot.init(option)
         }
-        option = Object.assign(defaultOption, option)
-        tocbot.init(option)
       })
     },
     selectNode(id) {
@@ -402,7 +410,7 @@ export default {
         .then(res => {
           this.articleFlag = false
           res.forEach(articleInfo => {
-            articleInfo.content = this.$refs.mavonEditor.markdownIt.render(articleInfo.content)
+            // articleInfo.content = this.$refs.mavonEditor.markdownIt.render(articleInfo.content)
             //html转成文字
             articleInfo.content = this.htmlToWord(articleInfo.content)
             //关键字变亮
@@ -475,74 +483,74 @@ export default {
 
 <style lang="scss">
 body {
-    background-color: #FFF
+  background-color: #FFF
 }
 
 .transition--300 {
-    transition: all 300ms ease-in-out
+  transition: all 300ms ease-in-out
 }
 
 
 .toc {
-    overflow-y: auto
+  overflow-y: auto
 }
 
 .toc>.toc-list {
-    overflow: hidden;
-    position: relative
+  overflow: hidden;
+  position: relative
 }
 
 .toc>.toc-list li {
-    list-style: none
+  list-style: none
 }
 
 .toc-list {
-    margin: 0;
-    padding-left: 10px
+  margin: 0;
+  padding-left: 10px
 }
 
 a.toc-link {
-    color: currentColor;
-    height: 100%
+  color: currentColor;
+  height: 100%
 }
 
 .is-collapsible {
-    // max-height: 1000px;
-    overflow: hidden;
-    transition: all 300ms ease-in-out
+  // max-height: 1000px;
+  overflow: hidden;
+  transition: all 300ms ease-in-out
 }
 
 .is-collapsed {
-    max-height: 0
+  max-height: 0
 }
 
 .is-position-fixed {
-    position: fixed !important;
-    top: 0
+  position: fixed !important;
+  top: 0
 }
 
 .is-active-link {
-    // font-weight: 700
-    color: #3296fa !important;
+  // font-weight: 700
+  color: #3296fa !important;
 }
 
 .toc-link::before {
-    background-color: #EEE;
-    content: ' ';
-    display: inline-block;
-    height: inherit;
-    left: 0;
-    margin-top: -8px;
-    position: absolute;
-    width: 2px
+  background-color: #EEE;
+  content: ' ';
+  display: inline-block;
+  height: inherit;
+  left: 0;
+  margin-top: -8px;
+  position: absolute;
+  width: 2px
 }
 
 .is-active-link::before {
-    background-color: #3296fa;
+  background-color: #3296fa;
 }
-
 #home-index {
   min-height: calc(100vh - 140px);
+  overflow: hidden;
 }
 .chapter-warpper {
   background: linear-gradient(to right, #f7f8fa 50%, #ffffff 50%);
@@ -736,12 +744,10 @@ a.toc-link {
       margin-top: 48px;
       margin-left: 50px;
       max-width: 1200px;
+      .paddding-right290 {
+        padding-right: 290px;
+      }
       .markdown-body {
-        .markdown-content {
-          margin-right: 30px;
-          padding-right: 290px;
-          width: 100%;
-        }
         .markdown-menu {
           width: 240px;
           font-size: 14px;
@@ -795,7 +801,6 @@ a.toc-link {
           display: flex;
           align-items: center;
           margin: 15px 0 25px 0;
-          padding-right: 290px;
           .time {
             margin-right: 40px;
           }
@@ -805,7 +810,7 @@ a.toc-link {
           .share {
             display: flex;
             &-block {
-              margin-left: 5px; 
+              margin-left: 5px;
               width: 30px;
               height: 30px;
               color: #989898;
@@ -878,24 +883,6 @@ a.toc-link {
     }
   }
 }
-.hljs{
-  background:#eee!important;
-  // color:#fff!important;
-}
-.markdown-body {
-  .markdown-content {
-    width: 0;
-    *:focus {
-      outline: none;
-    }
-  }
-  code{
-    background-color:#eee!important;
-  }
-  pre, .highlight pre {
-    background-color:#eee!important;
-  }
-}
 .w7-top {
   width: 40px;
   height: 42px;
@@ -910,7 +897,7 @@ a.toc-link {
   }
 }
 /* 简单适配手机端 */
-@media screen and (max-width: 500px) { 
+@media screen and (max-width: 500px) {
   .admin-view > .el-header, .w7-aside-home, .markdown-menu, .share{
     display: none !important;
   }
@@ -935,5 +922,5 @@ a.toc-link {
   .home-container .el-main .warpper .article .info .author {
     text-align: right;
   }
-} 
+}
 </style>
