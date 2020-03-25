@@ -163,9 +163,7 @@ export default {
               }
               this.dialogVisible = false
               if (this.dialogType == 'pass') {
-                this.$post('/common/auth/logout')
-                  .then(() => {
-                  })
+                window.location.href = window.location.origin + "/common/auth/logout"
               }
             })
         }
