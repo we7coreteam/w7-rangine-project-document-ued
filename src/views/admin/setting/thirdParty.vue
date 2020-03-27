@@ -48,12 +48,12 @@
           <el-input v-model="formData.setting.secret_key" v-if="editStatus"></el-input>
           <span v-else>{{formData.setting.secret_key}}</span>
         </el-form-item>
-        <el-form-item label="ACCESSTOKEN  API地址" prop="setting.access_token_url">
-          <el-input v-model="formData.setting.access_token_url" v-if="editStatus && !formData.is_default"></el-input>
+        <el-form-item label="ACCESSTOKEN  API地址" prop="setting.access_token_url" v-if="!formData.is_default">
+          <el-input v-model="formData.setting.access_token_url" v-if="editStatus"></el-input>
           <span v-else>{{formData.setting.access_token_url}}</span>
         </el-form-item>
-        <el-form-item label="获取用户信息  API地址" prop="setting.user_info_url">
-          <el-input v-model="formData.setting.user_info_url" v-if="editStatus && !formData.is_default"></el-input>
+        <el-form-item label="获取用户信息  API地址" prop="setting.user_info_url" v-if="!formData.is_default">
+          <el-input v-model="formData.setting.user_info_url" v-if="editStatus"></el-input>
           <span v-else>{{formData.setting.user_info_url}}</span>
         </el-form-item>
         <el-form-item label="回调地址" v-if="formData.setting.name == 'QQ'">
