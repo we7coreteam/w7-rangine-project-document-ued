@@ -67,14 +67,16 @@
         </div>
         <div class="we7-panel-form__header">
           <span>转换功能</span>
-          <span><i class="el-icon-info"></i>文档系统需要用户名，id的字段名是username、uid，请根据第三方系统对应的字段名进行转换。</span>
+          <!-- <span><i class="el-icon-info"></i>文档系统需要用户名，id的字段名是username、uid，请根据第三方系统对应的字段名进行转换。</span> -->
         </div>
         <div class="we7-panel-form__body edit">
           <el-form-item label="uid" label-width="290px">
             <el-input v-model="item.convert.uid"></el-input>
+            <div class="we7-help-block">请填写第三方系统用户id的字段</div>
           </el-form-item>
           <el-form-item label="username" label-width="290px">
             <el-input v-model="item.convert.username"></el-input>
+            <div class="we7-help-block">请填写第三方系统用户名的字段</div>
           </el-form-item>
         </div>
       </div>
