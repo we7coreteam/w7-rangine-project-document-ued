@@ -7,21 +7,41 @@ module.exports = {
   outputDir: resolve('../document-apiserver/public'), // 构建目录
   assetsDir: '', //静态资源目录
   devServer: {
+    host: '0.0.0.0',
+    sockHost: 'http://localhost:8080/',
+    disableHostCheck: true,
     proxy: {
-      '/admin': {
-        target: 'http://172.16.1.13:98/',
+      '/': {
+        target: 'http://192.168.168.31:99/',
         // secure: false,
-        changeOrigin: true
+        changeOrigin: true,
+        pathRewrite: {
+          '^/': '',
+        },
+      },
+      '/admin': {
+        target: 'http://192.168.168.31:99/',
+        // secure: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/admin': '',
+        },
       },
       '/client': {
-        target: 'http://172.16.1.13:98/',
+        target: 'http://192.168.168.31:99/',
         // secure: false,
-        changeOrigin: true
+        changeOrigin: true,
+        pathRewrite: {
+          '^/client': '',
+        }
       },
       js: {
-        target: 'http://172.16.1.13:98/',
+        target: 'http://192.168.168.31:99/',
         // secure: false,
-        changeOrigin: true
+        changeOrigin: true,
+        pathRewrite: {
+          '^/js': '',
+        }
       }
     }
   },
