@@ -1,104 +1,129 @@
 <template>
-  <div>
-    <h3 class="page-head">
-      <router-link to='/admin/user'><i class="el-icon-arrow-left"></i>用户管理</router-link>/基本信息
-    </h3>
-    <div class="title">基本信息</div>
+  <div class="container">
+    <div class="page-head">
+      <router-link to='/admin/user'><i class="el-icon-arrow-left"></i><span style="color:#4da4fb">用户管理</span></router-link>/<span>{{$route.params.id ? '编辑用户' : '添加用户'}}</span>
+    </div>
+    <div class="title" v-if="!$route.params.id">
+      <span class="active">1.添加成员</span>
+      <div class="title-line"></div>
+      <span :class="{ active:!firstPage }">2.设置权限</span>
+    </div>
     <div class="content">
-      <el-form ref="form" :model="formData" label-width="80px" :label-position="'left'">
-        <el-form-item label="用户账号">
-          <el-input v-model="formData.username" ></el-input>
-        </el-form-item>
-        <el-form-item label="密码">
-          <el-input v-model="formData.userpass" ></el-input>
-        </el-form-item>
-        <el-form-item label="确认密码">
-          <el-input v-model="formData.confirm_userpass" ></el-input>
-        </el-form-item>
-        <el-form-item label="备注">
-          <el-input v-model="formData.remark" type="textarea" :rows="4" ></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit">保存</el-button>
-        </el-form-item>
-      </el-form>
+      <template v-if="firstPage">
+        <el-form ref="ruleForm" :model="formData" :rules="rules" label-width="80px" :label-position="'left'" style="width:420px;">
+          <el-form-item label="用户账号" prop="username">
+            <el-input v-model="formData.username" ></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="userpass">
+            <el-input v-model="formData.userpass" type="password"></el-input>
+          </el-form-item>
+          <el-form-item label="确认密码" prop="confirm_userpass">
+            <el-input v-model="formData.confirm_userpass" type="password"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="onSubmit">下一步</el-button>
+          </el-form-item>
+        </el-form>
+      </template>
+      <template v-else>
+        <permission :user_id="user_id"></permission>
+      </template>
     </div>
   </div>
 </template>
 
 <script>
+import permission from './permission'
 export default {
+  components: {
+    permission
+  },
   data() {
+    var validatePass = (rule, val, callback) => {
+      if (val === '') {
+        callback(new Error('请输入密码'));
+      } else {
+        if (this.formData.confirm_userpass !== '') {
+          this.$refs.ruleForm.validateField('confirm_userpass');
+        }
+        callback();
+      }
+    };
+    var validatePass2 = (rule, val, callback) => {
+      if (val === '') {
+        callback(new Error('请再次输入密码'));
+      } else if (val !== this.formData.userpass) {
+        callback(new Error('两次输入密码不一致!'));
+      } else {
+        callback();
+      }
+    };
     return {
+      rules: {
+        username: [
+          { required: true, message: '请输入用户账号', trigger: 'blur' }
+        ],
+        userpass: [
+          { required: true, validator: validatePass, trigger: 'blur' }
+        ],
+        confirm_userpass: [
+          { required: true, validator: validatePass2, trigger: 'blur' }
+        ]
+      },
+      firstPage: true,
       formData: {
         id : this.$route.params.id,
         username: '',
         userpass: '',
-        confirm_userpass: '',
-        remark: ''
-      }
-    }
-  },
-  methods: {
-    onSubmit() {
-      if(this.formData.userpass !== this.formData.confirm_userpass) {
-        this.$message('两次密码不一致，请重新输入！')
-        return
-      }
-      if (this.$route.params.id) {
-        this.$post('/admin/user/update', this.formData)
-          .then(() => {
-            this.$message('修改成功！')
-          })
-      }else {
-        this.$post('/admin/user/add', this.formData)
-          .then(() => {
-            this.$message('保存成功！')
-          })
-        }
-    },
-    getDetailsUser() {
-      this.$post('/admin/user/detail-by-id',{
-        id: this.formData.id
-      })
-        .then(res => {
-          this.formData.username = res.username
-          this.formData.remark = res.remark
-        })
+        confirm_userpass: ''
+      },
+      user_id: ''//创建用户id
     }
   },
   created() {
-    if(this.$route.params.id) {
-      this.getDetailsUser()
+      if(this.$route.params.id) {
+        this.user_id = this.$route.params.id
+        this.firstPage = false
+      }
+  },
+  methods: {
+    onSubmit() {
+      this.$refs['ruleForm'].validate((valid) => {
+          if (valid) {
+            this.$post('/admin/user/add', this.formData)
+              .then((res) => {
+                this.$message('创建成功！')
+                this.user_id = res
+                this.firstPage = false
+              })
+          }
+        })
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.container{
+  padding: 0 40px;
+}
 .title {
+  margin-bottom: 30px;
   width: 100%;
   height: 30px;
   font-size: 14px ;
-  color: #3296fa;
-  line-height: 30px;
-  background-color: #f4f5f9;
-  text-align: center;
-}
-.content {
-  width: 500px;
-  margin-top:69px;
-  input {
-    border-radius: 2px;
-    border: solid 1px #eeeeee;
+  background-color: #fcfcfc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .title-line{
+    width:110px;
+    height:2px;
+    background:#3296fa;
+    margin:0 30px;
   }
-  /deep/ .el-input__inner {
-    height: 35px;
-  }
-  button {
-    width: 120px;
-    height: 35px;
-    padding: 9px 20px;
+  .active{
+    color: #3296fa;
   }
 }
 </style>

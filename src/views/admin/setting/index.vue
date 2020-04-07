@@ -1,44 +1,49 @@
 <template>
-  <div>
-    <h3 class="page-head">
-      <router-link to="/admin/setting">
-        <i class="el-icon-arrow-left"></i>系统管理
-      </router-link>/存储设置
-    </h3>
-    <div class="title">腾讯云存储</div>
-    <div class="content">
-      <el-form ref="form" :model="formData" :rules="rules" label-width="120px">
+  <div class="setting-store">
+    <div class="page-head">腾讯云存储</div>
+    <el-form ref="form" :model="formData" :rules="rules" label-position="left" class="we7-panel-form" :class="{'edit': editStatus}" label-width="120px">
+      <div class="we7-panel-form__header">腾讯云存储</div>
+      <div class="we7-panel-form__body">
         <el-form-item label="APPID" prop="app_id">
-          <el-input v-model="formData.app_id" placeholder="APPID 是您项目的唯一ID"></el-input>
+          <el-input v-model="formData.app_id" placeholder="APPID 是您项目的唯一ID" v-if="editStatus"></el-input>
+          <span v-else>{{formData.app_id}}</span>
         </el-form-item>
         <el-form-item label="SecretID" prop="secret_id">
-          <el-input v-model="formData.secret_id" placeholder="SecretID 是您项目的安全密钥，具有该账户完全的权限，请妥善保管"></el-input>
+          <el-input v-model="formData.secret_id" placeholder="SecretID 是您项目的安全密钥，具有该账户完全的权限，请妥善保管" v-if="editStatus"></el-input>
+          <span v-else>{{formData.secret_id}}</span>
         </el-form-item>
         <el-form-item label="SecretKEY" prop="secret_key">
-          <el-input v-model="formData.secret_key" placeholder="SecretKEY 是您项目的安全密钥，具有该账户完全的权限，请妥善保管"></el-input>
+          <el-input v-model="formData.secret_key" placeholder="SecretKEY 是您项目的安全密钥，具有该账户完全的权限，请妥善保管" v-if="editStatus"></el-input>
+          <span v-else>{{formData.secret_key}}</span>
         </el-form-item>
         <el-form-item label="Bucket" prop="bucket">
-          <el-input v-model="formData.bucket" placeholder="请保证bucket为可公共读取的"></el-input>
+          <el-input v-model="formData.bucket" placeholder="请保证bucket为可公共读取的" v-if="editStatus"></el-input>
+          <span v-else>{{formData.bucket}}</span>
         </el-form-item>
         <el-form-item label="所属地域" prop="region">
-          <!-- <el-input v-model="formData.region"></el-input> -->
-          <el-select v-model="formData.region" placeholder="所属地域">
+          <el-select v-model="formData.region" placeholder="所属地域" v-if="editStatus">
             <el-option v-for="(region, key) in regionList" :value="key" :key="key" :label="region"></el-option>
           </el-select>
+          <span v-else>{{regionList[formData.region]}}</span>
         </el-form-item>
         <el-form-item label="Url" prop="url">
-          <el-input v-model="formData.url" placeholder="腾讯云支持用户自定义访问域名。注：url结尾不加 ‘/’例：http://abc.com"></el-input>
-          <div class="">不填写则使用默认的地址<span v-if="formData.app_id && formData.region && formData.bucket">{{formData.bucket + '-' + formData.app_id + '.cos.'+ formData.region +'.myqcloud.com'}}</span>
+          <el-input v-model="formData.url" placeholder="腾讯云支持用户自定义访问域名。注：url结尾不加 ‘/’例：http://abc.com" v-if="editStatus"></el-input>
+          <span v-else>{{formData.url}}</span>
+          <div class="">
+            不填写则使用默认的地址<span v-if="formData.app_id && formData.region && formData.bucket">{{formData.bucket + '-' + formData.app_id + '.cos.'+ formData.region +'.myqcloud.com'}}</span>
           </div>
         </el-form-item>
-         <el-form-item label="保存目录" prop="path">
-          <el-input v-model="formData.path" placeholder="指定保存目录后，上传图片后会在COS中新建相应的目录，保存图片方便管理"></el-input>
+        <el-form-item label="保存目录" prop="path">
+          <el-input v-model="formData.path" placeholder="指定保存目录后，上传图片后会在COS中新建相应的目录，保存图片方便管理" v-if="editStatus"></el-input>
+          <span v-else>{{formData.path}}</span>
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit">保存</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+      </div>
+    </el-form>
+    <el-button type="primary" @click="editStatus = true" v-if="!editStatus">编辑</el-button>
+    <template v-if="editStatus">
+      <el-button type="primary" @click="onSubmit">保存</el-button>
+      <el-button @click="editStatus = false">取消</el-button>
+    </template>
   </div>
 </template>
 
@@ -46,6 +51,7 @@
 export default {
   data() {
     return {
+      editStatus: false,
       formData: {
         key: 'cloud_cosv5',
         app_id: '',
@@ -93,16 +99,17 @@ export default {
   },
   methods: {
     init() {
-      this.$post('/admin/setting/show', { key: 'cloud_cosv5' })
+      this.$post('/admin/setting/cos', {})
         .then(res => {
-          this.formData = Object.assign(this.formData, res.value)
+          this.formData = Object.assign(this.formData, res.setting);
+          this.formData.key = res.key
         })
         .catch(() => {})
     },
     onSubmit() {
       this.$refs['form'].validate(valid => {
         if (valid) {
-          this.$post('/admin/setting/save', this.formData)
+          this.$post('/admin/setting/save', {'key': this.formData['key'], 'setting' : this.formData})
             .then(() => {
               this.$message('保存成功！')
             })
@@ -115,30 +122,10 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.title {
-  width: 100%;
-  height: 30px;
-  font-size: 14px;
-  color: #3296fa;
-  line-height: 30px;
-  background-color: #f4f5f9;
-  text-align: center;
-}
-.content {
-  width: 900px;
-  margin-top: 69px;
-  input {
-    border-radius: 2px;
-    border: solid 1px #eeeeee;
-  }
-  /deep/ .el-input__inner {
-    height: 35px;
-  }
-  button {
-    width: 120px;
-    height: 35px;
-    padding: 9px 20px;
+<style lang="scss">
+.setting-store {
+  .page-head {
+    padding-bottom: 0;
   }
 }
 </style>
