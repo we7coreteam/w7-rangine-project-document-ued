@@ -7,40 +7,17 @@ module.exports = {
   outputDir: resolve('../document-apiserver/public'), // 构建目录
   assetsDir: '', //静态资源目录
   devServer: {
-    proxy: {
-      '/': {
-        target: 'http://192.168.168.31:99/',
-        // secure: false,
-        changeOrigin: true,
-        pathRewrite: {
-          '^/': '',
-        },
-      },
-      // '/admin': {
-      //   target: 'http://192.168.168.31:99/',
-      //   // secure: false,
-      //   changeOrigin: true,
-      //   pathRewrite: {
-      //     '^/admin': '',
-      //   },
-      // },
-      // '/client': {
-      //   target: 'http://192.168.168.31:99/',
-      //   // secure: false,
-      //   changeOrigin: true,
-      //   pathRewrite: {
-      //     '^/client': '',
-      //   }
-      // },
-      // js: {
-      //   target: 'http://192.168.168.31:99/',
-      //   // secure: false,
-      //   changeOrigin: true,
-      //   pathRewrite: {
-      //     '^/js': '',
-      //   }
-      // }
-    }
+    proxy: 'http://192.168.168.23:99/',
+    // proxy: {
+    //   '/api': {
+    //     target: 'http://192.168.168.23:99/',
+    //     // secure: false,
+    //     changeOrigin: true,
+    //     // pathRewrite: {
+    //     //   '^/api': '',
+    //     // },
+    //   }
+    // }
   },
   chainWebpack: config => {
     config.resolve.alias.set('@', resolve('src'))
