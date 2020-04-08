@@ -188,7 +188,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({ UserInfo: 'UserInfo' })
+    ...mapGetters({ UserInfo: 'UserInfo' }),
   },
   watch: {
     filterText(val) {
@@ -258,26 +258,40 @@ export default {
     },
     //保存操作记录
     setOperRecord (obj) {
-      //当前用户下的所有项目tree记录
-      let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
-      let record = allRecords['document_' + this.$route.params.id]
-      if (obj.is_dir) {//如果是目录
-        let index = record.defaultExpanded.findIndex( item => item == obj.id)
-        if (index > -1) {
-          record.defaultExpanded.splice(index, 1)
-        } else {
-          record.defaultExpanded.push(obj.id)
+      // console.log(this.UserInfo);
+      const isAdd = this.$route.query.type;
+      const id = this.$route.params.id;
+
+      if (isAdd == 'add') {
+        const records = {};
+        records['document_' + id] = {
+          defaultExpanded: [],
+          defaultSelect: ""
         }
+        localStorage.setItem('we7_doc_user_' + this.UserInfo.id, JSON.stringify(records))
       } else {
-        record.defaultSelect = obj.id
+        //当前用户下的所有项目tree记录
+        let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
+        let record = allRecords['document_' + this.$route.params.id];
+
+        if (obj.is_dir) {//如果是目录
+          let index = record.defaultExpanded.findIndex( item => item == obj.id)
+          if (index > -1) {
+            record.defaultExpanded.splice(index, 1)
+          } else {
+            record.defaultExpanded.push(obj.id)
+          }
+        } else {
+          record.defaultSelect = obj.id
+        }
+        localStorage.setItem('we7_doc_user_' + this.UserInfo.id, JSON.stringify(allRecords))
       }
-      localStorage.setItem('we7_doc_user_' + this.UserInfo.id, JSON.stringify(allRecords))
+
     },
     getChapters() {
       this.$post('/admin/chapter/detail', {
         document_id: this.$route.params.id
-      })
-        .then(res => {
+      }).then(res => {
           this.docName = res.document.name
           this.has_manage = res.acl.has_manage
           this.chapters = this.initTreeData(res.catalog)
@@ -289,6 +303,9 @@ export default {
               //展开
               let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
               let record = allRecords['document_' + this.$route.params.id]
+
+              console.log('record');
+              console.log(record);
               this.defaultExpanded = record.defaultExpanded
               this.defaultExpanded.push(this.$refs.chaptersTree.getCurrentNode().id)
             })

@@ -106,8 +106,9 @@
 
 <script>
   import {timestampFormat} from '@/utils/utils'
-  import setting from './setting.vue'
+  import { createDoc } from '@/api/api'
 
+  import setting from './setting.vue'
   export default {
     name: 'docIndex',
     components: {
@@ -156,7 +157,7 @@
           })
       },
       createDoc() {
-        this.$post('/admin/document/create', {
+        createDoc({
           name: this.name,
           is_public: this.radio
         }).then(res => {
@@ -164,6 +165,15 @@
           this.dialogDocInfoVisible = false;
           this.goChapter(res, true)
         })
+
+        // this.$post('/admin/document/create', {
+        //   name: this.name,
+        //   is_public: this.radio
+        // }).then(res => {
+        //   this.$message('创建成功！')
+        //   this.dialogDocInfoVisible = false;
+        //   this.goChapter(res, true)
+        // })
       },
       removeDoc(id) {
         this.$confirm('确定删除该文档吗?', '提示', {
