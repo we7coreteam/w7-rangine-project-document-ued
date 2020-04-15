@@ -92,6 +92,8 @@
               </div> -->
               <mavon-editor ref="mavonEditor" v-show="false"></mavon-editor>
             </div>
+
+
             <div class="article-list" v-if="!articleFlag">
               <el-button class="back" type="text" @click="articleFlag = !articleFlag">返回</el-button>
               <p class="number-result">{{articleInfoList.length}}条结果"{{keyword}}"</p>
@@ -216,7 +218,7 @@ export default {
         document_id: this.document_id
       })
         .then(res => {
-          this.document_name = res.data.name
+          this.document_name = res.data.name;
           this.getChapters()
         })
     },
@@ -285,9 +287,11 @@ export default {
       }
     },
     handleNodeClick(obj) {
-      if (!obj.is_dir) {
-        this.changeRoute(obj.id, obj.name)
-      }
+      this.changeRoute(obj.id, obj.name);
+
+      // if (!obj.is_dir) {
+      //   this.changeRoute(obj.id, obj.name)
+      // }
     },
     handleNodeExpand(obj) {
       //若default_show_chapter_id大于0 则表明有默认文档
@@ -320,7 +324,7 @@ export default {
       }
       this.$post('/document/chapter/detail', data)
         .then(res => {
-          this.articleContent = res
+          this.articleContent = res.data;
           // this.articleContent.content = res.content ? this.$refs.mavonEditor.markdownIt.render('<div class="markdown-content">\n \n'+res.content+'\n \n</div>' + '<div class="markdown-menu"><el-scrollbar>\n \n @[toc]( ) \n \n</el-scrollbar></div>\n \n' ) : ''
           this.articleContent.content = res.data.content ? this.$refs.mavonEditor.markdownIt.render(res.data.content) : ''
           this.$nextTick(() => {
@@ -398,19 +402,18 @@ export default {
       this.$post('/document/chapter/search', {
         document_id: this.$route.params.id,
         keywords: this.keyword
-      })
-        .then(res => {
-          this.articleFlag = false
-          res.data.forEach(articleInfo => {
-            articleInfo.content = this.$refs.mavonEditor.markdownIt.render(articleInfo.content)
-            //html转成文字
-            articleInfo.content = this.htmlToWord(articleInfo.content)
-            //关键字变亮
-            articleInfo.name = this.highlight(articleInfo.name)
-            articleInfo.content = this.highlight(articleInfo.content)
-          })
-          this.articleInfoList = res
+      }).then(res => {
+        this.articleFlag = false
+        res.data.forEach(articleInfo => {
+          articleInfo.content = this.$refs.mavonEditor.markdownIt.render(articleInfo.content)
+          //html转成文字
+          articleInfo.content = this.htmlToWord(articleInfo.content)
+          //关键字变亮
+          articleInfo.name = this.highlight(articleInfo.name)
+          articleInfo.content = this.highlight(articleInfo.content)
         })
+        this.articleInfoList = res.data;
+      })
     },
     highlight(text) {
       var keyword = this.keyword

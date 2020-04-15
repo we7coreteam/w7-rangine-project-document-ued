@@ -41,7 +41,7 @@
       <router-view></router-view>
     </div>
     <el-footer class="w7-footer" :class="$route.meta.footerClass" height="80px">
-      Powered by<a href="https://www.w7.cc">微擎云计算©www.w7.cc</a>
+      <div class="footer-law"><p>Copyright © 2018 宿州市涛盛网络科技有限公司 www.w7.cc All Rights Reserved </p><p>网站备案：皖ICP备17004788号-1&nbsp;&nbsp;增值电信业务经营许可证：皖B2-20200003&nbsp;&nbsp;<a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=34130202000406" target="_blank"><img src="//cdn.w7.cc/new/img/icon/bei.png?imageView2/5/w/14/h/14" alt="">&nbsp;&nbsp;皖公网安备 34130202000406号</a>&nbsp;&nbsp;<a href="http://www.cyberpolice.cn" target="_blank"><img src="//cdn.w7.cc/new/img/icon/jubao.png?imageView2/5/w/14/h/14" alt="">&nbsp;&nbsp;网络违法犯罪举报网站</a></p></div>
     </el-footer>
   </el-container>
 </template>
@@ -95,7 +95,7 @@ export default {
         document_id: this.$route.params.id
       })
         .then(res => {
-          this.docName = res.data.document.name
+          this.docName = res.data.name
         })
     },
     goto(name) {
@@ -122,6 +122,9 @@ export default {
     padding: 0 50px;
     font-size: 14px;
     z-index: 999;
+    background-color: #fff;
+
+
     .logo {
       margin-right: 20px;
       display: flex;
@@ -270,8 +273,15 @@ export default {
     padding-top: 60px;
   }
   .w7-footer {
-    &.float {
-      margin-left: 260px;
+    padding-left: 200px;
+    line-height: 30px;
+
+    .footer-law {
+      width: 100%;
+      color: #616161;
+      text-align: center;
+      font-size: 14px;
+      padding-bottom: 20px;
     }
   }
 }

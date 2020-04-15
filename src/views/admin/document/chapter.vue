@@ -77,6 +77,10 @@
     </el-aside>
     <el-main>
       <div class="chapter-title">{{docTitle}}</div>
+
+
+
+
       <div class="api" v-if="layout == 1">
         <el-form ref="form" :model="form" label-width="100">
           <!--基本信息-->
@@ -127,10 +131,92 @@
                 <!--请求头Header-->
                 <el-tab-pane label="请求头Header" name="1">
                   <!--el-tree 添加 show-checkbox 则显示复选框-->
+                  <div class="tree-wrap">
+                    <el-tree :data="apiHeaderTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
+                      <div class="custom-tree-node" slot-scope="{ node, data }">
+                        <el-row :gutter="5">
+                          <el-col :md="4">
+                            <el-form-item label="">
+                              <el-input @input="paramNameChange(node, data)" v-model="data.name" placeholder="参数名"></el-input>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :md="4">
+                            <el-form-item label="">
+                              <el-select v-model="data.type" placeholder="">
+                                <el-option v-for="val in paramsArr" :key="val.value" :label="val.type" :value="val.value"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :md="4">
+                            <el-form-item label="">
+                              <el-select v-model="data.enabled" placeholder="是否必填">
+                                <el-option label="true" :value="1"></el-option>
+                                <el-option label="false" :value="0"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :md="4">
+                            <el-form-item label="">
+                              <el-input v-model="data.default_value" placeholder="默认值"></el-input>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :md="6">
+                            <el-form-item label="">
+                              <el-input v-model="data.description" placeholder="描述"></el-input>
+                            </el-form-item>
+                          </el-col>
+                          <span class="add"  @click="() => addApiTreeNode(data)"><span class="iconfont wq-add"></span></span>
+                          <span class="delete" @click="() => removeApiTreeNode(node, data)"><span class="iconfont wq-delete"></span></span>
+                          <span class="delete" @click="() => insertAfter(node, data)"><!--<span class="iconfont wq-delete"></span>--></span>
+                        </el-row>
+                      </div>
+                    </el-tree>
+                  </div>
                 </el-tab-pane>
 
                 <!--params-->
                 <el-tab-pane label="Query Params" name="2">
+                  <div class="tree-wrap">
+                    <el-tree :data="apiParamsTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
+                      <div class="custom-tree-node" slot-scope="{ node, data }">
+                        <el-row :gutter="5">
+                          <el-col :md="4">
+                            <el-form-item label="">
+                              <el-input @input="paramNameChange(node, data)" v-model="data.name" placeholder="参数名"></el-input>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :md="4">
+                            <el-form-item label="">
+                              <el-select v-model="data.type" placeholder="">
+                                <el-option v-for="val in paramsArr" :key="val.value" :label="val.type" :value="val.value"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :md="4">
+                            <el-form-item label="">
+                              <el-select v-model="data.enabled" placeholder="是否必填">
+                                <el-option label="true" :value="1"></el-option>
+                                <el-option label="false" :value="0"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :md="4">
+                            <el-form-item label="">
+                              <el-input v-model="data.default_value" placeholder="默认值"></el-input>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :md="6">
+                            <el-form-item label="">
+                              <el-input v-model="data.description" placeholder="描述"></el-input>
+                            </el-form-item>
+                          </el-col>
+                          <span class="add"  @click="() => addApiTreeNode(data)"><span class="iconfont wq-add"></span></span>
+                          <span class="delete" @click="() => removeApiTreeNode(node, data)"><span class="iconfont wq-delete"></span></span>
+                          <span class="delete" @click="() => insertAfter(node, data)"><!--<span class="iconfont wq-delete"></span>--></span>
+                        </el-row>
+                      </div>
+                    </el-tree>
+                  </div>
                 </el-tab-pane>
 
                 <!--body-->
@@ -144,50 +230,50 @@
                         <el-radio label="6">binary</el-radio>
                       </el-radio-group>
                     </el-form-item>
+                    <div class="tree-wrap">
+                      <el-tree :data="apiBodyTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
+                        <div class="custom-tree-node" slot-scope="{ node, data }">
+                          <el-row :gutter="5">
+                            <el-col :md="4">
+                              <el-form-item label="">
+                                <el-input @input="paramNameChange(node, data)" v-model="data.name" placeholder="参数名"></el-input>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :md="4">
+                              <el-form-item label="">
+                                <el-select v-model="data.type" placeholder="">
+                                  <el-option v-for="val in paramsArr" :key="val.value" :label="val.type" :value="val.value"></el-option>
+                                </el-select>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :md="4">
+                              <el-form-item label="">
+                                <el-select v-model="data.enabled" placeholder="是否必填">
+                                  <el-option label="true" :value="1"></el-option>
+                                  <el-option label="false" :value="0"></el-option>
+                                </el-select>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :md="4">
+                              <el-form-item label="">
+                                <el-input v-model="data.default_value" placeholder="默认值"></el-input>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :md="6">
+                              <el-form-item label="">
+                                <el-input v-model="data.description" placeholder="描述"></el-input>
+                              </el-form-item>
+                            </el-col>
+                            <span class="add"  @click="() => addApiTreeNode(data)"><span class="iconfont wq-add"></span></span>
+                            <span class="delete" @click="() => removeApiTreeNode(node, data)"><span class="iconfont wq-delete"></span></span>
+                            <span class="delete" @click="() => insertAfter(node, data)"><!--<span class="iconfont wq-delete"></span>--></span>
+                          </el-row>
+                        </div>
+                      </el-tree>
+                    </div>
                   </div>
                 </el-tab-pane>
               </el-tabs>
-              <div class="tree-wrap">
-                <el-tree :data="apiTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
-                  <div class="custom-tree-node" slot-scope="{ node, data }">
-                    <el-row :gutter="5">
-                      <el-col :md="4">
-                        <el-form-item label="">
-                          <el-input @input="paramNameChange(node, data)" v-model="data.name" placeholder="参数名"></el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :md="4">
-                        <el-form-item label="">
-                          <el-select v-model="data.type" placeholder="">
-                            <el-option v-for="val in paramsArr" :key="val.value" :label="val.type" :value="val.value"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :md="4">
-                        <el-form-item label="">
-                          <el-select v-model="data.enabled" placeholder="是否必填">
-                            <el-option label="true" :value="1"></el-option>
-                            <el-option label="false" :value="0"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :md="4">
-                        <el-form-item label="">
-                          <el-input v-model="data.default_value" placeholder="默认值"></el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :md="6">
-                        <el-form-item label="">
-                          <el-input v-model="data.description" placeholder="描述"></el-input>
-                        </el-form-item>
-                      </el-col>
-                      <span class="add"  @click="() => addApiTreeNode(data)"><span class="iconfont wq-add"></span></span>
-                      <span class="delete" @click="() => removeApiTreeNode(node, data)"><span class="iconfont wq-delete"></span></span>
-                      <span class="delete" @click="() => insertAfter(node, data)"><!--<span class="iconfont wq-delete"></span>--></span>
-                    </el-row>
-                  </div>
-                </el-tree>
-              </div>
             </div>
           </div>
 
@@ -199,7 +285,7 @@
                 <span class="text">响应数据</span>
               </div>
               <el-button type="primary" plain icon="el-icon-plus" @click="addResFirstNode">添加</el-button>
-              <el-button type="default" plain icon="el-icon-upload">导入</el-button>
+              <el-button type="default" plain icon="el-icon-upload" v-if="false">导入</el-button>
             </div>
             <div class="c-con">
               <el-tree :data="apiResTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
@@ -246,7 +332,11 @@
         </el-form>
       </div>
 
-      <editors v-if="layout != 1" v-model="markDownContent" :markDownContent="markDownContent" :chapter_id = "chapter_id" :chapterIsDir="selectNodeObj.is_dir"></editors>
+
+
+
+
+      <editors v-model="markDownContent" :markDownContent="markDownContent" :chapter_id = "chapter_id" :chapterIsDir="selectNodeObj.is_dir"></editors>
       <!--<editors v-model="markDownContent" :markDownContent="markDownContent"  :chapterIsDir="selectNodeObj.is_dir"></editors>-->
 
       <el-button type="primary" @click="saveApi">保存</el-button>
@@ -396,14 +486,14 @@
           method: 1,
           url: '',
           description: '',
-          body_param_location: 3,
+          body_param_location: '3',
           tab_location: '1'
         },
         formCopy: {
           method: 1,
           url: '',
           description: '',
-          body_param_location: 3,
+          body_param_location: '3',
           tab_location: '1'
         },
         // activeName: '1',
@@ -419,7 +509,9 @@
           children: [],
         },
         markDownContent: '',
-        apiTreeData: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
+        apiHeaderTreeData: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
+        apiParamsTreeData: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
+        apiBodyTreeData: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
         apiTreeDataCopy: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
         apiResTreeData: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
         apiResTreeDataCopy: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
@@ -699,7 +791,8 @@
         this.rightSelectNodeObj = {}
       },
       updateNode(bool) {
-        this.dialogTitle = '重命名'
+        this.dialogTitle = '重命名';
+        localStorage.rename = this.rightSelectNodeObj.name;
         this.addNodeObj.name = this.rightSelectNodeObj.name
         this.dialogFormLabel = bool ? '新的目录名称' : '新的文档名称'
         this.dialogVisible = true
@@ -778,8 +871,14 @@
             } else {
               this.chapters.push(newChild)
             }
-            this.$message('新增成功！')
-            this.dialogVisible = false
+            this.$message('新增成功！');
+
+            this.dialogVisible = false;
+            this.form = this.formCopy;
+            this.apiTreeData = this.apiTreeDataCopy;
+            this.apiResTreeData = this.apiResTreeDataCopy;
+            this.markDownContent = '';
+
             this.$nextTick(() => {
               //选中新建章节
               this.$refs.chaptersTree.setCurrentKey(newChild.id)
@@ -802,7 +901,13 @@
           }).then(() => {
               this.$message('修改成功！')
               this.rightSelectNodeObj.name = this.addNodeObj.name
-              this.dialogVisible = false
+              this.dialogVisible = false;
+              const docTitle = this.docTitle;
+              const rename = localStorage.rename;
+              if (docTitle == rename) {
+                this.docTitle = this.addNodeObj.name;
+              }
+              // location.reload();
           }).catch(() => {
               this.dialogVisible = false
           })
@@ -1001,7 +1106,16 @@
         *或者按照这种push
         * baseRequestData = {isChecked: false, name: '',type: 1, enabled: '', default_value: '', description: '', rule: '',children: []}
         * */
-        this.apiTreeData.push(baseRequestData);
+
+        const tab_location = this.form.tab_location;
+
+        if (tab_location == 1) {
+          this.apiHeaderTreeData.push(baseRequestData);
+        } else if (tab_location == 2) {
+          this.apiParamsTreeData.push(baseRequestData);
+        } else if (tab_location == 3) {
+          this.apiBodyTreeData.push(baseRequestData);
+        }
       },
 
       // res响应数据 添加同级node
@@ -1019,7 +1133,7 @@
         console.log('data');
         console.log(data);
         // const newChild = {};
-        const newChild = {id: id++, already: 0, isChecked: false, name: '', type: '1', enabled: 0, default_value: '', description: '', rule: '', children: [],};
+        const newChild = {id: id++, already: 0, isChecked: false, name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: [],};
         if (!data.children) {
           this.$set(data, 'children', []);
         }
@@ -1031,7 +1145,7 @@
         console.log('data');
         console.log(data);
         // const newChild = {};
-        const newChild = {id: id++, already: 0, isChecked: false, name: '', type: '1', enabled: 0, default_value: '', description: '', rule: '', children: [],};
+        const newChild = {id: id++, already: 0, isChecked: false, name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: [],};
         if (!data.children) {
           this.$set(data, 'children', []);
         }
@@ -1059,7 +1173,7 @@
         console.log(data);
 
         const parent = node.parent;
-        const newChild = {id: id++, already: 0, isChecked: false, name: '', type: '1', enabled: 0, default_value: '', description: '', rule: '', children: []};
+        const newChild = {id: id++, already: 0, isChecked: false, name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []};
 
         if (Array.isArray(parent.data)) {
           parent.data.push(newChild);
@@ -1079,38 +1193,51 @@
         let record = {};
         let body = {};
         body = {};
-        if (tab_location == '1') {
-          body['1'] = this.apiTreeData;
-        } else if (tab_location == '2') {
-          body['2'] = this.apiTreeData;
-        } else if (tab_location == '3') {
+        if (tab_location == '3') {
           if (body_param_location == 3) {
-            body['3'] = this.apiTreeData;
+            body['3'] = this.apiBodyTreeData;
           } else if (body_param_location == 4) {
-            body['4'] = this.apiTreeData;
+            body['4'] = this.apiBodyTreeData;
           } else if (body_param_location == 5) {
-            body['5'] = this.apiTreeData;
+            body['5'] = this.apiBodyTreeData;
           } else if (body_param_location == 6) {
-            body['6'] = this.apiTreeData;
+            body['6'] = this.apiBodyTreeData;
           }
         }
+        body['1'] = this.apiHeaderTreeData;
+        body['2'] = this.apiParamsTreeData;
         body['10'] = this.apiResTreeData;
         record.api = this.form;
         record.body = body;
         record.extend = this.markDownContent;
         chapter_id = this.chapter_id;
 
-        saveChapter({
-          document_id: this.$route.params.id,
-          chapter_id,
-          layout: 1,
-          record
-        }).then(res => {
-          if (res.code == 200)
-          this.$message.success('保存成功！')
-          console.log('form');
-          console.log(this.form);
-        })
+        if (this.layout == 1) {
+          // alert(1);
+          saveChapter({
+            document_id: this.$route.params.id,
+            chapter_id,
+            layout: 1,
+            record
+          }).then(res => {
+            if (res.code == 200)
+              this.$message.success('保存成功！')
+            console.log('form');
+            console.log(this.form);
+          })
+        } else {
+          saveChapter({
+            document_id: this.$route.params.id,
+            chapter_id,
+            layout: 0,
+            content: this.markDownContent
+          }).then(res => {
+            if (res.code == 200)
+              this.$message.success('保存成功！')
+            console.log('form');
+            console.log(this.form);
+          })
+        }
       },
 
       // 查看文档
@@ -1123,22 +1250,38 @@
         }).then(res => {
           if (res.code == 200) {
             this.layout = res.data.layout;
-
-            if (res.data.content != null) {
-              console.log(res);
-              let record = res.data.record;
-              this.form = record.api;
-              this.form.tab_location = this.form.tab_location.toString();
-              this.apiTreeData = record.body[record.api.tab_location];
-              this.apiResTreeData = record.body[10];
-              this.markDownContent = record.extend;
-              console.log(record.extend);
-              console.log(this.markDownContent);
+            if (res.data.layout == 1) {
+              if (res.data.content != null) {
+                console.log(res);
+                let record = res.data.record;
+                if (record.api.length) {
+                  this.form = record.api;
+                  this.form.tab_location = this.form.tab_location.toString();
+                }
+                if (record.body.length) {
+                  this.apiHeaderTreeData = record.body['1'];
+                  this.apiParamsTreeData = record.body['2'];
+                  this.apiBodyTreeData = record.body[record.api.body_param_location];
+                  this.apiResTreeData = record.body[10];
+                }
+                this.markDownContent = record.extend;
+                console.log(record.extend);
+                console.log(this.markDownContent);
+              } else {
+                this.form = this.formCopy;
+                this.apiHeaderTreeData = this.apiTreeDataCopy;
+                this.apiParamsTreeData = this.apiTreeDataCopy;
+                this.apiBodyTreeData = this.apiTreeDataCopy;
+                this.apiResTreeData = this.apiResTreeDataCopy;
+                this.markDownContent = '';
+              }
             } else {
-              this.form = this.formCopy;
-              this.apiTreeData = this.apiTreeDataCopy;
-              this.apiResTreeData = this.apiResTreeDataCopy;
-              this.markDownContent = '';
+              this.markDownContent = res.data.content;
+              // if (res.data.content.length) {
+              //   this.markDownContent = res.data.content;
+              // } else {
+              //   this.markDownContent = '';
+              // }
             }
           }
         })
