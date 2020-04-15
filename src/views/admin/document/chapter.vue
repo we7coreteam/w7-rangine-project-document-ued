@@ -1265,7 +1265,11 @@
                 this.markDownContent = '';
               }
             } else {
-              this.markDownContent = res.data.content;
+              if (res.data.content == null) {
+                this.markDownContent = '';
+              } else {
+                this.markDownContent = res.data.content;
+              }
               // if (res.data.content.length) {
               //   this.markDownContent = res.data.content;
               // } else {
