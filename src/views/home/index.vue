@@ -216,7 +216,7 @@ export default {
         document_id: this.document_id
       })
         .then(res => {
-          this.document_name = res.name
+          this.document_name = res.data.name
           this.getChapters()
         })
     },
@@ -225,8 +225,8 @@ export default {
         document_id: this.$route.params.id
       })
         .then(res => {
-          if(!res.length) {return}
-          res.forEach(item => {
+          if(!res.data.length) {return}
+          res.data.forEach(item => {
             if(item.is_dir && item.children.length == 0) {
               item.children.push({is_dir: false})
             } else {
@@ -239,7 +239,7 @@ export default {
               })
             }
           })
-          this.chapters = res
+          this.chapters = res.data;
           this.$nextTick(() => {
             if (this.$route.query.id) {
               //F5刷新
@@ -322,7 +322,7 @@ export default {
         .then(res => {
           this.articleContent = res
           // this.articleContent.content = res.content ? this.$refs.mavonEditor.markdownIt.render('<div class="markdown-content">\n \n'+res.content+'\n \n</div>' + '<div class="markdown-menu"><el-scrollbar>\n \n @[toc]( ) \n \n</el-scrollbar></div>\n \n' ) : ''
-          this.articleContent.content = res.content ? this.$refs.mavonEditor.markdownIt.render(res.content) : ''
+          this.articleContent.content = res.data.content ? this.$refs.mavonEditor.markdownIt.render(res.data.content) : ''
           this.$nextTick(() => {
             // let id = this.$route.hash.substr(1)
             // let jump = document.getElementById(id)
@@ -401,7 +401,7 @@ export default {
       })
         .then(res => {
           this.articleFlag = false
-          res.forEach(articleInfo => {
+          res.data.forEach(articleInfo => {
             articleInfo.content = this.$refs.mavonEditor.markdownIt.render(articleInfo.content)
             //html转成文字
             articleInfo.content = this.htmlToWord(articleInfo.content)
@@ -436,7 +436,7 @@ export default {
           document_id: this.$route.params.id
       })
         .then(res => {
-          this.shareUrl = res
+          this.shareUrl = res.data
         })
     },
     shareToWeibo() {
@@ -466,7 +466,7 @@ export default {
       }
       this.$post(url, data)
         .then(res => {
-          this.articleContent.star_id = res.star_id || ''
+          this.articleContent.star_id = res.data.star_id || ''
         })
     }
   }

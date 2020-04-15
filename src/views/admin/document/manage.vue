@@ -5,15 +5,15 @@
       <div class="search-box">
         <div class="search-box-input">
           <el-input v-model="searchData.keyword" class="demo-input-suffix" placeholder="请输入文档名称" clearable
-                    @keyup.enter.native="getList">
-            <i slot="suffix" class="el-input__icon el-icon-search" @click="getList"></i>
+                    @keyup.enter.native="getAllProject">
+            <i slot="suffix" class="el-input__icon el-icon-search" @click="getAllProject"></i>
           </el-input>
-          <el-select v-model="searchData.is_public" @change="getList">
+          <el-select v-model="searchData.is_public" @change="getAllProject">
             <el-option label="全部" value=""></el-option>
             <el-option label="公有" value="1"></el-option>
             <el-option label="私有" value="2"></el-option>
           </el-select>
-          <el-select v-model="searchData.role" @change="getList">
+          <el-select v-model="searchData.role" @change="getAllProject">
             <el-option label="全部" value=""></el-option>
             <el-option label="我创建的" value="1"></el-option>
             <el-option label="我操作的" value="2"></el-option>
@@ -43,7 +43,7 @@
               </el-tooltip>
             </div>
           </div>
-          <div class="w7-card add-btn" @click="dialogDocInfoVisible = true">
+          <div class="w7-card add-btn" @click="dialogDocShow">
             <div class="add-text">新建项目</div>
             <div class="add-box">
               <i class="el-icon-circle-plus"></i>
@@ -53,7 +53,7 @@
       </div>
       <el-pagination
           background
-          @current-change="getList"
+          @current-change="getAllProject"
           layout="prev, pager, next, total"
           prev-text="上一页"
           next-text="下一页"
@@ -106,7 +106,7 @@
 
 <script>
   import {timestampFormat} from '@/utils/utils'
-  import { createDoc } from '@/api/api'
+  import { createDoc, getAllProject } from '@/api/api'
 
   import setting from './setting.vue'
   export default {
@@ -139,22 +139,27 @@
       }
     },
     created() {
-      this.getList()
+      this.getAllProject()
     },
     methods: {
-      getList() {
-        this.loading = true
-        this.$post('/admin/document/all', {
+      dialogDocShow () {
+        this.dialogDocInfoVisible = true;
+        this.name = '';
+      },
+      getAllProject() {
+        this.loading = true;
+        getAllProject({
           page: this.currentPage,
           page_size: this.page_size,
           ...this.searchData
+        }).then(res => {
+          if (res.code == 200) {
+            this.docList = res.data.data;
+            this.pageCount = res.page_count;
+            this.total = res.total;
+            this.loading = false;
+          }
         })
-          .then(res => {
-            this.docList = res.data
-            this.pageCount = res.page_count
-            this.total = res.total
-            this.loading = false
-          })
       },
       createDoc() {
         createDoc({
@@ -163,7 +168,14 @@
         }).then(res => {
           this.$message('创建成功！')
           this.dialogDocInfoVisible = false;
-          this.goChapter(res, true)
+          this.getAllProject();
+          // this.$router.push({
+          //   name: 'chapter',
+          //   params: {
+          //     id: res.data,
+          //   },
+          //   query: {type: 'add', documentType: 1}
+          // })
         })
 
         // this.$post('/admin/document/create', {
@@ -185,7 +197,7 @@
             id: id
           })
             .then(() => {
-              this.getList()
+              this.getAllProject()
               this.$message('删除成功！')
             })
         })
@@ -226,7 +238,7 @@
           username: this.transferUsername
         })
           .then(() => {
-            this.getList()
+            this.getAllProject()
             this.$message('转让成功！')
             this.dialogTransferDoc = false
           })
@@ -254,7 +266,7 @@
         }
       },
       handleClose() {
-        this.getList()
+        this.getAllProject()
         this.showSetting = false
       }
     }

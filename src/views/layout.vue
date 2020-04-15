@@ -95,7 +95,7 @@ export default {
         document_id: this.$route.params.id
       })
         .then(res => {
-          this.docName = res.document.name
+          this.docName = res.data.document.name
         })
     },
     goto(name) {

@@ -58,7 +58,7 @@ export default {
     init() {
       this.$post('/admin/third-party-login/all')
         .then(res => {
-          this.thirdPartyLoginMenu = res
+          this.thirdPartyLoginMenu = res.data
         })
     },
     refreshMenu(bool) {

@@ -200,18 +200,17 @@ export default {
     getdetails() {
       this.$post('/admin/document/detail',{
         document_id : this.id
+      }).then(res => {
+        this.details = res.data;
+        this.docData = {
+          cover: res.data.cover || '',
+          name: res.data.name,
+          is_public: res.data.is_public ? '2' : '1',
+          login_preview: res.data.login_preview ? '2' : '1'
+        }
+        this.role_list = res.data.role_list
+        this.addManageData.role = res.data.role_list[0].id;
       })
-        .then(res => {
-          this.details = res
-          this.docData = {
-            cover: res.cover || '',
-            name: res.name,
-            is_public: res.is_public ? '2' : '1',
-            login_preview: res.login_preview ? '2' : '1'
-          }
-          this.role_list = res.role_list
-          this.addManageData.role = res.role_list[0].id
-        })
     },
     getHistory() {
       this.$post('/admin/operate-log/get-by-document ',{

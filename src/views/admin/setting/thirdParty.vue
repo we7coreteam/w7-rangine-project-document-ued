@@ -149,17 +149,17 @@ export default {
         id: this.$route.query.id
       })
         .then(res => {
-          this.formData.is_default = res.is_default
+          this.formData.is_default = res.data.is_default
           this.formData.setting = {
-            name: res.setting.name || '',
-            enable: res.setting.enable || '',
-            logo: res.setting.logo || '',
-            app_id: res.setting.app_id || '',
-            secret_key: res.setting.secret_key || '',
-            access_token_url: res.setting.access_token_url || '',
-            user_info_url: res.setting.user_info_url || ''
+            name: res.data.setting.name || '',
+            enable: res.data.setting.enable || '',
+            logo: res.data.setting.logo || '',
+            app_id: res.data.setting.app_id || '',
+            secret_key: res.data.setting.secret_key || '',
+            access_token_url: res.data.setting.access_token_url || '',
+            user_info_url: res.data.setting.user_info_url || ''
           }
-          this.formData.convert = res.convert || {}
+          this.formData.convert = res.data.convert || {}
         })
     },
     handleAvatarSuccess(res) {

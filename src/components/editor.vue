@@ -1,19 +1,21 @@
 <template>
-  <mavon-editor
-      :ref="editorRef"
-      :boxShadow="false"
-      :scrollStyle="true"
-      :ishljs="true"
-      :navigation="false"
-      v-model="contentMd"
-      v-bind="$attrs"
-      @imgAdd="$imgAdd"
-      v-on="$listeners"
-      @change="change">
-    <template slot="left-toolbar-after">
-      <i class="el-icon-menu" @click="setContent()"></i>
-    </template>
-  </mavon-editor>
+  <div class="editor-wrap">
+    <mavon-editor
+        :ref="editorRef"
+        :boxShadow="false"
+        :scrollStyle="true"
+        :ishljs="true"
+        :navigation="false"
+        v-model="contentMd"
+        v-bind="$attrs"
+        @imgAdd="$imgAdd"
+        v-on="$listeners"
+        @change="change">
+      <template slot="left-toolbar-after">
+        <i class="el-icon-menu" @click="setContent()"></i>
+      </template>
+    </mavon-editor>
+  </div>
 </template>
 
 <script>
@@ -31,6 +33,8 @@ export default {
       code_style: '',
       contentMd: ''
     }
+  },
+  computed: {
   },
   methods: {
     $imgAdd(pos, $file) {

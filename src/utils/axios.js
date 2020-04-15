@@ -17,22 +17,14 @@ instance.interceptors.request.use(request => {
   return request
 })
 instance.interceptors.response.use(response => {
-  if (response.config.url == '/admin/upload/image') {
-    return response.data
+  if (response.data.code >= 200 && response.data.code < 300) {
+    return response.data;
   } else {
-    if (!response.data || !response.data.status) {
-      if (response.data.code == '444') {
-        router.push('/login?redirect_url='+ window.location.href)
-      } else {
-        Message({
-          message: (response.data && response.data.message) ? response.data.message : '出错了',
-          duration: 1000
-          })
-      }
-      return Promise.reject(response.data)
-    } else {
-      return response.data.data
+    if (response.data.code == '444') {
+      router.push({name: 'adminLoginPage'});
     }
+    Message.error(response.data.message);
+    return Promise.reject(response.data)
   }
 }, error => {
   return Promise.reject(error.response)

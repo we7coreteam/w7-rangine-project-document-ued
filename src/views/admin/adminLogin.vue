@@ -50,8 +50,10 @@ export default {
     getCode() {
       this.$post('/common/verifycode/image')
         .then(res => {
-          if(res.img) {
-            this.code = res.img
+          if(res.code == 200) {
+            this.code = res.data.img
+          } else {
+            this.$message.error(res.message);
           }
         })
     },

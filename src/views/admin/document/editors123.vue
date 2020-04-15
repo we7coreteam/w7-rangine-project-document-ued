@@ -21,7 +21,7 @@
 
 <script>
   export default {
-    props: ['chapter_id', 'markDownContent'],
+    props: ['chapterId', 'chapterIsDir', 'firstClickDoc'],
     data() {
       return {
         code_style: "tomorrow-night-blue",
@@ -36,36 +36,73 @@
       }
     },
     watch: {
-      'markDownContent' (val) {
-        console.log('val');
-        this.contentMd = val;
+      chapterId() {
+        this.init()
       }
     },
     mounted() {
       let clientHeight = document.documentElement.clientHeight
       this.$refs.mavonEditor.$el.style.height = (clientHeight - 310) + 'px'
     },
-    destroyed() {},
+    destroyed() {
+      //清除定时器
+      clearInterval(this.timer)
+    },
     methods: {
       input () {
+        console.log(this.contentMd);
         this.$emit('input', this.contentMd);
       },
 
+      init() {
+        if (this.chapterIsDir) {
+          return
+        }
+        this.$post('/admin/chapter/content', {
+          document_id: this.$route.params.id,
+          chapter_id: this.chapterId
+        }).then(res => {
+          this.chapterInfo = res
+          this.contentMd = res.content || ''
+          this.old_contentMd = res.content || ''
+          clearInterval(this.timer) //清除定时器
+          this.$nextTick(() => {
+            this.timer = setInterval(() => {
+              // if (this.old_contentMd != this.contentMd) {
+              this.save()
+              // }
+            }, 3 * 60 * 1000);
+          })
+        })
+      },
       $imgAdd(pos, $file) {
         // 第一步.将图片上传到服务器.
         var formdata = new FormData()
         formdata.append('file', $file)
-        formdata.append('document_id', this.$route.params.id);
-        formdata.append('chapter_id', this.chapter_id);
+        formdata.append('document_id', this.$route.params.id)
+        formdata.append('chapter_id', this.chapterId)
         this.$post('/admin/upload/image', formdata, {
           headers: {'Content-Type': 'multipart/form-data'}
-        }).then(res => {
+        })
+          .then(res => {
             // 第二步.将返回的url替换到文本原位置![...](0) -> ![...](url)
             this.$refs.mavonEditor.$img2Url(pos, res.data.url)
-          }).catch(function (error) {
+          })
+          .catch(function (error) {
             console.log('发生错误！', error)
           })
       },
+
+      save() {
+        this.$post('/admin/chapter/save', {
+          document_id: this.$route.params.id,
+          chapter_id: this.chapterId,
+          content: this.contentMd
+        }).then(() => {
+          this.$message('保存成功！')
+          this.old_contentMd = this.contentMd
+        })
+      }
     }
   }
 </script>
