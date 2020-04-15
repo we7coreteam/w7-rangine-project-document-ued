@@ -624,7 +624,6 @@
       },
       //保存操作记录
       setOperRecord(obj) {
-        // console.log(this.UserInfo);
         const isAdd = this.$route.query.type;
         const id = this.$route.params.id;
 
@@ -674,9 +673,6 @@
                 //展开
                 let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
                 let record = allRecords['document_' + this.$route.params.id]
-
-                console.log('record');
-                console.log(record);
                 this.defaultExpanded = record.defaultExpanded;
                 this.defaultExpanded.push(this.$refs.chaptersTree.getCurrentNode().id)
               })
@@ -803,7 +799,7 @@
       },
       addChildNode(bool) {
         this.addFirst = false
-        console.log(this.rightSelectNode)
+        // console.log(this.rightSelectNode)
         if (this.rightSelectNode.level == 2 && bool) {
           this.$message('第三级只能为文档！')
           return
@@ -1056,11 +1052,8 @@
       // 获取请求类型
       getMethodType () {
         getMethodType({}).then(res => {
-          console.log(res);
           if (res.data && res.data.methodLabel) {
-            console.log(res);
             this.methodArr = res.data.methodLabel.option;
-            console.log(this.methodArr);
           }
         })
       },
@@ -1072,11 +1065,10 @@
 
       // 请求数据 输入框输入 下方新增同级node
       paramNameChange (node, data) {
-        console.log(data.name);
         if (data.name.length) {
           data.already = Number(data.already) + 1;
-          console.log(data);
-          console.log(data.already);
+          // console.log(data);
+          // console.log(data.already);
           // 防止不断输入添加多个同级node
           if (data.already == 1) {
             // this.addFirstNode();
@@ -1087,11 +1079,10 @@
 
       // 响应数据 输入框输入 下方新增同级node
       resParamNameChange (node, data) {
-        console.log(data.name);
         if (data.name.length) {
           data.already = Number(data.already) + 1;
-          console.log(data);
-          console.log(data.already);
+          // console.log(data);
+          // console.log(data.already);
           // 防止不断输入添加多个同级node
           if (data.already == 1) {
             this.insertAfter(node, data);
@@ -1130,8 +1121,8 @@
 
       // 请求数据 添加下一级node
       addApiTreeNode (data) {
-        console.log('data');
-        console.log(data);
+        // console.log('data');
+        // console.log(data);
         // const newChild = {};
         const newChild = {id: id++, already: 0, isChecked: false, name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: [],};
         if (!data.children) {
@@ -1142,8 +1133,8 @@
 
       // 响应数据 添加下一级node
       addResApiTreeNode (data) {
-        console.log('data');
-        console.log(data);
+        // console.log('data');
+        // console.log(data);
         // const newChild = {};
         const newChild = {id: id++, already: 0, isChecked: false, name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: [],};
         if (!data.children) {
@@ -1169,8 +1160,8 @@
       },
 
       insertAfter (node, data) {
-        console.log(node);
-        console.log(data);
+        // console.log(node);
+        // console.log(data);
 
         const parent = node.parent;
         const newChild = {id: id++, already: 0, isChecked: false, name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []};
@@ -1184,8 +1175,8 @@
 
       // 保存文档
       saveApi () {
-        console.log('body_param_location');
-        console.log(this.form.body_param_location);
+        // console.log('body_param_location');
+        // console.log(this.form.body_param_location);
         const tab_location = this.form.tab_location;
         const body_param_location = this.form.body_param_location;
         let chapter_id = '';
@@ -1222,8 +1213,8 @@
           }).then(res => {
             if (res.code == 200)
               this.$message.success('保存成功！')
-            console.log('form');
-            console.log(this.form);
+            // console.log('form');
+            // console.log(this.form);
           })
         } else {
           saveChapter({
@@ -1234,8 +1225,8 @@
           }).then(res => {
             if (res.code == 200)
               this.$message.success('保存成功！')
-            console.log('form');
-            console.log(this.form);
+            // console.log('form');
+            // console.log(this.form);
           })
         }
       },
@@ -1252,7 +1243,7 @@
             this.layout = res.data.layout;
             if (res.data.layout == 1) {
               if (res.data.content != null) {
-                console.log(res);
+                // console.log(res);
                 let record = res.data.record;
                 if (record.api.length) {
                   this.form = record.api;
@@ -1265,8 +1256,6 @@
                   this.apiResTreeData = record.body[10];
                 }
                 this.markDownContent = record.extend;
-                console.log(record.extend);
-                console.log(this.markDownContent);
               } else {
                 this.form = this.formCopy;
                 this.apiHeaderTreeData = this.apiTreeDataCopy;
