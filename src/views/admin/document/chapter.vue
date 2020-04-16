@@ -1580,6 +1580,12 @@
           .el-input__inner {
           }
         }
+
+        /deep/ .el-input__inner {
+          border: none;
+          border-bottom: 1px solid #dcdfe6;
+          border-radius: 0;
+        }
       }
 
     }
