@@ -414,6 +414,16 @@
                  :close-on-click-modal="false" :before-close="handleClose">
         <setting :id="$route.params.id"></setting>
       </el-dialog>
+
+      <!--确认保存-->
+      <el-dialog title="" :visible.sync="saveDialogVisible" :show-close="false" width="30%">
+        <span>您已修改了一些数据，请确认是否要放弃保存并离开？</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="cancelLeave">取 消</el-button>
+          <el-button type="primary" @click="determineLeave">确 定</el-button>
+        </span>
+      </el-dialog>
+
     </el-container>
 </template>
 
@@ -513,7 +523,10 @@
         apiResTreeData: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
         apiResTreeDataCopy: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
         chapter_id: '',
-        isDocEmpty: true
+        isDocEmpty: true,
+        previewId: '',
+        isSave: true,
+        saveDialogVisible: false
       }
     },
     computed: {
@@ -638,12 +651,13 @@
           let record = allRecords['document_' + this.$route.params.id];
 
           if (obj.is_dir) {//如果是目录
-            let index = record.defaultExpanded.findIndex(item => item == obj.id)
-            if (index > -1) {
-              record.defaultExpanded.splice(index, 1)
-            } else {
-              record.defaultExpanded.push(obj.id)
-            }
+            record.defaultSelect = obj.id;
+            // let index = record.defaultExpanded.findIndex(item => item == obj.id) // 临时注释
+            // if (index > -1) {
+            //   record.defaultExpanded.splice(index, 1)
+            // } else {
+            //   record.defaultExpanded.push(obj.id)
+            // }
           } else {
             record.defaultSelect = obj.id
           }
@@ -667,6 +681,7 @@
               this.chapters = this.initTreeData(res.data.catalog); // 临时注释
               //如果有记录的默认文档节点，则选中
               if (this.defaultSelect) {
+                console.log(this.defaultSelect);
                 this.$nextTick(() => {
                   this.$refs.chaptersTree.setCurrentKey(this.defaultSelect)
                   this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode())
@@ -676,6 +691,19 @@
                   this.defaultExpanded = record.defaultExpanded;
                   this.defaultExpanded.push(this.$refs.chaptersTree.getCurrentNode().id)
                 })
+              } else {
+                this.$nextTick(() => {
+                  this.$refs.chaptersTree.setCurrentKey(res.data.catalog[0].id);
+                  this.handleNodeClick(res.data.catalog[0]);
+                })
+
+
+                // this.defaultExpanded = [];
+                // this.defaultCheckedKeys = [];
+                // this.defaultExpanded.push(res.data.catalog[0].id);
+                // this.defaultCheckedKeys.push(res.data.catalog[0].id);
+                // console.log(this.defaultExpanded);
+                // console.log(this.defaultCheckedKeys);
               }
             }
           }
@@ -698,9 +726,11 @@
         return treeData
       },
       readDoc() {
+        // Vue路由新窗口打开
         let routeUrl = this.$router.resolve({
-          path: "/chapter/" + this.$route.params.id
-        })
+          path: "/chapter/" + this.$route.params.id,
+          query: {id: this.previewId}
+        });
         window.open(routeUrl.href, '_blank')
       },
       filterNode(value, data) {
@@ -708,9 +738,14 @@
         return data.name.indexOf(value) !== -1;
       },
       handleNodeClick(data) {
+        // if (!this.isSave) {
+        //   this.saveDialogVisible = true;
+        //   return false
+        // }
         console.log(12);
         console.log(data);
 
+        this.previewId = data.id;
         this.docTitle = data.name;
         this.chapter_id = data.id;
 
@@ -721,6 +756,7 @@
         }
         this.selectNodeObj = data;
         this.setOperRecord(data); // 临时注释
+        this.isSave = false;
       },
       updateXY(event) {
         this.clientX = event.clientX
@@ -1215,6 +1251,7 @@
           }).then(res => {
             if (res.code == 200)
               this.$message.success('保存成功！')
+              this.isSave = true;
             // console.log('form');
             // console.log(this.form);
           })
@@ -1227,10 +1264,19 @@
           }).then(res => {
             if (res.code == 200)
               this.$message.success('保存成功！')
+              this.isSave = true;
             // console.log('form');
             // console.log(this.form);
           })
         }
+      },
+
+      determineLeave () {
+
+      },
+
+      cancelLeave () {
+        this.saveDialogVisible = false;
       },
 
       // 清空form
