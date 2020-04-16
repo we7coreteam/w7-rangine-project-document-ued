@@ -120,16 +120,15 @@ export default {
         page: this.currentPage,
         name: this.keyword,
         is_public: this.is_public
+      }).then(res => {
+        if (val == 'more') {
+          this.docList = [...this.docList,...res.data.data]
+        } else {
+          this.docList = res.data.data;
+        }
+        this.pageCount = res.data.page_count;
+        this.total = res.data.total;
       })
-        .then(res => {
-          if (val == 'more') {
-            this.docList = [...this.docList,...res.data]
-          } else {
-            this.docList = res.data
-          }
-          this.pageCount = res.page_count
-          this.total = res.total
-        })
     },
     save() {
       let document_permission = []

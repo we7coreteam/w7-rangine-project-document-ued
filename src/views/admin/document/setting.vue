@@ -19,21 +19,32 @@
         <div class="project" v-if="active == 0">
           <el-form :model="docData" ref="docForm" key="doc" :rules="rules" class="w7-form__no-required-icon" label-width="85px" label-position="left">
             <el-form-item label="项目封面" class="cover-warpper">
-              <el-upload
-                action="/admin/upload/image"
-                accept=".jpg,.jpeg,.png"
-                :show-file-list="false"
-                :on-success="handleAvatarSuccess"
-                :before-upload="beforeAvatarUpload">
-                <div class="cover-img">
-                  <img v-if="docData.cover" :src="docData.cover">
-                </div>
+              <div class="upload-wrap">
+                <el-upload
+                    action="/admin/upload/image"
+                    accept=".jpg,.jpeg,.png"
+                    ref="upload"
+                    :show-file-list="false"
+                    :on-success="handleAvatarSuccess"
+                    :before-upload="beforeAvatarUpload">
+                  <div class="cover-img">
+                    <img v-if="docData.cover" :src="docData.cover">
+                  </div>
+                </el-upload>
                 <div class="cover-btn">
-                  <el-button type="primary" plain>上传封面</el-button>
+                  <el-upload
+                      action="/admin/upload/image"
+                      accept=".jpg,.jpeg,.png"
+                      ref="upload"
+                      :show-file-list="false"
+                      :on-success="handleAvatarSuccess"
+                      :before-upload="beforeAvatarUpload">
+                    <el-button type="primary" plain>上传封面</el-button>
+                  </el-upload>
+                  <el-button class="cover-default" @click="docData.cover = ''">默认封面</el-button>
                 </div>
-                <div slot="tip" class="el-upload__tip">格式要求：支持jpg、jpeg、png格式，图片小于5M，最佳图片比例2:1。</div>
-              </el-upload>
-              <el-button class="cover-default" @click="docData.cover = ''">默认封面</el-button>
+              </div>
+              <div class="el-upload__tip">格式要求：支持jpg、jpeg、png格式，图片小于5M，最佳图片比例2:1。</div>
             </el-form-item>
             <el-form-item label="项目名称" prop="name">
               <el-input v-model="docData.name"></el-input>
@@ -216,13 +227,12 @@ export default {
       this.$post('/admin/operate-log/get-by-document ',{
         document_id : this.id,
         page: this.currentPageHistory
+      }).then(res => {
+        this.historyList = res.data.data || []
+        this.pageCountHistory = res.data.page_count
+        this.totalHistory = res.data.total
+        this.$refs.historyTableRef.bodyWrapper.scrollTop = 0
       })
-        .then(res => {
-          this.historyList = res.data || []
-          this.pageCountHistory = res.page_count
-          this.totalHistory = res.total
-          this.$refs.historyTableRef.bodyWrapper.scrollTop = 0
-        })
     },
     handleAvatarSuccess(res) {
       this.docData.cover = res.data.url;
@@ -260,11 +270,11 @@ export default {
       }).then(() => {
         this.$post('/admin/document/delete', {
           document_id: this.details.id
+        }).then(() => {
+          this.$parent.handleClose();
+          this.$message({ type: 'success', message: '删除成功!'})
+          // this.$router.push('/admin/document/')
         })
-          .then(() => {
-            this.$message({ type: 'success', message: '删除成功!'})
-            this.$router.push('/admin/document/')
-          })
       })
     },
     editManage(item) {
@@ -330,6 +340,11 @@ export default {
             })
         }
       })
+    },
+
+    uploadCover () {
+      this.$refs.upload.uploadFiles();
+      console.log(this.$refs.upload.uploadFiles());
     }
   }
 }
@@ -369,10 +384,19 @@ export default {
       }
     }
   }
+
   .content {
     flex: 1;
     height: 510px;
     box-sizing: border-box;
+
+    .upload-wrap {
+      display: flex;
+      /*align-items: center;*/
+
+    }
+
+
     .project {
       padding: 50px 100px;
       .el-form-item__content {
@@ -405,9 +429,10 @@ export default {
           line-height: 36px;
         }
         .cover-default {
-          position: absolute;
-          top: 50px;
-          right: 120px;
+          margin-top: 10px;
+          /*position: absolute;*/
+          /*top: 50px;*/
+          /*right: 120px;*/
         }
       }
       .btns {

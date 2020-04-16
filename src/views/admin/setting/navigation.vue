@@ -133,13 +133,13 @@ export default {
       getStyle() {
         this.$post('/admin/menu/get-theme')
           .then(res => {
-            this.style = res || 'white'
+            this.style = res.data || 'white'
           })
       },
       getMenuData() {
         this.$post('/admin/menu/all')
           .then(res => {
-            this.menuList = res
+            this.menuList = res.data
           })
       },
       confirmStyle() {

@@ -122,13 +122,12 @@ export default {
       this.$post('/admin/user/search', {
         page: this.currentPage,
         username: this.keyword
+      }).then(res => {
+         this.userList = res.data.data
+         this.currentPage = res.data.page_current
+         this.pageCount = res.data.pageCount
+         this.total = res.data.total
       })
-        .then(res => {
-           this.userList = res.data
-           this.currentPage = res.page_current
-           this.pageCount = res.pageCount
-           this.total = res.total
-        })
     },
     openEditorUser(row) {
       this.formData.id = row.id

@@ -93,7 +93,7 @@ export default {
             this.$post('/admin/user/add', this.formData)
               .then((res) => {
                 this.$message('创建成功！')
-                this.user_id = res
+                this.user_id = res.data;
                 this.firstPage = false
               })
           }
