@@ -29,7 +29,7 @@
         <el-form-item label="Url" prop="url">
           <el-input v-model="formData.url" placeholder="腾讯云支持用户自定义访问域名。注：url结尾不加 ‘/’例：http://abc.com" v-if="editStatus"></el-input>
           <span v-else>{{formData.url}}</span>
-          <div class="">
+          <div class="" v-if="!formData.url">
             不填写则使用默认的地址<span v-if="formData.app_id && formData.region && formData.bucket">{{formData.bucket + '-' + formData.app_id + '.cos.'+ formData.region +'.myqcloud.com'}}</span>
           </div>
         </el-form-item>
@@ -99,12 +99,10 @@ export default {
   },
   methods: {
     init() {
-      this.$post('/admin/setting/cos', {})
-        .then(res => {
-          this.formData = Object.assign(this.formData, res.setting);
-          this.formData.key = res.key
-        })
-        .catch(() => {})
+      this.$post('/admin/setting/cos', {}).then(res => {
+          this.formData = Object.assign(this.formData, res.data.setting);
+          this.formData.key = res.data.key
+      }).catch(() => {})
     },
     onSubmit() {
       this.$refs['form'].validate(valid => {

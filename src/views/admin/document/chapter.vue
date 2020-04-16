@@ -134,7 +134,7 @@
                   <div class="tree-wrap">
                     <el-tree :data="apiHeaderTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
                       <div class="custom-tree-node" slot-scope="{ node, data }">
-                        <el-row :gutter="5">
+                        <el-row :gutter="10">
                           <el-col :md="4">
                             <el-form-item label="">
                               <el-input @input="paramNameChange(node, data)" v-model="data.name" placeholder="参数名"></el-input>
@@ -1567,6 +1567,10 @@
             font-size: 24px;
             cursor: pointer;
           }
+        }
+
+        .el-select {
+          width: 100%;
         }
 
         /deep/ .el-tree-node__content {
