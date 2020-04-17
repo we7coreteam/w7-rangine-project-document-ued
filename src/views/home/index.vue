@@ -137,6 +137,7 @@
 import { mapGetters } from 'vuex'
 import QrcodeVue from 'qrcode.vue'
 import tocbot from 'tocbot'
+
 export default {
   components: {
     QrcodeVue
@@ -225,49 +226,52 @@ export default {
     getChapters() {
       this.$post('/document/chapter/list', {
         document_id: this.$route.params.id
-      })
-        .then(res => {
-          if(!res.data.length) {return}
-          res.data.forEach(item => {
-            if(item.is_dir && item.children.length == 0) {
-              item.children.push({is_dir: false})
-            } else {
-              item.children.forEach(child => {
-                if(child.is_dir && child.children.length == 0) {
-                  child.children.push({
-                    is_dir: false
-                  })
+      }).then(res => {
+        if(!res.data.length) {return}
+        res.data.forEach(item => {
+          if(item.is_dir && item.children.length == 0) {
+            item.children.push({is_dir: false})
+          } else {
+            item.children.forEach(child => {
+              if(child.is_dir && child.children.length == 0) {
+                child.children.push({
+                  is_dir: false
+                })
+              }
+            })
+          }
+        })
+        this.chapters = res.data;
+        this.$nextTick(() => {
+          if (this.$route.query.id) {
+            //F5刷新
+            this.selectChapterId = this.$route.query.id
+            //递归找name
+            let name = '';
+            let getName = function (array, id) {
+              array.forEach(chapters => {
+                if (!chapters.children.length) {
+                  getName(chapters.children)
+                }
+                if (chapters.id == id) {
+                  name = chapters.name
+                  return
                 }
               })
             }
-          })
-          this.chapters = res.data;
-          this.$nextTick(() => {
-            if (this.$route.query.id) {
-              //F5刷新
-              this.selectChapterId = this.$route.query.id
-              //递归找name
-              let name = '';
-              let getName = function (array, id) {
-                array.forEach(chapters => {
-                  if (!chapters.children.length) {
-                    getName(chapters.children)
-                  }
-                  if (chapters.id == id) {
-                    name = chapters.name
-                    return
-                  }
-                })
-              }
-              getName(this.chapters, this.selectChapterId)
-              this.selectNode(this.selectChapterId)
-              document.title = name ? (name + ' — '+ this.document_name) : this.document_name
-              this.getArticle()
-            } else {
-              this.goDefaultChaper(res)
+            getName(this.chapters, this.selectChapterId)
+            this.selectNode(this.selectChapterId)
+            document.title = name ? (name + ' — '+ this.document_name) : this.document_name
+            this.getArticle()
+          } else {
+            // this.goDefaultChaper(res)
+            if (res.data.length) {
+              this.selectNode(res.data[0].id);
+              this.handleNodeClick(res.data[0])
             }
-          })
+          }
         })
+     })
     },
     //判断是否有默认文档,有则选中
     goDefaultChaper(data, defaultId) {
@@ -472,7 +476,7 @@ export default {
           this.articleContent.star_id = res.data.star_id || ''
         })
     }
-  }
+  },
 }
 </script>
 

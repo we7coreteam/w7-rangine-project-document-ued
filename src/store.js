@@ -6,7 +6,9 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     UserInfo: {},
-    NavMenu: {}
+    NavMenu: {},
+    isSave: true,
+    saveDialogVisible: false
   },
   getters: {
     UserInfo(state) {

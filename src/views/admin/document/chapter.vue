@@ -525,12 +525,16 @@
         chapter_id: '',
         isDocEmpty: true,
         previewId: '',
-        isSave: true,
-        saveDialogVisible: false
       }
     },
     computed: {
       ...mapGetters({UserInfo: 'UserInfo'}),
+      isSave () {
+        return this.$store.state.isSave;
+      },
+      saveDialogVisible () {
+        return this.$store.state.saveDialogVisible;
+      }
     },
     watch: {
       filterText(val) {
@@ -730,10 +734,6 @@
         return data.name.indexOf(value) !== -1;
       },
       handleNodeClick(data) {
-        // if (!this.isSave) {
-        //   this.saveDialogVisible = true;
-        //   return false
-        // }
         console.log(12);
         console.log(data);
 
@@ -748,7 +748,6 @@
         }
         this.selectNodeObj = data;
         this.setOperRecord(data); // 临时注释
-        this.isSave = false;
       },
       updateXY(event) {
         this.clientX = event.clientX
@@ -1243,7 +1242,6 @@
           }).then(res => {
             if (res.code == 200)
               this.$message.success('保存成功！')
-              this.isSave = true;
             // console.log('form');
             // console.log(this.form);
           })
@@ -1256,7 +1254,6 @@
           }).then(res => {
             if (res.code == 200)
               this.$message.success('保存成功！')
-              this.isSave = true;
             // console.log('form');
             // console.log(this.form);
           })
@@ -1264,11 +1261,15 @@
       },
 
       determineLeave () {
-
+        this.$store.state.saveDialogVisible = false;
+        this.$store.state.isSave = true;
+        console.log('isSave');
+        console.log(this.$store.state.isSave);
+        console.log(this.$store.state.saveDialogVisible);
       },
 
       cancelLeave () {
-        this.saveDialogVisible = false;
+        this.$store.state.saveDialogVisible = false;
       },
 
       // 清空form
