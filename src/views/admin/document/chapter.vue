@@ -122,7 +122,7 @@
                     <span class="line"></span>
                     <span class="text">请求数据</span>
                   </div>
-                  <el-button type="primary" plain icon="el-icon-plus" @click="addFirstNode">添加</el-button>
+                  <!--<el-button type="primary" plain icon="el-icon-plus" @click="addFirstNode">添加</el-button>-->
                   <el-button type="default" plain icon="el-icon-upload" v-if="false">导入</el-button>
                 </div>
                 <div class="c-con">
@@ -283,7 +283,7 @@
                     <span class="line"></span>
                     <span class="text">响应数据</span>
                   </div>
-                  <el-button type="primary" plain icon="el-icon-plus" @click="addResFirstNode">添加</el-button>
+                  <!--<el-button type="primary" plain icon="el-icon-plus" @click="addResFirstNode">添加</el-button>-->
                   <el-button type="default" plain icon="el-icon-upload" v-if="false">导入</el-button>
                 </div>
                 <div class="c-con">
@@ -441,6 +441,7 @@
     },
     data() {
       return {
+        isHeaderLast: true,
         docName: '',
         docTitle: '',
         defaultCheckedKeys: [],
@@ -533,7 +534,7 @@
       },
       saveDialogVisible () {
         return this.$store.state.saveDialogVisible;
-      }
+      },
     },
     watch: {
       filterText(val) {
@@ -550,7 +551,7 @@
         if (val) {
           this.getOperRecord()
         }
-      }
+      },
     },
     created() {
       if (this.$route.query && this.$route.query.type == 'add') {//新增项目
@@ -1204,6 +1205,30 @@
 
       // 删除 请求数据node
       removeApiTreeNode (node, data) {
+        const length1 = this.apiParamsTreeData.length;
+        const length2 = this.apiParamsTreeData.length;
+        const length3 = this.apiBodyTreeData.length;
+        const tab_location = this.form.tab_location;
+
+        if (tab_location == 1) {
+          if (length1 == 1 && node.level == 1) {
+            this.$message.error('已经是最后一个了，勿删！')
+            return false;
+          }
+        }
+        if (tab_location == 2) {
+          if (length2 == 1 && node.level == 1) {
+            this.$message.error('已经是最后一个了，勿删！')
+            return false;
+          }
+        }
+        if (tab_location == 3) {
+          if (length3 == 1 && node.level == 1) {
+            this.$message.error('已经是最后一个了，勿删！')
+            return false;
+          }
+        }
+
         const parent = node.parent;
         const children = parent.data.children || parent.data;
         const index = children.findIndex(d => d.id === data.id);
@@ -1212,6 +1237,15 @@
 
       // 删除 响应数据数据node
       removeResApiTreeNode (node, data) {
+        console.log(node);
+
+        const length = this.apiResTreeData.length;
+        console.log(length);
+
+        if (length == 1 && node.level == 1) {
+          this.$message.error('已经是最后一个了，勿删！')
+          return false;
+        }
         const parent = node.parent;
         const children = parent.data.children || parent.data;
         const index = children.findIndex(d => d.id === data.id);
@@ -1328,6 +1362,10 @@
               if (res.data.content != null && res.data.content.length) {
                 // console.log(res);
                 let record = res.data.record;
+                const apiData1 = JSON.parse(JSON.stringify(this.baseRequestData));
+                const apiData2 = JSON.parse(JSON.stringify(this.baseRequestData));
+                const apiData3 = JSON.parse(JSON.stringify(this.baseRequestData));
+                const apiData4 = JSON.parse(JSON.stringify(this.baseRequestData));
                 if (record.api) {
                   this.form = record.api;
                   this.form.tab_location = this.form.tab_location.toString();
@@ -1338,6 +1376,15 @@
                   this.apiParamsTreeData = record.body['2'];
                   this.apiBodyTreeData = record.body.request_body;
                   this.apiResTreeData = record.body.reponse_body;
+
+                  this.apiHeaderTreeData.push(apiData1);
+                  this.apiParamsTreeData.push(apiData2);
+                  this.apiBodyTreeData.push(apiData3);
+                  this.apiResTreeData.push(apiData4);
+
+
+
+
                 }
                 this.markDownContent = record.extend;
               } else {
