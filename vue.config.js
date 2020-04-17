@@ -1,7 +1,11 @@
-var path = require('path')
+
+const path = require('path')
+const webpack = require('webpack')
+const CompressionPlugin = require("compression-webpack-plugin")
 function resolve(dir) {
-  return path.join(__dirname, dir)
+  return path.join(__dirname, dir);
 }
+
 module.exports = {
   publicPath: '/',
   outputDir: resolve('../document-apiserver/public'), // 构建目录
@@ -23,5 +27,27 @@ module.exports = {
   chainWebpack: config => {
     config.resolve.alias.set('@', resolve('src'))
     config.plugins.delete('prefetch') // 移除prefetch
+  },
+  productionSourceMap: false,
+  runtimeCompiler: false,
+  transpileDependencies: [],
+  css: {
+    sourceMap: false
+  },
+  configureWebpack: config => {
+    return {
+      performance: {
+        hints: false
+      },
+      plugins: [
+        new CompressionPlugin({
+          test: /\.js$|\.html$|\.css/,
+          threshold: 10240,
+          deleteOriginalAssets: false
+        }),
+        // new webpack.HotModuleReplacementPlugin() // hot: true 开启了hot模式，无需手动加载HotModuleReplacementPlugin
+      ]
+    }
+
   }
 }
