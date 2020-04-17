@@ -696,14 +696,6 @@
                   this.$refs.chaptersTree.setCurrentKey(res.data.catalog[0].id);
                   this.handleNodeClick(res.data.catalog[0]);
                 })
-
-
-                // this.defaultExpanded = [];
-                // this.defaultCheckedKeys = [];
-                // this.defaultExpanded.push(res.data.catalog[0].id);
-                // this.defaultCheckedKeys.push(res.data.catalog[0].id);
-                // console.log(this.defaultExpanded);
-                // console.log(this.defaultCheckedKeys);
               }
             }
           }
@@ -1301,10 +1293,10 @@
           if (res.code == 200) {
             this.layout = res.data.layout;
             if (res.data.layout == 1) {
-              if (res.data.content != null) {
+              if (res.data.content != null && res.data.content.length) {
                 // console.log(res);
                 let record = res.data.record;
-                if (record.api.length) {
+                if (record.api) {
                   this.form = record.api;
                   this.form.tab_location = this.form.tab_location.toString();
                 }
