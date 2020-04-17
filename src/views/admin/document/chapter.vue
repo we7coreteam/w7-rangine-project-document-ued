@@ -128,7 +128,7 @@
                 <div class="c-con">
                   <el-tabs v-model="form.tab_location" @tab-click="tabRequest">
                     <!--请求头Header-->
-                    <el-tab-pane label="请求头Header" name="1" :key="header">
+                    <el-tab-pane label="请求头Header" name="1" key="header">
                       <!--el-tree 添加 show-checkbox 则显示复选框-->
                       <div class="tree-wrap">
                         <el-tree :data="apiHeaderTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
@@ -174,7 +174,7 @@
                     </el-tab-pane>
 
                     <!--params-->
-                    <el-tab-pane label="Query Params" name="2" :key="params">
+                    <el-tab-pane label="Query Params" name="2" key="params">
                       <div class="tree-wrap">
                         <el-tree :data="apiParamsTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
                           <div class="custom-tree-node" slot-scope="{ node, data }">
@@ -219,7 +219,7 @@
                     </el-tab-pane>
 
                     <!--body-->
-                    <el-tab-pane label="请求参数（Body）" name="3" :key="body">
+                    <el-tab-pane label="请求参数（Body）" name="3" key="body">
                       <div class="type-body">
                         <el-form-item label="请求类型：">
                           <el-radio-group v-model="form.body_param_location">
@@ -669,6 +669,15 @@
 
       },
       getChapters() {
+        // const apiData1 = JSON.parse(JSON.stringify(this.baseRequestData));
+        // const apiData2 = JSON.parse(JSON.stringify(this.baseRequestData));
+        // const apiData3 = JSON.parse(JSON.stringify(this.baseRequestData));
+        // const apiData4 = JSON.parse(JSON.stringify(this.baseRequestData));
+        // this.apiHeaderTreeData.push(apiData1);
+        // this.apiParamsTreeData.push(apiData2);
+        // this.apiBodyTreeData.push(apiData3);
+        // this.apiResTreeData.push(apiData4);
+
         getAllChapter({
           document_id: this.$route.params.id
         }).then(res => {
@@ -1153,12 +1162,20 @@
 
       // res响应数据 添加同级node
       addResFirstNode () {
+        const This = this;
         const baseRequestData = JSON.parse(JSON.stringify(this.baseRequestData));
-        /*
-        *或者按照这种push
-        * baseRequestData = {isChecked: false, name: '',type: 1, enabled: '', default_value: '', description: '', rule: '',children: []}
-        * */
-        this.apiResTreeData.push(baseRequestData);
+        // this.apiResTreeData.push(baseRequestData);
+
+        function apiDataFilter(data) {
+          const last = data.length -1;
+          if (data[last].name == '' && data[last].description == '') {
+            This.$message.warning('已存在空白行，请勿再次添加！')
+          } else {
+            data.push(baseRequestData);
+          }
+        }
+
+        apiDataFilter(this.apiResTreeData);
       },
 
       // 请求数据 添加下一级node
@@ -1222,24 +1239,25 @@
         const tab_location = this.form.tab_location;
         const body_param_location = this.form.body_param_location;
         let chapter_id = '';
-
         let record = {};
         let body = {};
         body = {};
-        if (tab_location == '3') {
-          if (body_param_location == 3) {
-            body['3'] = this.apiBodyTreeData;
-          } else if (body_param_location == 4) {
-            body['4'] = this.apiBodyTreeData;
-          } else if (body_param_location == 5) {
-            body['5'] = this.apiBodyTreeData;
-          } else if (body_param_location == 6) {
-            body['6'] = this.apiBodyTreeData;
-          }
-        }
+        // if (tab_location == '3') {
+        //   if (body_param_location == 3) {
+        //     body['3'] = this.apiBodyTreeData;
+        //   } else if (body_param_location == 4) {
+        //     body['4'] = this.apiBodyTreeData;
+        //   } else if (body_param_location == 5) {
+        //     body['5'] = this.apiBodyTreeData;
+        //   } else if (body_param_location == 6) {
+        //     body['6'] = this.apiBodyTreeData;
+        //   }
+        // }
+
         body['1'] = this.apiHeaderTreeData;
         body['2'] = this.apiParamsTreeData;
-        body['10'] = this.apiResTreeData;
+        body['request_body'] = this.apiBodyTreeData;
+        body['reponse_body'] = this.apiResTreeData;
         record.api = this.form;
         record.body = body;
         record.extend = this.markDownContent;
@@ -1313,12 +1331,13 @@
                 if (record.api) {
                   this.form = record.api;
                   this.form.tab_location = this.form.tab_location.toString();
+                  this.form.body_param_location = this.form.body_param_location.toString();
                 }
                 if (record.body) {
                   this.apiHeaderTreeData = record.body['1'];
                   this.apiParamsTreeData = record.body['2'];
-                  this.apiBodyTreeData = record.body[record.api.body_param_location];
-                  this.apiResTreeData = record.body[10];
+                  this.apiBodyTreeData = record.body.request_body;
+                  this.apiResTreeData = record.body.reponse_body;
                 }
                 this.markDownContent = record.extend;
               } else {
@@ -1327,10 +1346,10 @@
                 const apiData2 = JSON.parse(JSON.stringify(this.baseRequestData));
                 const apiData3 = JSON.parse(JSON.stringify(this.baseRequestData));
                 const apiData4 = JSON.parse(JSON.stringify(this.baseRequestData));
-                this.apiHeaderTreeData.push(apiData1);
-                this.apiParamsTreeData.push(apiData2);
-                this.apiBodyTreeData.push(apiData3);
-                this.apiResTreeData.push(apiData4);
+                this.apiHeaderTreeData = [apiData1];
+                this.apiParamsTreeData = [apiData2];
+                this.apiBodyTreeData = [apiData3];
+                this.apiResTreeData = [apiData4];
                 this.markDownContent = '';
               }
             } else {
