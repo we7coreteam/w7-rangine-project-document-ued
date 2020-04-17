@@ -1205,7 +1205,7 @@
 
       // 删除 请求数据node
       removeApiTreeNode (node, data) {
-        const length1 = this.apiParamsTreeData.length;
+        const length1 = this.apiHeaderTreeData.length;
         const length2 = this.apiParamsTreeData.length;
         const length3 = this.apiBodyTreeData.length;
         const tab_location = this.form.tab_location;
