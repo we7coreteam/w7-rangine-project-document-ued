@@ -1300,7 +1300,7 @@
                   this.form = record.api;
                   this.form.tab_location = this.form.tab_location.toString();
                 }
-                if (record.body.length) {
+                if (record.body) {
                   this.apiHeaderTreeData = record.body['1'];
                   this.apiParamsTreeData = record.body['2'];
                   this.apiBodyTreeData = record.body[record.api.body_param_location];
