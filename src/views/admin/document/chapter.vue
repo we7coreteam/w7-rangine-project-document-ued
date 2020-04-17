@@ -128,7 +128,7 @@
                 <div class="c-con">
                   <el-tabs v-model="form.tab_location" @tab-click="tabRequest">
                     <!--请求头Header-->
-                    <el-tab-pane label="请求头Header" name="1">
+                    <el-tab-pane label="请求头Header" name="1" :key="header">
                       <!--el-tree 添加 show-checkbox 则显示复选框-->
                       <div class="tree-wrap">
                         <el-tree :data="apiHeaderTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
@@ -174,7 +174,7 @@
                     </el-tab-pane>
 
                     <!--params-->
-                    <el-tab-pane label="Query Params" name="2">
+                    <el-tab-pane label="Query Params" name="2" :key="params">
                       <div class="tree-wrap">
                         <el-tree :data="apiParamsTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
                           <div class="custom-tree-node" slot-scope="{ node, data }">
@@ -219,7 +219,7 @@
                     </el-tab-pane>
 
                     <!--body-->
-                    <el-tab-pane label="请求参数（Body）" name="3">
+                    <el-tab-pane label="请求参数（Body）" name="3" :key="body">
                       <div class="type-body">
                         <el-form-item label="请求类型：">
                           <el-radio-group v-model="form.body_param_location">
@@ -516,11 +516,10 @@
           children: [],
         },
         markDownContent: '',
-        apiHeaderTreeData: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
-        apiParamsTreeData: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
-        apiBodyTreeData: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
-        apiTreeDataCopy: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
-        apiResTreeData: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
+        apiHeaderTreeData: [],
+        apiParamsTreeData: [],
+        apiBodyTreeData: [],
+        apiResTreeData: [],
         apiResTreeDataCopy: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
         chapter_id: '',
         isDocEmpty: true,
@@ -1122,6 +1121,17 @@
       // request请求 添加同级node
       addFirstNode () {
         const baseRequestData = JSON.parse(JSON.stringify(this.baseRequestData));
+        const This = this;
+
+        function apiDataFilter(data) {
+          const last = data.length -1;
+          if (data[last].name == '' && data[last].description == '') {
+            This.$message.warning('已存在空白行，请勿再次添加！')
+          } else {
+            data.push(baseRequestData);
+          }
+        }
+
         /*
         *或者按照这种push
         * baseRequestData = {isChecked: false, name: '',type: 1, enabled: '', default_value: '', description: '', rule: '',children: []}
@@ -1130,11 +1140,14 @@
         const tab_location = this.form.tab_location;
 
         if (tab_location == 1) {
-          this.apiHeaderTreeData.push(baseRequestData);
+          // this.apiHeaderTreeData.push(baseRequestData);
+          apiDataFilter(this.apiHeaderTreeData);
         } else if (tab_location == 2) {
-          this.apiParamsTreeData.push(baseRequestData);
+          // this.apiParamsTreeData.push(baseRequestData);
+          apiDataFilter(this.apiParamsTreeData);
         } else if (tab_location == 3) {
-          this.apiBodyTreeData.push(baseRequestData);
+          // this.apiBodyTreeData.push(baseRequestData);
+          apiDataFilter(this.apiBodyTreeData);
         }
       },
 
@@ -1310,10 +1323,14 @@
                 this.markDownContent = record.extend;
               } else {
                 this.form = this.formCopy;
-                this.apiHeaderTreeData = this.apiTreeDataCopy;
-                this.apiParamsTreeData = this.apiTreeDataCopy;
-                this.apiBodyTreeData = this.apiTreeDataCopy;
-                this.apiResTreeData = this.apiResTreeDataCopy;
+                const apiData1 = JSON.parse(JSON.stringify(this.baseRequestData));
+                const apiData2 = JSON.parse(JSON.stringify(this.baseRequestData));
+                const apiData3 = JSON.parse(JSON.stringify(this.baseRequestData));
+                const apiData4 = JSON.parse(JSON.stringify(this.baseRequestData));
+                this.apiHeaderTreeData.push(apiData1);
+                this.apiParamsTreeData.push(apiData2);
+                this.apiBodyTreeData.push(apiData3);
+                this.apiResTreeData.push(apiData4);
                 this.markDownContent = '';
               }
             } else {
