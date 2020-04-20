@@ -60,7 +60,7 @@
           :page-size="page_size"
           :current-page.sync="currentPage"
           :page-count="pageCount"
-          :hide-on-single-page="true"
+          :hide-on-single-page="false"
           style="margin-top:20px"
       >
       </el-pagination>
