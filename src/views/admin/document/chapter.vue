@@ -1359,57 +1359,65 @@
           if (res.code == 200) {
             this.layout = res.data.layout;
             if (res.data.layout == 1) {
-              if (res.data.content != null && res.data.content.length) {
-                // console.log(res);
-                let record = res.data.record;
-                const apiData1 = JSON.parse(JSON.stringify(this.baseRequestData));
-                const apiData2 = JSON.parse(JSON.stringify(this.baseRequestData));
-                const apiData3 = JSON.parse(JSON.stringify(this.baseRequestData));
-                const apiData4 = JSON.parse(JSON.stringify(this.baseRequestData));
-                if (record.api) {
-                  this.form = record.api;
-                  this.form.tab_location = this.form.tab_location.toString();
-                  this.form.body_param_location = this.form.body_param_location.toString();
-                }
-                if (record.body) {
-                  this.apiHeaderTreeData = record.body['1'];
-                  this.apiParamsTreeData = record.body['2'];
-                  this.apiBodyTreeData = record.body.request_body;
-                  this.apiResTreeData = record.body.reponse_body;
-
-                  this.apiHeaderTreeData.push(apiData1);
-                  this.apiParamsTreeData.push(apiData2);
-                  this.apiBodyTreeData.push(apiData3);
-                  this.apiResTreeData.push(apiData4);
-
-
-
-
-                }
-                this.markDownContent = record.extend;
+              // api文档
+              let record = res.data.record;
+              const apiData1 = JSON.parse(JSON.stringify(this.baseRequestData));
+              const apiData2 = JSON.parse(JSON.stringify(this.baseRequestData));
+              const apiData3 = JSON.parse(JSON.stringify(this.baseRequestData));
+              const apiData4 = JSON.parse(JSON.stringify(this.baseRequestData));
+              if (record.api) {
+                this.form = record.api;
+                this.form.tab_location = this.form.tab_location.toString();
+                this.form.body_param_location = this.form.body_param_location.toString();
               } else {
                 this.form = this.formCopy;
-                const apiData1 = JSON.parse(JSON.stringify(this.baseRequestData));
-                const apiData2 = JSON.parse(JSON.stringify(this.baseRequestData));
-                const apiData3 = JSON.parse(JSON.stringify(this.baseRequestData));
-                const apiData4 = JSON.parse(JSON.stringify(this.baseRequestData));
+              }
+
+              // header
+              if (record.body[1].length) {
+                this.apiHeaderTreeData = record.body['1'];
+                this.apiHeaderTreeData.push(apiData1);
+              } else {
+                // const apiData1 = JSON.parse(JSON.stringify(this.baseRequestData));
                 this.apiHeaderTreeData = [apiData1];
+              }
+              // params
+              if (record.body[2].length) {
+                this.apiParamsTreeData = record.body['2'];
+                this.apiParamsTreeData.push(apiData2);
+              } else {
+                // const apiData2 = JSON.parse(JSON.stringify(this.baseRequestData));
                 this.apiParamsTreeData = [apiData2];
+              }
+              // request body
+              if (record.body.request_body.length) {
+                this.apiBodyTreeData = record.body.request_body;
+                this.apiBodyTreeData.push(apiData3);
+              } else {
+                // const apiData3 = JSON.parse(JSON.stringify(this.baseRequestData));
                 this.apiBodyTreeData = [apiData3];
+              }
+              // reponse body
+              if (record.body.reponse_body.length) {
+                this.apiResTreeData = record.body.reponse_body;
+                this.apiResTreeData.push(apiData4);
+              } else {
+                // const apiData4 = JSON.parse(JSON.stringify(this.baseRequestData));
                 this.apiResTreeData = [apiData4];
+              }
+              // markDown
+              if (record.extend == null) {
                 this.markDownContent = '';
+              } else {
+                this.markDownContent = record.extend;
               }
             } else {
+              // 普通文档
               if (res.data.content == null) {
                 this.markDownContent = '';
               } else {
                 this.markDownContent = res.data.content;
               }
-              // if (res.data.content.length) {
-              //   this.markDownContent = res.data.content;
-              // } else {
-              //   this.markDownContent = '';
-              // }
             }
           }
         })
