@@ -552,6 +552,7 @@
         chapter_id: '',
         isDocEmpty: true,
         previewId: '',
+        loading: ''
       }
     },
     computed: {
@@ -1433,6 +1434,7 @@
       viewChapter() {
         const chapter_id = this.chapter_id;
         const document_id = this.$route.params.id;
+        this.loading = this.$loading();
         viewChapter({
           chapter_id,
           document_id
@@ -1500,6 +1502,7 @@
                 this.markDownContent = res.data.content;
               }
             }
+            this.loading.close();
           }
         })
       }
