@@ -207,16 +207,15 @@
         this.$post('/admin/document/update', {
           id: id,
           is_show: isShow == 1 ? 2 : 1
+        }).then(() => {
+          //修改docList
+          this.docList.forEach(row => {
+            if (row.id == id) {
+              row.is_show = isShow == 1 ? 2 : 1
+              return
+            }
+          });
         })
-          .then(() => {
-            //修改docList
-            this.docList.forEach(row => {
-              if (row.id == id) {
-                row.is_show = isShow == 1 ? 2 : 1
-                return
-              }
-            });
-          })
       },
       readDoc(item) {
         let routeUrl = this.$router.resolve({

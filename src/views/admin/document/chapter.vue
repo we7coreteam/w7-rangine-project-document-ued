@@ -1,44 +1,44 @@
 <template>
-    <el-container class="w7-document-chapter">
-      <el-aside class="w7-aside-chapter" width="260px">
-        <div class="w7-aside-chapter-head">
-          <p>{{ docName }}</p>
-        </div>
-        <div class="search-box">
-          <el-input placeholder="请输入关键字搜索" v-model="filterText" clearable>
-            <i slot="suffix" class="el-input__icon el-icon-search"></i>
-          </el-input>
-        </div>
-        <div class="icon-box">
-          <el-tooltip effect="dark" content="新建文档" placement="bottom">
-            <i class="wi wi-document" @click="clickIconAddNode(false)"></i>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="新建目录" placement="bottom">
-            <i class="wi wi-folder" @click="clickIconAddNode(true)"></i>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="预览" placement="bottom">
-            <i class="wi wi-view" @click="readDoc"></i>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="设置" placement="bottom" v-if="has_manage">
-            <i class="wi wi-guanli" @click="showSetting = true"></i>
-          </el-tooltip>
-        </div>
-        <div class="tree-warpper">
-          <el-scrollbar style="height: 100%">
-            <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text="没有与搜索条件匹配的项"
-                     ref="chaptersTree"
-                     node-key="id"
-                     :expand-on-click-node="true"
-                     :highlight-current="true"
-                     :default-expanded-keys="defaultExpanded"
-                     :default-checked-keys="defaultCheckedKeys"
-                     :filter-node-method="filterNode"
-                     @node-contextmenu="rightClick"
-                     @node-click="handleNodeClick"
-                     draggable
-                     @node-drop="handleDrop"
-                     :allow-drop="allowDrop">
-              <div class="custom-tree-node" slot-scope="{ node, data }">
+  <el-container class="w7-document-chapter">
+    <el-aside class="w7-aside-chapter" width="260px">
+      <div class="w7-aside-chapter-head">
+        <p>{{ docName }}</p>
+      </div>
+      <div class="search-box">
+        <el-input placeholder="请输入关键字搜索" v-model="filterText" clearable>
+          <i slot="suffix" class="el-input__icon el-icon-search"></i>
+        </el-input>
+      </div>
+      <div class="icon-box">
+        <el-tooltip effect="dark" content="新建文档" placement="bottom">
+          <i class="wi wi-document" @click="clickIconAddNode(false)"></i>
+        </el-tooltip>
+        <el-tooltip effect="dark" content="新建目录" placement="bottom">
+          <i class="wi wi-folder" @click="clickIconAddNode(true)"></i>
+        </el-tooltip>
+        <el-tooltip effect="dark" content="预览" placement="bottom">
+          <i class="wi wi-view" @click="readDoc"></i>
+        </el-tooltip>
+        <el-tooltip effect="dark" content="设置" placement="bottom" v-if="has_manage">
+          <i class="wi wi-guanli" @click="showSetting = true"></i>
+        </el-tooltip>
+      </div>
+      <div class="tree-warpper">
+        <el-scrollbar style="height: 100%">
+          <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text="没有与搜索条件匹配的项"
+                   ref="chaptersTree"
+                   node-key="id"
+                   :expand-on-click-node="true"
+                   :highlight-current="true"
+                   :default-expanded-keys="defaultExpanded"
+                   :default-checked-keys="defaultCheckedKeys"
+                   :filter-node-method="filterNode"
+                   @node-contextmenu="rightClick"
+                   @node-click="handleNodeClick"
+                   draggable
+                   @node-drop="handleDrop"
+                   :allow-drop="allowDrop">
+            <div class="custom-tree-node" slot-scope="{ node, data }">
               <span class="node-info">
                 <i class="wi wi-folder" v-if="data.is_dir == 1"></i>
                 <i class="wi wi-document" v-if="data.is_dir == 0"></i>
@@ -46,148 +46,211 @@
                   <span :title="node.label">{{ node.label }}</span>
                 </div>
               </span>
-                <span class="shortcut" @click.stop="shortcut(data, node)">
+              <span class="shortcut" @click.stop="shortcut(data, node)">
                 <i class="wi wi-document" v-if="data.is_dir == 1"></i>
               </span>
-                <span class="point3" @mousemove='updateXY' @click.stop="leftClick(data, node)"><span>...</span></span>
-                <div class="doc-default" v-if="data.is_default"></div>
-              </div>
-            </el-tree>
-            <div id="menu-bar" class="menu-bar" v-show="menuBarVisible">
-              <ul class="menu">
-                <template v-if="rightSelectNodeObj.is_dir == 1">
-                  <li class="menu__item" @click="addChildNode(true)">创建目录</li>
-                  <li class="menu__item" @click="addChildNode(false)">创建文档</li>
-                  <li class="menu__item" @click="updateNode(true)">重命名</li>
-                  <li class="menu__item" @click="openMoveDialog(true)">移动</li>
-                  <li class="menu__item" @click="removeNode">删除</li>
-                </template>
-                <template v-if="rightSelectNodeObj.is_dir == 0">
-                  <!--<li class="menu__item" @click="defaultFile">设为目录默认文档</li>-->
-                  <li class="menu__item" @click="updateNode(false)">重命名</li>
-                  <li class="menu__item" @click="copyNode()">复制文档</li>
-                  <li class="menu__item" @click="openMoveDialog(false)">移动</li>
-                  <!-- <li class="menu__item" @click="">权限</li> -->
-                  <li class="menu__item" @click="removeNode">删除</li>
-                </template>
-              </ul>
+              <span class="point3" @mousemove='updateXY' @click.stop="leftClick(data, node)"><span>...</span></span>
+              <div class="doc-default" v-if="data.is_default"></div>
             </div>
-          </el-scrollbar>
-        </div>
-      </el-aside>
-      <el-main v-cloak>
-        <div v-if="isDocEmpty">尚未创建文档</div>
-        <template v-else>
-          <div class="chapter-title">{{docTitle}}</div>
+          </el-tree>
+          <div id="menu-bar" class="menu-bar" v-show="menuBarVisible">
+            <ul class="menu">
+              <template v-if="rightSelectNodeObj.is_dir == 1">
+                <li class="menu__item" @click="addChildNode(true)">创建目录</li>
+                <li class="menu__item" @click="addChildNode(false)">创建文档</li>
+                <li class="menu__item" @click="updateNode(true)">重命名</li>
+                <li class="menu__item" @click="openMoveDialog(true)">移动</li>
+                <li class="menu__item" @click="removeNode">删除</li>
+              </template>
+              <template v-if="rightSelectNodeObj.is_dir == 0">
+                <!--<li class="menu__item" @click="defaultFile">设为目录默认文档</li>-->
+                <li class="menu__item" @click="updateNode(false)">重命名</li>
+                <li class="menu__item" @click="copyNode()">复制文档</li>
+                <li class="menu__item" @click="openMoveDialog(false)">移动</li>
+                <!-- <li class="menu__item" @click="">权限</li> -->
+                <li class="menu__item" @click="removeNode">删除</li>
+              </template>
+            </ul>
+          </div>
+        </el-scrollbar>
+      </div>
+    </el-aside>
+    <el-main v-cloak>
+      <div v-if="isDocEmpty">尚未创建文档</div>
+      <template v-else>
+        <div class="chapter-title">{{docTitle}}</div>
 
-          <div class="api" v-if="layout == 1">
-            <el-form ref="form" :model="form" label-width="100">
-              <!--基本信息-->
-              <div class="basic-information api-con">
-                <div class="top">
-                  <div class="line-wrap">
-                    <span class="line"></span>
-                    <span class="text">基本信息</span>
-                  </div>
-                </div>
-                <div class="c-con">
-                  <el-row :gutter="10">
-                    <el-col :md="4">
-                      <el-form-item label="">
-                        <el-select v-model="form.method" placeholder="">
-                          <el-option v-for="item in methodArr" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :md="10">
-                      <el-form-item label="">
-                        <el-input v-model="form.url" placeholder="请求地址，如：/api/test"></el-input>
-                      </el-form-item>
-                    </el-col>
-                  </el-row>
-                  <el-row :gutter="10">
-                    <el-col :md="14">
-                      <el-form-item label="">
-                        <el-input v-model="form.description" placeholder="请在此输入接口描述内容"></el-input>
-                      </el-form-item>
-                    </el-col>
-                  </el-row>
+        <div class="api" v-if="layout == 1">
+          <el-form ref="form" :model="form" label-width="100">
+            <!--基本信息-->
+            <div class="basic-information api-con">
+              <div class="top">
+                <div class="line-wrap">
+                  <span class="line"></span>
+                  <span class="text">基本信息</span>
                 </div>
               </div>
+              <div class="c-con">
+                <el-row :gutter="10">
+                  <el-col :md="4">
+                    <el-form-item label="">
+                      <el-select v-model="form.method" placeholder="">
+                        <el-option v-for="item in methodArr" :key="item.value" :label="item.label"
+                                   :value="item.value"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :md="10">
+                    <el-form-item label="">
+                      <el-input v-model="form.url" placeholder="请求地址，如：/api/test"></el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="10">
+                  <el-col :md="14">
+                    <el-form-item label="">
+                      <el-input v-model="form.description" placeholder="请在此输入接口描述内容"></el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </div>
+            </div>
 
-              <!--请求数据-->
-              <div class="api-con">
-                <div class="top">
-                  <div class="line-wrap">
-                    <span class="line"></span>
-                    <span class="text">请求数据</span>
-                  </div>
-                  <!--<el-button type="primary" plain icon="el-icon-plus" @click="addFirstNode">添加</el-button>-->
-                  <el-button type="default" plain icon="el-icon-upload" v-if="false">导入</el-button>
+            <!--请求数据-->
+            <div class="api-con">
+              <div class="top">
+                <div class="line-wrap">
+                  <span class="line"></span>
+                  <span class="text">请求数据</span>
                 </div>
-                <div class="c-con">
-                  <el-tabs v-model="form.tab_location" @tab-click="tabRequest">
-                    <!--请求头Header-->
-                    <el-tab-pane label="请求头Header" name="1" key="header">
-                      <!--el-tree 添加 show-checkbox 则显示复选框-->
-                      <div class="tree-wrap">
-                        <el-tree :data="apiHeaderTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
-                          <div class="custom-tree-node" slot-scope="{ node, data }">
-                            <el-row :gutter="10">
-                              <el-col :md="4">
-                                <el-form-item label="">
-                                  <el-input @input="paramNameChange(node, data)" v-model="data.name" placeholder="参数名"></el-input>
-                                </el-form-item>
-                              </el-col>
-                              <el-col :md="4">
-                                <el-form-item label="">
-                                  <el-select v-model="data.type" placeholder="">
-                                    <el-option v-for="val in paramsArr" :key="val.value" :label="val.type" :value="val.value"></el-option>
-                                  </el-select>
-                                </el-form-item>
-                              </el-col>
-                              <el-col :md="4">
-                                <el-form-item label="">
-                                  <el-select v-model="data.enabled" placeholder="是否必填">
-                                    <el-option label="true" :value="1"></el-option>
-                                    <el-option label="false" :value="0"></el-option>
-                                  </el-select>
-                                </el-form-item>
-                              </el-col>
-                              <el-col :md="4">
-                                <el-form-item label="">
-                                  <el-input v-model="data.default_value" placeholder="默认值"></el-input>
-                                </el-form-item>
-                              </el-col>
-                              <el-col :md="6">
-                                <el-form-item label="">
-                                  <el-input v-model="data.description" placeholder="描述"></el-input>
-                                </el-form-item>
-                              </el-col>
-                              <span class="add"  @click="() => addApiTreeNode(data)"><span class="iconfont wq-add"></span></span>
-                              <span class="delete" @click="() => removeApiTreeNode(node, data)"><span class="iconfont wq-delete"></span></span>
-                              <span class="delete" @click="() => insertAfter(node, data)"><!--<span class="iconfont wq-delete"></span>--></span>
-                            </el-row>
-                          </div>
-                        </el-tree>
-                      </div>
-                    </el-tab-pane>
+                <!--<el-button type="primary" plain icon="el-icon-plus" @click="addFirstNode">添加</el-button>-->
+                <el-button type="default" plain icon="el-icon-upload" v-if="false">导入</el-button>
+              </div>
+              <div class="c-con">
+                <el-tabs v-model="form.tab_location" @tab-click="tabRequest">
+                  <!--请求头Header-->
+                  <el-tab-pane label="请求头Header" name="1" key="header">
+                    <!--el-tree 添加 show-checkbox 则显示复选框-->
+                    <div class="tree-wrap">
+                      <el-tree :data="apiHeaderTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
+                        <div class="custom-tree-node" slot-scope="{ node, data }">
+                          <el-row :gutter="10">
+                            <el-col :md="4">
+                              <el-form-item label="">
+                                <el-input @input="paramNameChange(node, data)" v-model="data.name"
+                                          placeholder="参数名"></el-input>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :md="4">
+                              <el-form-item label="">
+                                <el-select v-model="data.type" placeholder="">
+                                  <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
+                                             :value="val.value"></el-option>
+                                </el-select>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :md="4">
+                              <el-form-item label="">
+                                <el-select v-model="data.enabled" placeholder="是否必填">
+                                  <el-option label="true" :value="1"></el-option>
+                                  <el-option label="false" :value="0"></el-option>
+                                </el-select>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :md="4">
+                              <el-form-item label="">
+                                <el-input v-model="data.default_value" placeholder="默认值"></el-input>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :md="6">
+                              <el-form-item label="">
+                                <el-input v-model="data.description" placeholder="描述"></el-input>
+                              </el-form-item>
+                            </el-col>
+                            <span class="add" @click="() => addApiTreeNode(data)"><span class="iconfont wq-add"></span></span>
+                            <span class="delete" @click="() => removeApiTreeNode(node, data)"><span
+                                class="iconfont wq-delete"></span></span>
+                            <span class="delete" @click="() => insertAfter(node, data)"><!--<span class="iconfont wq-delete"></span>--></span>
+                          </el-row>
+                        </div>
+                      </el-tree>
+                    </div>
+                  </el-tab-pane>
 
-                    <!--params-->
-                    <el-tab-pane label="Query Params" name="2" key="params">
+                  <!--params-->
+                  <el-tab-pane label="Query Params" name="2" key="params">
+                    <div class="tree-wrap">
+                      <el-tree :data="apiParamsTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
+                        <div class="custom-tree-node" slot-scope="{ node, data }">
+                          <el-row :gutter="5">
+                            <el-col :md="4">
+                              <el-form-item label="">
+                                <el-input @input="paramNameChange(node, data)" v-model="data.name"
+                                          placeholder="参数名"></el-input>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :md="4">
+                              <el-form-item label="">
+                                <el-select v-model="data.type" placeholder="">
+                                  <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
+                                             :value="val.value"></el-option>
+                                </el-select>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :md="4">
+                              <el-form-item label="">
+                                <el-select v-model="data.enabled" placeholder="是否必填">
+                                  <el-option label="true" :value="1"></el-option>
+                                  <el-option label="false" :value="0"></el-option>
+                                </el-select>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :md="4">
+                              <el-form-item label="">
+                                <el-input v-model="data.default_value" placeholder="默认值"></el-input>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :md="6">
+                              <el-form-item label="">
+                                <el-input v-model="data.description" placeholder="描述"></el-input>
+                              </el-form-item>
+                            </el-col>
+                            <span class="add" @click="() => addApiTreeNode(data)"><span class="iconfont wq-add"></span></span>
+                            <span class="delete" @click="() => removeApiTreeNode(node, data)"><span
+                                class="iconfont wq-delete"></span></span>
+                            <span class="delete" @click="() => insertAfter(node, data)"><!--<span class="iconfont wq-delete"></span>--></span>
+                          </el-row>
+                        </div>
+                      </el-tree>
+                    </div>
+                  </el-tab-pane>
+
+                  <!--body-->
+                  <el-tab-pane label="请求参数（Body）" name="3" key="body">
+                    <div class="type-body">
+                      <el-form-item label="请求类型：">
+                        <el-radio-group v-model="form.body_param_location">
+                          <el-radio label="3">form-data</el-radio>
+                          <el-radio label="4">x-www-form-urlencoded</el-radio>
+                          <el-radio label="5">raw</el-radio>
+                          <el-radio label="6">binary</el-radio>
+                        </el-radio-group>
+                      </el-form-item>
                       <div class="tree-wrap">
-                        <el-tree :data="apiParamsTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
+                        <el-tree :data="apiBodyTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
                           <div class="custom-tree-node" slot-scope="{ node, data }">
                             <el-row :gutter="5">
                               <el-col :md="4">
                                 <el-form-item label="">
-                                  <el-input @input="paramNameChange(node, data)" v-model="data.name" placeholder="参数名"></el-input>
+                                  <el-input @input="paramNameChange(node, data)" v-model="data.name"
+                                            placeholder="参数名"></el-input>
                                 </el-form-item>
                               </el-col>
                               <el-col :md="4">
                                 <el-form-item label="">
                                   <el-select v-model="data.type" placeholder="">
-                                    <el-option v-for="val in paramsArr" :key="val.value" :label="val.type" :value="val.value"></el-option>
+                                    <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
+                                               :value="val.value"></el-option>
                                   </el-select>
                                 </el-form-item>
                               </el-col>
@@ -209,222 +272,175 @@
                                   <el-input v-model="data.description" placeholder="描述"></el-input>
                                 </el-form-item>
                               </el-col>
-                              <span class="add"  @click="() => addApiTreeNode(data)"><span class="iconfont wq-add"></span></span>
-                              <span class="delete" @click="() => removeApiTreeNode(node, data)"><span class="iconfont wq-delete"></span></span>
+                              <span class="add" @click="() => addApiTreeNode(data)"><span
+                                  class="iconfont wq-add"></span></span>
+                              <span class="delete" @click="() => removeApiTreeNode(node, data)"><span
+                                  class="iconfont wq-delete"></span></span>
                               <span class="delete" @click="() => insertAfter(node, data)"><!--<span class="iconfont wq-delete"></span>--></span>
                             </el-row>
                           </div>
                         </el-tree>
                       </div>
-                    </el-tab-pane>
-
-                    <!--body-->
-                    <el-tab-pane label="请求参数（Body）" name="3" key="body">
-                      <div class="type-body">
-                        <el-form-item label="请求类型：">
-                          <el-radio-group v-model="form.body_param_location">
-                            <el-radio label="3">form-data</el-radio>
-                            <el-radio label="4">x-www-form-urlencoded</el-radio>
-                            <el-radio label="5">raw</el-radio>
-                            <el-radio label="6">binary</el-radio>
-                          </el-radio-group>
-                        </el-form-item>
-                        <div class="tree-wrap">
-                          <el-tree :data="apiBodyTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
-                            <div class="custom-tree-node" slot-scope="{ node, data }">
-                              <el-row :gutter="5">
-                                <el-col :md="4">
-                                  <el-form-item label="">
-                                    <el-input @input="paramNameChange(node, data)" v-model="data.name" placeholder="参数名"></el-input>
-                                  </el-form-item>
-                                </el-col>
-                                <el-col :md="4">
-                                  <el-form-item label="">
-                                    <el-select v-model="data.type" placeholder="">
-                                      <el-option v-for="val in paramsArr" :key="val.value" :label="val.type" :value="val.value"></el-option>
-                                    </el-select>
-                                  </el-form-item>
-                                </el-col>
-                                <el-col :md="4">
-                                  <el-form-item label="">
-                                    <el-select v-model="data.enabled" placeholder="是否必填">
-                                      <el-option label="true" :value="1"></el-option>
-                                      <el-option label="false" :value="0"></el-option>
-                                    </el-select>
-                                  </el-form-item>
-                                </el-col>
-                                <el-col :md="4">
-                                  <el-form-item label="">
-                                    <el-input v-model="data.default_value" placeholder="默认值"></el-input>
-                                  </el-form-item>
-                                </el-col>
-                                <el-col :md="6">
-                                  <el-form-item label="">
-                                    <el-input v-model="data.description" placeholder="描述"></el-input>
-                                  </el-form-item>
-                                </el-col>
-                                <span class="add"  @click="() => addApiTreeNode(data)"><span class="iconfont wq-add"></span></span>
-                                <span class="delete" @click="() => removeApiTreeNode(node, data)"><span class="iconfont wq-delete"></span></span>
-                                <span class="delete" @click="() => insertAfter(node, data)"><!--<span class="iconfont wq-delete"></span>--></span>
-                              </el-row>
-                            </div>
-                          </el-tree>
-                        </div>
-                      </div>
-                    </el-tab-pane>
-                  </el-tabs>
-                </div>
-              </div>
-
-              <!--响应数据-->
-              <div class="api-con">
-                <div class="top">
-                  <div class="line-wrap">
-                    <span class="line"></span>
-                    <span class="text">响应数据</span>
-                  </div>
-                  <!--<el-button type="primary" plain icon="el-icon-plus" @click="addResFirstNode">添加</el-button>-->
-                  <el-button type="default" plain icon="el-icon-upload" v-if="false">导入</el-button>
-                </div>
-                <div class="c-con">
-                  <el-tree :data="apiResTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
-                    <div class="custom-tree-node" slot-scope="{ node, data }">
-                      <el-row :gutter="5">
-                        <el-col :md="4">
-                          <el-form-item label="">
-                            <el-input @input="resParamNameChange(node, data)" v-model="data.name" placeholder="参数名"></el-input>
-                          </el-form-item>
-                        </el-col>
-                        <el-col :md="4">
-                          <el-form-item label="">
-                            <el-select v-model="data.type" placeholder="">
-                              <el-option v-for="val in paramsArr" :key="val.value" :label="val.type" :value="val.value"></el-option>
-                            </el-select>
-                          </el-form-item>
-                        </el-col>
-                        <el-col :md="4">
-                          <el-form-item label="">
-                            <el-select v-model="data.enabled" placeholder="是否必填">
-                              <el-option label="true" :value="1"></el-option>
-                              <el-option label="false" :value="0"></el-option>
-                            </el-select>
-                          </el-form-item>
-                        </el-col>
-                        <el-col :md="4">
-                          <el-form-item label="">
-                            <el-input v-model="data.default_value" placeholder="默认值"></el-input>
-                          </el-form-item>
-                        </el-col>
-                        <el-col :md="6">
-                          <el-form-item label="">
-                            <el-input v-model="data.description" placeholder="描述"></el-input>
-                          </el-form-item>
-                        </el-col>
-                        <span class="add"  @click="() => addResApiTreeNode(data)"><span class="iconfont wq-add"></span></span>
-                        <span class="delete" @click="() => removeResApiTreeNode(node, data)"><span class="iconfont wq-delete"></span></span>
-                        <span class="delete" @click="() => insertAfter(node, data)"><!--<span class="iconfont wq-delete"></span>--></span>
-                      </el-row>
                     </div>
-                  </el-tree>
-                </div>
+                  </el-tab-pane>
+                </el-tabs>
               </div>
-            </el-form>
-          </div>
+            </div>
 
-          <editors v-model="markDownContent" :markDownContent="markDownContent" :chapter_id = "chapter_id" :chapterIsDir="selectNodeObj.is_dir"></editors>
-          <!--<editors v-model="markDownContent" :markDownContent="markDownContent"  :chapterIsDir="selectNodeObj.is_dir"></editors>-->
-
-          <el-button type="primary" @click="saveApi">保存</el-button>
-
-          <!--<editors :chapterId="selectNodeObj.id" :chapterIsDir="selectNodeObj.is_dir"></editors>-->
-
-        </template>
-      </el-main>
-
-      <!-- 新增节点弹出框 -->
-      <el-dialog class="we7-dialog only-input-dialog" :title="dialogTitle" :visible.sync="dialogVisible"
-                 :close-on-click-modal="false" center>
-        <el-form :model="addNodeObj" label-width="105px" label-position="left" @submit.native.prevent>
-          <el-form-item :label="dialogFormLabel">
-            <el-input v-model="addNodeObj.name" @keyup.enter.native="confirmBtn"></el-input>
-          </el-form-item>
-          <el-form-item label="文档类型" v-if="addNodeObj.is_dir != 1">
-            <el-radio-group v-model="addNodeObj.layout">
-              <el-radio :label="0">普通文档</el-radio>
-              <el-radio :label="1">API文档</el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="confirmBtn">确 定</el-button>
-          <el-button @click="dialogVisible = false">取 消</el-button>
+            <!--响应数据-->
+            <div class="api-con">
+              <div class="top">
+                <div class="line-wrap">
+                  <span class="line"></span>
+                  <span class="text">响应数据</span>
+                </div>
+                <!--<el-button type="primary" plain icon="el-icon-plus" @click="addResFirstNode">添加</el-button>-->
+                <el-button type="default" plain icon="el-icon-upload" v-if="false">导入</el-button>
+              </div>
+              <div class="c-con">
+                <el-tree :data="apiResTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
+                  <div class="custom-tree-node" slot-scope="{ node, data }">
+                    <el-row :gutter="5">
+                      <el-col :md="4">
+                        <el-form-item label="">
+                          <el-input @input="resParamNameChange(node, data)" v-model="data.name"
+                                    placeholder="参数名"></el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :md="4">
+                        <el-form-item label="">
+                          <el-select v-model="data.type" placeholder="">
+                            <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
+                                       :value="val.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :md="4">
+                        <el-form-item label="">
+                          <el-select v-model="data.enabled" placeholder="是否必填">
+                            <el-option label="true" :value="1"></el-option>
+                            <el-option label="false" :value="0"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :md="4">
+                        <el-form-item label="">
+                          <el-input v-model="data.default_value" placeholder="默认值"></el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :md="6">
+                        <el-form-item label="">
+                          <el-input v-model="data.description" placeholder="描述"></el-input>
+                        </el-form-item>
+                      </el-col>
+                      <span class="add" @click="() => addResApiTreeNode(data)"><span
+                          class="iconfont wq-add"></span></span>
+                      <span class="delete" @click="() => removeResApiTreeNode(node, data)"><span
+                          class="iconfont wq-delete"></span></span>
+                      <span class="delete" @click="() => insertAfter(node, data)"><!--<span class="iconfont wq-delete"></span>--></span>
+                    </el-row>
+                  </div>
+                </el-tree>
+              </div>
+            </div>
+          </el-form>
         </div>
-      </el-dialog>
 
-      <!-- 弹出框移动tree节点 -->
-      <el-dialog class="we7-dialog" :title="dialogMoveTitle" :visible.sync="dialogMoveVisible"
-                 :close-on-click-modal="false" center>
-        <el-form label-width="105px" label-position="left">
-          <el-form-item label="项目">
-            <el-select v-model="moveDoc" placeholder="请输入文档名称进行搜索"
-                       filterable
-                       remote
-                       reserve-keyword
-                       :remote-method="remoteMethod"
-                       @change="changeDoc">
-              <el-option
-                  v-for="item in docList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="分类">
-            <el-cascader
-                v-model="moveClass"
-                :options="docChapters"
-                :props="{ value: 'id', label: 'name'}"
-                :clearable="true"
-                :change-on-select="true"></el-cascader>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="moveNode">确 定</el-button>
-          <el-button @click="dialogMoveVisible = false">取 消</el-button>
-        </div>
-      </el-dialog>
+        <editors v-model="markDownContent" :markDownContent="markDownContent" :chapter_id="chapter_id"
+                 :chapterIsDir="selectNodeObj.is_dir"></editors>
+        <!--<editors v-model="markDownContent" :markDownContent="markDownContent"  :chapterIsDir="selectNodeObj.is_dir"></editors>-->
 
-      <!-- 复制节点弹出框 -->
-      <el-dialog class="we7-dialog only-input-dialog" title="复制章节" :visible.sync="dialogVisibleCopy"
-                 :close-on-click-modal="false" center>
-        <el-form label-width="105px" label-position="left" @submit.native.prevent>
-          <el-form-item label="文档名称">
-            <el-input v-model="copyNodeName" @keyup.enter.native="confirmBtnCopy"></el-input>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="confirmBtnCopy">确 定</el-button>
-          <el-button @click="dialogVisibleCopy = false">取 消</el-button>
-        </div>
-      </el-dialog>
+        <el-button type="primary" @click="saveApi">保存</el-button>
 
-      <!-- 文档设置 -->
-      <el-dialog class="we7-dialog dialog-setting" title="项目设置" width="1000px" :visible.sync="showSetting"
-                 :close-on-click-modal="false" :before-close="handleClose">
-        <setting :id="$route.params.id"></setting>
-      </el-dialog>
+        <!--<editors :chapterId="selectNodeObj.id" :chapterIsDir="selectNodeObj.is_dir"></editors>-->
 
-      <!--确认保存-->
-      <el-dialog title="" :visible.sync="saveDialogVisible" :show-close="false" width="30%">
-        <span>您已修改了一些数据，请确认是否要放弃保存并离开？</span>
-        <span slot="footer" class="dialog-footer">
+      </template>
+    </el-main>
+
+    <!-- 新增节点弹出框 -->
+    <el-dialog class="we7-dialog only-input-dialog" :title="dialogTitle" :visible.sync="dialogVisible"
+               :close-on-click-modal="false" center>
+      <el-form :model="addNodeObj" label-width="105px" label-position="left" @submit.native.prevent>
+        <el-form-item :label="dialogFormLabel">
+          <el-input v-model="addNodeObj.name" @keyup.enter.native="confirmBtn"></el-input>
+        </el-form-item>
+        <el-form-item label="文档类型" v-if="addNodeObj.is_dir != 1">
+          <el-radio-group v-model="addNodeObj.layout">
+            <el-radio :label="0">普通文档</el-radio>
+            <el-radio :label="1">API文档</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="confirmBtn">确 定</el-button>
+        <el-button @click="dialogVisible = false">取 消</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 弹出框移动tree节点 -->
+    <el-dialog class="we7-dialog" :title="dialogMoveTitle" :visible.sync="dialogMoveVisible"
+               :close-on-click-modal="false" center>
+      <el-form label-width="105px" label-position="left">
+        <el-form-item label="项目">
+          <el-select v-model="moveDoc" placeholder="请输入文档名称进行搜索"
+                     filterable
+                     remote
+                     reserve-keyword
+                     :remote-method="remoteMethod"
+                     @change="changeDoc">
+            <el-option
+                v-for="item in docList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="分类">
+          <el-cascader
+              v-model="moveClass"
+              :options="docChapters"
+              :props="{ value: 'id', label: 'name'}"
+              :clearable="true"
+              :change-on-select="true"></el-cascader>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="moveNode">确 定</el-button>
+        <el-button @click="dialogMoveVisible = false">取 消</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 复制节点弹出框 -->
+    <el-dialog class="we7-dialog only-input-dialog" title="复制章节" :visible.sync="dialogVisibleCopy"
+               :close-on-click-modal="false" center>
+      <el-form label-width="105px" label-position="left" @submit.native.prevent>
+        <el-form-item label="文档名称">
+          <el-input v-model="copyNodeName" @keyup.enter.native="confirmBtnCopy"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="confirmBtnCopy">确 定</el-button>
+        <el-button @click="dialogVisibleCopy = false">取 消</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 文档设置 -->
+    <el-dialog class="we7-dialog dialog-setting" title="项目设置" width="1000px" :visible.sync="showSetting"
+               :close-on-click-modal="false" :before-close="handleClose">
+      <setting :id="$route.params.id"></setting>
+    </el-dialog>
+
+    <!--确认保存-->
+    <el-dialog title="" :visible.sync="saveDialogVisible" :show-close="false" width="30%">
+      <span>您已修改了一些数据，请确认是否要放弃保存并离开？</span>
+      <span slot="footer" class="dialog-footer">
           <el-button @click="cancelLeave">取 消</el-button>
           <el-button type="primary" @click="determineLeave">确 定</el-button>
         </span>
-      </el-dialog>
+    </el-dialog>
 
-    </el-container>
+  </el-container>
 </template>
 
 <script>
@@ -522,7 +538,17 @@
         apiParamsTreeData: [],
         apiBodyTreeData: [],
         apiResTreeData: [],
-        apiResTreeDataCopy: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
+        apiResTreeDataCopy: [{
+          already: 0,
+          isChecked: false,
+          name: '',
+          type: 1,
+          enabled: 0,
+          default_value: '',
+          description: '',
+          rule: '',
+          children: []
+        }],
         chapter_id: '',
         isDocEmpty: true,
         previewId: '',
@@ -530,10 +556,10 @@
     },
     computed: {
       ...mapGetters({UserInfo: 'UserInfo'}),
-      isSave () {
+      isSave() {
         return this.$store.state.isSave;
       },
-      saveDialogVisible () {
+      saveDialogVisible() {
         return this.$store.state.saveDialogVisible;
       },
     },
@@ -566,6 +592,20 @@
       this.getMethodType();
       // this.initCreateChapter();
     },
+    mounted () {
+      // (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)
+      const This = this;
+      document.addEventListener('keydown', function(e){
+        let currKey = 0;
+        e = e || event || window.event;
+        currKey = e.keyCode || e.which || e.charCode;
+        if ((e.ctrlKey || e.metaKey) && currKey == 83){
+          e.preventDefault();
+          This.saveApi();
+          // return false;
+        }
+      })
+    },
     methods: {
       /**
        * @打开操作记录
@@ -580,7 +620,7 @@
        *      把defaultSelect（默认选中文档）push进去，但是不可以保存在localStorage中
        */
       // 创建默认文档
-      initCreateChapter () {
+      initCreateChapter() {
         createChapter({
           document_id: this.$route.params.id,
           parent_id: 0,
@@ -726,6 +766,7 @@
             }
           }
         }
+
         loopData(treeData)
         console.log('treeData');
         console.log(treeData);
@@ -924,7 +965,7 @@
               this.defaultExpanded.push(newChild.id);
             })
           }).catch(() => {
-              this.dialogVisible = false
+            this.dialogVisible = false
           })
         }
         if (this.dialogTitle == '重命名') {
@@ -933,17 +974,17 @@
             chapter_id: this.rightSelectNodeObj.id,
             name: this.addNodeObj.name
           }).then(() => {
-              this.$message('修改成功！')
-              this.rightSelectNodeObj.name = this.addNodeObj.name
-              this.dialogVisible = false;
-              const docTitle = this.docTitle;
-              const rename = localStorage.rename;
-              if (docTitle == rename) {
-                this.docTitle = this.addNodeObj.name;
-              }
-              // location.reload();
+            this.$message('修改成功！')
+            this.rightSelectNodeObj.name = this.addNodeObj.name
+            this.dialogVisible = false;
+            const docTitle = this.docTitle;
+            const rename = localStorage.rename;
+            if (docTitle == rename) {
+              this.docTitle = this.addNodeObj.name;
+            }
+            // location.reload();
           }).catch(() => {
-              this.dialogVisible = false
+            this.dialogVisible = false
           })
         }
       },
@@ -1089,7 +1130,7 @@
       },
 
       // 获取请求类型
-      getMethodType () {
+      getMethodType() {
         getMethodType({}).then(res => {
           if (res.data && res.data.methodLabel) {
             this.methodArr = res.data.methodLabel.option;
@@ -1104,7 +1145,7 @@
       },
 
       // 请求数据 输入框输入 下方新增同级node
-      paramNameChange (node, data) {
+      paramNameChange(node, data) {
         if (data.name.length) {
           data.already = Number(data.already) + 1;
           // console.log(data);
@@ -1118,7 +1159,7 @@
       },
 
       // 响应数据 输入框输入 下方新增同级node
-      resParamNameChange (node, data) {
+      resParamNameChange(node, data) {
         if (data.name.length) {
           data.already = Number(data.already) + 1;
           // console.log(data);
@@ -1131,12 +1172,12 @@
       },
 
       // request请求 添加同级node
-      addFirstNode () {
+      addFirstNode() {
         const baseRequestData = JSON.parse(JSON.stringify(this.baseRequestData));
         const This = this;
 
         function apiDataFilter(data) {
-          const last = data.length -1;
+          const last = data.length - 1;
           if (data[last].name == '' && data[last].description == '') {
             This.$message.warning('已存在空白行，请勿再次添加！')
           } else {
@@ -1164,13 +1205,14 @@
       },
 
       // res响应数据 添加同级node
-      addResFirstNode () {
+      addResFirstNode() {
         const This = this;
         const baseRequestData = JSON.parse(JSON.stringify(this.baseRequestData));
+
         // this.apiResTreeData.push(baseRequestData);
 
         function apiDataFilter(data) {
-          const last = data.length -1;
+          const last = data.length - 1;
           if (data[last].name == '' && data[last].description == '') {
             This.$message.warning('已存在空白行，请勿再次添加！')
           } else {
@@ -1182,11 +1224,22 @@
       },
 
       // 请求数据 添加下一级node
-      addApiTreeNode (data) {
+      addApiTreeNode(data) {
         // console.log('data');
         // console.log(data);
         // const newChild = {};
-        const newChild = {id: id++, already: 0, isChecked: false, name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: [],};
+        const newChild = {
+          id: id++,
+          already: 0,
+          isChecked: false,
+          name: '',
+          type: 1,
+          enabled: 0,
+          default_value: '',
+          description: '',
+          rule: '',
+          children: [],
+        };
         if (!data.children) {
           this.$set(data, 'children', []);
         }
@@ -1194,11 +1247,22 @@
       },
 
       // 响应数据 添加下一级node
-      addResApiTreeNode (data) {
+      addResApiTreeNode(data) {
         // console.log('data');
         // console.log(data);
         // const newChild = {};
-        const newChild = {id: id++, already: 0, isChecked: false, name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: [],};
+        const newChild = {
+          id: id++,
+          already: 0,
+          isChecked: false,
+          name: '',
+          type: 1,
+          enabled: 0,
+          default_value: '',
+          description: '',
+          rule: '',
+          children: [],
+        };
         if (!data.children) {
           this.$set(data, 'children', []);
         }
@@ -1206,7 +1270,7 @@
       },
 
       // 删除 请求数据node
-      removeApiTreeNode (node, data) {
+      removeApiTreeNode(node, data) {
         const length1 = this.apiHeaderTreeData.length;
         const length2 = this.apiParamsTreeData.length;
         const length3 = this.apiBodyTreeData.length;
@@ -1238,7 +1302,7 @@
       },
 
       // 删除 响应数据数据node
-      removeResApiTreeNode (node, data) {
+      removeResApiTreeNode(node, data) {
         console.log(node);
 
         const length = this.apiResTreeData.length;
@@ -1254,12 +1318,23 @@
         children.splice(index, 1);
       },
 
-      insertAfter (node, data) {
+      insertAfter(node, data) {
         // console.log(node);
         // console.log(data);
 
         const parent = node.parent;
-        const newChild = {id: id++, already: 0, isChecked: false, name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []};
+        const newChild = {
+          id: id++,
+          already: 0,
+          isChecked: false,
+          name: '',
+          type: 1,
+          enabled: 0,
+          default_value: '',
+          description: '',
+          rule: '',
+          children: []
+        };
 
         if (Array.isArray(parent.data)) {
           parent.data.push(newChild);
@@ -1269,7 +1344,7 @@
       },
 
       // 保存文档
-      saveApi () {
+      saveApi() {
         // console.log('body_param_location');
         // console.log(this.form.body_param_location);
         const tab_location = this.form.tab_location;
@@ -1327,7 +1402,11 @@
         }
       },
 
-      determineLeave () {
+      keyupSave () {
+        console.log(123);
+      },
+
+      determineLeave() {
         this.$store.state.saveDialogVisible = false;
         this.$store.state.isSave = true;
         console.log('isSave');
@@ -1335,12 +1414,12 @@
         console.log(this.$store.state.saveDialogVisible);
       },
 
-      cancelLeave () {
+      cancelLeave() {
         this.$store.state.saveDialogVisible = false;
       },
 
       // 清空form
-      emptyForm () {
+      emptyForm() {
         this.docTitle = ''
         this.form = this.formCopy;
         this.apiHeaderTreeData = this.apiTreeDataCopy;
@@ -1351,7 +1430,7 @@
       },
 
       // 查看文档
-      viewChapter () {
+      viewChapter() {
         const chapter_id = this.chapter_id;
         const document_id = this.$route.params.id;
         viewChapter({
@@ -1700,6 +1779,7 @@
           .add {
             margin-left: 10px;
           }
+
           .delete {
             margin-left: 10px;
           }

@@ -51,14 +51,14 @@
             </el-form-item>
             <el-form-item label="公开性质">
               <el-select v-model="docData.is_public">
-                <el-option label="私有项目" value="1"></el-option>
-                <el-option label="公开项目" value="2"></el-option>
+                <el-option label="公开项目" value="1"></el-option>
+                <el-option label="私有项目" value="2"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="查看权限">
+            <el-form-item label="查看权限" v-if="docData.is_public != 1">
               <el-select v-model="docData.login_preview">
-                <el-option label="仅限有权限者查看" value="1"></el-option>
-                <el-option label="点击链接登录后查看" value="2"></el-option>
+                <el-option label="仅限有权限者查看" value="2"></el-option>
+                <el-option label="点击链接登录后查看" value="3"></el-option>
               </el-select>
             </el-form-item>
           </el-form>
@@ -169,7 +169,8 @@ export default {
         cover: '',
         name: '',
         is_public: '1',
-        login_preview: '1'
+        login_preview: '2',
+        is_public_Copy: ''
       },
       rules: {
         name: [
@@ -213,12 +214,30 @@ export default {
         document_id : this.id
       }).then(res => {
         this.details = res.data;
+        let is_public = '';
+        let login_preview = '';
+        if (res.data.is_public == 1) {
+          login_preview = 2;
+          is_public = 1;
+        } else if (res.data.is_public == 2) {
+          login_preview = res.data.is_public;
+          is_public = 2;
+        } else {
+          login_preview = res.data.is_public;
+          is_public = 2;
+        }
         this.docData = {
           cover: res.data.cover || '',
           name: res.data.name,
-          is_public: res.data.is_public ? '2' : '1',
-          login_preview: res.data.login_preview ? '2' : '1'
+          // is_public: res.data.is_public ? '2' : '1',
+          is_public,
+          login_preview,
+          is_public_Copy: res.data.is_public
         }
+        this.docData.is_public = this.docData.is_public.toString();
+        console.log('is_public');
+        console.log(this.docData.is_public);
+        this.docData.login_preview = this.docData.login_preview.toString();
         this.role_list = res.data.role_list
         this.addManageData.role = res.data.role_list[0].id;
       })
@@ -250,15 +269,31 @@ export default {
       return isFormat && isLt5M;
     },
     saveDoc() {
+      const cover = this.docData.cover;
+      const name = this.docData.name;
+      const login_preview = this.docData.login_preview;
+      let is_public = this.docData.is_public;
+      if (is_public == 1) {
+        is_public = 1;
+      } else {
+        if (login_preview == 2) {
+          is_public = 2;
+        } else {
+          is_public = 3;
+        }
+      }
+
       this.$refs['docForm'].validate((valid) => {
         if (valid) {
           this.$post('/admin/document/update', {
             document_id: this.details.id,
-            ...this.docData
+            cover,
+            name,
+            is_public
+          }).then(() => {
+              this.$message({ type: 'success', message: '保存成功!'});
+              
           })
-            .then(() => {
-              this.$message({ type: 'success', message: '保存成功!'})
-            })
         }
       })
     },

@@ -610,8 +610,10 @@ a.toc-link {
       padding-left: calc(100% - 200px);
     }
     .w7-aside-home-head {
-      font-size: 24px;
-      padding: 40px 0 30px ;
+      font-size: 16px;
+      padding: 40px 0 30px;
+      font-weight: 600;
+      text-align: center;
     }
     .w7-aside-home-search {
       position: relative;
