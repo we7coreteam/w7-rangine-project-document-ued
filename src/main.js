@@ -25,6 +25,15 @@ const vm = new Vue({
 }).$mount('#app')
 export default vm;
 
+router.beforeEach((to, from, next) => {
+  next();
+  setTimeout(() => {
+    const recordHref = location.href;
+    localStorage.recordHref = recordHref;
+  }, 500);
+})
+
+
 // router.beforeEach((to, from, next) => {
 //   const isSave = vm.$store.state.isSave;
 //   console.log(123);

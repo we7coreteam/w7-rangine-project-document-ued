@@ -47,8 +47,9 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-export default {
+  import {mapGetters} from 'vuex'
+
+  export default {
   name: 'admin',
   data() {
     return {
@@ -105,7 +106,7 @@ export default {
     },
     exit() {
       window.location.href = window.location.origin + "/common/auth/logout"
-    }
+    },
   }
 }
 </script>

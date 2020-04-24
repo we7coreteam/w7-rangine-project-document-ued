@@ -68,8 +68,13 @@ export default {
         .then(() => {
           let msg = this.$message('登录成功')
           setTimeout(() => {
-            msg.close()
-            this.$router.push('/admin/document')
+            msg.close();
+            const href = localStorage.recordHref;
+            if (href) {
+              location.href = href;
+            } else {
+              this.$router.push('/admin/document')
+            }
           }, 500)
         }).catch(() => {
           this.formData.code = ''
