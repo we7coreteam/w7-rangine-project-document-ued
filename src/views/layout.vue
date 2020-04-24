@@ -105,7 +105,8 @@
       })
     },
     exit() {
-      window.location.href = window.location.origin + "/common/auth/logout"
+      this.$router.push({name: 'adminLoginPage'});
+      // window.location.href = window.location.origin + "/common/auth/logout"
     },
   }
 }

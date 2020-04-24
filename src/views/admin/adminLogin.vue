@@ -69,9 +69,9 @@ export default {
           let msg = this.$message('登录成功')
           setTimeout(() => {
             msg.close();
-            const href = JSON.parse(localStorage.recordHref);
+            const href = localStorage.recordHref;
             if (href) {
-              location.href = href[href.length - 2];
+              location.href = href;
             } else {
               this.$router.push('/admin/document')
             }

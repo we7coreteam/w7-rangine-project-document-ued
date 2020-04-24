@@ -25,13 +25,14 @@ const vm = new Vue({
 }).$mount('#app')
 export default vm;
 
-let recordHref = [];
 router.beforeEach((to, from, next) => {
   next();
   setTimeout(() => {
-    const href = location.href;
-    recordHref.push(href);
-    localStorage.recordHref = JSON.stringify(recordHref);
+    const recordHref = location.href;
+    console.log(recordHref);
+    if(recordHref.indexOf('admin-login') == -1) {
+      localStorage.recordHref = recordHref;
+    }
   }, 500);
 })
 
