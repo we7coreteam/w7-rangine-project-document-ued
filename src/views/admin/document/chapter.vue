@@ -429,9 +429,10 @@
 
 <script>
   import {mapGetters} from 'vuex'
-  import { getMethodType, saveChapter, createChapter, viewChapter, getAllChapter } from '@/api/api'
+  import {createChapter, getAllChapter, getMethodType, saveChapter, viewChapter} from '@/api/api'
   import editors from './editors.vue'
   import setting from './setting.vue'
+
   let id = 1000;
   export default {
     name: 'chapter',
@@ -1098,6 +1099,7 @@
 
       // 请求类型切换
       tabRequest(tab) {
+        localStorage.tab_location = tab.name;
         console.log(tab);
       },
 
@@ -1367,7 +1369,7 @@
               const apiData4 = JSON.parse(JSON.stringify(this.baseRequestData));
               if (record.api) {
                 this.form = record.api;
-                this.form.tab_location = this.form.tab_location.toString();
+                this.form.tab_location = localStorage.tab_location || this.form.tab_location.toString();
                 this.form.body_param_location = this.form.body_param_location.toString();
               } else {
                 this.form = this.formCopy;

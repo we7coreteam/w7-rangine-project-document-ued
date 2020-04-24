@@ -25,7 +25,7 @@
           <div class="w7-card" :class="{'has-cover': item.cover}"
                v-for="(item,index) in docList" :key="index"
                :style="{backgroundImage: 'url('+ item.cover +')'}"
-               @click="goChapter(item.id)">
+               @click="goChapter(item)">
             <div class="w7-card-title">
               {{item.name}}
               <i class="wi wi-lock" v-if="!item.is_public"></i>
@@ -36,7 +36,7 @@
                 <i class="wi wi-transfer" @click.stop="transferDoc(item.id)"></i>
               </el-tooltip>
               <el-tooltip effect="dark" content="预览" placement="bottom">
-                <i class="wi wi-view" @click.stop="readDoc(item.id)"></i>
+                <i class="wi wi-view" @click.stop="readDoc(item)"></i>
               </el-tooltip>
               <el-tooltip effect="dark" content="进入管理" placement="bottom" v-if="item.acl.has_manage">
                 <i class="wi wi-guanli" @click.stop="settingDoc(item.id)"></i>
@@ -106,9 +106,10 @@
 
 <script>
   import {timestampFormat} from '@/utils/utils'
-  import { createDoc, getAllProject } from '@/api/api'
+  import {createDoc, getAllProject} from '@/api/api'
 
   import setting from './setting.vue'
+
   export default {
     name: 'docIndex',
     components: {
@@ -217,10 +218,11 @@
             });
           })
       },
-      readDoc(id) {
+      readDoc(item) {
         let routeUrl = this.$router.resolve({
-          path: "/chapter/" + id
+          path: "/chapter/" + item.id
         })
+        localStorage.projectName = item.name;
         window.open(routeUrl.href, '_blank')
       },
       settingDoc(id) {
@@ -243,16 +245,17 @@
             this.dialogTransferDoc = false
           })
       },
-      goChapter(id, bool) {
+      goChapter(item, bool) {
         let routeData = {
           name: 'chapter',
           params: {
-            id: id
+            id: item.id
           }
         }
         if (bool) {
           routeData['query'] = {type: 'add', documentType: 1}
         }
+        localStorage.projectName = item.name;
         this.$router.push(routeData)
       },
       format(time) {

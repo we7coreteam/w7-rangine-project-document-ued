@@ -58,12 +58,12 @@ export default {
         })
     },
     login() {
-      for(let index in this.formData) {
-        if(!this.formData[index]) {
-          this.$message('请填写完整表单')
-          return false
-        }
-      }
+      // for(let index in this.formData) {
+      //   if(!this.formData[index]) {
+      //     this.$message('请填写完整表单')
+      //     return false
+      //   }
+      // }
       this.$post('/common/auth/login', this.formData)
         .then(() => {
           let msg = this.$message('登录成功')

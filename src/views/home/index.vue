@@ -4,7 +4,7 @@
       <el-container class="home-container">
         <el-aside class="w7-aside-home" width="220px">
           <div class="w7-aside-home-box">
-            <p class="w7-aside-home-head">目录</p>
+            <p class="w7-aside-home-head">{{projectName}}</p>
             <div class="w7-aside-home-search">
               <el-autocomplete
                 popper-class="my-autocomplete"
@@ -134,11 +134,11 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import QrcodeVue from 'qrcode.vue'
-import tocbot from 'tocbot'
+  import {mapGetters} from 'vuex'
+  import QrcodeVue from 'qrcode.vue'
+  import tocbot from 'tocbot'
 
-export default {
+  export default {
   components: {
     QrcodeVue
   },
@@ -162,7 +162,9 @@ export default {
       articleInfoList: [],
       filterWord: '',
       shareUrl: '',
-      showShareWechat: false
+      showShareWechat: false,
+      projectName: '目录',
+      loading: ''
     }
   },
   computed: {
@@ -180,6 +182,9 @@ export default {
   },
   created () {
     this.getDocumentName()
+  },
+  mounted () {
+    this.projectName = localStorage.projectName;
   },
   methods: {
     querySearch(queryString, cb) {
@@ -326,9 +331,13 @@ export default {
       if (this.$route.query.share_key) {
         data['share_key'] = this.$route.query.share_key
       }
-      this.$post('/document/chapter/detail', data)
-        .then(res => {
+
+      this.loading = this.$loading();
+
+      this.$post('/document/chapter/detail', data).then(res => {
+        if (res.code == 200) {
           this.articleContent = res.data;
+          this.loading.close();
           // this.articleContent.content = res.content ? this.$refs.mavonEditor.markdownIt.render('<div class="markdown-content">\n \n'+res.content+'\n \n</div>' + '<div class="markdown-menu"><el-scrollbar>\n \n @[toc]( ) \n \n</el-scrollbar></div>\n \n' ) : ''
           this.articleContent.content = res.data.content ? this.$refs.mavonEditor.markdownIt.render(res.data.content) : ''
           this.$nextTick(() => {
@@ -355,7 +364,8 @@ export default {
           } else {
             this.shareUrl = window.location.href
           }
-        })
+        }
+      })
     },
     initToc(option) {
       this.$nextTick(() => {

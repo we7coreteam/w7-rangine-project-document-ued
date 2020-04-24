@@ -1,8 +1,6 @@
 import axios from 'axios'
 import router from '../router'
-import {
-  Message
-} from 'element-ui'
+import {Message} from 'element-ui'
 import qs from 'qs'
 
 // axios.defaults.withCredentials=true
@@ -22,8 +20,10 @@ instance.interceptors.response.use(response => {
   } else {
     if (response.data.code == '444') {
       router.push({name: 'adminLoginPage'});
+    } else {
+      Message.closeAll();
+      Message.error(response.data.message);
     }
-    Message.error(response.data.message);
     return Promise.reject(response.data)
   }
 }, error => {

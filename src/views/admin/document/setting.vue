@@ -71,7 +71,7 @@
           <div class="top">
             <el-button type="primary" plain @click="openAddManage">添加权限</el-button>
           </div>
-          <el-table class="w7-table" :data="details.operator" key="manageTable" :header-cell-style="{background:'#f7f9fc',color:'#606266'}" max-height="390">
+          <el-table class="w7-table" max-height="370" :data="details.operator" key="manageTable" :header-cell-style="{background:'#f7f9fc',color:'#606266'}">
             <el-table-column prop="username" label="名称" width="300px"></el-table-column>
             <el-table-column label="身份" align="center">
               <template slot-scope="scope">
@@ -451,12 +451,12 @@ export default {
       }
       .w7-table {
         margin-top: 0;
-        overflow: inherit;
+        /*overflow: inherit;*/
         .el-table th, .el-table td {
           padding: 6px 0;
         }
         .el-table__body-wrapper, .cell {
-          overflow: inherit;
+          /*overflow: inherit;*/
         }
         .identity {
           margin: 0 auto;
