@@ -26,14 +26,20 @@ const vm = new Vue({
 export default vm;
 
 router.beforeEach((to, from, next) => {
-  next();
-  setTimeout(() => {
+  console.log(to);
+  console.log(from);
+  if (to.name == 'adminLoginPage') {
     const recordHref = location.href;
-    console.log(recordHref);
-    if(recordHref.indexOf('admin-login') == -1) {
-      localStorage.recordHref = recordHref;
-    }
-  }, 500);
+    localStorage.recordHref = recordHref;
+  }
+  next();
+  // setTimeout(() => {
+  //   const recordHref = location.href;
+  //   console.log(recordHref);
+  //   if(recordHref.indexOf('admin-login') == -1) {
+  //     localStorage.recordHref = recordHref;
+  //   }
+  // }, 500);
 })
 
 
