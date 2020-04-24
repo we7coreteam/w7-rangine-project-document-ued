@@ -81,7 +81,7 @@
             </el-table-column>
             <el-table-column label="操作" align="right">
               <div class="oper" slot-scope="scope">
-                <el-tooltip effect="dark" content="编辑" placement="bottom">
+                <el-tooltip v-if="false" effect="dark" content="编辑" placement="bottom">
                   <i class="wi wi-edit" @click="editManage(scope.row)" v-if="details.acl.has_manage && scope.row.acl.role != 1"></i>
                 </el-tooltip>
                 <el-tooltip effect="dark" content="删除" placement="bottom">
@@ -292,7 +292,7 @@ export default {
             is_public
           }).then(() => {
               this.$message({ type: 'success', message: '保存成功!'});
-              
+
           })
         }
       })
