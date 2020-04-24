@@ -20,6 +20,8 @@ instance.interceptors.response.use(response => {
   } else {
     if (response.data.code == '444') {
       router.push({name: 'adminLoginPage'});
+      Message.closeAll();
+      Message.error(response.data.message);
     } else {
       Message.closeAll();
       Message.error(response.data.message);
