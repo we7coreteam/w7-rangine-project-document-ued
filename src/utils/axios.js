@@ -1,4 +1,5 @@
 import axios from 'axios'
+import router from '../router'
 import {Message} from 'element-ui'
 import qs from 'qs'
 
@@ -18,6 +19,7 @@ instance.interceptors.response.use(response => {
     return response.data;
   } else {
     if (response.data.code == '444') {
+      router.push({name: 'adminLoginPage'});
       Message.closeAll();
       Message.error(response.data.message);
     } else {
