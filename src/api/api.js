@@ -47,6 +47,13 @@ export const getAllChapter = (data) => axios({
   method: 'post'
 })
 
+// 退出
+export const logout = (data) => axios({
+  url: '/common/auth/logout',
+  data,
+  method: 'post'
+})
+
 
 
 
