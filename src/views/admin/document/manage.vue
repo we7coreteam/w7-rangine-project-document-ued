@@ -283,11 +283,11 @@
 
   .w7-card {
     position: relative;
-    top: 0;
+    /*top: 0;*/
     margin: 10px;
     width: 300px;
     height: 160px;
-    transition: 0.2s;
+    transition: 300ms;
     background: #e6f2ff;
     border: 1px solid #eeeeee;
     box-sizing: border-box;
@@ -301,10 +301,11 @@
     }
 
     &:hover {
-      position: relative;
+      /*position: relative;*/
       cursor: pointer;
-      top: -10px;
+      //top: -10px;
       border-color: #bdddfd;
+      transform: translateY(-10px);
 
       .w7-card-title {
         color: #3296fa;
