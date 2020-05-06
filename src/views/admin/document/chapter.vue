@@ -372,7 +372,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="confirmBtn">确 定</el-button>
+        <el-button type="primary" :disabled="confirmDisabled" @click="confirmBtn">确 定</el-button>
         <el-button @click="dialogVisible = false">取 消</el-button>
       </div>
     </el-dialog>
@@ -420,7 +420,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="confirmBtnCopy">确 定</el-button>
+        <el-button type="primary" :disabled="confirmCopyDisabled" @click="confirmBtnCopy">确 定</el-button>
         <el-button @click="dialogVisibleCopy = false">取 消</el-button>
       </div>
     </el-dialog>
@@ -552,7 +552,9 @@
         chapter_id: '',
         isDocEmpty: true,
         previewId: '',
-        loading: ''
+        loading: '',
+        confirmDisabled: false,
+        confirmCopyDisabled: false
       }
     },
     computed: {
@@ -898,6 +900,7 @@
           this.$message('章节名称不能为空！')
           return
         }
+        this.confirmCopyDisabled = true;
         this.$post('/admin/chapter/copy', {
           document_id: this.$route.params.id,
           chapter_id: this.rightSelectNodeObj.id,
@@ -905,6 +908,7 @@
           name: this.copyNodeName
         }).then(res => {
           let newChild = res.data;
+          this.confirmCopyDisabled = false;
           if (this.rightSelectNodeObj.parent_id != 0) {
             let node = this.rightSelectNode
             let parent = node.parent
@@ -929,7 +933,9 @@
       confirmBtn() {
         if (!this.addNodeObj.name) {
           this.$message('章节名称不能为空！')
+          return
         }
+        this.confirmDisabled = true;
         if (this.dialogTitle == '新建目录' || this.dialogTitle == '新建文档') {
           createChapter({
             document_id: this.$route.params.id,
@@ -939,6 +945,7 @@
             name: this.addNodeObj.name
           }).then(res => {
             this.chapter_id = res.data.id;
+            this.confirmDisabled = false;
             let newChild = res.data;
             if (!this.addFirst) {
               let data = this.rightSelectNodeObj
