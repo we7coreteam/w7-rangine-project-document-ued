@@ -255,15 +255,15 @@
           routeData['query'] = {type: 'add', documentType: 1}
         }
         localStorage.projectName = item.name;
-        this.$router.push(routeData)
+        this.$router.push(routeData);
       },
       format(time) {
         if (time) {
           let result = timestampFormat(time)
           if (result.length > 8) {
-            return timestampFormat(time).slice(5)
+            return timestampFormat(time).slice(5);
           } else {
-            return timestampFormat(time)
+            return timestampFormat(time);
           }
         }
       },
