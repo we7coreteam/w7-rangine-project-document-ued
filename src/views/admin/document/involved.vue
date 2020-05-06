@@ -74,9 +74,9 @@ export default {
         only_reader: 1
       })
         .then(res => {
-          this.docList = res.data
-          this.pageCount = res.page_count
-          this.total = res.total
+          this.docList = res.data.data;
+          this.pageCount = res.data.page_count
+          this.total = res.data.total
           this.loading = false
         })
     },
@@ -94,7 +94,7 @@ export default {
           this.$message(mes)
           this.docList.forEach(doc => {
             if (doc.id == row.id) {
-              doc.star_id = res.star_id || ''
+              doc.star_id = res.data.star_id || ''
               return
             }
           })
