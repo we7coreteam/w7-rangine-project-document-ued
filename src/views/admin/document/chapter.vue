@@ -152,8 +152,8 @@
                             <el-col :md="4">
                               <el-form-item label="">
                                 <el-select v-model="data.enabled" placeholder="是否必填">
-                                  <el-option label="true" :value="1"></el-option>
-                                  <el-option label="false" :value="0"></el-option>
+                                  <el-option label="true" :value="2"></el-option>
+                                  <el-option label="false" :value="1"></el-option>
                                 </el-select>
                               </el-form-item>
                             </el-col>
@@ -200,8 +200,8 @@
                             <el-col :md="4">
                               <el-form-item label="">
                                 <el-select v-model="data.enabled" placeholder="是否必填">
-                                  <el-option label="true" :value="1"></el-option>
-                                  <el-option label="false" :value="0"></el-option>
+                                  <el-option label="true" :value="2"></el-option>
+                                  <el-option label="false" :value="1"></el-option>
                                 </el-select>
                               </el-form-item>
                             </el-col>
@@ -257,8 +257,8 @@
                               <el-col :md="4">
                                 <el-form-item label="">
                                   <el-select v-model="data.enabled" placeholder="是否必填">
-                                    <el-option label="true" :value="1"></el-option>
-                                    <el-option label="false" :value="0"></el-option>
+                                    <el-option label="true" :value="2"></el-option>
+                                    <el-option label="false" :value="1"></el-option>
                                   </el-select>
                                 </el-form-item>
                               </el-col>
@@ -318,8 +318,8 @@
                       <el-col :md="4">
                         <el-form-item label="">
                           <el-select v-model="data.enabled" placeholder="是否必填">
-                            <el-option label="true" :value="1"></el-option>
-                            <el-option label="false" :value="0"></el-option>
+                            <el-option label="true" :value="2"></el-option>
+                            <el-option label="false" :value="1"></el-option>
                           </el-select>
                         </el-form-item>
                       </el-col>
@@ -527,7 +527,7 @@
           isChecked: false,
           name: '',
           type: 1,
-          enabled: 0,
+          enabled: 2,
           default_value: '',
           description: '',
           rule: '',
@@ -543,7 +543,7 @@
           isChecked: false,
           name: '',
           type: 1,
-          enabled: 0,
+          enabled: 2,
           default_value: '',
           description: '',
           rule: '',
@@ -1242,7 +1242,7 @@
           isChecked: false,
           name: '',
           type: 1,
-          enabled: 0,
+          enabled: 2,
           default_value: '',
           description: '',
           rule: '',
@@ -1265,7 +1265,7 @@
           isChecked: false,
           name: '',
           type: 1,
-          enabled: 0,
+          enabled: 2,
           default_value: '',
           description: '',
           rule: '',
@@ -1337,7 +1337,7 @@
           isChecked: false,
           name: '',
           type: 1,
-          enabled: 0,
+          enabled: 2,
           default_value: '',
           description: '',
           rule: '',
