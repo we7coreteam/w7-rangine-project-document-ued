@@ -35,7 +35,9 @@
 </template>
 
 <script>
-export default {
+  import axios from '@/utils/axios'
+
+  export default {
   name: 'adminLogin',
   data() {
     return {
@@ -48,6 +50,40 @@ export default {
         code: ''
       },
       thirdPartyList: []
+    }
+  },
+  beforeRouteEnter(to, from, next) {
+    let code = to.query.code//第三方登录成功之后返回的code
+    let redirect_url = to.query.redirect_url//需要跳转的url
+    let app_id = to.query.app_id
+    if (code) {
+      axios.post('/common/auth/third-party-login', {
+        code,
+        app_id
+      })
+        .then(res => {
+          if (res && res.is_need_bind) {//跳转到绑定
+            next('/bind')
+          } else {
+            if (!redirect_url) {
+              next('/admin/document')
+            } else {
+              window.open(redirect_url, '_self')
+            }
+          }
+        })
+        .catch(() => {
+          next('/login')
+        })
+    } else {
+      axios.post('/common/auth/default-login-url')
+        .then(res => {
+          if (res) {
+            window.open(res, '_self')
+          } else {
+            next()
+          }
+        })
     }
   },
   created () {
