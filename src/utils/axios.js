@@ -19,7 +19,8 @@ instance.interceptors.response.use(response => {
     return response.data;
   } else {
     if (response.data.code == '444') {
-      router.push({name: 'adminLoginPage'});
+      router.push('/admin-login?redirect_url='+ window.location.href)
+      // router.push({name: 'adminLoginPage'});
       Message.closeAll();
       Message.error(response.data.message);
     } else {
