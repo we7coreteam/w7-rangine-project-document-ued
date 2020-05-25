@@ -32,11 +32,11 @@ export default {
       this.$post('/common/auth/third-party-login-bind', {
         username: this.formData.bindname,
         userpass: this.formData.bindpass
+      }).then(res => {
+        this.$message(res)
+        console.error(3);
+        this.$router.push('/admin/document')
       })
-        .then(res => {
-          this.$message(res)
-          this.$router.push('/admin/document')
-        })
     }
   }
 }
