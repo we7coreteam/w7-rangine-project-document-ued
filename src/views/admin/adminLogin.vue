@@ -66,24 +66,24 @@
             next('/bind')
           } else {
             if (!redirect_url) {
-              next('/admin/document')
+              // next('/admin/document')
             } else {
               window.open(redirect_url, '_self')
             }
           }
         })
         .catch(() => {
-          next('/login')
+          next('/admin-login')
         })
     } else {
-      axios.post('/common/auth/default-login-url')
-        .then(res => {
-          if (res) {
-            window.open(res, '_self')
-          } else {
-            next()
-          }
-        })
+      next()
+      // axios.post('/common/auth/default-login-url').then(res => {
+      //   if (res) {
+      //     window.open(res, '_self')
+      //   } else {
+      //     next()
+      //   }
+      // })
     }
   },
   created () {
