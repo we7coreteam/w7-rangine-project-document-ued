@@ -34,7 +34,7 @@ export default {
         userpass: this.formData.bindpass
       }).then(res => {
         this.$message(res)
-        console.error(3);
+        // console.error(3);
         this.$router.push('/admin/document')
       })
     }

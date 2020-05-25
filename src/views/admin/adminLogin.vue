@@ -63,14 +63,14 @@
         app_id
       }).then(res => {
         if (res && res.is_need_bind) {//跳转到绑定
-          console.error(5)
+          // console.error(5)
           next('/bind')
         } else {
           if (!redirect_url) {
-            console.error(2)
+            // console.error(2)
             next('/admin/document')
           } else {
-            console.error(3)
+            // console.error(3)
             window.open(redirect_url, '_self')
           }
         }
@@ -78,8 +78,8 @@
           next('/admin-login')
         })
     } else {
-      console.error(6)
-      console.log(6)
+      // console.error(6)
+      // console.log(6)
       // next()
       axios.post('/common/auth/default-login-url').then(res => {
         if (res.data) {
@@ -125,7 +125,7 @@
             if (href) {
               location.href = href;
             } else {
-              console.error(1)
+              // console.error(1)
               this.$router.push('/admin/document')
             }
           }, 500)
