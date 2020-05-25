@@ -76,14 +76,14 @@
           next('/admin-login')
         })
     } else {
-      next()
-      // axios.post('/common/auth/default-login-url').then(res => {
-      //   if (res.data) {
-      //     window.open(res.data, '_self')
-      //   } else {
-      //     next()
-      //   }
-      // })
+      // next()
+      axios.post('/common/auth/default-login-url').then(res => {
+        if (res.data) {
+          window.open(res.data, '_self')
+        } else {
+          next()
+        }
+      })
     }
   },
   created () {
