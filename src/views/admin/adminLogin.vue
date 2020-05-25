@@ -60,30 +60,28 @@
       axios.post('/common/auth/third-party-login', {
         code,
         app_id
-      })
-        .then(res => {
-          if (res && res.is_need_bind) {//跳转到绑定
-            next('/bind')
+      }).then(res => {
+        if (res && res.is_need_bind) {//跳转到绑定
+          next('/bind')
+        } else {
+          if (!redirect_url) {
+            // next('/admin/document')
           } else {
-            if (!redirect_url) {
-              // next('/admin/document')
-            } else {
-              window.open(redirect_url, '_self')
-            }
+            window.open(redirect_url, '_self')
           }
-        })
-        .catch(() => {
+        }
+      }).catch(() => {
           next('/admin-login')
         })
     } else {
-      next()
-      // axios.post('/common/auth/default-login-url').then(res => {
-      //   if (res) {
-      //     window.open(res, '_self')
-      //   } else {
-      //     next()
-      //   }
-      // })
+      // next()
+      axios.post('/common/auth/default-login-url').then(res => {
+        if (res.data) {
+          window.open(res.data, '_self')
+        } else {
+          next()
+        }
+      })
     }
   },
   created () {
