@@ -11,6 +11,16 @@
               <img :src="code" @click="getCode" slot="append" alt="">
             </el-input>
           </div>
+          <div class="login-thirdParty" v-if="thirdPartyList.length">
+            <span class="title">第三方账号登录</span>
+            <div class="icon-list">
+              <img class="icon-block"
+                   v-for="icon in thirdPartyList" :key="icon.name"
+                   :src="icon.logo"
+                   :title="icon.name"
+                   @click="thirdPartyIconClick(icon.redirect_url)">
+            </div>
+          </div>
           <!-- <div class="login-action">
             <el-button type="text" @click="showFind">找回密码?</el-button>
           </div> -->
@@ -41,7 +51,8 @@ export default {
     }
   },
   created () {
-    this.getCode()
+    this.getCode();
+    this.getThirdParty();
   },
   methods: {
     showFind() {
@@ -81,6 +92,17 @@ export default {
           document.getElementsByClassName("el-input__inner")[2].focus()
           this.getCode()
         })
+    },
+    getThirdParty() {
+      this.$post('/common/auth/method', {
+        redirect_url: this.$route.query.redirect_url
+      })
+        .then(res => {
+          this.thirdPartyList = res.data || []
+        })
+    },
+    thirdPartyIconClick(url) {
+      window.open(url, '_self')
     }
   }
 }
