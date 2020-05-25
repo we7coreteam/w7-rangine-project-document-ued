@@ -68,6 +68,7 @@
             console.error(2)
             next('/admin/document')
           } else {
+            console.error(3)
             window.open(redirect_url, '_self')
           }
         }
