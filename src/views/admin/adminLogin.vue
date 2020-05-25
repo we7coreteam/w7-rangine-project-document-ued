@@ -65,7 +65,8 @@
           next('/bind')
         } else {
           if (!redirect_url) {
-            // next('/admin/document')
+            console.error(2)
+            next('/admin/document')
           } else {
             window.open(redirect_url, '_self')
           }
@@ -115,9 +116,11 @@
           setTimeout(() => {
             msg.close();
             const href = localStorage.recordHref;
+
             if (href) {
               location.href = href;
             } else {
+              console.error(1)
               this.$router.push('/admin/document')
             }
           }, 500)
