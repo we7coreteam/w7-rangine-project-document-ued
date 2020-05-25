@@ -56,12 +56,14 @@
     let code = to.query.code//第三方登录成功之后返回的code
     let redirect_url = to.query.redirect_url//需要跳转的url
     let app_id = to.query.app_id
+    console.log(10);
     if (code) {
       axios.post('/common/auth/third-party-login', {
         code,
         app_id
       }).then(res => {
         if (res && res.is_need_bind) {//跳转到绑定
+          console.error(5)
           next('/bind')
         } else {
           if (!redirect_url) {
@@ -76,6 +78,8 @@
           next('/admin-login')
         })
     } else {
+      console.error(6)
+      console.log(6)
       // next()
       axios.post('/common/auth/default-login-url').then(res => {
         if (res.data) {
