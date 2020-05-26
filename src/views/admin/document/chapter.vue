@@ -974,6 +974,7 @@
             })
           }).catch(() => {
             this.dialogVisible = false
+            this.confirmDisabled = false;
           })
         }
         if (this.dialogTitle == '重命名') {
@@ -985,6 +986,7 @@
             this.$message('修改成功！')
             this.rightSelectNodeObj.name = this.addNodeObj.name
             this.dialogVisible = false;
+            this.confirmDisabled = false;
             const docTitle = this.docTitle;
             const rename = localStorage.rename;
             if (docTitle == rename) {
@@ -993,6 +995,7 @@
             // location.reload();
           }).catch(() => {
             this.dialogVisible = false
+            this.confirmDisabled = false;
           })
         }
       },
