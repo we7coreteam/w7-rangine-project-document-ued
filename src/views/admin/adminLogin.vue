@@ -80,14 +80,18 @@
     } else {
       // console.error(6)
       // console.log(6)
-      // next()
-      axios.post('/common/auth/default-login-url').then(res => {
-        if (res.data) {
-          window.open(res.data, '_self')
-        } else {
-          next()
-        }
-      })
+      if (process.env.NODE_ENV == 'production') {
+        console.log('production');
+        axios.post('/common/auth/default-login-url').then(res => {
+          if (res.data) {
+            window.open(res.data, '_self')
+          } else {
+            next()
+          }
+        })
+      } else {
+        next()
+      }
     }
   },
   created () {
@@ -137,11 +141,10 @@
     },
     getThirdParty() {
       this.$post('/common/auth/method', {
-        redirect_url: this.$route.query.redirect_url
+        redirect_url: localStorage.recordHref || this.$route.query.redirect_url
+      }).then(res => {
+        this.thirdPartyList = res.data || []
       })
-        .then(res => {
-          this.thirdPartyList = res.data || []
-        })
     },
     thirdPartyIconClick(url) {
       window.open(url, '_self')

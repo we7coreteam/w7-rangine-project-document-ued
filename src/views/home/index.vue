@@ -184,7 +184,7 @@
     this.getDocumentName()
   },
   mounted () {
-    this.projectName = localStorage.projectName;
+    // this.projectName = localStorage.projectName;
   },
   methods: {
     querySearch(queryString, cb) {
@@ -338,6 +338,9 @@
         if (res.code == 200) {
           this.articleContent = res.data;
           this.loading.close();
+          if (res.data.document) {
+            this.projectName = res.data.document.name;
+          }
           // this.articleContent.content = res.content ? this.$refs.mavonEditor.markdownIt.render('<div class="markdown-content">\n \n'+res.content+'\n \n</div>' + '<div class="markdown-menu"><el-scrollbar>\n \n @[toc]( ) \n \n</el-scrollbar></div>\n \n' ) : ''
           this.articleContent.content = res.data.content ? this.$refs.mavonEditor.markdownIt.render(res.data.content) : ''
           this.$nextTick(() => {
