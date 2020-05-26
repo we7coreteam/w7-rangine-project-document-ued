@@ -163,7 +163,7 @@
       filterWord: '',
       shareUrl: '',
       showShareWechat: false,
-      projectName: '目录',
+      projectName: '',
       loading: ''
     }
   },
