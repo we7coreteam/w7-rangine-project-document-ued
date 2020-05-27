@@ -26,18 +26,18 @@
       <div class="tree-warpper">
         <el-scrollbar style="height: 100%">
           <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text="没有与搜索条件匹配的项"
-                   ref="chaptersTree"
-                   node-key="id"
-                   :expand-on-click-node="true"
-                   :highlight-current="true"
-                   :default-expanded-keys="defaultExpanded"
-                   :default-checked-keys="defaultCheckedKeys"
-                   :filter-node-method="filterNode"
-                   @node-contextmenu="rightClick"
-                   @node-click="handleNodeClick"
-                   draggable
-                   @node-drop="handleDrop"
-                   :allow-drop="allowDrop">
+            ref="chaptersTree"
+            node-key="id"
+            :expand-on-click-node="true"
+            :highlight-current="true"
+            :default-expanded-keys="defaultExpanded"
+            :default-checked-keys="defaultCheckedKeys"
+            :filter-node-method="filterNode"
+            @node-contextmenu="rightClick"
+            @node-click="handleNodeClick"
+            draggable
+            @node-drop="handleDrop"
+            :allow-drop="allowDrop">
             <div class="custom-tree-node" slot-scope="{ node, data }">
               <span class="node-info">
                 <i class="wi wi-folder" v-if="data.is_dir == 1"></i>
@@ -595,14 +595,14 @@
       this.getMethodType();
       // this.initCreateChapter();
     },
-    mounted () {
+    mounted() {
       // (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)
       const This = this;
-      document.addEventListener('keydown', function(e){
+      document.addEventListener('keydown', function (e) {
         let currKey = 0;
         e = e || event || window.event;
         currKey = e.keyCode || e.which || e.charCode;
-        if ((e.ctrlKey || e.metaKey) && currKey == 83){
+        if ((e.ctrlKey || e.metaKey) && currKey == 83) {
           e.preventDefault();
           This.saveApi();
           // return false;
@@ -1413,7 +1413,7 @@
         }
       },
 
-      keyupSave () {
+      keyupSave() {
         console.log(123);
       },
 

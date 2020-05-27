@@ -73,6 +73,6 @@ export default {
 
 <style lang="scss" scoped>
 .el-main {
-  padding: 0 25px 0 15px;
+  padding: 0 25px 20px 15px;
 }
 </style>

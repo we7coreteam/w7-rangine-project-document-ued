@@ -4,16 +4,16 @@
     <div class="container-box">
       <div class="search-box">
         <div class="search-box-input">
-          <el-input v-model="searchData.keyword" class="demo-input-suffix" placeholder="请输入文档名称" clearable
+          <el-input v-model="listQuery.keyword" class="demo-input-suffix" placeholder="请输入文档名称" clearable
                     @keyup.enter.native="getAllProject">
             <i slot="suffix" class="el-input__icon el-icon-search" @click="getAllProject"></i>
           </el-input>
-          <el-select v-model="searchData.is_public" @change="getAllProject">
+          <el-select v-model="listQuery.is_public" @change="getAllProject">
             <el-option label="全部" value=""></el-option>
             <el-option label="公有" value="1"></el-option>
             <el-option label="私有" value="2"></el-option>
           </el-select>
-          <el-select v-model="searchData.role" @change="getAllProject">
+          <el-select v-model="listQuery.role" @change="getAllProject">
             <el-option label="全部" value=""></el-option>
             <el-option label="我创建的" value="1"></el-option>
             <el-option label="我操作的" value="2"></el-option>
@@ -52,18 +52,29 @@
         </div>
       </div>
       <el-pagination
-          background
-          @current-change="getAllProject"
-          layout="prev, pager, next, total"
-          prev-text="上一页"
-          next-text="下一页"
-          :page-size="page_size"
-          :current-page.sync="currentPage"
-          :page-count="pageCount"
-          :hide-on-single-page="false"
-          style="margin-top:20px"
-      >
-      </el-pagination>
+        background
+        :current-page.sync="listQuery.page"
+        :page-sizes="[10,20,30,50]"
+        :page-size="listQuery.page_size"
+        :layout="paginationLayouts"
+        :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+
+      <!--<el-pagination-->
+          <!--background-->
+          <!--@current-change="getAllProject"-->
+          <!--layout="prev, pager, next, total"-->
+          <!--prev-text="上一页"-->
+          <!--next-text="下一页"-->
+          <!--:page-sizes="[10,20,30,50]"-->
+          <!--:current-page.sync="currentPage"-->
+          <!--:page-count="pageCount"-->
+          <!--:hide-on-single-page="false"-->
+          <!--style="margin-top:20px"-->
+      <!--&gt;-->
+      <!--</el-pagination>-->
       <!-- 基本信息弹出框 -->
       <el-dialog class="w7-dialog" title="创建项目" :visible.sync="dialogDocInfoVisible" :close-on-click-modal="false"
                  center>
@@ -117,13 +128,15 @@
     },
     data() {
       return {
-        radio: '1',
-        loading: false,
-        searchData: {
+        listQuery: {
+          page: 1,
+          page_size: 20,
           keyword: '',
           role: '',
           is_public: ''
         },
+        radio: '1',
+        loading: false,
         docList: [],
         currentPage: 0,//当前页码
         page_size: 19,
@@ -142,6 +155,11 @@
     created() {
       this.getAllProject()
     },
+    computed: {
+      paginationLayouts() {
+        return this.total && (this.total / this.listQuery.page_size) > 1 ? 'total, sizes, prev, pager, next, jumper' : 'total, sizes'
+      }
+    },
     methods: {
       dialogDocShow () {
         this.dialogDocInfoVisible = true;
@@ -149,15 +167,11 @@
       },
       getAllProject() {
         this.loading = true;
-        getAllProject({
-          page: this.currentPage,
-          page_size: this.page_size,
-          ...this.searchData
-        }).then(res => {
+        getAllProject(this.listQuery).then(res => {
           if (res.code == 200) {
             this.docList = res.data.data;
-            this.pageCount = res.page_count;
-            this.total = res.total;
+            this.pageCount = res.data.page_count;
+            this.total = res.data.total;
             this.loading = false;
           }
         })
@@ -270,6 +284,14 @@
       handleClose() {
         this.getAllProject()
         this.showSetting = false
+      },
+      handleSizeChange(val) {
+        this.listQuery.page_size = val
+        this.getAllProject()
+      },
+      handleCurrentChange(val) {
+        this.listQuery.page = val
+        this.getAllProject()
       }
     }
   }
