@@ -28,7 +28,6 @@
                 ref="chaptersTree"
                 node-key="id"
                 :highlight-current="true"
-                :expand-on-click-node="false"
                 :default-expanded-keys="expandIdArray"
                 @node-click="handleNodeClick"
                 @node-expand="handleNodeExpand">

@@ -12,7 +12,8 @@ module.exports = {
   assetsDir: '', //静态资源目录
   devServer: {
     host: '0.0.0.0',
-    proxy: 'http://wiki.we7888.cn/',
+    proxy: 'http://api.we7888.cn//',
+    // proxy: 'http://wiki.we7888.cn/',
     // proxy: 'http://192.168.168.23:99/',
     // proxy: {
     //   '/api': {

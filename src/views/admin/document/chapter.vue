@@ -11,16 +11,16 @@
       </div>
       <div class="icon-box">
         <el-tooltip effect="dark" content="新建文档" placement="bottom">
-          <i class="wi wi-document" @click="clickIconAddNode(false)"></i>
+          <i class="wq wq-wendang" @click="clickIconAddNode(false)"></i>
         </el-tooltip>
         <el-tooltip effect="dark" content="新建目录" placement="bottom">
-          <i class="wi wi-folder" @click="clickIconAddNode(true)"></i>
+          <i class="wq wq-mulu" @click="clickIconAddNode(true)"></i>
         </el-tooltip>
         <el-tooltip effect="dark" content="预览" placement="bottom">
-          <i class="wi wi-view" @click="readDoc"></i>
+          <i class="wq wq-chakan" @click="readDoc"></i>
         </el-tooltip>
         <el-tooltip effect="dark" content="设置" placement="bottom" v-if="has_manage">
-          <i class="wi wi-guanli" @click="showSetting = true"></i>
+          <i class="wq wq-shezhi1" @click="showSetting = true"></i>
         </el-tooltip>
       </div>
       <div class="tree-warpper">
@@ -40,14 +40,14 @@
             :allow-drop="allowDrop">
             <div class="custom-tree-node" slot-scope="{ node, data }">
               <span class="node-info">
-                <i class="wi wi-folder" v-if="data.is_dir == 1"></i>
-                <i class="wi wi-document" v-if="data.is_dir == 0"></i>
+                <i class="wq wq-wendang" v-if="data.is_dir == 1"></i>
+                <i class="wq wq-mulu" v-if="data.is_dir == 0"></i>
                 <div class="text-over">
                   <span :title="node.label">{{ node.label }}</span>
                 </div>
               </span>
               <span class="shortcut" @click.stop="shortcut(data, node)">
-                <i class="wi wi-document" v-if="data.is_dir == 1"></i>
+                <i class="wq wq-mulu" v-if="data.is_dir == 1"></i>
               </span>
               <span class="point3" @mousemove='updateXY' @click.stop="leftClick(data, node)"><span>...</span></span>
               <div class="doc-default" v-if="data.is_default"></div>
@@ -135,13 +135,13 @@
                       <el-tree :data="apiHeaderTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
                         <div class="custom-tree-node" slot-scope="{ node, data }">
                           <el-row :gutter="10">
-                            <el-col :md="4">
+                            <el-col :span="4">
                               <el-form-item label="">
                                 <el-input @input="paramNameChange(node, data)" v-model="data.name"
                                           placeholder="参数名"></el-input>
                               </el-form-item>
                             </el-col>
-                            <el-col :md="4">
+                            <el-col :span="4">
                               <el-form-item label="">
                                 <el-select v-model="data.type" placeholder="">
                                   <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
@@ -149,7 +149,7 @@
                                 </el-select>
                               </el-form-item>
                             </el-col>
-                            <el-col :md="4">
+                            <el-col :span="4">
                               <el-form-item label="">
                                 <el-select v-model="data.enabled" placeholder="是否必填">
                                   <el-option label="true" :value="2"></el-option>
@@ -157,12 +157,12 @@
                                 </el-select>
                               </el-form-item>
                             </el-col>
-                            <el-col :md="4">
+                            <el-col :span="4">
                               <el-form-item label="">
                                 <el-input v-model="data.default_value" placeholder="默认值"></el-input>
                               </el-form-item>
                             </el-col>
-                            <el-col :md="6">
+                            <el-col :span="6">
                               <el-form-item label="">
                                 <el-input v-model="data.description" placeholder="描述"></el-input>
                               </el-form-item>
@@ -183,13 +183,13 @@
                       <el-tree :data="apiParamsTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
                         <div class="custom-tree-node" slot-scope="{ node, data }">
                           <el-row :gutter="5">
-                            <el-col :md="4">
+                            <el-col :span="4">
                               <el-form-item label="">
                                 <el-input @input="paramNameChange(node, data)" v-model="data.name"
                                           placeholder="参数名"></el-input>
                               </el-form-item>
                             </el-col>
-                            <el-col :md="4">
+                            <el-col :span="4">
                               <el-form-item label="">
                                 <el-select v-model="data.type" placeholder="">
                                   <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
@@ -197,7 +197,7 @@
                                 </el-select>
                               </el-form-item>
                             </el-col>
-                            <el-col :md="4">
+                            <el-col :span="4">
                               <el-form-item label="">
                                 <el-select v-model="data.enabled" placeholder="是否必填">
                                   <el-option label="true" :value="2"></el-option>
@@ -205,12 +205,12 @@
                                 </el-select>
                               </el-form-item>
                             </el-col>
-                            <el-col :md="4">
+                            <el-col :span="4">
                               <el-form-item label="">
                                 <el-input v-model="data.default_value" placeholder="默认值"></el-input>
                               </el-form-item>
                             </el-col>
-                            <el-col :md="6">
+                            <el-col :span="6">
                               <el-form-item label="">
                                 <el-input v-model="data.description" placeholder="描述"></el-input>
                               </el-form-item>
@@ -240,13 +240,13 @@
                         <el-tree :data="apiBodyTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
                           <div class="custom-tree-node" slot-scope="{ node, data }">
                             <el-row :gutter="5">
-                              <el-col :md="4">
+                              <el-col :span="4">
                                 <el-form-item label="">
                                   <el-input @input="paramNameChange(node, data)" v-model="data.name"
                                             placeholder="参数名"></el-input>
                                 </el-form-item>
                               </el-col>
-                              <el-col :md="4">
+                              <el-col :span="4">
                                 <el-form-item label="">
                                   <el-select v-model="data.type" placeholder="">
                                     <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
@@ -254,7 +254,7 @@
                                   </el-select>
                                 </el-form-item>
                               </el-col>
-                              <el-col :md="4">
+                              <el-col :span="4">
                                 <el-form-item label="">
                                   <el-select v-model="data.enabled" placeholder="是否必填">
                                     <el-option label="true" :value="2"></el-option>
@@ -262,12 +262,12 @@
                                   </el-select>
                                 </el-form-item>
                               </el-col>
-                              <el-col :md="4">
+                              <el-col :span="4">
                                 <el-form-item label="">
                                   <el-input v-model="data.default_value" placeholder="默认值"></el-input>
                                 </el-form-item>
                               </el-col>
-                              <el-col :md="6">
+                              <el-col :span="6">
                                 <el-form-item label="">
                                   <el-input v-model="data.description" placeholder="描述"></el-input>
                                 </el-form-item>
@@ -301,13 +301,13 @@
                 <el-tree :data="apiResTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
                   <div class="custom-tree-node" slot-scope="{ node, data }">
                     <el-row :gutter="5">
-                      <el-col :md="4">
+                      <el-col :span="4">
                         <el-form-item label="">
                           <el-input @input="resParamNameChange(node, data)" v-model="data.name"
                                     placeholder="参数名"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :md="4">
+                      <el-col :span="4">
                         <el-form-item label="">
                           <el-select v-model="data.type" placeholder="">
                             <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
@@ -315,20 +315,20 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :md="4">
-                        <el-form-item label="">
-                          <el-select v-model="data.enabled" placeholder="是否必填">
-                            <el-option label="true" :value="2"></el-option>
-                            <el-option label="false" :value="1"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :md="4">
+                      <!--<el-col :span="4">-->
+                        <!--<el-form-item label="">-->
+                          <!--<el-select v-model="data.enabled" placeholder="是否必填">-->
+                            <!--<el-option label="true" :value="2"></el-option>-->
+                            <!--<el-option label="false" :value="1"></el-option>-->
+                          <!--</el-select>-->
+                        <!--</el-form-item>-->
+                      <!--</el-col>-->
+                      <el-col :span="4">
                         <el-form-item label="">
                           <el-input v-model="data.default_value" placeholder="默认值"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :md="6">
+                      <el-col :span="6">
                         <el-form-item label="">
                           <el-input v-model="data.description" placeholder="描述"></el-input>
                         </el-form-item>
@@ -790,7 +790,6 @@
       handleNodeClick(data) {
         console.log(12);
         console.log(data);
-
         this.previewId = data.id;
         this.docTitle = data.name;
         this.chapter_id = data.id;
@@ -1254,13 +1253,17 @@
         if (!data.children) {
           this.$set(data, 'children', []);
         }
-        data.children.push(newChild);
+        if (data.type == 4 || data.type == 5) {
+          data.children.push(newChild);
+        } else {
+          this.$message.warning('参数类型为Object或者为Array才可添加！')
+        }
       },
 
       // 响应数据 添加下一级node
       addResApiTreeNode(data) {
-        // console.log('data');
-        // console.log(data);
+        console.log('data');
+        console.log(data);
         // const newChild = {};
         const newChild = {
           id: id++,
@@ -1277,7 +1280,11 @@
         if (!data.children) {
           this.$set(data, 'children', []);
         }
-        data.children.push(newChild);
+        if (data.type == 4 || data.type == 5) {
+          data.children.push(newChild);
+        } else {
+          this.$message.warning('参数类型为Object或者为Array才可添加！')
+        }
       },
 
       // 删除 请求数据node
@@ -1556,13 +1563,13 @@
       display: flex;
       justify-content: space-between;
       margin-bottom: 30px;
-      color: #b6b5b5;
+      color: #3296FA;
 
       .el-tooltip {
         cursor: pointer;
       }
 
-      .wi {
+      .wq {
         font-size: 22px;
       }
     }
@@ -1646,10 +1653,21 @@
         flex: 1;
         display: flex;
         align-items: center;
+        width: 100%;
 
         .node-info {
           flex: 1;
           display: flex;
+          align-items: center;
+
+          .wq {
+            color: #ffcd2c;
+            font-size: 18px;
+
+            &.wq-mulu {
+              font-size: 16px;
+            }
+          }
 
           .text-over {
             flex: 1;
@@ -1663,12 +1681,8 @@
           display: none;
           margin-right: 10px;
 
-          .wi {
-            color: #b6b5b5;
-
-            &:hover {
-              color: #3296fa;
-            }
+          .wq {
+            color: #ffcd2c;
           }
         }
 
@@ -1697,14 +1711,6 @@
           background-image: url('~@/assets/img/doc-default.png');
         }
       }
-    }
-
-    .wi-document {
-      color: #3296fa;
-    }
-
-    .wi-folder {
-      color: #ffcd2c;
     }
   }
 
@@ -1769,6 +1775,10 @@
                 line-height: normal;
               }
             }
+          }
+
+          .custom-tree-node {
+            width: 100%;
           }
 
           .el-row {
