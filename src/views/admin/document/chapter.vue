@@ -1399,9 +1399,10 @@
         body['1'] = this.apiHeaderTreeData;
         body['2'] = this.apiParamsTreeData;
         body['request_body'] = this.apiBodyTreeData;
-        body['reponse_body'] = this.apiResTreeData;
+        // body['reponse_body'] = this.apiResTreeData;
         record.api = this.form;
         record.body = body;
+        record.reponse = this.apiResTreeData;
         record.extend = this.markDownContent;
         chapter_id = this.chapter_id;
 
