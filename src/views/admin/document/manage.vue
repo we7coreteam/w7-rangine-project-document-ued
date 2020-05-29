@@ -115,7 +115,7 @@
   import setting from './setting.vue'
 
   export default {
-    name: 'docIndex',
+    name: 'documentIndex',
     components: {
       setting
     },
@@ -145,13 +145,13 @@
         settingDocId: ''
       }
     },
-    created() {
-      this.getAllProject()
-    },
     computed: {
       paginationLayouts() {
         return this.total && (this.total / this.listQuery.page_size) > 1 ? 'total, sizes, prev, pager, next, jumper' : 'total, sizes'
       }
+    },
+    created() {
+      this.getAllProject()
     },
     methods: {
       dialogDocShow () {

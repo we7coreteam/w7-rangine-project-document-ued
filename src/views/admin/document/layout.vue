@@ -26,13 +26,16 @@
       </el-menu>
     </el-aside>
     <el-main>
-      <router-view></router-view>
+      <keep-alive include="documentIndex">
+        <router-view></router-view>
+      </keep-alive>
     </el-main>
   </el-container>
 </template>
 
 <script>
 export default {
+  name: 'documentLayout',
   data() {
     return {
       active: '/admin/document',

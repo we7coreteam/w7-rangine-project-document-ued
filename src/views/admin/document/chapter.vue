@@ -294,11 +294,25 @@
                   <span class="line"></span>
                   <span class="text">响应数据</span>
                 </div>
-                <!--<el-button type="primary" plain icon="el-icon-plus" @click="addResFirstNode">添加</el-button>-->
+                <el-button type="primary" size="mini" icon="el-icon-plus" @click="addResNode">添加</el-button>
                 <el-button type="default" plain icon="el-icon-upload" v-if="false">导入</el-button>
               </div>
-              <div class="c-con">
-                <el-tree :data="apiResTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
+              <div class="c-con" v-for="(item, index) in apiResTreeData" :key="index">
+                <el-row :gutter="5">
+                  <el-col :span="18">
+                    <div style="padding-left: 24px;">
+                      <el-form-item label="">
+                        <el-input style="width: calc(100% + 5px)" v-model="item.description" placeholder="响应数据描述"></el-input>
+                      </el-form-item>
+                    </div>
+                  </el-col>
+                  <el-col :span="6">
+                    <div style="text-align: right;">
+                      <el-button type="danger" size="mini" @click="deleteApiItem(index)">删除</el-button>
+                    </div>
+                  </el-col>
+                </el-row>
+                <el-tree :data="item.data" node-key="id" default-expand-all :expand-on-click-node="false">
                   <div class="custom-tree-node" slot-scope="{ node, data }">
                     <el-row :gutter="5">
                       <el-col :span="4">
@@ -711,7 +725,6 @@
           }
           localStorage.setItem('we7_doc_user_' + this.UserInfo.id, JSON.stringify(allRecords))
         }
-
       },
       getChapters() {
         // const apiData1 = JSON.parse(JSON.stringify(this.baseRequestData));
@@ -1498,9 +1511,11 @@
                 this.apiBodyTreeData = [apiData3];
               }
               // reponse body
-              if (record.body.reponse_body.length) {
-                this.apiResTreeData = record.body.reponse_body;
-                this.apiResTreeData.push(apiData4);
+              if (record.reponse.length) {
+                this.apiResTreeData = record.reponse;
+                this.apiResTreeData.forEach(item1 => {
+                  item1.data.push(apiData4)
+                })
               } else {
                 // const apiData4 = JSON.parse(JSON.stringify(this.baseRequestData));
                 this.apiResTreeData = [apiData4];
@@ -1522,6 +1537,16 @@
             this.loading.close();
           }
         })
+      },
+      // 添加响应数据模块
+      addResNode() {
+        const apiData = JSON.parse(JSON.stringify(this.baseRequestData));
+        this.apiResTreeData.push({description: '', data: [apiData]});
+      },
+
+      // 删除响应数据模块
+      deleteApiItem(index) {
+        this.apiResTreeData.splice(index, 1);
       }
     }
   }
@@ -1756,6 +1781,7 @@
           border: 1px solid rgba(238, 238, 238, 1);
           border-radius: 2px;
           padding: 15px 20px;
+          margin-bottom: 20px;
 
           /deep/ .el-tabs__header {
             margin-bottom: 25px;
