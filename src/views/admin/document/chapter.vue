@@ -1518,8 +1518,8 @@
                   item1.data.push(apiData4)
                 })
               } else {
-                // const apiData4 = JSON.parse(JSON.stringify(this.baseRequestData));
-                this.apiResTreeData = [apiData4];
+                const apiData = JSON.parse(JSON.stringify(this.baseRequestData));
+                this.apiResTreeData.push({description: '', data: [apiData]});
               }
               // markDown
               if (record.extend == null) {
