@@ -230,10 +230,10 @@
                     <div class="type-body">
                       <el-form-item label="请求类型：">
                         <el-radio-group v-model="form.body_param_location">
-                          <el-radio label="3">form-data</el-radio>
-                          <el-radio label="4">x-www-form-urlencoded</el-radio>
-                          <el-radio label="5">raw</el-radio>
-                          <el-radio label="6">binary</el-radio>
+                          <el-radio :label="3">form-data</el-radio>
+                          <el-radio :label="4">x-www-form-urlencoded</el-radio>
+                          <el-radio :label="5">raw</el-radio>
+                          <el-radio :label="6">binary</el-radio>
                         </el-radio-group>
                       </el-form-item>
                       <div class="tree-wrap">
@@ -444,16 +444,6 @@
                :close-on-click-modal="false" :before-close="handleClose">
       <setting :id="$route.params.id"></setting>
     </el-dialog>
-
-    <!--确认保存-->
-    <el-dialog title="" :visible.sync="saveDialogVisible" :show-close="false" width="30%">
-      <span>您已修改了一些数据，请确认是否要放弃保存并离开？</span>
-      <span slot="footer" class="dialog-footer">
-          <el-button @click="cancelLeave">取 消</el-button>
-          <el-button type="primary" @click="determineLeave">确 定</el-button>
-        </span>
-    </el-dialog>
-
   </el-container>
 </template>
 
@@ -525,14 +515,15 @@
           method: 1,
           url: '',
           description: '',
-          body_param_location: '3',
+          body_param_location: 3,
           tab_location: '1'
         },
+        formCompared: {},
         formCopy: {
           method: 1,
           url: '',
           description: '',
-          body_param_location: '3',
+          body_param_location: 3,
           tab_location: '1'
         },
         // activeName: '1',
@@ -568,17 +559,24 @@
         previewId: '',
         loading: '',
         confirmDisabled: false,
-        confirmCopyDisabled: false
+        confirmCopyDisabled: false,
+        apiHeaderTreeDataCompared: '',
+        apiParamsTreeDataCompared: '',
+        apiBodyTreeDataCompared: '',
+        apiResTreeDataCompared: '',
+        markDownContentCompared: '',
+        isSave: true,
+        isFormChange: false,
+        isApiHeaderTreeDataChange: false,
+        isApiParamsTreeDataChange: false,
+        isApiBodyTreeDataChange: false,
+        isApiResTreeDataChange: false,
+        isMarkDownContentChange: false,
+        treeActive: false
       }
     },
     computed: {
       ...mapGetters({UserInfo: 'UserInfo'}),
-      isSave() {
-        return this.$store.state.isSave;
-      },
-      saveDialogVisible() {
-        return this.$store.state.saveDialogVisible;
-      },
     },
     watch: {
       filterText(val) {
@@ -596,6 +594,166 @@
           this.getOperRecord()
         }
       },
+      markDownContent: {
+        deep: true,
+        handler: function (newVal, oldVal) {
+          const newString = JSON.stringify(newVal);
+          const oldString = JSON.stringify(this.markDownContentCompared);
+          if (newString != oldString) {
+            console.log('markDownContent有数据差异');
+            console.log(newString);
+            console.log(oldString);
+            this.isMarkDownContentChange = true;
+          } else {
+            this.isMarkDownContentChange = false;
+          }
+        }
+      },
+      form: {
+        deep: true,
+        immediate: false,
+        handler: function(newVal, oldVal) {
+          const newObj = JSON.parse(JSON.stringify(newVal));
+          delete newObj.tab_location;
+
+          const oldObj = JSON.parse(JSON.stringify(this.formCompared));
+          delete oldObj.tab_location;
+
+          const newString = JSON.stringify(newObj);
+          const oldString = JSON.stringify(oldObj);
+          // console.log(111);
+          // console.log(newString);
+          // console.log(oldString);
+          if (newString != oldString) {
+            console.log('form有数据差异');
+            console.log(newString);
+            console.log(oldString);
+            this.isFormChange = true;
+          } else {
+            this.isFormChange = false;
+          }
+        }
+      },
+      apiHeaderTreeData: {
+        deep: true,
+        immediate: false,
+        handler: function(newVal) {
+          let newObj = JSON.parse(JSON.stringify(newVal));
+          let newString = '';
+          if (newObj.length) {
+            newObj.forEach(item => {
+              delete item.already;
+            })
+            newObj = newObj.filter(item => {
+              return item.name || item.description
+            })
+            if (newObj.length) {
+              newString = JSON.stringify(newObj);
+            } else {
+              newString = '""';
+            }
+          }
+          let oldObj = JSON.parse(JSON.stringify(this.apiHeaderTreeDataCompared));
+          const oldString = JSON.stringify(oldObj);
+          if (newString != oldString) {
+            console.log('apiHeaderTreeData有数据差异');
+            console.log(newString);
+            console.log(oldString);
+            this.isApiHeaderTreeDataChange = true;
+          } else {
+            this.isApiHeaderTreeDataChange = false;
+          }
+        }
+      },
+      apiParamsTreeData: {
+        deep: true,
+        immediate: false,
+        handler: function(newVal) {
+          let newObj = JSON.parse(JSON.stringify(newVal));
+          let newString = '';
+          if (newObj.length) {
+            newObj.forEach(item => {
+              delete item.already;
+            })
+            newObj = newObj.filter(item => {
+              return item.name || item.description
+            })
+            if (newObj.length) {
+              newString = JSON.stringify(newObj);
+            } else {
+              newString = '""';
+            }
+          }
+          let oldObj = JSON.parse(JSON.stringify(this.apiParamsTreeDataCompared));
+          const oldString = JSON.stringify(oldObj);
+
+          if (newString != oldString) {
+            console.log('apiParamsTreeData有数据差异');
+            console.log(newString);
+            console.log(oldString);
+            this.isApiParamsTreeDataChange = true;
+          } else {
+            this.isApiParamsTreeDataChange = false;
+          }
+        }
+      },
+      apiBodyTreeData: {
+        deep: true,
+        immediate: false,
+        handler: function(newVal) {
+          let newObj = JSON.parse(JSON.stringify(newVal));
+          let newString = '';
+          if (newObj.length) {
+            newObj.forEach(item => {
+              delete item.already;
+            })
+            newObj = newObj.filter(item => {
+              return item.name || item.description
+            })
+            if (newObj.length) {
+              newString = JSON.stringify(newObj);
+            } else {
+              newString = '""';
+            }
+          }
+          let oldObj = JSON.parse(JSON.stringify(this.apiBodyTreeDataCompared));
+          const oldString = JSON.stringify(oldObj);
+          if (newString != oldString) {
+            console.log('apiBodyTreeData有数据差异');
+            console.log(newString);
+            console.log(oldString);
+            this.isApiBodyTreeDataChange = true;
+          } else {
+            this.isApiBodyTreeDataChange = false;
+          }
+        }
+      },
+      apiResTreeData: {
+        deep: true,
+        immediate: false,
+        handler: function(newVal) {
+          let newObj = JSON.parse(JSON.stringify(newVal));
+          newObj.forEach(item => {
+            item.data.forEach(item2 => {
+              delete item2.already;
+            })
+            item.data = item.data.filter(item2 => {
+              return item2.name || item2.description
+            })
+          })
+          const newString = JSON.stringify(newObj);
+          let oldObj = JSON.parse(JSON.stringify(this.apiResTreeDataCompared));
+          const oldString = JSON.stringify(oldObj);
+          if (newString != oldString) {
+            console.log('apiResTreeData有数据差异');
+            console.log(newString);
+            console.log(oldString);
+            this.isApiResTreeDataChange = true;
+          } else {
+            this.isApiResTreeDataChange = false;
+          }
+        }
+      }
     },
     created() {
       if (this.$route.query && this.$route.query.type == 'add') {//新增项目
@@ -622,6 +780,27 @@
           // return false;
         }
       })
+    },
+    beforeRouteLeave(to, from, next) {
+      // console.log(to)
+      // console.log(from)
+      if (this.isFormChange || this.isApiHeaderTreeDataChange || this.isApiParamsTreeDataChange || this.isApiBodyTreeDataChange || this.isApiResTreeDataChange || this.isMarkDownContentChange) {
+        this.$confirm('您有数据尚未保存, 是否保存?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.saveApi();
+          next();
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          });
+        });
+      } else {
+        next();
+      }
     },
     methods: {
       /**
@@ -727,15 +906,6 @@
         }
       },
       getChapters() {
-        // const apiData1 = JSON.parse(JSON.stringify(this.baseRequestData));
-        // const apiData2 = JSON.parse(JSON.stringify(this.baseRequestData));
-        // const apiData3 = JSON.parse(JSON.stringify(this.baseRequestData));
-        // const apiData4 = JSON.parse(JSON.stringify(this.baseRequestData));
-        // this.apiHeaderTreeData.push(apiData1);
-        // this.apiParamsTreeData.push(apiData2);
-        // this.apiBodyTreeData.push(apiData3);
-        // this.apiResTreeData.push(apiData4);
-
         getAllChapter({
           document_id: this.$route.params.id
         }).then(res => {
@@ -751,6 +921,7 @@
               this.chapters = this.initTreeData(res.data.catalog); // 临时注释
               //如果有记录的默认文档节点，则选中
               if (this.defaultSelect) {
+                console.log('defaultSelect');
                 console.log(this.defaultSelect);
                 this.$nextTick(() => {
                   this.$refs.chaptersTree.setCurrentKey(this.defaultSelect)
@@ -803,17 +974,54 @@
       handleNodeClick(data) {
         console.log(12);
         console.log(data);
-        this.previewId = data.id;
-        this.docTitle = data.name;
-        this.chapter_id = data.id;
 
-        this.viewChapter();
-
-        if (this.menuBarVisible) {
-          this.menuBarVisible = false
+        if (this.isFormChange || this.isApiHeaderTreeDataChange || this.isApiParamsTreeDataChange || this.isApiBodyTreeDataChange || this.isApiResTreeDataChange || this.isMarkDownContentChange) {
+          this.$confirm('您有数据尚未保存, 是否保存?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.saveApi();
+            this.isFormChange = false;
+            this.isApiHeaderTreeDataChange = false;
+            this.isApiParamsTreeDataChange = false;
+            this.isApiBodyTreeDataChange = false;
+            this.isApiResTreeDataChange = false;
+            this.isMarkDownContentChange = false;
+            this.getOperRecord();
+            this.getChapters();
+          }).catch(() => {
+            // location.reload();
+            this.isFormChange = false;
+            this.isApiHeaderTreeDataChange = false;
+            this.isApiParamsTreeDataChange = false;
+            this.isApiBodyTreeDataChange = false;
+            this.isApiResTreeDataChange = false;
+            this.isMarkDownContentChange = false;
+            this.getOperRecord();
+            this.getChapters();
+            this.$message({
+              type: 'info',
+              message: '已取消'
+            });
+          });
+          return false;
+        } else {
+          this.previewId = data.id;
+          this.docTitle = data.name;
+          this.chapter_id = data.id;
+          this.viewChapter();
+          this.treeActive = true;
+          if (this.menuBarVisible) {
+            this.menuBarVisible = false
+          }
+          this.selectNodeObj = data;
+          this.setOperRecord(data); // 临时注释
+          console.log('无变化');
+          this.$nextTick(() => {
+            $('.w7-tree .is-current').attr('data-active', 'tree-active');
+          })
         }
-        this.selectNodeObj = data;
-        this.setOperRecord(data); // 临时注释
       },
       updateXY(event) {
         this.clientX = event.clientX
@@ -1434,22 +1642,6 @@
         }
       },
 
-      keyupSave() {
-        console.log(123);
-      },
-
-      determineLeave() {
-        this.$store.state.saveDialogVisible = false;
-        this.$store.state.isSave = true;
-        console.log('isSave');
-        console.log(this.$store.state.isSave);
-        console.log(this.$store.state.saveDialogVisible);
-      },
-
-      cancelLeave() {
-        this.$store.state.saveDialogVisible = false;
-      },
-
       // 清空form
       emptyForm() {
         this.docTitle = ''
@@ -1474,71 +1666,91 @@
             this.layout = res.data.layout;
             if (res.data.layout == 1) {
               // api文档
-              let record = res.data.record;
+              let record = JSON.parse(JSON.stringify(res.data.record));
               const apiData1 = JSON.parse(JSON.stringify(this.baseRequestData));
               const apiData2 = JSON.parse(JSON.stringify(this.baseRequestData));
               const apiData3 = JSON.parse(JSON.stringify(this.baseRequestData));
               const apiData4 = JSON.parse(JSON.stringify(this.baseRequestData));
               if (record.api) {
-                this.form = record.api;
+                this.formCompared = JSON.parse(JSON.stringify(record.api));
+                this.form = JSON.parse(JSON.stringify(record.api));
                 this.form.tab_location = localStorage.tab_location || this.form.tab_location.toString();
-                this.form.body_param_location = this.form.body_param_location.toString();
+                // this.form.body_param_location = this.form.body_param_location.toString();
+                this.form.body_param_location = this.form.body_param_location;
               } else {
+                this.formCompared = "";
                 this.form = this.formCopy;
               }
 
               // header
               if (record.body[1].length) {
-                this.apiHeaderTreeData = record.body['1'];
+                this.apiHeaderTreeData = JSON.parse(JSON.stringify(record.body['1']));
+                this.apiHeaderTreeDataCompared = JSON.parse(JSON.stringify(record.body['1']));
                 this.apiHeaderTreeData.push(apiData1);
               } else {
                 // const apiData1 = JSON.parse(JSON.stringify(this.baseRequestData));
+                this.apiHeaderTreeDataCompared = "";
                 this.apiHeaderTreeData = [apiData1];
               }
               // params
               if (record.body[2].length) {
-                this.apiParamsTreeData = record.body['2'];
+                console.log('apiParamsTreeDataCompared');
+                console.log(record.body['2']);
+                this.apiParamsTreeData = JSON.parse(JSON.stringify(record.body['2']));
+                this.apiParamsTreeDataCompared = JSON.parse(JSON.stringify(record.body['2']));
                 this.apiParamsTreeData.push(apiData2);
+                console.log('apiParamsTreeDataCompared2');
+                console.log(this.apiParamsTreeDataCompared);
               } else {
                 // const apiData2 = JSON.parse(JSON.stringify(this.baseRequestData));
+                this.apiParamsTreeDataCompared = "";
                 this.apiParamsTreeData = [apiData2];
               }
               // request body
               if (record.body.request_body.length) {
-                this.apiBodyTreeData = record.body.request_body;
+                this.apiBodyTreeData = JSON.parse(JSON.stringify(record.body.request_body));
+                this.apiBodyTreeDataCompared = JSON.parse(JSON.stringify(record.body.request_body));
                 this.apiBodyTreeData.push(apiData3);
               } else {
                 // const apiData3 = JSON.parse(JSON.stringify(this.baseRequestData));
+                this.apiBodyTreeDataCompared = "";
                 this.apiBodyTreeData = [apiData3];
               }
               // reponse body
               if (record.reponse.length) {
-                this.apiResTreeData = record.reponse;
+                this.apiResTreeData = JSON.parse(JSON.stringify(record.reponse));
+                this.apiResTreeDataCompared = JSON.parse(JSON.stringify(record.reponse));
                 this.apiResTreeData.forEach(item1 => {
                   item1.data.push(apiData4)
                 })
               } else {
                 const apiData = JSON.parse(JSON.stringify(this.baseRequestData));
+                this.apiResTreeDataCompared = "";
                 this.apiResTreeData.push({description: '', data: [apiData]});
               }
               // markDown
               if (record.extend == null) {
                 this.markDownContent = '';
+                this.markDownContentCompared = "";
               } else {
-                this.markDownContent = record.extend;
+                this.markDownContent = JSON.parse(JSON.stringify(record.extend));
+                this.markDownContentCompared = JSON.parse(JSON.stringify(record.extend));
               }
             } else {
               // 普通文档
               if (res.data.content == null) {
                 this.markDownContent = '';
+                this.markDownContentCompared = ''
               } else {
                 this.markDownContent = res.data.content;
+                this.markDownContentCompared = res.data.content;
               }
             }
             this.loading.close();
           }
         })
       },
+
       // 添加响应数据模块
       addResNode() {
         const apiData = JSON.parse(JSON.stringify(this.baseRequestData));
@@ -1741,6 +1953,13 @@
   }
 
   // wyg 2020/04/09
+  .w7-aside-chapter {
+    .custom-tree-node {
+      /*height: 40px;*/
+    }
+  }
+
+
   .w7-document-chapter {
     .chapter-title {
       margin-bottom: 30px;
@@ -1874,4 +2093,9 @@
   [v-cloak] {
     display: none !important;
   }
+
+  .w7-tree.el-tree--highlight-current .is-current[data-active=tree-active] > .el-tree-node__content {
+     background-color: #fff !important;
+   }
+
 </style>

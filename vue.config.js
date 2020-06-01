@@ -46,6 +46,12 @@ module.exports = {
           threshold: 10240,
           deleteOriginalAssets: false
         }),
+        new webpack.ProvidePlugin({
+          $: "jquery",
+          jQuery: "jquery",
+          "windows.jQuery": "jquery",
+        }),
+
         // new webpack.HotModuleReplacementPlugin() // hot: true 开启了hot模式，无需手动加载HotModuleReplacementPlugin
       ]
     }
