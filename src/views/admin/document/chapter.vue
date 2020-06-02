@@ -1029,30 +1029,30 @@
             type: 'warning'
           }).then(() => {
             this.saveApi();
-            location.reload();
-            // this.isFormChange = false;
-            // this.isApiHeaderTreeDataChange = false;
-            // this.isApiParamsTreeDataChange = false;
-            // this.isApiBodyTreeDataChange = false;
-            // this.isApiResTreeDataChange = false;
-            // this.isMarkDownContentChange = false;
-            // this.getOperRecord();
+            // location.reload();
+            this.isFormChange = false;
+            this.isApiHeaderTreeDataChange = false;
+            this.isApiParamsTreeDataChange = false;
+            this.isApiBodyTreeDataChange = false;
+            this.isApiResTreeDataChange = false;
+            this.isMarkDownContentChange = false;
+            this.getOperRecord();
+            this.getChapters();
             // this.viewChapter();
-            // this.getChapters();
           }).catch(() => {
             this.$message({
               type: 'info',
               message: '已取消'
             });
-            location.reload();
-            // this.isFormChange = false;
-            // this.isApiHeaderTreeDataChange = false;
-            // this.isApiParamsTreeDataChange = false;
-            // this.isApiBodyTreeDataChange = false;
-            // this.isApiResTreeDataChange = false;
-            // this.isMarkDownContentChange = false;
-            // this.getOperRecord();
-            // this.getChapters();
+            // location.reload();
+            this.isFormChange = false;
+            this.isApiHeaderTreeDataChange = false;
+            this.isApiParamsTreeDataChange = false;
+            this.isApiBodyTreeDataChange = false;
+            this.isApiResTreeDataChange = false;
+            this.isMarkDownContentChange = false;
+            this.getOperRecord();
+            this.getChapters();
           });
           return false;
         } else {
@@ -1754,12 +1754,14 @@
                   this.formCompared = "";
                 }
                 this.form = JSON.parse(JSON.stringify(record.api));
+                console.log(55);
                 this.form.tab_location = localStorage.tab_location || this.form.tab_location.toString();
                 // this.form.body_param_location = this.form.body_param_location.toString();
                 this.form.body_param_location = this.form.body_param_location;
               } else {
+                console.log(56);
                 this.formCompared = "";
-                this.form = this.formCopy;
+                this.form = JSON.parse(JSON.stringify(this.formCopy));
               }
 
               // header
