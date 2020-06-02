@@ -1029,28 +1029,30 @@
             type: 'warning'
           }).then(() => {
             this.saveApi();
-            this.isFormChange = false;
-            this.isApiHeaderTreeDataChange = false;
-            this.isApiParamsTreeDataChange = false;
-            this.isApiBodyTreeDataChange = false;
-            this.isApiResTreeDataChange = false;
-            this.isMarkDownContentChange = false;
-            this.getOperRecord();
-            this.getChapters();
+            location.reload();
+            // this.isFormChange = false;
+            // this.isApiHeaderTreeDataChange = false;
+            // this.isApiParamsTreeDataChange = false;
+            // this.isApiBodyTreeDataChange = false;
+            // this.isApiResTreeDataChange = false;
+            // this.isMarkDownContentChange = false;
+            // this.getOperRecord();
+            // this.viewChapter();
+            // this.getChapters();
           }).catch(() => {
-            // location.reload();
-            this.isFormChange = false;
-            this.isApiHeaderTreeDataChange = false;
-            this.isApiParamsTreeDataChange = false;
-            this.isApiBodyTreeDataChange = false;
-            this.isApiResTreeDataChange = false;
-            this.isMarkDownContentChange = false;
-            this.getOperRecord();
-            this.getChapters();
             this.$message({
               type: 'info',
               message: '已取消'
             });
+            location.reload();
+            // this.isFormChange = false;
+            // this.isApiHeaderTreeDataChange = false;
+            // this.isApiParamsTreeDataChange = false;
+            // this.isApiBodyTreeDataChange = false;
+            // this.isApiResTreeDataChange = false;
+            // this.isMarkDownContentChange = false;
+            // this.getOperRecord();
+            // this.getChapters();
           });
           return false;
         } else {
@@ -1677,10 +1679,19 @@
             layout: 1,
             record
           }).then(res => {
-            if (res.code == 200)
-              this.$message.success('保存成功！')
-            // console.log('form');
-            // console.log(this.form);
+            if (res.code == 200) {
+              this.$message.success('保存成功！');
+              this.isFormChange = false;
+              this.isApiHeaderTreeDataChange = false;
+              this.isApiParamsTreeDataChange = false;
+              this.isApiBodyTreeDataChange = false;
+              this.isApiResTreeDataChange = false;
+              this.isMarkDownContentChange = false;
+              console.log(1);
+              // this.getOperRecord();
+              // this.getChapters();
+              // this.viewChapter();
+            }
           })
         } else {
           saveChapter({
@@ -1689,8 +1700,19 @@
             layout: 0,
             content: this.markDownContent
           }).then(res => {
-            if (res.code == 200)
-              this.$message.success('保存成功！')
+            if (res.code == 200) {
+              this.$message.success('保存成功！');
+              this.isFormChange = false;
+              this.isApiHeaderTreeDataChange = false;
+              this.isApiParamsTreeDataChange = false;
+              this.isApiBodyTreeDataChange = false;
+              this.isApiResTreeDataChange = false;
+              this.isMarkDownContentChange = false;
+              console.log(2);
+              // this.getOperRecord();
+              // this.getChapters();
+              // this.viewChapter();
+            }
             // console.log('form');
             // console.log(this.form);
           })
