@@ -11,10 +11,10 @@
       </div>
       <div class="icon-box">
         <el-tooltip effect="dark" content="新建文档" placement="bottom">
-          <i class="wq wq-wendang" @click="clickIconAddNode(false)"></i>
+          <i class="wq wq-mulu" @click="clickIconAddNode(false)"></i>
         </el-tooltip>
         <el-tooltip effect="dark" content="新建目录" placement="bottom">
-          <i class="wq wq-mulu" @click="clickIconAddNode(true)"></i>
+          <i class="wq wq-wendang" @click="clickIconAddNode(true)"></i>
         </el-tooltip>
         <el-tooltip effect="dark" content="预览" placement="bottom">
           <i class="wq wq-chakan" @click="readDoc"></i>
@@ -615,11 +615,15 @@
         handler: function(newVal, oldVal) {
           const newObj = JSON.parse(JSON.stringify(newVal));
           delete newObj.tab_location;
+          let newString = '';
+          if (newObj.url) {
+            newString = JSON.stringify(newObj);
+          } else {
+            newString = '""';
+          }
 
           const oldObj = JSON.parse(JSON.stringify(this.formCompared));
           delete oldObj.tab_location;
-
-          const newString = JSON.stringify(newObj);
           const oldString = JSON.stringify(oldObj);
           // console.log(111);
           // console.log(newString);
@@ -638,30 +642,32 @@
         deep: true,
         immediate: false,
         handler: function(newVal) {
-          let newObj = JSON.parse(JSON.stringify(newVal));
-          let newString = '';
-          if (newObj.length) {
-            newObj.forEach(item => {
-              delete item.already;
-            })
-            newObj = newObj.filter(item => {
-              return item.name || item.description
-            })
+          if (newVal) {
+            let newObj = JSON.parse(JSON.stringify(newVal));
+            let newString = '';
             if (newObj.length) {
-              newString = JSON.stringify(newObj);
-            } else {
-              newString = '""';
+              newObj.forEach(item => {
+                delete item.already;
+              })
+              newObj = newObj.filter(item => {
+                return item.name || item.description
+              })
+              if (newObj.length) {
+                newString = JSON.stringify(newObj);
+              } else {
+                newString = '""';
+              }
             }
-          }
-          let oldObj = JSON.parse(JSON.stringify(this.apiHeaderTreeDataCompared));
-          const oldString = JSON.stringify(oldObj);
-          if (newString != oldString) {
-            console.log('apiHeaderTreeData有数据差异');
-            console.log(newString);
-            console.log(oldString);
-            this.isApiHeaderTreeDataChange = true;
-          } else {
-            this.isApiHeaderTreeDataChange = false;
+            let oldObj = JSON.parse(JSON.stringify(this.apiHeaderTreeDataCompared));
+            const oldString = JSON.stringify(oldObj);
+            if (newString != oldString) {
+              console.log('apiHeaderTreeData有数据差异');
+              console.log(newString);
+              console.log(oldString);
+              this.isApiHeaderTreeDataChange = true;
+            } else {
+              this.isApiHeaderTreeDataChange = false;
+            }
           }
         }
       },
@@ -669,88 +675,116 @@
         deep: true,
         immediate: false,
         handler: function(newVal) {
-          let newObj = JSON.parse(JSON.stringify(newVal));
-          let newString = '';
-          if (newObj.length) {
-            newObj.forEach(item => {
-              delete item.already;
-            })
-            newObj = newObj.filter(item => {
-              return item.name || item.description
-            })
+          if (newVal) {
+            let newObj = JSON.parse(JSON.stringify(newVal));
+            let newString = '';
             if (newObj.length) {
-              newString = JSON.stringify(newObj);
-            } else {
-              newString = '""';
+              newObj.forEach(item => {
+                delete item.already;
+              })
+              newObj = newObj.filter(item => {
+                return item.name || item.description
+              })
+              if (newObj.length) {
+                newString = JSON.stringify(newObj);
+              } else {
+                newString = '""';
+              }
             }
-          }
-          let oldObj = JSON.parse(JSON.stringify(this.apiParamsTreeDataCompared));
-          const oldString = JSON.stringify(oldObj);
+            let oldObj = JSON.parse(JSON.stringify(this.apiParamsTreeDataCompared));
+            const oldString = JSON.stringify(oldObj);
 
-          if (newString != oldString) {
-            console.log('apiParamsTreeData有数据差异');
-            console.log(newString);
-            console.log(oldString);
-            this.isApiParamsTreeDataChange = true;
-          } else {
-            this.isApiParamsTreeDataChange = false;
-          }
+            if (newString != oldString) {
+              console.log('apiParamsTreeData有数据差异');
+              console.log(newString);
+              console.log(oldString);
+              this.isApiParamsTreeDataChange = true;
+            } else {
+              this.isApiParamsTreeDataChange = false;
+            }          }
         }
       },
       apiBodyTreeData: {
         deep: true,
         immediate: false,
         handler: function(newVal) {
-          let newObj = JSON.parse(JSON.stringify(newVal));
-          let newString = '';
-          if (newObj.length) {
-            newObj.forEach(item => {
-              delete item.already;
-            })
-            newObj = newObj.filter(item => {
-              return item.name || item.description
-            })
+          if (newVal) {
+            let newObj = JSON.parse(JSON.stringify(newVal));
+            let newString = '';
             if (newObj.length) {
-              newString = JSON.stringify(newObj);
-            } else {
-              newString = '""';
+              newObj.forEach(item => {
+                delete item.already;
+              })
+              newObj = newObj.filter(item => {
+                return item.name || item.description
+              })
+              if (newObj.length) {
+                newString = JSON.stringify(newObj);
+              } else {
+                newString = '""';
+              }
             }
-          }
-          let oldObj = JSON.parse(JSON.stringify(this.apiBodyTreeDataCompared));
-          const oldString = JSON.stringify(oldObj);
-          if (newString != oldString) {
-            console.log('apiBodyTreeData有数据差异');
-            console.log(newString);
-            console.log(oldString);
-            this.isApiBodyTreeDataChange = true;
-          } else {
-            this.isApiBodyTreeDataChange = false;
-          }
+            let oldObj = JSON.parse(JSON.stringify(this.apiBodyTreeDataCompared));
+            const oldString = JSON.stringify(oldObj);
+            if (newString != oldString) {
+              console.log('apiBodyTreeData有数据差异');
+              console.log(newString);
+              console.log(oldString);
+              this.isApiBodyTreeDataChange = true;
+            } else {
+              this.isApiBodyTreeDataChange = false;
+            }          }
         }
       },
       apiResTreeData: {
         deep: true,
         immediate: false,
         handler: function(newVal) {
-          let newObj = JSON.parse(JSON.stringify(newVal));
-          newObj.forEach(item => {
-            item.data.forEach(item2 => {
-              delete item2.already;
-            })
-            item.data = item.data.filter(item2 => {
-              return item2.name || item2.description
-            })
-          })
-          const newString = JSON.stringify(newObj);
-          let oldObj = JSON.parse(JSON.stringify(this.apiResTreeDataCompared));
-          const oldString = JSON.stringify(oldObj);
-          if (newString != oldString) {
-            console.log('apiResTreeData有数据差异');
-            console.log(newString);
-            console.log(oldString);
-            this.isApiResTreeDataChange = true;
-          } else {
-            this.isApiResTreeDataChange = false;
+          if (newVal) {
+            let newObj = JSON.parse(JSON.stringify(newVal));
+            console.log('newObj');
+            console.log(newObj);
+            if (newObj.length && newObj[0].already == 0) {
+              console.log(222);
+              newObj = newObj.filter(item => {
+                return item.name || item.description
+              })
+            }
+            if (newObj.length) {
+              newObj.forEach(item => {
+                if (item.data && item.data.length) {
+                  item.data.forEach(item2 => {
+                    delete item2.already;
+                  })
+                  item.data = item.data.filter(item2 => {
+                    return item2.name || item2.description
+                  })
+                }
+              })
+            } else {
+              newObj = [{description: '', data: []}];
+            }
+            let newString = '';
+            newString = JSON.stringify(newObj);
+            // if (newObj.length == 1) {
+            //   if (!newObj[0].data.length && !newObj[0].description) {
+            //     newString = '""'
+            //   } else {
+            //     newString = JSON.stringify(newObj);
+            //   }
+            // } else {
+            //   newString = JSON.stringify(newObj);
+            // }
+            let oldObj = JSON.parse(JSON.stringify(this.apiResTreeDataCompared));
+            const oldString = JSON.stringify(oldObj);
+            if (newString != oldString) {
+              console.log('apiResTreeData有数据差异');
+              console.log(newString);
+              console.log(oldString);
+              this.isApiResTreeDataChange = true;
+            } else {
+              this.isApiResTreeDataChange = false;
+            }
           }
         }
       }
@@ -921,18 +955,32 @@
               this.chapters = this.initTreeData(res.data.catalog); // 临时注释
               //如果有记录的默认文档节点，则选中
               if (this.defaultSelect) {
-                console.log('defaultSelect');
-                console.log(this.defaultSelect);
+                console.log(1);
+                // console.log(this.defaultSelect);
                 this.$nextTick(() => {
-                  this.$refs.chaptersTree.setCurrentKey(this.defaultSelect)
-                  this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode())
-                  //展开
-                  let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
-                  let record = allRecords['document_' + this.$route.params.id]
-                  this.defaultExpanded = record.defaultExpanded;
-                  this.defaultExpanded.push(this.$refs.chaptersTree.getCurrentNode().id)
+                  this.$refs.chaptersTree.setCurrentKey(this.defaultSelect);
+                  console.log(3);
+                  console.log(this.$refs.chaptersTree.getCurrentNode());
+                  if (this.$refs.chaptersTree.getCurrentNode() != null) {
+                    console.log(4);
+                    this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode());
+                    //展开
+                    let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
+                    let record = allRecords['document_' + this.$route.params.id]
+                    this.defaultExpanded = record.defaultExpanded;
+                    this.defaultExpanded.push(this.$refs.chaptersTree.getCurrentNode().id)
+                  } else {
+                    console.log(5);
+                    this.$refs.chaptersTree.setCurrentKey(res.data.catalog[0].id);
+                    this.handleNodeClick(res.data.catalog[0]);
+                    let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
+                    let record = allRecords['document_' + this.$route.params.id]
+                    this.defaultExpanded = record.defaultExpanded;
+                    this.defaultExpanded.push(res.data.catalog[0])
+                  }
                 })
               } else {
+                console.log(2);
                 this.$nextTick(() => {
                   this.$refs.chaptersTree.setCurrentKey(res.data.catalog[0].id);
                   this.handleNodeClick(res.data.catalog[0]);
@@ -955,8 +1003,8 @@
         }
 
         loopData(treeData)
-        console.log('treeData');
-        console.log(treeData);
+        // console.log('treeData');
+        // console.log(treeData);
         return treeData
       },
       readDoc() {
@@ -974,7 +1022,6 @@
       handleNodeClick(data) {
         console.log(12);
         console.log(data);
-
         if (this.isFormChange || this.isApiHeaderTreeDataChange || this.isApiParamsTreeDataChange || this.isApiBodyTreeDataChange || this.isApiResTreeDataChange || this.isMarkDownContentChange) {
           this.$confirm('您有数据尚未保存, 是否保存?', '提示', {
             confirmButtonText: '确定',
@@ -1157,6 +1204,10 @@
         }
         this.confirmDisabled = true;
         if (this.dialogTitle == '新建目录' || this.dialogTitle == '新建文档') {
+          this.formCompared = '';
+          this.markDownContentCompared = '';
+          this.apiResTreeDataCompared = [];
+          this.apiResTreeDataCompared.push({description: '', data: []});
           createChapter({
             document_id: this.$route.params.id,
             parent_id: this.addFirst ? 0 : this.rightSelectNode.data.id,
@@ -1251,9 +1302,14 @@
             let index = children.findIndex(d => d.id === data.id)
             children.splice(index, 1)
             this.$message('删除成功！')
-            this.emptyForm();
-            this.getChapters();
-            this.selectNodeObj = {}
+            console.log('defaultSelect2');
+            console.log(this.defaultSelect);
+            console.log(arrId);
+            // this.emptyForm();
+            // this.getChapters();
+            // this.selectNodeObj = {}
+            // 使用刷新页面替代
+            location.reload();
           })
         }).catch(() => {
         })
@@ -1287,10 +1343,9 @@
         if (query !== '') {
           this.$post('/admin/document/all', {
             keyword: query
+          }).then(res => {
+            this.docList = res.data.data
           })
-            .then(res => {
-              this.docList = res.data
-            })
         } else {
           this.options = [];
         }
@@ -1673,6 +1728,9 @@
               const apiData4 = JSON.parse(JSON.stringify(this.baseRequestData));
               if (record.api) {
                 this.formCompared = JSON.parse(JSON.stringify(record.api));
+                if (!this.formCompared.url) {
+                  this.formCompared = "";
+                }
                 this.form = JSON.parse(JSON.stringify(record.api));
                 this.form.tab_location = localStorage.tab_location || this.form.tab_location.toString();
                 // this.form.body_param_location = this.form.body_param_location.toString();
@@ -1694,13 +1752,10 @@
               }
               // params
               if (record.body[2].length) {
-                console.log('apiParamsTreeDataCompared');
                 console.log(record.body['2']);
                 this.apiParamsTreeData = JSON.parse(JSON.stringify(record.body['2']));
                 this.apiParamsTreeDataCompared = JSON.parse(JSON.stringify(record.body['2']));
                 this.apiParamsTreeData.push(apiData2);
-                console.log('apiParamsTreeDataCompared2');
-                console.log(this.apiParamsTreeDataCompared);
               } else {
                 // const apiData2 = JSON.parse(JSON.stringify(this.baseRequestData));
                 this.apiParamsTreeDataCompared = "";
@@ -1718,15 +1773,18 @@
               }
               // reponse body
               if (record.reponse.length) {
+                // console.error(1)
                 this.apiResTreeData = JSON.parse(JSON.stringify(record.reponse));
-                this.apiResTreeDataCompared = JSON.parse(JSON.stringify(record.reponse));
                 this.apiResTreeData.forEach(item1 => {
                   item1.data.push(apiData4)
                 })
+                this.apiResTreeDataCompared = JSON.parse(JSON.stringify(record.reponse));
               } else {
+                // console.error(2)
                 const apiData = JSON.parse(JSON.stringify(this.baseRequestData));
-                this.apiResTreeDataCompared = "";
-                this.apiResTreeData.push({description: '', data: [apiData]});
+                this.apiResTreeDataCompared = [];
+                this.apiResTreeDataCompared.push({description: '', data: []});
+                this.apiResTreeData = [{description: '', data: [apiData]}];
               }
               // markDown
               if (record.extend == null) {
