@@ -60,9 +60,9 @@
       <div class="pagination-wrap">
         <el-pagination
           background
-          :hide-on-single-page="total <= 20"
+          :hide-on-single-page="total <= 23"
           :current-page.sync="listQuery.page"
-          :page-sizes="[10,20,30,50]"
+          :page-sizes="[11,23,35]"
           :page-size="listQuery.page_size"
           :layout="paginationLayouts"
           :total="total"
@@ -126,7 +126,7 @@
     return {
       listQuery: {
         page: 1,
-        page_size: 20,
+        page_size: 23,
         keyword: '',
         role: '',
         is_public: ''
