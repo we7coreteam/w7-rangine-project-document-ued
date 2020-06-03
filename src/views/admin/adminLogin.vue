@@ -11,6 +11,16 @@
               <img :src="code" @click="getCode" slot="append" alt="">
             </el-input>
           </div>
+          <div class="login-thirdParty" v-if="thirdPartyList.length">
+            <span class="title">第三方账号登录</span>
+            <div class="icon-list">
+              <img class="icon-block"
+                   v-for="icon in thirdPartyList" :key="icon.name"
+                   :src="icon.logo"
+                   :title="icon.name"
+                   @click="thirdPartyIconClick(icon.redirect_url)">
+            </div>
+          </div>
           <!-- <div class="login-action">
             <el-button type="text" @click="showFind">找回密码?</el-button>
           </div> -->
@@ -25,7 +35,9 @@
 </template>
 
 <script>
-export default {
+  import axios from '@/utils/axios'
+
+  export default {
   name: 'adminLogin',
   data() {
     return {
@@ -40,8 +52,52 @@ export default {
       thirdPartyList: []
     }
   },
+  beforeRouteEnter(to, from, next) {
+    let code = to.query.code//第三方登录成功之后返回的code
+    let redirect_url = to.query.redirect_url//需要跳转的url
+    let app_id = to.query.app_id
+    // console.log(10);
+    if (code) {
+      axios.post('/common/auth/third-party-login', {
+        code,
+        app_id
+      }).then(res => {
+        if (res && res.is_need_bind) {//跳转到绑定
+          console.error(5)
+          next('/bind')
+        } else {
+          if (!redirect_url) {
+            console.error(2)
+            next('/admin/document')
+          } else {
+            // console.error(3)
+            window.open(redirect_url, '_self')
+          }
+        }
+      }).catch(() => {
+          next('/admin-login')
+        })
+    } else {
+      // console.error(6)
+      // console.log(6)
+      if (process.env.NODE_ENV == 'production') {
+        // console.log('production');
+        axios.post('/common/auth/default-login-url').then(res => {
+          if (res.data) {
+            window.open(res.data, '_self')
+          } else {
+            next()
+          }
+        })
+      } else {
+        // console.error(7)
+        next()
+      }
+    }
+  },
   created () {
-    this.getCode()
+    this.getCode();
+    this.getThirdParty();
   },
   methods: {
     showFind() {
@@ -58,24 +114,41 @@ export default {
         })
     },
     login() {
-      for(let index in this.formData) {
-        if(!this.formData[index]) {
-          this.$message('请填写完整表单')
-          return false
-        }
-      }
+      // for(let index in this.formData) {
+      //   if(!this.formData[index]) {
+      //     this.$message('请填写完整表单')
+      //     return false
+      //   }
+      // }
       this.$post('/common/auth/login', this.formData)
         .then(() => {
           let msg = this.$message('登录成功')
           setTimeout(() => {
-            msg.close()
-            this.$router.push('/admin/document')
+            msg.close();
+            const href = localStorage.recordHref;
+
+            if (href) {
+              location.href = href;
+            } else {
+              // console.error(1)
+              this.$router.push('/admin/document')
+            }
           }, 500)
         }).catch(() => {
           this.formData.code = ''
           document.getElementsByClassName("el-input__inner")[2].focus()
           this.getCode()
         })
+    },
+    getThirdParty() {
+      this.$post('/common/auth/method', {
+        redirect_url: localStorage.recordHref || this.$route.query.redirect_url
+      }).then(res => {
+        this.thirdPartyList = res.data || []
+      })
+    },
+    thirdPartyIconClick(url) {
+      window.open(url, '_self')
     }
   }
 }

@@ -4,7 +4,7 @@
       <el-container class="home-container">
         <el-aside class="w7-aside-home" width="220px">
           <div class="w7-aside-home-box">
-            <p class="w7-aside-home-head">目录</p>
+            <p class="w7-aside-home-head">{{projectName}}</p>
             <div class="w7-aside-home-search">
               <el-autocomplete
                 popper-class="my-autocomplete"
@@ -28,7 +28,6 @@
                 ref="chaptersTree"
                 node-key="id"
                 :highlight-current="true"
-                :expand-on-click-node="false"
                 :default-expanded-keys="expandIdArray"
                 @node-click="handleNodeClick"
                 @node-expand="handleNodeExpand">
@@ -134,10 +133,11 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import QrcodeVue from 'qrcode.vue'
-import tocbot from 'tocbot'
-export default {
+  import {mapGetters} from 'vuex'
+  import QrcodeVue from 'qrcode.vue'
+  import tocbot from 'tocbot'
+
+  export default {
   components: {
     QrcodeVue
   },
@@ -161,7 +161,9 @@ export default {
       articleInfoList: [],
       filterWord: '',
       shareUrl: '',
-      showShareWechat: false
+      showShareWechat: false,
+      projectName: '',
+      loading: ''
     }
   },
   computed: {
@@ -179,6 +181,9 @@ export default {
   },
   created () {
     this.getDocumentName()
+  },
+  mounted () {
+    // this.projectName = localStorage.projectName;
   },
   methods: {
     querySearch(queryString, cb) {
@@ -225,49 +230,52 @@ export default {
     getChapters() {
       this.$post('/document/chapter/list', {
         document_id: this.$route.params.id
-      })
-        .then(res => {
-          if(!res.data.length) {return}
-          res.data.forEach(item => {
-            if(item.is_dir && item.children.length == 0) {
-              item.children.push({is_dir: false})
-            } else {
-              item.children.forEach(child => {
-                if(child.is_dir && child.children.length == 0) {
-                  child.children.push({
-                    is_dir: false
-                  })
+      }).then(res => {
+        if(!res.data.length) {return}
+        res.data.forEach(item => {
+          if(item.is_dir && item.children.length == 0) {
+            item.children.push({is_dir: false})
+          } else {
+            item.children.forEach(child => {
+              if(child.is_dir && child.children.length == 0) {
+                child.children.push({
+                  is_dir: false
+                })
+              }
+            })
+          }
+        })
+        this.chapters = res.data;
+        this.$nextTick(() => {
+          if (this.$route.query.id) {
+            //F5刷新
+            this.selectChapterId = this.$route.query.id
+            //递归找name
+            let name = '';
+            let getName = function (array, id) {
+              array.forEach(chapters => {
+                if (!chapters.children.length) {
+                  getName(chapters.children)
+                }
+                if (chapters.id == id) {
+                  name = chapters.name
+                  return
                 }
               })
             }
-          })
-          this.chapters = res.data;
-          this.$nextTick(() => {
-            if (this.$route.query.id) {
-              //F5刷新
-              this.selectChapterId = this.$route.query.id
-              //递归找name
-              let name = '';
-              let getName = function (array, id) {
-                array.forEach(chapters => {
-                  if (!chapters.children.length) {
-                    getName(chapters.children)
-                  }
-                  if (chapters.id == id) {
-                    name = chapters.name
-                    return
-                  }
-                })
-              }
-              getName(this.chapters, this.selectChapterId)
-              this.selectNode(this.selectChapterId)
-              document.title = name ? (name + ' — '+ this.document_name) : this.document_name
-              this.getArticle()
-            } else {
-              this.goDefaultChaper(res)
+            getName(this.chapters, this.selectChapterId)
+            this.selectNode(this.selectChapterId)
+            document.title = name ? (name + ' — '+ this.document_name) : this.document_name
+            this.getArticle()
+          } else {
+            // this.goDefaultChaper(res)
+            if (res.data.length) {
+              this.selectNode(res.data[0].id);
+              this.handleNodeClick(res.data[0])
             }
-          })
+          }
         })
+     })
     },
     //判断是否有默认文档,有则选中
     goDefaultChaper(data, defaultId) {
@@ -322,9 +330,16 @@ export default {
       if (this.$route.query.share_key) {
         data['share_key'] = this.$route.query.share_key
       }
-      this.$post('/document/chapter/detail', data)
-        .then(res => {
+
+      this.loading = this.$loading();
+
+      this.$post('/document/chapter/detail', data).then(res => {
+        if (res.code == 200) {
           this.articleContent = res.data;
+          this.loading.close();
+          if (res.data.document) {
+            this.projectName = res.data.document.name;
+          }
           // this.articleContent.content = res.content ? this.$refs.mavonEditor.markdownIt.render('<div class="markdown-content">\n \n'+res.content+'\n \n</div>' + '<div class="markdown-menu"><el-scrollbar>\n \n @[toc]( ) \n \n</el-scrollbar></div>\n \n' ) : ''
           this.articleContent.content = res.data.content ? this.$refs.mavonEditor.markdownIt.render(res.data.content) : ''
           this.$nextTick(() => {
@@ -351,7 +366,8 @@ export default {
           } else {
             this.shareUrl = window.location.href
           }
-        })
+        }
+      })
     },
     initToc(option) {
       this.$nextTick(() => {
@@ -472,7 +488,7 @@ export default {
           this.articleContent.star_id = res.data.star_id || ''
         })
     }
-  }
+  },
 }
 </script>
 
@@ -596,8 +612,10 @@ a.toc-link {
       padding-left: calc(100% - 200px);
     }
     .w7-aside-home-head {
-      font-size: 24px;
-      padding: 40px 0 30px ;
+      font-size: 16px;
+      padding: 40px 0 30px;
+      font-weight: 600;
+      text-align: center;
     }
     .w7-aside-home-search {
       position: relative;

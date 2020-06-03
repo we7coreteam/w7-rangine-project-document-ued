@@ -71,13 +71,12 @@ export default {
       this.$post('/admin/star/all',{
         page: this.currentPage,
         name: this.keyword
+      }).then(res => {
+        this.docList = res.data.data;
+        this.pageCount = res.data.page_count
+        this.total = res.data.total
+        this.loading = false
       })
-        .then(res => {
-          this.docList = res.data
-          this.pageCount = res.page_count
-          this.total = res.total
-          this.loading = false
-        })
     },
     cancel(item) {
        this.$post('/admin/star/delete',{

@@ -93,27 +93,26 @@ export default {
         })
     },
     getThirdParty() {
-      this.$post('/admin/third-party-login/all')
-        .then(res => {
-          this.thirdParty = []
-          for (const i in res) {
-            if (i == 0) {
-              this.thirdPartyFisrtId = res[i].id
-            }
-            if (this.default_login_channel == res[i].id) {
-              this.default_login_name = res[i].name
-            }
-            if (res[i].enable) {
-              this.thirdParty.push({
-                id: res[i].id + '',
-                name: res[i].name
-              })
-              if (!this.default_login_channel) {
-                this.default_login_channel = res[i].id + ''
-              }
+      this.$post('/admin/third-party-login/all').then(res => {
+        this.thirdParty = []
+        for (const i in res.data) {
+          if (i == 0) {
+            this.thirdPartyFisrtId = res.data[i].id
+          }
+          if (this.default_login_channel == res.data[i].id) {
+            this.default_login_name = res.data[i].name
+          }
+          if (res.data[i].enable) {
+            this.thirdParty.push({
+              id: res.data[i].id + '',
+              name: res.data[i].name
+            })
+            if (!this.default_login_channel) {
+              this.default_login_channel = res.data[i].id + ''
             }
           }
-        })
+        }
+      })
     },
     change(val) {
       if (val == 1 && !this.thirdParty.length) {

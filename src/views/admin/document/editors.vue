@@ -37,7 +37,7 @@
     },
     watch: {
       'markDownContent' (val) {
-        console.log('val');
+        // console.log('val');
         this.contentMd = val;
       }
     },

@@ -47,8 +47,10 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-export default {
+  import {mapGetters} from 'vuex'
+  import {logout} from '@/api/api'
+
+  export default {
   name: 'admin',
   data() {
     return {
@@ -104,8 +106,13 @@ export default {
       })
     },
     exit() {
-      window.location.href = window.location.origin + "/common/auth/logout"
-    }
+      logout().then(res => {
+        if (res.code == 200) {
+          this.$router.push({name: 'adminLoginPage'});
+        }
+      })
+      // window.location.href = window.location.origin + "/common/auth/logout"
+    },
   }
 }
 </script>

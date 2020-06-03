@@ -1,437 +1,458 @@
 <template>
-    <el-container class="w7-document-chapter">
-      <el-aside class="w7-aside-chapter" width="260px">
-        <div class="w7-aside-chapter-head">
-          <p>{{ docName }}</p>
-        </div>
-        <div class="search-box">
-          <el-input placeholder="请输入关键字搜索" v-model="filterText" clearable>
-            <i slot="suffix" class="el-input__icon el-icon-search"></i>
-          </el-input>
-        </div>
-        <div class="icon-box">
-          <el-tooltip effect="dark" content="新建文档" placement="bottom">
-            <i class="wi wi-document" @click="clickIconAddNode(false)"></i>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="新建目录" placement="bottom">
-            <i class="wi wi-folder" @click="clickIconAddNode(true)"></i>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="预览" placement="bottom">
-            <i class="wi wi-view" @click="readDoc"></i>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="设置" placement="bottom" v-if="has_manage">
-            <i class="wi wi-guanli" @click="showSetting = true"></i>
-          </el-tooltip>
-        </div>
-        <div class="tree-warpper">
-          <el-scrollbar style="height: 100%">
-            <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text="没有与搜索条件匹配的项"
-                     ref="chaptersTree"
-                     node-key="id"
-                     :expand-on-click-node="true"
-                     :highlight-current="true"
-                     :default-expanded-keys="defaultExpanded"
-                     :default-checked-keys="defaultCheckedKeys"
-                     :filter-node-method="filterNode"
-                     @node-contextmenu="rightClick"
-                     @node-click="handleNodeClick"
-                     draggable
-                     @node-drop="handleDrop"
-                     :allow-drop="allowDrop">
-              <div class="custom-tree-node" slot-scope="{ node, data }">
+  <el-container class="w7-document-chapter">
+    <el-aside class="w7-aside-chapter" width="260px">
+      <div class="w7-aside-chapter-head">
+        <p>{{ docName }}</p>
+      </div>
+      <div class="search-box">
+        <el-input placeholder="请输入关键字搜索" v-model="filterText" clearable>
+          <i slot="suffix" class="el-input__icon el-icon-search"></i>
+        </el-input>
+      </div>
+      <div class="icon-box">
+        <el-tooltip effect="dark" content="新建文档" placement="bottom">
+          <i class="wq wq-mulu" @click="clickIconAddNode(false)"></i>
+        </el-tooltip>
+        <el-tooltip effect="dark" content="新建目录" placement="bottom">
+          <i class="wq wq-wendang" @click="clickIconAddNode(true)"></i>
+        </el-tooltip>
+        <el-tooltip effect="dark" content="预览" placement="bottom">
+          <i class="wq wq-chakan" @click="readDoc"></i>
+        </el-tooltip>
+        <el-tooltip effect="dark" content="设置" placement="bottom" v-if="has_manage">
+          <i class="wq wq-shezhi1" @click="showSetting = true"></i>
+        </el-tooltip>
+      </div>
+      <div class="tree-warpper">
+        <el-scrollbar style="height: 100%">
+          <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text="没有与搜索条件匹配的项"
+            ref="chaptersTree"
+            node-key="id"
+            :expand-on-click-node="true"
+            :highlight-current="true"
+            :default-expanded-keys="defaultExpanded"
+            :default-checked-keys="defaultCheckedKeys"
+            :filter-node-method="filterNode"
+            @node-contextmenu="rightClick"
+            @node-click="handleNodeClick"
+            draggable
+            @node-drop="handleDrop"
+            :allow-drop="allowDrop">
+            <div class="custom-tree-node" slot-scope="{ node, data }">
               <span class="node-info">
-                <i class="wi wi-folder" v-if="data.is_dir == 1"></i>
-                <i class="wi wi-document" v-if="data.is_dir == 0"></i>
+                <i class="wq wq-wendang" v-if="data.is_dir == 1"></i>
+                <i class="wq wq-mulu" v-if="data.is_dir == 0"></i>
                 <div class="text-over">
                   <span :title="node.label">{{ node.label }}</span>
                 </div>
               </span>
-                <span class="shortcut" @click.stop="shortcut(data, node)">
-                <i class="wi wi-document" v-if="data.is_dir == 1"></i>
+              <span class="shortcut" @click.stop="shortcut(data, node)">
+                <i class="wq wq-mulu" v-if="data.is_dir == 1"></i>
               </span>
-                <span class="point3" @mousemove='updateXY' @click.stop="leftClick(data, node)"><span>...</span></span>
-                <div class="doc-default" v-if="data.is_default"></div>
-              </div>
-            </el-tree>
-            <div id="menu-bar" class="menu-bar" v-show="menuBarVisible">
-              <ul class="menu">
-                <template v-if="rightSelectNodeObj.is_dir == 1">
-                  <li class="menu__item" @click="addChildNode(true)">创建目录</li>
-                  <li class="menu__item" @click="addChildNode(false)">创建文档</li>
-                  <li class="menu__item" @click="updateNode(true)">重命名</li>
-                  <li class="menu__item" @click="openMoveDialog(true)">移动</li>
-                  <li class="menu__item" @click="removeNode">删除</li>
-                </template>
-                <template v-if="rightSelectNodeObj.is_dir == 0">
-                  <!--<li class="menu__item" @click="defaultFile">设为目录默认文档</li>-->
-                  <li class="menu__item" @click="updateNode(false)">重命名</li>
-                  <li class="menu__item" @click="copyNode()">复制文档</li>
-                  <li class="menu__item" @click="openMoveDialog(false)">移动</li>
-                  <!-- <li class="menu__item" @click="">权限</li> -->
-                  <li class="menu__item" @click="removeNode">删除</li>
-                </template>
-              </ul>
+              <span class="point3" @mousemove='updateXY' @click.stop="leftClick(data, node)"><span>...</span></span>
+              <div class="doc-default" v-if="data.is_default"></div>
             </div>
-          </el-scrollbar>
-        </div>
-      </el-aside>
-      <el-main v-cloak>
-        <div v-if="isDocEmpty">尚未创建文档</div>
-        <template v-else>
-          <div class="chapter-title">{{docTitle}}</div>
+          </el-tree>
+          <div id="menu-bar" class="menu-bar" v-show="menuBarVisible">
+            <ul class="menu">
+              <template v-if="rightSelectNodeObj.is_dir == 1">
+                <li class="menu__item" @click="addChildNode(true)">创建目录</li>
+                <li class="menu__item" @click="addChildNode(false)">创建文档</li>
+                <li class="menu__item" @click="updateNode(true)">重命名</li>
+                <li class="menu__item" @click="openMoveDialog(true)">移动</li>
+                <li class="menu__item" @click="removeNode">删除</li>
+              </template>
+              <template v-if="rightSelectNodeObj.is_dir == 0">
+                <!--<li class="menu__item" @click="defaultFile">设为目录默认文档</li>-->
+                <li class="menu__item" @click="updateNode(false)">重命名</li>
+                <li class="menu__item" @click="copyNode()">复制文档</li>
+                <li class="menu__item" @click="openMoveDialog(false)">移动</li>
+                <!-- <li class="menu__item" @click="">权限</li> -->
+                <li class="menu__item" @click="removeNode">删除</li>
+              </template>
+            </ul>
+          </div>
+        </el-scrollbar>
+      </div>
+    </el-aside>
+    <el-main v-cloak>
+      <div v-if="isDocEmpty">尚未创建文档</div>
+      <template v-else>
+        <div class="chapter-title">{{docTitle}}</div>
 
-          <div class="api" v-if="layout == 1">
-            <el-form ref="form" :model="form" label-width="100">
-              <!--基本信息-->
-              <div class="basic-information api-con">
-                <div class="top">
-                  <div class="line-wrap">
-                    <span class="line"></span>
-                    <span class="text">基本信息</span>
-                  </div>
-                </div>
-                <div class="c-con">
-                  <el-row :gutter="10">
-                    <el-col :md="4">
-                      <el-form-item label="">
-                        <el-select v-model="form.method" placeholder="">
-                          <el-option v-for="item in methodArr" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :md="10">
-                      <el-form-item label="">
-                        <el-input v-model="form.url" placeholder="请求地址，如：/api/test"></el-input>
-                      </el-form-item>
-                    </el-col>
-                  </el-row>
-                  <el-row :gutter="10">
-                    <el-col :md="14">
-                      <el-form-item label="">
-                        <el-input v-model="form.description" placeholder="请在此输入接口描述内容"></el-input>
-                      </el-form-item>
-                    </el-col>
-                  </el-row>
+        <div class="api" v-if="layout == 1">
+          <el-form ref="form" :model="form" label-width="100">
+            <!--基本信息-->
+            <div class="basic-information api-con">
+              <div class="top">
+                <div class="line-wrap">
+                  <span class="line"></span>
+                  <span class="text">基本信息</span>
                 </div>
               </div>
+              <div class="c-con">
+                <el-row :gutter="10">
+                  <el-col :md="4">
+                    <el-form-item label="">
+                      <el-select v-model="form.method" placeholder="">
+                        <el-option v-for="item in methodArr" :key="item.value" :label="item.label"
+                                   :value="item.value"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :md="10">
+                    <el-form-item label="">
+                      <el-input v-model="form.url" placeholder="请求地址，如：/api/test"></el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="10">
+                  <el-col :md="14">
+                    <el-form-item label="">
+                      <el-input v-model="form.description" placeholder="请在此输入接口描述内容"></el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </div>
+            </div>
 
-              <!--请求数据-->
-              <div class="api-con">
-                <div class="top">
-                  <div class="line-wrap">
-                    <span class="line"></span>
-                    <span class="text">请求数据</span>
-                  </div>
-                  <el-button type="primary" plain icon="el-icon-plus" @click="addFirstNode">添加</el-button>
-                  <el-button type="default" plain icon="el-icon-upload" v-if="false">导入</el-button>
+            <!--请求数据-->
+            <div class="api-con">
+              <div class="top">
+                <div class="line-wrap">
+                  <span class="line"></span>
+                  <span class="text">请求数据</span>
                 </div>
-                <div class="c-con">
-                  <el-tabs v-model="form.tab_location" @tab-click="tabRequest">
-                    <!--请求头Header-->
-                    <el-tab-pane label="请求头Header" name="1">
-                      <!--el-tree 添加 show-checkbox 则显示复选框-->
-                      <div class="tree-wrap">
-                        <el-tree :data="apiHeaderTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
-                          <div class="custom-tree-node" slot-scope="{ node, data }">
-                            <el-row :gutter="10">
-                              <el-col :md="4">
-                                <el-form-item label="">
-                                  <el-input @input="paramNameChange(node, data)" v-model="data.name" placeholder="参数名"></el-input>
-                                </el-form-item>
-                              </el-col>
-                              <el-col :md="4">
-                                <el-form-item label="">
-                                  <el-select v-model="data.type" placeholder="">
-                                    <el-option v-for="val in paramsArr" :key="val.value" :label="val.type" :value="val.value"></el-option>
-                                  </el-select>
-                                </el-form-item>
-                              </el-col>
-                              <el-col :md="4">
-                                <el-form-item label="">
-                                  <el-select v-model="data.enabled" placeholder="是否必填">
-                                    <el-option label="true" :value="1"></el-option>
-                                    <el-option label="false" :value="0"></el-option>
-                                  </el-select>
-                                </el-form-item>
-                              </el-col>
-                              <el-col :md="4">
-                                <el-form-item label="">
-                                  <el-input v-model="data.default_value" placeholder="默认值"></el-input>
-                                </el-form-item>
-                              </el-col>
-                              <el-col :md="6">
-                                <el-form-item label="">
-                                  <el-input v-model="data.description" placeholder="描述"></el-input>
-                                </el-form-item>
-                              </el-col>
-                              <span class="add"  @click="() => addApiTreeNode(data)"><span class="iconfont wq-add"></span></span>
-                              <span class="delete" @click="() => removeApiTreeNode(node, data)"><span class="iconfont wq-delete"></span></span>
-                              <span class="delete" @click="() => insertAfter(node, data)"><!--<span class="iconfont wq-delete"></span>--></span>
-                            </el-row>
-                          </div>
-                        </el-tree>
-                      </div>
-                    </el-tab-pane>
+                <!--<el-button type="primary" plain icon="el-icon-plus" @click="addFirstNode">添加</el-button>-->
+                <el-button type="default" plain icon="el-icon-upload" v-if="false">导入</el-button>
+              </div>
+              <div class="c-con">
+                <el-tabs v-model="form.tab_location" @tab-click="tabRequest">
+                  <!--请求头Header-->
+                  <el-tab-pane label="请求头Header" name="1" key="header">
+                    <!--el-tree 添加 show-checkbox 则显示复选框-->
+                    <div class="tree-wrap">
+                      <el-tree :data="apiHeaderTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
+                        <div class="custom-tree-node" slot-scope="{ node, data }">
+                          <el-row :gutter="10">
+                            <el-col :span="4">
+                              <el-form-item label="">
+                                <el-input @input="paramNameChange(node, data)" v-model="data.name"
+                                          placeholder="参数名"></el-input>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :span="4">
+                              <el-form-item label="">
+                                <el-select v-model="data.type" placeholder="">
+                                  <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
+                                             :value="val.value"></el-option>
+                                </el-select>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :span="4">
+                              <el-form-item label="">
+                                <el-select v-model="data.enabled" placeholder="是否必填">
+                                  <el-option label="true" :value="2"></el-option>
+                                  <el-option label="false" :value="1"></el-option>
+                                </el-select>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :span="4">
+                              <el-form-item label="">
+                                <el-input v-model="data.default_value" placeholder="默认值"></el-input>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                              <el-form-item label="">
+                                <el-input v-model="data.description" placeholder="描述"></el-input>
+                              </el-form-item>
+                            </el-col>
+                            <span class="add" @click="() => addApiTreeNode(data)"><span class="iconfont wq-add"></span></span>
+                            <span class="delete" @click="() => removeApiTreeNode(node, data)"><span
+                                class="iconfont wq-delete"></span></span>
+                            <span class="delete" @click="() => insertAfter(node, data)"><!--<span class="iconfont wq-delete"></span>--></span>
+                          </el-row>
+                        </div>
+                      </el-tree>
+                    </div>
+                  </el-tab-pane>
 
-                    <!--params-->
-                    <el-tab-pane label="Query Params" name="2">
+                  <!--params-->
+                  <el-tab-pane label="Query Params" name="2" key="params">
+                    <div class="tree-wrap">
+                      <el-tree :data="apiParamsTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
+                        <div class="custom-tree-node" slot-scope="{ node, data }">
+                          <el-row :gutter="5">
+                            <el-col :span="4">
+                              <el-form-item label="">
+                                <el-input @input="paramNameChange(node, data)" v-model="data.name"
+                                          placeholder="参数名"></el-input>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :span="4">
+                              <el-form-item label="">
+                                <el-select v-model="data.type" placeholder="">
+                                  <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
+                                             :value="val.value"></el-option>
+                                </el-select>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :span="4">
+                              <el-form-item label="">
+                                <el-select v-model="data.enabled" placeholder="是否必填">
+                                  <el-option label="true" :value="2"></el-option>
+                                  <el-option label="false" :value="1"></el-option>
+                                </el-select>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :span="4">
+                              <el-form-item label="">
+                                <el-input v-model="data.default_value" placeholder="默认值"></el-input>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                              <el-form-item label="">
+                                <el-input v-model="data.description" placeholder="描述"></el-input>
+                              </el-form-item>
+                            </el-col>
+                            <span class="add" @click="() => addApiTreeNode(data)"><span class="iconfont wq-add"></span></span>
+                            <span class="delete" @click="() => removeApiTreeNode(node, data)"><span
+                                class="iconfont wq-delete"></span></span>
+                            <span class="delete" @click="() => insertAfter(node, data)"><!--<span class="iconfont wq-delete"></span>--></span>
+                          </el-row>
+                        </div>
+                      </el-tree>
+                    </div>
+                  </el-tab-pane>
+
+                  <!--body-->
+                  <el-tab-pane label="请求参数（Body）" name="3" key="body">
+                    <div class="type-body">
+                      <el-form-item label="请求类型：">
+                        <el-radio-group v-model="form.body_param_location">
+                          <el-radio :label="3">form-data</el-radio>
+                          <el-radio :label="4">x-www-form-urlencoded</el-radio>
+                          <el-radio :label="5">raw</el-radio>
+                          <el-radio :label="6">binary</el-radio>
+                        </el-radio-group>
+                      </el-form-item>
                       <div class="tree-wrap">
-                        <el-tree :data="apiParamsTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
+                        <el-tree :data="apiBodyTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
                           <div class="custom-tree-node" slot-scope="{ node, data }">
                             <el-row :gutter="5">
-                              <el-col :md="4">
+                              <el-col :span="4">
                                 <el-form-item label="">
-                                  <el-input @input="paramNameChange(node, data)" v-model="data.name" placeholder="参数名"></el-input>
+                                  <el-input @input="paramNameChange(node, data)" v-model="data.name"
+                                            placeholder="参数名"></el-input>
                                 </el-form-item>
                               </el-col>
-                              <el-col :md="4">
+                              <el-col :span="4">
                                 <el-form-item label="">
                                   <el-select v-model="data.type" placeholder="">
-                                    <el-option v-for="val in paramsArr" :key="val.value" :label="val.type" :value="val.value"></el-option>
+                                    <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
+                                               :value="val.value"></el-option>
                                   </el-select>
                                 </el-form-item>
                               </el-col>
-                              <el-col :md="4">
+                              <el-col :span="4">
                                 <el-form-item label="">
                                   <el-select v-model="data.enabled" placeholder="是否必填">
-                                    <el-option label="true" :value="1"></el-option>
-                                    <el-option label="false" :value="0"></el-option>
+                                    <el-option label="true" :value="2"></el-option>
+                                    <el-option label="false" :value="1"></el-option>
                                   </el-select>
                                 </el-form-item>
                               </el-col>
-                              <el-col :md="4">
+                              <el-col :span="4">
                                 <el-form-item label="">
                                   <el-input v-model="data.default_value" placeholder="默认值"></el-input>
                                 </el-form-item>
                               </el-col>
-                              <el-col :md="6">
+                              <el-col :span="6">
                                 <el-form-item label="">
                                   <el-input v-model="data.description" placeholder="描述"></el-input>
                                 </el-form-item>
                               </el-col>
-                              <span class="add"  @click="() => addApiTreeNode(data)"><span class="iconfont wq-add"></span></span>
-                              <span class="delete" @click="() => removeApiTreeNode(node, data)"><span class="iconfont wq-delete"></span></span>
+                              <span class="add" @click="() => addApiTreeNode(data)"><span
+                                  class="iconfont wq-add"></span></span>
+                              <span class="delete" @click="() => removeApiTreeNode(node, data)"><span
+                                  class="iconfont wq-delete"></span></span>
                               <span class="delete" @click="() => insertAfter(node, data)"><!--<span class="iconfont wq-delete"></span>--></span>
                             </el-row>
                           </div>
                         </el-tree>
                       </div>
-                    </el-tab-pane>
-
-                    <!--body-->
-                    <el-tab-pane label="请求参数（Body）" name="3">
-                      <div class="type-body">
-                        <el-form-item label="请求类型：">
-                          <el-radio-group v-model="form.body_param_location">
-                            <el-radio label="3">form-data</el-radio>
-                            <el-radio label="4">x-www-form-urlencoded</el-radio>
-                            <el-radio label="5">raw</el-radio>
-                            <el-radio label="6">binary</el-radio>
-                          </el-radio-group>
-                        </el-form-item>
-                        <div class="tree-wrap">
-                          <el-tree :data="apiBodyTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
-                            <div class="custom-tree-node" slot-scope="{ node, data }">
-                              <el-row :gutter="5">
-                                <el-col :md="4">
-                                  <el-form-item label="">
-                                    <el-input @input="paramNameChange(node, data)" v-model="data.name" placeholder="参数名"></el-input>
-                                  </el-form-item>
-                                </el-col>
-                                <el-col :md="4">
-                                  <el-form-item label="">
-                                    <el-select v-model="data.type" placeholder="">
-                                      <el-option v-for="val in paramsArr" :key="val.value" :label="val.type" :value="val.value"></el-option>
-                                    </el-select>
-                                  </el-form-item>
-                                </el-col>
-                                <el-col :md="4">
-                                  <el-form-item label="">
-                                    <el-select v-model="data.enabled" placeholder="是否必填">
-                                      <el-option label="true" :value="1"></el-option>
-                                      <el-option label="false" :value="0"></el-option>
-                                    </el-select>
-                                  </el-form-item>
-                                </el-col>
-                                <el-col :md="4">
-                                  <el-form-item label="">
-                                    <el-input v-model="data.default_value" placeholder="默认值"></el-input>
-                                  </el-form-item>
-                                </el-col>
-                                <el-col :md="6">
-                                  <el-form-item label="">
-                                    <el-input v-model="data.description" placeholder="描述"></el-input>
-                                  </el-form-item>
-                                </el-col>
-                                <span class="add"  @click="() => addApiTreeNode(data)"><span class="iconfont wq-add"></span></span>
-                                <span class="delete" @click="() => removeApiTreeNode(node, data)"><span class="iconfont wq-delete"></span></span>
-                                <span class="delete" @click="() => insertAfter(node, data)"><!--<span class="iconfont wq-delete"></span>--></span>
-                              </el-row>
-                            </div>
-                          </el-tree>
-                        </div>
-                      </div>
-                    </el-tab-pane>
-                  </el-tabs>
-                </div>
-              </div>
-
-              <!--响应数据-->
-              <div class="api-con">
-                <div class="top">
-                  <div class="line-wrap">
-                    <span class="line"></span>
-                    <span class="text">响应数据</span>
-                  </div>
-                  <el-button type="primary" plain icon="el-icon-plus" @click="addResFirstNode">添加</el-button>
-                  <el-button type="default" plain icon="el-icon-upload" v-if="false">导入</el-button>
-                </div>
-                <div class="c-con">
-                  <el-tree :data="apiResTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
-                    <div class="custom-tree-node" slot-scope="{ node, data }">
-                      <el-row :gutter="5">
-                        <el-col :md="4">
-                          <el-form-item label="">
-                            <el-input @input="resParamNameChange(node, data)" v-model="data.name" placeholder="参数名"></el-input>
-                          </el-form-item>
-                        </el-col>
-                        <el-col :md="4">
-                          <el-form-item label="">
-                            <el-select v-model="data.type" placeholder="">
-                              <el-option v-for="val in paramsArr" :key="val.value" :label="val.type" :value="val.value"></el-option>
-                            </el-select>
-                          </el-form-item>
-                        </el-col>
-                        <el-col :md="4">
-                          <el-form-item label="">
-                            <el-select v-model="data.enabled" placeholder="是否必填">
-                              <el-option label="true" :value="1"></el-option>
-                              <el-option label="false" :value="0"></el-option>
-                            </el-select>
-                          </el-form-item>
-                        </el-col>
-                        <el-col :md="4">
-                          <el-form-item label="">
-                            <el-input v-model="data.default_value" placeholder="默认值"></el-input>
-                          </el-form-item>
-                        </el-col>
-                        <el-col :md="6">
-                          <el-form-item label="">
-                            <el-input v-model="data.description" placeholder="描述"></el-input>
-                          </el-form-item>
-                        </el-col>
-                        <span class="add"  @click="() => addResApiTreeNode(data)"><span class="iconfont wq-add"></span></span>
-                        <span class="delete" @click="() => removeResApiTreeNode(node, data)"><span class="iconfont wq-delete"></span></span>
-                        <span class="delete" @click="() => insertAfter(node, data)"><!--<span class="iconfont wq-delete"></span>--></span>
-                      </el-row>
                     </div>
-                  </el-tree>
-                </div>
+                  </el-tab-pane>
+                </el-tabs>
               </div>
-            </el-form>
-          </div>
+            </div>
 
-          <editors v-model="markDownContent" :markDownContent="markDownContent" :chapter_id = "chapter_id" :chapterIsDir="selectNodeObj.is_dir"></editors>
-          <!--<editors v-model="markDownContent" :markDownContent="markDownContent"  :chapterIsDir="selectNodeObj.is_dir"></editors>-->
-
-          <el-button type="primary" @click="saveApi">保存</el-button>
-
-          <!--<editors :chapterId="selectNodeObj.id" :chapterIsDir="selectNodeObj.is_dir"></editors>-->
-
-        </template>
-      </el-main>
-
-      <!-- 新增节点弹出框 -->
-      <el-dialog class="we7-dialog only-input-dialog" :title="dialogTitle" :visible.sync="dialogVisible"
-                 :close-on-click-modal="false" center>
-        <el-form :model="addNodeObj" label-width="105px" label-position="left" @submit.native.prevent>
-          <el-form-item :label="dialogFormLabel">
-            <el-input v-model="addNodeObj.name" @keyup.enter.native="confirmBtn"></el-input>
-          </el-form-item>
-          <el-form-item label="文档类型" v-if="addNodeObj.is_dir != 1">
-            <el-radio-group v-model="addNodeObj.layout">
-              <el-radio :label="0">普通文档</el-radio>
-              <el-radio :label="1">API文档</el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="confirmBtn">确 定</el-button>
-          <el-button @click="dialogVisible = false">取 消</el-button>
+            <!--响应数据-->
+            <div class="api-con">
+              <div class="top">
+                <div class="line-wrap">
+                  <span class="line"></span>
+                  <span class="text">响应数据</span>
+                </div>
+                <el-button type="primary" size="mini" icon="el-icon-plus" @click="addResNode">添加</el-button>
+                <el-button type="default" plain icon="el-icon-upload" v-if="false">导入</el-button>
+              </div>
+              <div class="c-con" v-for="(item, index) in apiResTreeData" :key="index">
+                <el-row :gutter="5">
+                  <el-col :span="18">
+                    <div style="padding-left: 24px;">
+                      <el-form-item label="">
+                        <el-input style="width: calc(100% + 5px)" v-model="item.description" placeholder="响应数据描述"></el-input>
+                      </el-form-item>
+                    </div>
+                  </el-col>
+                  <el-col :span="6">
+                    <div style="text-align: right;">
+                      <el-button type="danger" size="mini" @click="deleteApiItem(index)">删除</el-button>
+                    </div>
+                  </el-col>
+                </el-row>
+                <el-tree :data="item.data" node-key="id" default-expand-all :expand-on-click-node="false">
+                  <div class="custom-tree-node" slot-scope="{ node, data }">
+                    <el-row :gutter="5">
+                      <el-col :span="4">
+                        <el-form-item label="">
+                          <el-input @input="resParamNameChange(node, data)" v-model="data.name"
+                                    placeholder="参数名"></el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="4">
+                        <el-form-item label="">
+                          <el-select v-model="data.type" placeholder="">
+                            <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
+                                       :value="val.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <!--<el-col :span="4">-->
+                        <!--<el-form-item label="">-->
+                          <!--<el-select v-model="data.enabled" placeholder="是否必填">-->
+                            <!--<el-option label="true" :value="2"></el-option>-->
+                            <!--<el-option label="false" :value="1"></el-option>-->
+                          <!--</el-select>-->
+                        <!--</el-form-item>-->
+                      <!--</el-col>-->
+                      <el-col :span="4">
+                        <el-form-item label="">
+                          <el-input v-model="data.default_value" placeholder="默认值"></el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="6">
+                        <el-form-item label="">
+                          <el-input v-model="data.description" placeholder="描述"></el-input>
+                        </el-form-item>
+                      </el-col>
+                      <span class="add" @click="() => addResApiTreeNode(data)"><span
+                          class="iconfont wq-add"></span></span>
+                      <span class="delete" @click="() => removeResApiTreeNode(node, data)"><span
+                          class="iconfont wq-delete"></span></span>
+                      <span class="delete" @click="() => insertAfter(node, data)"><!--<span class="iconfont wq-delete"></span>--></span>
+                    </el-row>
+                  </div>
+                </el-tree>
+              </div>
+            </div>
+          </el-form>
         </div>
-      </el-dialog>
 
-      <!-- 弹出框移动tree节点 -->
-      <el-dialog class="we7-dialog" :title="dialogMoveTitle" :visible.sync="dialogMoveVisible"
-                 :close-on-click-modal="false" center>
-        <el-form label-width="105px" label-position="left">
-          <el-form-item label="项目">
-            <el-select v-model="moveDoc" placeholder="请输入文档名称进行搜索"
-                       filterable
-                       remote
-                       reserve-keyword
-                       :remote-method="remoteMethod"
-                       @change="changeDoc">
-              <el-option
-                  v-for="item in docList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="分类">
-            <el-cascader
-                v-model="moveClass"
-                :options="docChapters"
-                :props="{ value: 'id', label: 'name'}"
-                :clearable="true"
-                :change-on-select="true"></el-cascader>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="moveNode">确 定</el-button>
-          <el-button @click="dialogMoveVisible = false">取 消</el-button>
-        </div>
-      </el-dialog>
+        <editors v-model="markDownContent" :markDownContent="markDownContent" :chapter_id="chapter_id"
+                 :chapterIsDir="selectNodeObj.is_dir"></editors>
+        <!--<editors v-model="markDownContent" :markDownContent="markDownContent"  :chapterIsDir="selectNodeObj.is_dir"></editors>-->
 
-      <!-- 复制节点弹出框 -->
-      <el-dialog class="we7-dialog only-input-dialog" title="复制章节" :visible.sync="dialogVisibleCopy"
-                 :close-on-click-modal="false" center>
-        <el-form label-width="105px" label-position="left" @submit.native.prevent>
-          <el-form-item label="文档名称">
-            <el-input v-model="copyNodeName" @keyup.enter.native="confirmBtnCopy"></el-input>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="confirmBtnCopy">确 定</el-button>
-          <el-button @click="dialogVisibleCopy = false">取 消</el-button>
-        </div>
-      </el-dialog>
+        <el-button type="primary" @click="saveApi">保存</el-button>
 
-      <!-- 文档设置 -->
-      <el-dialog class="we7-dialog dialog-setting" title="项目设置" width="1000px" :visible.sync="showSetting"
-                 :close-on-click-modal="false" :before-close="handleClose">
-        <setting :id="$route.params.id"></setting>
-      </el-dialog>
+        <!--<editors :chapterId="selectNodeObj.id" :chapterIsDir="selectNodeObj.is_dir"></editors>-->
 
-      <!--确认保存-->
-      <el-dialog title="" :visible.sync="saveDialogVisible" :show-close="false" width="30%">
-        <span>您已修改了一些数据，请确认是否要放弃保存并离开？</span>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="cancelLeave">取 消</el-button>
-          <el-button type="primary" @click="determineLeave">确 定</el-button>
-        </span>
-      </el-dialog>
+      </template>
+    </el-main>
 
-    </el-container>
+    <!-- 新增节点弹出框 -->
+    <el-dialog class="we7-dialog only-input-dialog" :title="dialogTitle" :visible.sync="dialogVisible"
+               :close-on-click-modal="false" center>
+      <el-form :model="addNodeObj" label-width="105px" label-position="left" @submit.native.prevent>
+        <el-form-item :label="dialogFormLabel">
+          <el-input v-model="addNodeObj.name" @keyup.enter.native="confirmBtn"></el-input>
+        </el-form-item>
+        <el-form-item label="文档类型" v-if="addNodeObj.is_dir != 1">
+          <el-radio-group v-model="addNodeObj.layout">
+            <el-radio :label="0">普通文档</el-radio>
+            <el-radio :label="1">API文档</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" :disabled="confirmDisabled" @click="confirmBtn">确 定</el-button>
+        <el-button @click="dialogVisible = false">取 消</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 弹出框移动tree节点 -->
+    <el-dialog class="we7-dialog" :title="dialogMoveTitle" :visible.sync="dialogMoveVisible"
+               :close-on-click-modal="false" center>
+      <el-form label-width="105px" label-position="left">
+        <el-form-item label="项目">
+          <el-select v-model="moveDoc" placeholder="请输入文档名称进行搜索"
+                     filterable
+                     remote
+                     reserve-keyword
+                     :remote-method="remoteMethod"
+                     @change="changeDoc">
+            <el-option
+                v-for="item in docList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="分类">
+          <el-cascader
+              v-model="moveClass"
+              :options="docChapters"
+              :props="{ value: 'id', label: 'name'}"
+              :clearable="true"
+              :change-on-select="true"></el-cascader>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="moveNode">确 定</el-button>
+        <el-button @click="dialogMoveVisible = false">取 消</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 复制节点弹出框 -->
+    <el-dialog class="we7-dialog only-input-dialog" title="复制章节" :visible.sync="dialogVisibleCopy"
+               :close-on-click-modal="false" center>
+      <el-form label-width="105px" label-position="left" @submit.native.prevent>
+        <el-form-item label="文档名称">
+          <el-input v-model="copyNodeName" @keyup.enter.native="confirmBtnCopy"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" :disabled="confirmCopyDisabled" @click="confirmBtnCopy">确 定</el-button>
+        <el-button @click="dialogVisibleCopy = false">取 消</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 文档设置 -->
+    <el-dialog class="we7-dialog dialog-setting" title="项目设置" width="1000px" :visible.sync="showSetting"
+               :close-on-click-modal="false" :before-close="handleClose">
+      <setting :id="$route.params.id"></setting>
+    </el-dialog>
+  </el-container>
 </template>
 
 <script>
   import {mapGetters} from 'vuex'
-  import { getMethodType, saveChapter, createChapter, viewChapter, getAllChapter } from '@/api/api'
+  import {createChapter, getAllChapter, getMethodType, saveChapter, viewChapter} from '@/api/api'
   import editors from './editors.vue'
   import setting from './setting.vue'
+
   let id = 1000;
   export default {
     name: 'chapter',
@@ -441,6 +462,7 @@
     },
     data() {
       return {
+        isHeaderLast: true,
         docName: '',
         docTitle: '',
         defaultCheckedKeys: [],
@@ -493,14 +515,15 @@
           method: 1,
           url: '',
           description: '',
-          body_param_location: '3',
+          body_param_location: 3,
           tab_location: '1'
         },
+        formCompared: {},
         formCopy: {
           method: 1,
           url: '',
           description: '',
-          body_param_location: '3',
+          body_param_location: 3,
           tab_location: '1'
         },
         // activeName: '1',
@@ -509,24 +532,47 @@
           isChecked: false,
           name: '',
           type: 1,
-          enabled: 0,
+          enabled: 2,
           default_value: '',
           description: '',
           rule: '',
           children: [],
         },
         markDownContent: '',
-        apiHeaderTreeData: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
-        apiParamsTreeData: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
-        apiBodyTreeData: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
-        apiTreeDataCopy: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
-        apiResTreeData: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
-        apiResTreeDataCopy: [{already: 0, isChecked: false,  name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []}],
+        apiHeaderTreeData: [],
+        apiParamsTreeData: [],
+        apiBodyTreeData: [],
+        apiResTreeData: [],
+        apiResTreeDataCopy: [{
+          already: 0,
+          isChecked: false,
+          name: '',
+          type: 1,
+          enabled: 2,
+          default_value: '',
+          description: '',
+          rule: '',
+          children: []
+        }],
         chapter_id: '',
         isDocEmpty: true,
         previewId: '',
+        loading: '',
+        confirmDisabled: false,
+        confirmCopyDisabled: false,
+        apiHeaderTreeDataCompared: '',
+        apiParamsTreeDataCompared: '',
+        apiBodyTreeDataCompared: '',
+        apiResTreeDataCompared: '',
+        markDownContentCompared: '',
         isSave: true,
-        saveDialogVisible: false
+        isFormChange: false,
+        isApiHeaderTreeDataChange: false,
+        isApiParamsTreeDataChange: false,
+        isApiBodyTreeDataChange: false,
+        isApiResTreeDataChange: false,
+        isMarkDownContentChange: false,
+        treeActive: false
       }
     },
     computed: {
@@ -547,6 +593,200 @@
         if (val) {
           this.getOperRecord()
         }
+      },
+      markDownContent: {
+        deep: true,
+        handler: function (newVal, oldVal) {
+          const newString = JSON.stringify(newVal);
+          const oldString = JSON.stringify(this.markDownContentCompared);
+          if (newString != oldString) {
+            console.log('markDownContent有数据差异');
+            console.log(newString);
+            console.log(oldString);
+            this.isMarkDownContentChange = true;
+          } else {
+            this.isMarkDownContentChange = false;
+          }
+        }
+      },
+      form: {
+        deep: true,
+        immediate: false,
+        handler: function(newVal, oldVal) {
+          const newObj = JSON.parse(JSON.stringify(newVal));
+          delete newObj.tab_location;
+          let newString = '';
+          if (newObj.url) {
+            newString = JSON.stringify(newObj);
+          } else {
+            newString = '""';
+          }
+
+          const oldObj = JSON.parse(JSON.stringify(this.formCompared));
+          delete oldObj.tab_location;
+          const oldString = JSON.stringify(oldObj);
+          // console.log(111);
+          // console.log(newString);
+          // console.log(oldString);
+          if (newString != oldString) {
+            console.log('form有数据差异');
+            console.log(newString);
+            console.log(oldString);
+            this.isFormChange = true;
+          } else {
+            this.isFormChange = false;
+          }
+        }
+      },
+      apiHeaderTreeData: {
+        deep: true,
+        immediate: false,
+        handler: function(newVal) {
+          if (newVal) {
+            let newObj = JSON.parse(JSON.stringify(newVal));
+            let newString = '';
+            if (newObj.length) {
+              newObj.forEach(item => {
+                delete item.already;
+              })
+              newObj = newObj.filter(item => {
+                return item.name || item.description
+              })
+              if (newObj.length) {
+                newString = JSON.stringify(newObj);
+              } else {
+                newString = '""';
+              }
+            }
+            let oldObj = JSON.parse(JSON.stringify(this.apiHeaderTreeDataCompared));
+            const oldString = JSON.stringify(oldObj);
+            if (newString != oldString) {
+              console.log('apiHeaderTreeData有数据差异');
+              console.log(newString);
+              console.log(oldString);
+              this.isApiHeaderTreeDataChange = true;
+            } else {
+              this.isApiHeaderTreeDataChange = false;
+            }
+          }
+        }
+      },
+      apiParamsTreeData: {
+        deep: true,
+        immediate: false,
+        handler: function(newVal) {
+          if (newVal) {
+            let newObj = JSON.parse(JSON.stringify(newVal));
+            let newString = '';
+            if (newObj.length) {
+              newObj.forEach(item => {
+                delete item.already;
+              })
+              newObj = newObj.filter(item => {
+                return item.name || item.description
+              })
+              if (newObj.length) {
+                newString = JSON.stringify(newObj);
+              } else {
+                newString = '""';
+              }
+            }
+            let oldObj = JSON.parse(JSON.stringify(this.apiParamsTreeDataCompared));
+            const oldString = JSON.stringify(oldObj);
+
+            if (newString != oldString) {
+              console.log('apiParamsTreeData有数据差异');
+              console.log(newString);
+              console.log(oldString);
+              this.isApiParamsTreeDataChange = true;
+            } else {
+              this.isApiParamsTreeDataChange = false;
+            }          }
+        }
+      },
+      apiBodyTreeData: {
+        deep: true,
+        immediate: false,
+        handler: function(newVal) {
+          if (newVal) {
+            let newObj = JSON.parse(JSON.stringify(newVal));
+            let newString = '';
+            if (newObj.length) {
+              newObj.forEach(item => {
+                delete item.already;
+              })
+              newObj = newObj.filter(item => {
+                return item.name || item.description
+              })
+              if (newObj.length) {
+                newString = JSON.stringify(newObj);
+              } else {
+                newString = '""';
+              }
+            }
+            let oldObj = JSON.parse(JSON.stringify(this.apiBodyTreeDataCompared));
+            const oldString = JSON.stringify(oldObj);
+            if (newString != oldString) {
+              console.log('apiBodyTreeData有数据差异');
+              console.log(newString);
+              console.log(oldString);
+              this.isApiBodyTreeDataChange = true;
+            } else {
+              this.isApiBodyTreeDataChange = false;
+            }          }
+        }
+      },
+      apiResTreeData: {
+        deep: true,
+        immediate: false,
+        handler: function(newVal) {
+          if (newVal) {
+            let newObj = JSON.parse(JSON.stringify(newVal));
+            console.log('newObj');
+            console.log(newObj);
+            if (newObj.length && newObj[0].already == 0) {
+              console.log(222);
+              newObj = newObj.filter(item => {
+                return item.name || item.description
+              })
+            }
+            if (newObj.length) {
+              newObj.forEach(item => {
+                if (item.data && item.data.length) {
+                  item.data.forEach(item2 => {
+                    delete item2.already;
+                  })
+                  item.data = item.data.filter(item2 => {
+                    return item2.name || item2.description
+                  })
+                }
+              })
+            } else {
+              newObj = [{description: '', data: []}];
+            }
+            let newString = '';
+            newString = JSON.stringify(newObj);
+            // if (newObj.length == 1) {
+            //   if (!newObj[0].data.length && !newObj[0].description) {
+            //     newString = '""'
+            //   } else {
+            //     newString = JSON.stringify(newObj);
+            //   }
+            // } else {
+            //   newString = JSON.stringify(newObj);
+            // }
+            let oldObj = JSON.parse(JSON.stringify(this.apiResTreeDataCompared));
+            const oldString = JSON.stringify(oldObj);
+            if (newString != oldString) {
+              console.log('apiResTreeData有数据差异');
+              console.log(newString);
+              console.log(oldString);
+              this.isApiResTreeDataChange = true;
+            } else {
+              this.isApiResTreeDataChange = false;
+            }
+          }
+        }
       }
     },
     created() {
@@ -560,6 +800,43 @@
       }
       this.getMethodType();
       // this.initCreateChapter();
+    },
+    mounted() {
+      // (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)
+      const This = this;
+      document.addEventListener('keydown', function (e) {
+        let currKey = 0;
+        e = e || event || window.event;
+        currKey = e.keyCode || e.which || e.charCode;
+        if ((e.ctrlKey || e.metaKey) && currKey == 83) {
+          e.preventDefault();
+          This.saveApi();
+          // return false;
+        }
+      })
+    },
+    beforeRouteLeave(to, from, next) {
+      // console.log(to)
+      // console.log(from)
+      if (this.isFormChange || this.isApiHeaderTreeDataChange || this.isApiParamsTreeDataChange || this.isApiBodyTreeDataChange || this.isApiResTreeDataChange || this.isMarkDownContentChange) {
+        this.$confirm('您有数据尚未保存，确认保存?', '提示', {
+          showClose: false,
+          closeOnClickModal: false,
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.saveApi();
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          });
+          next();
+        });
+      } else {
+        next();
+      }
     },
     methods: {
       /**
@@ -575,7 +852,7 @@
        *      把defaultSelect（默认选中文档）push进去，但是不可以保存在localStorage中
        */
       // 创建默认文档
-      initCreateChapter () {
+      initCreateChapter() {
         createChapter({
           document_id: this.$route.params.id,
           parent_id: 0,
@@ -663,7 +940,6 @@
           }
           localStorage.setItem('we7_doc_user_' + this.UserInfo.id, JSON.stringify(allRecords))
         }
-
       },
       getChapters() {
         getAllChapter({
@@ -681,17 +957,32 @@
               this.chapters = this.initTreeData(res.data.catalog); // 临时注释
               //如果有记录的默认文档节点，则选中
               if (this.defaultSelect) {
-                console.log(this.defaultSelect);
+                console.log(1);
+                // console.log(this.defaultSelect);
                 this.$nextTick(() => {
-                  this.$refs.chaptersTree.setCurrentKey(this.defaultSelect)
-                  this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode())
-                  //展开
-                  let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
-                  let record = allRecords['document_' + this.$route.params.id]
-                  this.defaultExpanded = record.defaultExpanded;
-                  this.defaultExpanded.push(this.$refs.chaptersTree.getCurrentNode().id)
+                  this.$refs.chaptersTree.setCurrentKey(this.defaultSelect);
+                  console.log(3);
+                  console.log(this.$refs.chaptersTree.getCurrentNode());
+                  if (this.$refs.chaptersTree.getCurrentNode() != null) {
+                    console.log(4);
+                    this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode());
+                    //展开
+                    let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
+                    let record = allRecords['document_' + this.$route.params.id]
+                    this.defaultExpanded = record.defaultExpanded;
+                    this.defaultExpanded.push(this.$refs.chaptersTree.getCurrentNode().id)
+                  } else {
+                    console.log(5);
+                    this.$refs.chaptersTree.setCurrentKey(res.data.catalog[0].id);
+                    this.handleNodeClick(res.data.catalog[0]);
+                    let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
+                    let record = allRecords['document_' + this.$route.params.id]
+                    this.defaultExpanded = record.defaultExpanded;
+                    this.defaultExpanded.push(res.data.catalog[0])
+                  }
                 })
               } else {
+                console.log(2);
                 this.$nextTick(() => {
                   this.$refs.chaptersTree.setCurrentKey(res.data.catalog[0].id);
                   this.handleNodeClick(res.data.catalog[0]);
@@ -712,9 +1003,10 @@
             }
           }
         }
+
         loopData(treeData)
-        console.log('treeData');
-        console.log(treeData);
+        // console.log('treeData');
+        // console.log(treeData);
         return treeData
       },
       readDoc() {
@@ -730,25 +1022,73 @@
         return data.name.indexOf(value) !== -1;
       },
       handleNodeClick(data) {
-        // if (!this.isSave) {
-        //   this.saveDialogVisible = true;
-        //   return false
-        // }
         console.log(12);
         console.log(data);
-
-        this.previewId = data.id;
-        this.docTitle = data.name;
-        this.chapter_id = data.id;
-
-        this.viewChapter();
-
-        if (this.menuBarVisible) {
-          this.menuBarVisible = false
+        if (this.isFormChange || this.isApiHeaderTreeDataChange || this.isApiParamsTreeDataChange || this.isApiBodyTreeDataChange || this.isApiResTreeDataChange || this.isMarkDownContentChange) {
+          this.$confirm('您有数据尚未保存，确认保存?', '提示', {
+            showClose: false,
+            closeOnClickModal: false,
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.saveApi();
+            // location.reload();
+            this.isFormChange = false;
+            this.isApiHeaderTreeDataChange = false;
+            this.isApiParamsTreeDataChange = false;
+            this.isApiBodyTreeDataChange = false;
+            this.isApiResTreeDataChange = false;
+            this.isMarkDownContentChange = false;
+            this.getOperRecord();
+            this.getChapters();
+            // this.viewChapter();
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消'
+            });
+            // location.reload();
+            this.isFormChange = false;
+            this.isApiHeaderTreeDataChange = false;
+            this.isApiParamsTreeDataChange = false;
+            this.isApiBodyTreeDataChange = false;
+            this.isApiResTreeDataChange = false;
+            this.isMarkDownContentChange = false;
+            // this.getOperRecord();
+            // this.getChapters();
+            this.previewId = data.id;
+            this.docTitle = data.name;
+            this.chapter_id = data.id;
+            this.viewChapter();
+            this.treeActive = true;
+            if (this.menuBarVisible) {
+              this.menuBarVisible = false
+            }
+            this.selectNodeObj = data;
+            this.setOperRecord(data); // 临时注释
+            console.log('无变化');
+            this.$nextTick(() => {
+              $('.w7-tree .is-current').attr('data-active', 'tree-active');
+            })
+          });
+          return false;
+        } else {
+          this.previewId = data.id;
+          this.docTitle = data.name;
+          this.chapter_id = data.id;
+          this.viewChapter();
+          this.treeActive = true;
+          if (this.menuBarVisible) {
+            this.menuBarVisible = false
+          }
+          this.selectNodeObj = data;
+          this.setOperRecord(data); // 临时注释
+          console.log('无变化');
+          this.$nextTick(() => {
+            $('.w7-tree .is-current').attr('data-active', 'tree-active');
+          })
         }
-        this.selectNodeObj = data;
-        this.setOperRecord(data); // 临时注释
-        this.isSave = false;
       },
       updateXY(event) {
         this.clientX = event.clientX
@@ -847,6 +1187,7 @@
           this.$message('章节名称不能为空！')
           return
         }
+        this.confirmCopyDisabled = true;
         this.$post('/admin/chapter/copy', {
           document_id: this.$route.params.id,
           chapter_id: this.rightSelectNodeObj.id,
@@ -854,6 +1195,7 @@
           name: this.copyNodeName
         }).then(res => {
           let newChild = res.data;
+          this.confirmCopyDisabled = false;
           if (this.rightSelectNodeObj.parent_id != 0) {
             let node = this.rightSelectNode
             let parent = node.parent
@@ -878,8 +1220,14 @@
       confirmBtn() {
         if (!this.addNodeObj.name) {
           this.$message('章节名称不能为空！')
+          return
         }
+        this.confirmDisabled = true;
         if (this.dialogTitle == '新建目录' || this.dialogTitle == '新建文档') {
+          this.formCompared = '';
+          this.markDownContentCompared = '';
+          this.apiResTreeDataCompared = [];
+          this.apiResTreeDataCompared.push({description: '', data: []});
           createChapter({
             document_id: this.$route.params.id,
             parent_id: this.addFirst ? 0 : this.rightSelectNode.data.id,
@@ -888,6 +1236,7 @@
             name: this.addNodeObj.name
           }).then(res => {
             this.chapter_id = res.data.id;
+            this.confirmDisabled = false;
             let newChild = res.data;
             if (!this.addFirst) {
               let data = this.rightSelectNodeObj
@@ -915,7 +1264,8 @@
               this.defaultExpanded.push(newChild.id);
             })
           }).catch(() => {
-              this.dialogVisible = false
+            this.dialogVisible = false
+            this.confirmDisabled = false;
           })
         }
         if (this.dialogTitle == '重命名') {
@@ -924,17 +1274,19 @@
             chapter_id: this.rightSelectNodeObj.id,
             name: this.addNodeObj.name
           }).then(() => {
-              this.$message('修改成功！')
-              this.rightSelectNodeObj.name = this.addNodeObj.name
-              this.dialogVisible = false;
-              const docTitle = this.docTitle;
-              const rename = localStorage.rename;
-              if (docTitle == rename) {
-                this.docTitle = this.addNodeObj.name;
-              }
-              // location.reload();
+            this.$message('修改成功！')
+            this.rightSelectNodeObj.name = this.addNodeObj.name
+            this.dialogVisible = false;
+            this.confirmDisabled = false;
+            const docTitle = this.docTitle;
+            const rename = localStorage.rename;
+            if (docTitle == rename) {
+              this.docTitle = this.addNodeObj.name;
+            }
+            // location.reload();
           }).catch(() => {
-              this.dialogVisible = false
+            this.dialogVisible = false
+            this.confirmDisabled = false;
           })
         }
       },
@@ -970,9 +1322,14 @@
             let index = children.findIndex(d => d.id === data.id)
             children.splice(index, 1)
             this.$message('删除成功！')
-            this.emptyForm();
-            this.getChapters();
-            this.selectNodeObj = {}
+            console.log('defaultSelect2');
+            console.log(this.defaultSelect);
+            console.log(arrId);
+            // this.emptyForm();
+            // this.getChapters();
+            // this.selectNodeObj = {}
+            // 使用刷新页面替代
+            location.reload();
           })
         }).catch(() => {
         })
@@ -1006,10 +1363,9 @@
         if (query !== '') {
           this.$post('/admin/document/all', {
             keyword: query
+          }).then(res => {
+            this.docList = res.data.data
           })
-            .then(res => {
-              this.docList = res.data
-            })
         } else {
           this.options = [];
         }
@@ -1080,7 +1436,7 @@
       },
 
       // 获取请求类型
-      getMethodType () {
+      getMethodType() {
         getMethodType({}).then(res => {
           if (res.data && res.data.methodLabel) {
             this.methodArr = res.data.methodLabel.option;
@@ -1090,11 +1446,12 @@
 
       // 请求类型切换
       tabRequest(tab) {
+        localStorage.tab_location = tab.name;
         console.log(tab);
       },
 
       // 请求数据 输入框输入 下方新增同级node
-      paramNameChange (node, data) {
+      paramNameChange(node, data) {
         if (data.name.length) {
           data.already = Number(data.already) + 1;
           // console.log(data);
@@ -1108,7 +1465,7 @@
       },
 
       // 响应数据 输入框输入 下方新增同级node
-      resParamNameChange (node, data) {
+      resParamNameChange(node, data) {
         if (data.name.length) {
           data.already = Number(data.already) + 1;
           // console.log(data);
@@ -1121,8 +1478,19 @@
       },
 
       // request请求 添加同级node
-      addFirstNode () {
+      addFirstNode() {
         const baseRequestData = JSON.parse(JSON.stringify(this.baseRequestData));
+        const This = this;
+
+        function apiDataFilter(data) {
+          const last = data.length - 1;
+          if (data[last].name == '' && data[last].description == '') {
+            This.$message.warning('已存在空白行，请勿再次添加！')
+          } else {
+            data.push(baseRequestData);
+          }
+        }
+
         /*
         *或者按照这种push
         * baseRequestData = {isChecked: false, name: '',type: 1, enabled: '', default_value: '', description: '', rule: '',children: []}
@@ -1131,50 +1499,116 @@
         const tab_location = this.form.tab_location;
 
         if (tab_location == 1) {
-          this.apiHeaderTreeData.push(baseRequestData);
+          // this.apiHeaderTreeData.push(baseRequestData);
+          apiDataFilter(this.apiHeaderTreeData);
         } else if (tab_location == 2) {
-          this.apiParamsTreeData.push(baseRequestData);
+          // this.apiParamsTreeData.push(baseRequestData);
+          apiDataFilter(this.apiParamsTreeData);
         } else if (tab_location == 3) {
-          this.apiBodyTreeData.push(baseRequestData);
+          // this.apiBodyTreeData.push(baseRequestData);
+          apiDataFilter(this.apiBodyTreeData);
         }
       },
 
       // res响应数据 添加同级node
-      addResFirstNode () {
+      addResFirstNode() {
+        const This = this;
         const baseRequestData = JSON.parse(JSON.stringify(this.baseRequestData));
-        /*
-        *或者按照这种push
-        * baseRequestData = {isChecked: false, name: '',type: 1, enabled: '', default_value: '', description: '', rule: '',children: []}
-        * */
-        this.apiResTreeData.push(baseRequestData);
+
+        // this.apiResTreeData.push(baseRequestData);
+
+        function apiDataFilter(data) {
+          const last = data.length - 1;
+          if (data[last].name == '' && data[last].description == '') {
+            This.$message.warning('已存在空白行，请勿再次添加！')
+          } else {
+            data.push(baseRequestData);
+          }
+        }
+
+        apiDataFilter(this.apiResTreeData);
       },
 
       // 请求数据 添加下一级node
-      addApiTreeNode (data) {
+      addApiTreeNode(data) {
         // console.log('data');
         // console.log(data);
         // const newChild = {};
-        const newChild = {id: id++, already: 0, isChecked: false, name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: [],};
+        const newChild = {
+          id: id++,
+          already: 0,
+          isChecked: false,
+          name: '',
+          type: 1,
+          enabled: 2,
+          default_value: '',
+          description: '',
+          rule: '',
+          children: [],
+        };
         if (!data.children) {
           this.$set(data, 'children', []);
         }
-        data.children.push(newChild);
+        if (data.type == 4 || data.type == 5) {
+          data.children.push(newChild);
+        } else {
+          this.$message.warning('参数类型为Object或者为Array才可添加！')
+        }
       },
 
       // 响应数据 添加下一级node
-      addResApiTreeNode (data) {
-        // console.log('data');
-        // console.log(data);
+      addResApiTreeNode(data) {
+        console.log('data');
+        console.log(data);
         // const newChild = {};
-        const newChild = {id: id++, already: 0, isChecked: false, name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: [],};
+        const newChild = {
+          id: id++,
+          already: 0,
+          isChecked: false,
+          name: '',
+          type: 1,
+          enabled: 2,
+          default_value: '',
+          description: '',
+          rule: '',
+          children: [],
+        };
         if (!data.children) {
           this.$set(data, 'children', []);
         }
-        data.children.push(newChild);
+        if (data.type == 4 || data.type == 5) {
+          data.children.push(newChild);
+        } else {
+          this.$message.warning('参数类型为Object或者为Array才可添加！')
+        }
       },
 
       // 删除 请求数据node
-      removeApiTreeNode (node, data) {
+      removeApiTreeNode(node, data) {
+        const length1 = this.apiHeaderTreeData.length;
+        const length2 = this.apiParamsTreeData.length;
+        const length3 = this.apiBodyTreeData.length;
+        const tab_location = this.form.tab_location;
+
+        if (tab_location == 1) {
+          if (length1 == 1 && node.level == 1) {
+            this.$message.error('已经是最后一个了，勿删！')
+            return false;
+          }
+        }
+        if (tab_location == 2) {
+          if (length2 == 1 && node.level == 1) {
+            this.$message.error('已经是最后一个了，勿删！')
+            return false;
+          }
+        }
+        if (tab_location == 3) {
+          if (length3 == 1 && node.level == 1) {
+            this.$message.error('已经是最后一个了，勿删！')
+            return false;
+          }
+        }
+
         const parent = node.parent;
         const children = parent.data.children || parent.data;
         const index = children.findIndex(d => d.id === data.id);
@@ -1182,19 +1616,39 @@
       },
 
       // 删除 响应数据数据node
-      removeResApiTreeNode (node, data) {
+      removeResApiTreeNode(node, data) {
+        console.log(node);
+
+        const length = this.apiResTreeData.length;
+        console.log(length);
+
+        if (length == 1 && node.level == 1) {
+          this.$message.error('已经是最后一个了，勿删！')
+          return false;
+        }
         const parent = node.parent;
         const children = parent.data.children || parent.data;
         const index = children.findIndex(d => d.id === data.id);
         children.splice(index, 1);
       },
 
-      insertAfter (node, data) {
+      insertAfter(node, data) {
         // console.log(node);
         // console.log(data);
 
         const parent = node.parent;
-        const newChild = {id: id++, already: 0, isChecked: false, name: '', type: 1, enabled: 0, default_value: '', description: '', rule: '', children: []};
+        const newChild = {
+          id: id++,
+          already: 0,
+          isChecked: false,
+          name: '',
+          type: 1,
+          enabled: 2,
+          default_value: '',
+          description: '',
+          rule: '',
+          children: []
+        };
 
         if (Array.isArray(parent.data)) {
           parent.data.push(newChild);
@@ -1204,32 +1658,34 @@
       },
 
       // 保存文档
-      saveApi () {
+      saveApi() {
         // console.log('body_param_location');
         // console.log(this.form.body_param_location);
         const tab_location = this.form.tab_location;
         const body_param_location = this.form.body_param_location;
         let chapter_id = '';
-
         let record = {};
         let body = {};
         body = {};
-        if (tab_location == '3') {
-          if (body_param_location == 3) {
-            body['3'] = this.apiBodyTreeData;
-          } else if (body_param_location == 4) {
-            body['4'] = this.apiBodyTreeData;
-          } else if (body_param_location == 5) {
-            body['5'] = this.apiBodyTreeData;
-          } else if (body_param_location == 6) {
-            body['6'] = this.apiBodyTreeData;
-          }
-        }
+        // if (tab_location == '3') {
+        //   if (body_param_location == 3) {
+        //     body['3'] = this.apiBodyTreeData;
+        //   } else if (body_param_location == 4) {
+        //     body['4'] = this.apiBodyTreeData;
+        //   } else if (body_param_location == 5) {
+        //     body['5'] = this.apiBodyTreeData;
+        //   } else if (body_param_location == 6) {
+        //     body['6'] = this.apiBodyTreeData;
+        //   }
+        // }
+
         body['1'] = this.apiHeaderTreeData;
         body['2'] = this.apiParamsTreeData;
-        body['10'] = this.apiResTreeData;
+        body['request_body'] = this.apiBodyTreeData;
+        // body['reponse_body'] = this.apiResTreeData;
         record.api = this.form;
         record.body = body;
+        record.reponse = this.apiResTreeData;
         record.extend = this.markDownContent;
         chapter_id = this.chapter_id;
 
@@ -1241,11 +1697,19 @@
             layout: 1,
             record
           }).then(res => {
-            if (res.code == 200)
-              this.$message.success('保存成功！')
-              this.isSave = true;
-            // console.log('form');
-            // console.log(this.form);
+            if (res.code == 200) {
+              this.$message.success('保存成功！');
+              this.isFormChange = false;
+              this.isApiHeaderTreeDataChange = false;
+              this.isApiParamsTreeDataChange = false;
+              this.isApiBodyTreeDataChange = false;
+              this.isApiResTreeDataChange = false;
+              this.isMarkDownContentChange = false;
+              console.log(1);
+              // this.getOperRecord();
+              // this.getChapters();
+              // this.viewChapter();
+            }
           })
         } else {
           saveChapter({
@@ -1254,25 +1718,27 @@
             layout: 0,
             content: this.markDownContent
           }).then(res => {
-            if (res.code == 200)
-              this.$message.success('保存成功！')
-              this.isSave = true;
+            if (res.code == 200) {
+              this.$message.success('保存成功！');
+              this.isFormChange = false;
+              this.isApiHeaderTreeDataChange = false;
+              this.isApiParamsTreeDataChange = false;
+              this.isApiBodyTreeDataChange = false;
+              this.isApiResTreeDataChange = false;
+              this.isMarkDownContentChange = false;
+              console.log(2);
+              // this.getOperRecord();
+              // this.getChapters();
+              // this.viewChapter();
+            }
             // console.log('form');
             // console.log(this.form);
           })
         }
       },
 
-      determineLeave () {
-
-      },
-
-      cancelLeave () {
-        this.saveDialogVisible = false;
-      },
-
       // 清空form
-      emptyForm () {
+      emptyForm() {
         this.docTitle = ''
         this.form = this.formCopy;
         this.apiHeaderTreeData = this.apiTreeDataCopy;
@@ -1283,9 +1749,10 @@
       },
 
       // 查看文档
-      viewChapter () {
+      viewChapter() {
         const chapter_id = this.chapter_id;
         const document_id = this.$route.params.id;
+        this.loading = this.$loading();
         viewChapter({
           chapter_id,
           document_id
@@ -1293,42 +1760,106 @@
           if (res.code == 200) {
             this.layout = res.data.layout;
             if (res.data.layout == 1) {
-              if (res.data.content != null && res.data.content.length) {
-                // console.log(res);
-                let record = res.data.record;
-                if (record.api) {
-                  this.form = record.api;
-                  this.form.tab_location = this.form.tab_location.toString();
+              // api文档
+              let record = JSON.parse(JSON.stringify(res.data.record));
+              const apiData1 = JSON.parse(JSON.stringify(this.baseRequestData));
+              const apiData2 = JSON.parse(JSON.stringify(this.baseRequestData));
+              const apiData3 = JSON.parse(JSON.stringify(this.baseRequestData));
+              const apiData4 = JSON.parse(JSON.stringify(this.baseRequestData));
+              if (record.api) {
+                this.formCompared = JSON.parse(JSON.stringify(record.api));
+                if (!this.formCompared.url) {
+                  this.formCompared = "";
                 }
-                if (record.body.length) {
-                  this.apiHeaderTreeData = record.body['1'];
-                  this.apiParamsTreeData = record.body['2'];
-                  this.apiBodyTreeData = record.body[record.api.body_param_location];
-                  this.apiResTreeData = record.body[10];
-                }
-                this.markDownContent = record.extend;
+                this.form = JSON.parse(JSON.stringify(record.api));
+                console.log(55);
+                this.form.tab_location = localStorage.tab_location || this.form.tab_location.toString();
+                // this.form.body_param_location = this.form.body_param_location.toString();
+                this.form.body_param_location = this.form.body_param_location;
               } else {
-                this.form = this.formCopy;
-                this.apiHeaderTreeData = this.apiTreeDataCopy;
-                this.apiParamsTreeData = this.apiTreeDataCopy;
-                this.apiBodyTreeData = this.apiTreeDataCopy;
-                this.apiResTreeData = this.apiResTreeDataCopy;
+                console.log(56);
+                this.formCompared = "";
+                this.form = JSON.parse(JSON.stringify(this.formCopy));
+              }
+
+              // header
+              if (record.body[1].length) {
+                this.apiHeaderTreeData = JSON.parse(JSON.stringify(record.body['1']));
+                this.apiHeaderTreeDataCompared = JSON.parse(JSON.stringify(record.body['1']));
+                this.apiHeaderTreeData.push(apiData1);
+              } else {
+                // const apiData1 = JSON.parse(JSON.stringify(this.baseRequestData));
+                this.apiHeaderTreeDataCompared = "";
+                this.apiHeaderTreeData = [apiData1];
+              }
+              // params
+              if (record.body[2].length) {
+                console.log(record.body['2']);
+                this.apiParamsTreeData = JSON.parse(JSON.stringify(record.body['2']));
+                this.apiParamsTreeDataCompared = JSON.parse(JSON.stringify(record.body['2']));
+                this.apiParamsTreeData.push(apiData2);
+              } else {
+                // const apiData2 = JSON.parse(JSON.stringify(this.baseRequestData));
+                this.apiParamsTreeDataCompared = "";
+                this.apiParamsTreeData = [apiData2];
+              }
+              // request body
+              if (record.body.request_body.length) {
+                this.apiBodyTreeData = JSON.parse(JSON.stringify(record.body.request_body));
+                this.apiBodyTreeDataCompared = JSON.parse(JSON.stringify(record.body.request_body));
+                this.apiBodyTreeData.push(apiData3);
+              } else {
+                // const apiData3 = JSON.parse(JSON.stringify(this.baseRequestData));
+                this.apiBodyTreeDataCompared = "";
+                this.apiBodyTreeData = [apiData3];
+              }
+              // reponse body
+              if (record.reponse.length) {
+                // console.error(1)
+                this.apiResTreeData = JSON.parse(JSON.stringify(record.reponse));
+                this.apiResTreeData.forEach(item1 => {
+                  item1.data.push(apiData4)
+                })
+                this.apiResTreeDataCompared = JSON.parse(JSON.stringify(record.reponse));
+              } else {
+                // console.error(2)
+                const apiData = JSON.parse(JSON.stringify(this.baseRequestData));
+                this.apiResTreeDataCompared = [];
+                this.apiResTreeDataCompared.push({description: '', data: []});
+                this.apiResTreeData = [{description: '', data: [apiData]}];
+              }
+              // markDown
+              if (record.extend == null) {
                 this.markDownContent = '';
+                this.markDownContentCompared = "";
+              } else {
+                this.markDownContent = JSON.parse(JSON.stringify(record.extend));
+                this.markDownContentCompared = JSON.parse(JSON.stringify(record.extend));
               }
             } else {
+              // 普通文档
               if (res.data.content == null) {
                 this.markDownContent = '';
+                this.markDownContentCompared = ''
               } else {
                 this.markDownContent = res.data.content;
+                this.markDownContentCompared = res.data.content;
               }
-              // if (res.data.content.length) {
-              //   this.markDownContent = res.data.content;
-              // } else {
-              //   this.markDownContent = '';
-              // }
             }
+            this.loading.close();
           }
         })
+      },
+
+      // 添加响应数据模块
+      addResNode() {
+        const apiData = JSON.parse(JSON.stringify(this.baseRequestData));
+        this.apiResTreeData.push({description: '', data: [apiData]});
+      },
+
+      // 删除响应数据模块
+      deleteApiItem(index) {
+        this.apiResTreeData.splice(index, 1);
       }
     }
   }
@@ -1370,13 +1901,13 @@
       display: flex;
       justify-content: space-between;
       margin-bottom: 30px;
-      color: #b6b5b5;
+      color: #3296FA;
 
       .el-tooltip {
         cursor: pointer;
       }
 
-      .wi {
+      .wq {
         font-size: 22px;
       }
     }
@@ -1460,10 +1991,21 @@
         flex: 1;
         display: flex;
         align-items: center;
+        width: 100%;
 
         .node-info {
           flex: 1;
           display: flex;
+          align-items: center;
+
+          .wq {
+            color: #ffcd2c;
+            font-size: 18px;
+
+            &.wq-mulu {
+              font-size: 16px;
+            }
+          }
 
           .text-over {
             flex: 1;
@@ -1477,12 +2019,8 @@
           display: none;
           margin-right: 10px;
 
-          .wi {
-            color: #b6b5b5;
-
-            &:hover {
-              color: #3296fa;
-            }
+          .wq {
+            color: #ffcd2c;
           }
         }
 
@@ -1512,17 +2050,16 @@
         }
       }
     }
-
-    .wi-document {
-      color: #3296fa;
-    }
-
-    .wi-folder {
-      color: #ffcd2c;
-    }
   }
 
   // wyg 2020/04/09
+  .w7-aside-chapter {
+    .custom-tree-node {
+      /*height: 40px;*/
+    }
+  }
+
+
   .w7-document-chapter {
     .chapter-title {
       margin-bottom: 30px;
@@ -1564,6 +2101,7 @@
           border: 1px solid rgba(238, 238, 238, 1);
           border-radius: 2px;
           padding: 15px 20px;
+          margin-bottom: 20px;
 
           /deep/ .el-tabs__header {
             margin-bottom: 25px;
@@ -1583,6 +2121,10 @@
                 line-height: normal;
               }
             }
+          }
+
+          .custom-tree-node {
+            width: 100%;
           }
 
           .el-row {
@@ -1606,6 +2148,7 @@
           .add {
             margin-left: 10px;
           }
+
           .delete {
             margin-left: 10px;
           }
@@ -1650,4 +2193,9 @@
   [v-cloak] {
     display: none !important;
   }
+
+  .w7-tree.el-tree--highlight-current .is-current[data-active=tree-active] > .el-tree-node__content {
+     background-color: #fff !important;
+   }
+
 </style>
