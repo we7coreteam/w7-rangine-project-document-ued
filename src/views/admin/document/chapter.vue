@@ -820,6 +820,8 @@
       // console.log(from)
       if (this.isFormChange || this.isApiHeaderTreeDataChange || this.isApiParamsTreeDataChange || this.isApiBodyTreeDataChange || this.isApiResTreeDataChange || this.isMarkDownContentChange) {
         this.$confirm('您有数据尚未保存, 是否保存?', '提示', {
+          showClose: false,
+          closeOnClickModal: false,
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -1024,6 +1026,8 @@
         console.log(data);
         if (this.isFormChange || this.isApiHeaderTreeDataChange || this.isApiParamsTreeDataChange || this.isApiBodyTreeDataChange || this.isApiResTreeDataChange || this.isMarkDownContentChange) {
           this.$confirm('您有数据尚未保存, 是否保存?', '提示', {
+            showClose: false,
+            closeOnClickModal: false,
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'

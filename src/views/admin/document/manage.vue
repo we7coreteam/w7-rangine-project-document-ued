@@ -57,16 +57,19 @@
           </div>
         </div>
       </div>
-      <el-pagination
-        background
-        :current-page.sync="listQuery.page"
-        :page-sizes="[10,20,30,50]"
-        :page-size="listQuery.page_size"
-        :layout="paginationLayouts"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      <div class="pagination-wrap">
+        <el-pagination
+          background
+          :hide-on-single-page="total <= 20"
+          :current-page.sync="listQuery.page"
+          :page-sizes="[10,20,30,50]"
+          :page-size="listQuery.page_size"
+          :layout="paginationLayouts"
+          :total="total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
 
       <!-- 基本信息弹出框 -->
       <el-dialog class="w7-dialog" title="创建项目" :visible.sync="dialogDocInfoVisible" :close-on-click-modal="false"
@@ -115,181 +118,188 @@
   import setting from './setting.vue'
 
   export default {
-    name: 'documentIndex',
-    components: {
-      setting
-    },
-    data() {
-      return {
-        listQuery: {
-          page: 1,
-          page_size: 20,
-          keyword: '',
-          role: '',
-          is_public: ''
-        },
-        radio: '1',
-        loading: false,
-        docList: [],
-        currentPage: 0,//当前页码
-        page_size: 19,
-        pageCount: 0,//总页数
-        total: 0,//总数
-        name: '',
-        dialogDocInfoVisible: false,//创建文档弹弹出框
-        actClass: "actClass",
-        dialogTransferDoc: false,
-        transferUsername: '',
-        selectDocId: '',
-        showSetting: false,
-        settingDocId: ''
-      }
-    },
-    computed: {
-      paginationLayouts() {
-        return this.total && (this.total / this.listQuery.page_size) > 1 ? 'total, sizes, prev, pager, next, jumper' : 'total, sizes'
-      }
-    },
-    created() {
-      this.getAllProject()
-    },
-    methods: {
-      dialogDocShow () {
-        this.dialogDocInfoVisible = true;
-        this.name = '';
+  name: 'documentIndex',
+  components: {
+    setting
+  },
+  data() {
+    return {
+      listQuery: {
+        page: 1,
+        page_size: 20,
+        keyword: '',
+        role: '',
+        is_public: ''
       },
-      getAllProject() {
-        this.loading = true;
-        getAllProject(this.listQuery).then(res => {
-          if (res.code == 200) {
-            this.docList = res.data.data;
-            this.pageCount = res.data.page_count;
-            this.total = res.data.total;
-            this.loading = false;
-          }
-        })
-      },
-      createDoc() {
-        createDoc({
-          name: this.name,
-          is_public: this.radio
-        }).then(res => {
-          this.$message('创建成功！')
-          this.dialogDocInfoVisible = false;
-          this.getAllProject();
-          // this.$router.push({
-          //   name: 'chapter',
-          //   params: {
-          //     id: res.data,
-          //   },
-          //   query: {type: 'add', documentType: 1}
-          // })
-        })
-
-        // this.$post('/admin/document/create', {
-        //   name: this.name,
-        //   is_public: this.radio
-        // }).then(res => {
-        //   this.$message('创建成功！')
-        //   this.dialogDocInfoVisible = false;
-        //   this.goChapter(res, true)
+      radio: '1',
+      loading: false,
+      docList: [],
+      currentPage: 0,//当前页码
+      page_size: 19,
+      pageCount: 0,//总页数
+      total: 0,//总数
+      name: '',
+      dialogDocInfoVisible: false,//创建文档弹弹出框
+      actClass: "actClass",
+      dialogTransferDoc: false,
+      transferUsername: '',
+      selectDocId: '',
+      showSetting: false,
+      settingDocId: ''
+    }
+  },
+  computed: {
+    paginationLayouts() {
+      return this.total && (this.total / this.listQuery.page_size) > 1 ? 'total, sizes, prev, pager, next, jumper' : 'total, sizes'
+    }
+  },
+  created() {
+    this.getAllProject()
+  },
+  methods: {
+    dialogDocShow () {
+      this.dialogDocInfoVisible = true;
+      this.name = '';
+    },
+    getAllProject() {
+      this.loading = true;
+      getAllProject(this.listQuery).then(res => {
+        if (res.code == 200) {
+          this.docList = res.data.data;
+          this.pageCount = res.data.page_count;
+          this.total = res.data.total;
+          this.loading = false;
+        }
+      })
+    },
+    createDoc() {
+      createDoc({
+        name: this.name,
+        is_public: this.radio
+      }).then(res => {
+        this.$message('创建成功！')
+        this.dialogDocInfoVisible = false;
+        this.getAllProject();
+        // this.$router.push({
+        //   name: 'chapter',
+        //   params: {
+        //     id: res.data,
+        //   },
+        //   query: {type: 'add', documentType: 1}
         // })
-      },
-      removeDoc(id) {
-        this.$confirm('确定删除该文档吗?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$post('/admin/document/delete', {
-            id: id
-          })
-            .then(() => {
-              this.getAllProject()
-              this.$message('删除成功！')
-            })
-        })
-      },
-      updateDoc(id, isShow) {
-        this.$post('/admin/document/update', {
-          id: id,
-          is_show: isShow == 1 ? 2 : 1
-        }).then(() => {
-          //修改docList
-          this.docList.forEach(row => {
-            if (row.id == id) {
-              row.is_show = isShow == 1 ? 2 : 1
-              return
-            }
-          });
-        })
-      },
-      readDoc(item) {
-        let routeUrl = this.$router.resolve({
-          path: "/chapter/" + item.id
-        })
-        localStorage.projectName = item.name;
-        window.open(routeUrl.href, '_blank')
-      },
-      settingDoc(id) {
-        this.settingDocId = id
-        this.showSetting = true
-      },
-      transferDoc(id) {
-        this.selectDocId = id
-        this.transferUsername = ''
-        this.dialogTransferDoc = true
-      },
-      transfer() {
-        this.$post('/admin/document/change-founder', {
-          document_id: this.selectDocId,
-          username: this.transferUsername
+      })
+
+      // this.$post('/admin/document/create', {
+      //   name: this.name,
+      //   is_public: this.radio
+      // }).then(res => {
+      //   this.$message('创建成功！')
+      //   this.dialogDocInfoVisible = false;
+      //   this.goChapter(res, true)
+      // })
+    },
+    removeDoc(id) {
+      this.$confirm('确定删除该文档吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$post('/admin/document/delete', {
+          id: id
         })
           .then(() => {
             this.getAllProject()
-            this.$message('转让成功！')
-            this.dialogTransferDoc = false
+            this.$message('删除成功！')
           })
-      },
-      goChapter(item, bool) {
-        let routeData = {
-          name: 'chapter',
-          params: {
-            id: item.id
+      })
+    },
+    updateDoc(id, isShow) {
+      this.$post('/admin/document/update', {
+        id: id,
+        is_show: isShow == 1 ? 2 : 1
+      }).then(() => {
+        //修改docList
+        this.docList.forEach(row => {
+          if (row.id == id) {
+            row.is_show = isShow == 1 ? 2 : 1
+            return
           }
+        });
+      })
+    },
+    readDoc(item) {
+      let routeUrl = this.$router.resolve({
+        path: "/chapter/" + item.id
+      })
+      localStorage.projectName = item.name;
+      window.open(routeUrl.href, '_blank')
+    },
+    settingDoc(id) {
+      this.settingDocId = id
+      this.showSetting = true
+    },
+    transferDoc(id) {
+      this.selectDocId = id
+      this.transferUsername = ''
+      this.dialogTransferDoc = true
+    },
+    transfer() {
+      this.$post('/admin/document/change-founder', {
+        document_id: this.selectDocId,
+        username: this.transferUsername
+      })
+        .then(() => {
+          this.getAllProject()
+          this.$message('转让成功！')
+          this.dialogTransferDoc = false
+        })
+    },
+    goChapter(item, bool) {
+      let routeData = {
+        name: 'chapter',
+        params: {
+          id: item.id
         }
-        if (bool) {
-          routeData['query'] = {type: 'add', documentType: 1}
-        }
-        localStorage.projectName = item.name;
-        this.$router.push(routeData);
-      },
-      format(time) {
-        if (time) {
-          let result = timestampFormat(time)
-          if (result.length > 8) {
-            return timestampFormat(time).slice(5);
-          } else {
-            return timestampFormat(time);
-          }
-        }
-      },
-      handleClose() {
-        this.getAllProject()
-        this.showSetting = false
-      },
-      handleSizeChange(val) {
-        this.listQuery.page_size = val
-        this.getAllProject()
-      },
-      handleCurrentChange(val) {
-        this.listQuery.page = val
-        this.getAllProject()
       }
+      if (bool) {
+        routeData['query'] = {type: 'add', documentType: 1}
+      }
+      localStorage.projectName = item.name;
+      this.$router.push(routeData);
+    },
+    format(time) {
+      if (time) {
+        let result = timestampFormat(time)
+        if (result.length > 8) {
+          return timestampFormat(time).slice(5);
+        } else {
+          return timestampFormat(time);
+        }
+      }
+    },
+    handleClose() {
+      this.getAllProject()
+      this.showSetting = false
+    },
+    handleSizeChange(val) {
+      this.listQuery.page_size = val
+      this.getAllProject()
+    },
+    handleCurrentChange(val) {
+      this.listQuery.page = val
+      this.getAllProject()
     }
   }
+}
 </script>
 <style lang="scss" scoped>
+  .pagination-wrap {
+    .el-pagination {
+      float: none;
+      text-align: center;
+    }
+  }
+
   .card-box {
     margin-top: 30px;
   }
