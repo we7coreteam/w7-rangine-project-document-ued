@@ -819,20 +819,20 @@
       // console.log(to)
       // console.log(from)
       if (this.isFormChange || this.isApiHeaderTreeDataChange || this.isApiParamsTreeDataChange || this.isApiBodyTreeDataChange || this.isApiResTreeDataChange || this.isMarkDownContentChange) {
-        this.$confirm('您有数据尚未保存, 是否保存?', '提示', {
+        this.$confirm('您有数据尚未保存，确认保存?', '提示', {
           showClose: false,
           closeOnClickModal: false,
-          confirmButtonText: '确定',
+          confirmButtonText: '确认',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           this.saveApi();
-          next();
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消'
           });
+          next();
         });
       } else {
         next();
@@ -1025,10 +1025,10 @@
         console.log(12);
         console.log(data);
         if (this.isFormChange || this.isApiHeaderTreeDataChange || this.isApiParamsTreeDataChange || this.isApiBodyTreeDataChange || this.isApiResTreeDataChange || this.isMarkDownContentChange) {
-          this.$confirm('您有数据尚未保存, 是否保存?', '提示', {
+          this.$confirm('您有数据尚未保存，确认保存?', '提示', {
             showClose: false,
             closeOnClickModal: false,
-            confirmButtonText: '确定',
+            confirmButtonText: '确认',
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
@@ -1055,8 +1055,22 @@
             this.isApiBodyTreeDataChange = false;
             this.isApiResTreeDataChange = false;
             this.isMarkDownContentChange = false;
-            this.getOperRecord();
-            this.getChapters();
+            // this.getOperRecord();
+            // this.getChapters();
+            this.previewId = data.id;
+            this.docTitle = data.name;
+            this.chapter_id = data.id;
+            this.viewChapter();
+            this.treeActive = true;
+            if (this.menuBarVisible) {
+              this.menuBarVisible = false
+            }
+            this.selectNodeObj = data;
+            this.setOperRecord(data); // 临时注释
+            console.log('无变化');
+            this.$nextTick(() => {
+              $('.w7-tree .is-current').attr('data-active', 'tree-active');
+            })
           });
           return false;
         } else {
