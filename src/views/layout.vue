@@ -131,11 +131,11 @@
     z-index: 999;
     background-color: #fff;
 
-
     .logo {
       margin-right: 20px;
       display: flex;
       font-size: 24px;
+
       .wi {
         font-size: 30px;
         padding-right: 20px;
@@ -231,22 +231,26 @@
         color: #3296fa;
       }
       #w7-nav-menu {
+        background-color: #fff;
         display: none;
         position: fixed;
         top: 60px;
         right: 50px;
         font-size: 14px;
         text-align: center;
-        box-shadow: 0px 2px 10px 0px rgba(82,185,198,0.1);
+        box-shadow: 0 2px 10px 0 rgba(82,185,198,.1);
         border-radius: 0;
         border: 0;
         z-index: 9999;
+        border-radius: 10px;
+
         ul {
           margin: 0;
-          padding: 0;
+          padding: 7px 0;
         }
         li {
           list-style: none;
+          line-height: 32px;
         }
         ul li:hover {
           color: #3296fa;

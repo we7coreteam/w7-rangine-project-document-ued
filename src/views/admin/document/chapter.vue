@@ -1859,7 +1859,18 @@
 
       // 删除响应数据模块
       deleteApiItem(index) {
-        this.apiResTreeData.splice(index, 1);
+        this.$confirm('确认删除该数据吗?', '提示', {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.apiResTreeData.splice(index, 1);
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          });
+        });
       }
     }
   }
@@ -2059,7 +2070,6 @@
     }
   }
 
-
   .w7-document-chapter {
     .chapter-title {
       margin-bottom: 30px;
@@ -2188,6 +2198,15 @@
 
     }
   }
+
+  .api {
+    /deep/ {
+      .el-tree-node:focus > .el-tree-node__content {
+        background-color: transparent;
+      }
+    }
+  }
+
 </style>
 <style>
   [v-cloak] {
@@ -2197,5 +2216,4 @@
   .w7-tree.el-tree--highlight-current .is-current[data-active=tree-active] > .el-tree-node__content {
      background-color: #fff !important;
    }
-
 </style>
