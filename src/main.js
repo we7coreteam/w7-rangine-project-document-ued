@@ -26,8 +26,8 @@ const vm = new Vue({
 export default vm;
 
 router.beforeEach((to, from, next) => {
-  console.log(to);
-  console.log(from);
+  // console.log(to);
+  // console.log(from);
   if (to.name == 'adminLoginPage') {
     const recordHref = location.href;
     localStorage.recordHref = recordHref;

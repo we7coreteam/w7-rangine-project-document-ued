@@ -1,4 +1,3 @@
-
 const path = require('path')
 const webpack = require('webpack')
 const CompressionPlugin = require("compression-webpack-plugin")
@@ -12,8 +11,8 @@ module.exports = {
   assetsDir: '', //静态资源目录
   devServer: {
     host: '0.0.0.0',
-    // proxy: 'http://api.we7888.cn/',
-    proxy: 'http://wiki.we7888.cn/',
+    proxy: 'http://api.we7888.cn/',
+    // proxy: 'http://wiki.we7888.cn/',
     // proxy: {
     //   '/api': {
     //     target: 'http://192.168.168.23:99/',
@@ -36,6 +35,9 @@ module.exports = {
     sourceMap: false
   },
   configureWebpack: config => {
+    if(process.env.NODE_ENV === 'production'){
+      config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
+    }
     return {
       performance: {
         hints: false
@@ -51,7 +53,6 @@ module.exports = {
           jQuery: "jquery",
           "windows.jQuery": "jquery",
         }),
-
         // new webpack.HotModuleReplacementPlugin() // hot: true 开启了hot模式，无需手动加载HotModuleReplacementPlugin
       ]
     }
