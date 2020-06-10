@@ -35,6 +35,9 @@ module.exports = {
     sourceMap: false
   },
   configureWebpack: config => {
+    /*
+    * npm install terser-webpack-plugin --save
+    * 去除生产环境console.log*/
     if(process.env.NODE_ENV === 'production'){
       config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
     }
@@ -56,6 +59,5 @@ module.exports = {
         // new webpack.HotModuleReplacementPlugin() // hot: true 开启了hot模式，无需手动加载HotModuleReplacementPlugin
       ]
     }
-
   }
 }
