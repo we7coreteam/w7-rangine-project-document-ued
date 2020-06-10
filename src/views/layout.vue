@@ -31,7 +31,8 @@
         <div id="w7-nav-menu" class="menu-bar">
           <ul class="menu-ul">
             <li class="menu__item" @click="goto('accountInfo')">个人中心</li>
-            <li class="menu__item" @click="exit">退出系统1</li>
+            <li class="menu__item">退出系统1</li>
+            <!--<li class="menu__item" @click="exit">退出系统1</li>-->
           </ul>
         </div>
       </div>
@@ -111,7 +112,6 @@
           this.$router.push({name: 'adminLoginPage'});
         }
       })
-      // window.location.href = window.location.origin + "/common/auth/logout"
     },
   }
 }
