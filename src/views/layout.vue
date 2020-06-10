@@ -31,7 +31,7 @@
         <div id="w7-nav-menu" class="menu-bar">
           <ul class="menu-ul">
             <li class="menu__item" @click="goto('accountInfo')">个人中心</li>
-            <li class="menu__item" @click="exit">退出系统</li>
+            <li class="menu__item" @click="exit">退出系统1</li>
           </ul>
         </div>
       </div>
@@ -107,7 +107,6 @@
     },
     exit() {
       logout().then(res => {
-        alert(1);
         if (res.code == 200) {
           this.$router.push({name: 'adminLoginPage'});
         }
