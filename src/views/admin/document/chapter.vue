@@ -1757,6 +1757,7 @@
           chapter_id,
           document_id
         }).then(res => {
+          this.loading.close();
           if (res.code == 200) {
             this.layout = res.data.layout;
             if (res.data.layout == 1) {
@@ -1846,8 +1847,10 @@
                 this.markDownContentCompared = res.data.content;
               }
             }
-            this.loading.close();
           }
+        }).catch(e => {
+          console.log(e);
+          this.loading.close();
         })
       },
 
