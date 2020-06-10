@@ -1,5 +1,4 @@
 //
-import axios from 'axios'
 import router from '../router'
 import {Message} from 'element-ui'
 import qs from 'qs'
@@ -24,6 +23,9 @@ instance.interceptors.response.use(response => {
       // router.push({name: 'adminLoginPage'});
       Message.closeAll();
       Message.error(response.data.message);
+    } else if (response.data.code == 445) {
+      Message.error(response.data.message);
+      router.push('/admin/document');
     } else if (response.data.code == 446) {
       Message.error(response.data.message);
       router.push('/admin/document');
