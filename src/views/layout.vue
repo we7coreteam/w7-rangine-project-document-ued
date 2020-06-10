@@ -107,6 +107,7 @@
     },
     exit() {
       logout().then(res => {
+        console.error(1)
         if (res.code == 200) {
           this.$router.push({name: 'adminLoginPage'});
         }
