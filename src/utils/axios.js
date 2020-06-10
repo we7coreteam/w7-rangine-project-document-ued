@@ -1,4 +1,3 @@
-//
 import router from '../router'
 import {Message} from 'element-ui'
 import qs from 'qs'
