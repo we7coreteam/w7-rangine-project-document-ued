@@ -35,8 +35,9 @@
 </template>
 
 <script>
-import axios from '@/utils/axios'
-export default {
+  import axios from '@/utils/fetch'
+
+  export default {
   name: 'adminLogin',
   data() {
     return {

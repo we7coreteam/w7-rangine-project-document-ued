@@ -18,11 +18,17 @@ instance.interceptors.response.use(response => {
   if (response.data.code >= 200 && response.data.code < 300) {
     return response.data;
   } else {
-    if (response.data.code == '444') {
+    if (response.data.code == 444) {
       router.push('/admin-login?redirect_url='+ window.location.href)
       // router.push({name: 'adminLoginPage'});
       Message.closeAll();
       Message.error(response.data.message);
+    } else if (response.data.code == 445) {
+      Message.error(response.data.message);
+      router.push('/admin/document');
+    } else if (response.data.code == 446) {
+      Message.error(response.data.message);
+      router.push('/admin/document');
     } else {
       Message.closeAll();
       Message.error(response.data.message);
