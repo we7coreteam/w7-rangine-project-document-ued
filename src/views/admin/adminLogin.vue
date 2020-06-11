@@ -38,128 +38,119 @@
   import axios from '@/utils/fetch'
 
   export default {
-    name: 'adminLogin',
-    data() {
-      return {
-        autofocus: false,
-        active: 'first',
-        code: '',
-        formData: {
-          username: '',
-          userpass: '',
-          code: ''
-        },
-        thirdPartyList: []
-      }
-    },
-    beforeRouteEnter(to, from, next) {
-      let code = to.query.code//第三方登录成功之后返回的code
-      let redirect_url = to.query.redirect_url//需要跳转的url
-      let app_id = to.query.app_id
-      // console.log(10);
-      if (code) {
-        // debugger
-        axios.post('/common/auth/third-party-login', {
-          code,
-          app_id
-        }).then(res => {
-          if (res && res.is_need_bind) {//跳转到绑定
-            next('/bind')
+  name: 'adminLogin',
+  data() {
+    return {
+      autofocus: false,
+      active: 'first',
+      code: '',
+      formData: {
+        username: '',
+        userpass: '',
+        code: ''
+      },
+      thirdPartyList: []
+    }
+  },
+  beforeRouteEnter(to, from, next) {
+    let code = to.query.code//第三方登录成功之后返回的code
+    let redirect_url = to.query.redirect_url//需要跳转的url
+    let app_id = to.query.app_id
+    // console.log(10);
+    if (code) {
+      // debugger
+      axios.post('/common/auth/third-party-login', {
+        code,
+        app_id
+      }).then(res => {
+        if (res && res.is_need_bind) {//跳转到绑定
+          next('/bind')
+        } else {
+          if (!redirect_url) {
+            // console.error(2)
+            next('/admin/document')
           } else {
-            if (!redirect_url) {
-              console.error(2)
-              next('/admin/document')
-            } else {
-              // console.error(3)
-              window.open(redirect_url, '_self')
-            }
+            // console.error(3)
+            window.open(redirect_url, '_self')
           }
-        }).catch(() => {
-          next('/admin-login')
+        }
+      }).catch(() => {
+        next('/admin-login')
+      })
+    } else {
+      // debugger
+      // console.error(6)
+      // console.log(6)
+      if (process.env.NODE_ENV == 'production') {
+        // console.log('production');
+        axios.post('/common/auth/default-login-url').then(res => {
+          if (res.data) {
+            window.open(res.data, '_self')
+          } else {
+            next()
+          }
         })
       } else {
-        // debugger
-        // console.error(6)
-        // console.log(6)
-        if (process.env.NODE_ENV == 'production') {
-          // console.log('production');
-          axios.post('/common/auth/default-login-url').then(res => {
-            if (res.data) {
-              window.open(res.data, '_self')
-            } else {
-              next()
-            }
-          })
-        } else {
-          // console.error(7)
-          next()
-        }
-      }
-    },
-    created () {
-      this.getCode();
-      this.getThirdParty();
-      var data = this.$mock.mock({
-        'list|1-10': [{
-          'id|+1': 1,
-          'user': {
-            'name|1-5': 'name'
-          }
-        }]
-      })
-      console.log(JSON.stringify(data, null, 4))
-    },
-    methods: {
-      showFind() {
-        this.$message({message: '请联系管理员修改或使用密码找回工具修改'})
-      },
-      getCode() {
-        this.$post('/common/verifycode/image')
-          .then(res => {
-            if(res.code == 200) {
-              this.code = res.data.img
-            } else {
-              this.$message.error(res.message);
-            }
-          })
-      },
-      login() {
-        // for(let index in this.formData) {
-        //   if(!this.formData[index]) {
-        //     this.$message('请填写完整表单')
-        //     return false
-        //   }
-        // }
-        // debugger
-        this.$post('/common/auth/login', this.formData).then(() => {
-          let msg = this.$message('登录成功')
-          setTimeout(() => {
-            msg.close();
-            const href = localStorage.recordHref;
-            if (href) {
-              location.href = href;
-            } else {
-              this.$router.push('/admin/document')
-            }
-          }, 500)
-        }).catch(() => {
-          this.formData.code = ''
-          document.getElementsByClassName("el-input__inner")[2].focus()
-          this.getCode()
-        })
-      },
-      getThirdParty() {
-        console.log('redirect_url');
-        console.log(localStorage.redirect_url);
-        this.$post('/common/auth/method', {
-          redirect_url: localStorage.recordHref || this.$route.query.redirect_url
-        }).then(res => {
-          this.thirdPartyList = res.data || []
-        })
-      },
-      thirdPartyIconClick(url) {
-        window.open(url, '_self')
+        // console.error(7)
+        next()
       }
     }
+  },
+  created () {
+    this.getCode();
+    this.getThirdParty();
+  },
+  methods: {
+    showFind() {
+      this.$message({message: '请联系管理员修改或使用密码找回工具修改'})
+    },
+    getCode() {
+      this.$post('/common/verifycode/image')
+        .then(res => {
+          if(res.code == 200) {
+            this.code = res.data.img
+          } else {
+            this.$message.error(res.message);
+          }
+        })
+    },
+    login() {
+      // for(let index in this.formData) {
+      //   if(!this.formData[index]) {
+      //     this.$message('请填写完整表单')
+      //     return false
+      //   }
+      // }
+      // debugger
+      this.$post('/common/auth/login', this.formData).then(() => {
+        let msg = this.$message('登录成功')
+        setTimeout(() => {
+          msg.close();
+          const href = localStorage.recordHref;
+          if (href) {
+            location.href = href;
+          } else {
+            this.$router.push('/admin/document')
+          }
+        }, 500)
+      }).catch(() => {
+        this.formData.code = ''
+        document.getElementsByClassName("el-input__inner")[2].focus()
+        this.getCode()
+      })
+    },
+    getThirdParty() {
+      console.log('redirect_url');
+      console.log(localStorage.redirect_url);
+      this.$post('/common/auth/method', {
+        redirect_url: localStorage.recordHref || this.$route.query.redirect_url
+      }).then(res => {
+        this.thirdPartyList = res.data || []
+      })
+    },
+    thirdPartyIconClick(url) {
+      window.open(url, '_self')
+    }
   }
+}
 </script>
