@@ -28,7 +28,9 @@ instance.interceptors.response.use(response => {
       router.push('/admin/document');
     } else if (response.data.code == 446) {
       Message.error(response.data.message);
-      router.push('/admin/document');
+      setTimeout(() => {
+        router.push('/admin/document');
+      }, 3000)
     } else {
       Message.closeAll();
       Message.error(response.data.message);
