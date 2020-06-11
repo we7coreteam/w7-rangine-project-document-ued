@@ -54,6 +54,12 @@ export const logout = (data) => axios({
   method: 'post'
 })
 
+export const logouturl = (data) => axios({
+  url: '/common/auth/getlogouturl',
+  data,
+  method: 'get'
+})
+
 
 
 

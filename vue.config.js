@@ -12,8 +12,8 @@ module.exports = {
   devServer: {
     host: '0.0.0.0',
     // proxy: 'http://api.we7888.cn/',
-    proxy: 'http://192.168.168.31:99/',
-    // proxy: 'http://wiki.we7888.cn/',
+    // proxy: 'http://192.168.168.31:99/',
+    proxy: 'http://wiki.we7888.cn/',
     // proxy: {
     //   '/api': {
     //     target: 'http://192.168.168.23:99/',

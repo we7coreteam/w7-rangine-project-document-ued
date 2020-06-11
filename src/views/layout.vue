@@ -48,7 +48,7 @@
 
 <script>
   import {mapGetters} from 'vuex'
-  import {logout} from '@/api/api'
+  import {logouturl} from '@/api/api'
 
   export default {
   name: 'admin',
@@ -106,12 +106,12 @@
       })
     },
     exit() {
-      // logout().then(res => {
-      //   if (res.code == 200) {
-      //     this.$router.push({name: 'adminLoginPage'});
-      //   }
-      // })
-      window.location.href = window.location.origin + "/common/auth/logout"
+      logouturl().then(res => {
+        if (res.code == 200) {
+          location.href = res.data;
+        }
+      })
+      // window.location.href = window.location.origin + "/common/auth/logout"
     },
   }
 }
