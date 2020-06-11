@@ -26,18 +26,18 @@
       <div class="tree-warpper">
         <el-scrollbar style="height: 100%">
           <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text="没有与搜索条件匹配的项"
-            ref="chaptersTree"
-            node-key="id"
-            :expand-on-click-node="true"
-            :highlight-current="true"
-            :default-expanded-keys="defaultExpanded"
-            :default-checked-keys="defaultCheckedKeys"
-            :filter-node-method="filterNode"
-            @node-contextmenu="rightClick"
-            @node-click="handleNodeClick"
-            draggable
-            @node-drop="handleDrop"
-            :allow-drop="allowDrop">
+           ref="chaptersTree"
+           node-key="id"
+           :expand-on-click-node="true"
+           :highlight-current="true"
+           :default-expanded-keys="defaultExpanded"
+           :default-checked-keys="defaultCheckedKeys"
+           :filter-node-method="filterNode"
+           @node-contextmenu="rightClick"
+           @node-click="handleNodeClick"
+           draggable
+           @node-drop="handleDrop"
+           :allow-drop="allowDrop">
             <div class="custom-tree-node" slot-scope="{ node, data }">
               <span class="node-info">
                 <i class="wq wq-wendang" v-if="data.is_dir == 1"></i>
@@ -330,12 +330,12 @@
                         </el-form-item>
                       </el-col>
                       <!--<el-col :span="4">-->
-                        <!--<el-form-item label="">-->
-                          <!--<el-select v-model="data.enabled" placeholder="是否必填">-->
-                            <!--<el-option label="true" :value="2"></el-option>-->
-                            <!--<el-option label="false" :value="1"></el-option>-->
-                          <!--</el-select>-->
-                        <!--</el-form-item>-->
+                      <!--<el-form-item label="">-->
+                      <!--<el-select v-model="data.enabled" placeholder="是否必填">-->
+                      <!--<el-option label="true" :value="2"></el-option>-->
+                      <!--<el-option label="false" :value="1"></el-option>-->
+                      <!--</el-select>-->
+                      <!--</el-form-item>-->
                       <!--</el-col>-->
                       <el-col :span="4">
                         <el-form-item label="">
@@ -745,7 +745,7 @@
             console.log('newObj');
             console.log(newObj);
             if (newObj.length && newObj[0].already == 0) {
-              console.log(222);
+              // console.log(222);
               newObj = newObj.filter(item => {
                 return item.name || item.description
               })
@@ -957,14 +957,14 @@
               this.chapters = this.initTreeData(res.data.catalog); // 临时注释
               //如果有记录的默认文档节点，则选中
               if (this.defaultSelect) {
-                console.log(1);
+                // console.log(1);
                 // console.log(this.defaultSelect);
                 this.$nextTick(() => {
                   this.$refs.chaptersTree.setCurrentKey(this.defaultSelect);
-                  console.log(3);
+                  // console.log(3);
                   console.log(this.$refs.chaptersTree.getCurrentNode());
                   if (this.$refs.chaptersTree.getCurrentNode() != null) {
-                    console.log(4);
+                    // console.log(4);
                     this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode());
                     //展开
                     let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
@@ -972,7 +972,7 @@
                     this.defaultExpanded = record.defaultExpanded;
                     this.defaultExpanded.push(this.$refs.chaptersTree.getCurrentNode().id)
                   } else {
-                    console.log(5);
+                    // console.log(5);
                     this.$refs.chaptersTree.setCurrentKey(res.data.catalog[0].id);
                     this.handleNodeClick(res.data.catalog[0]);
                     let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
@@ -982,7 +982,7 @@
                   }
                 })
               } else {
-                console.log(2);
+                // console.log(2);
                 this.$nextTick(() => {
                   this.$refs.chaptersTree.setCurrentKey(res.data.catalog[0].id);
                   this.handleNodeClick(res.data.catalog[0]);
@@ -1021,42 +1021,66 @@
         if (!value) return true;
         return data.name.indexOf(value) !== -1;
       },
+      // 点击tree
       handleNodeClick(data) {
         console.log(12);
         console.log(data);
-        if (this.isFormChange || this.isApiHeaderTreeDataChange || this.isApiParamsTreeDataChange || this.isApiBodyTreeDataChange || this.isApiResTreeDataChange || this.isMarkDownContentChange) {
-          this.$confirm('您有数据尚未保存，确认保存?', '提示', {
-            showClose: false,
-            closeOnClickModal: false,
-            confirmButtonText: '确认',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            this.saveApi();
-            // location.reload();
-            this.isFormChange = false;
-            this.isApiHeaderTreeDataChange = false;
-            this.isApiParamsTreeDataChange = false;
-            this.isApiBodyTreeDataChange = false;
-            this.isApiResTreeDataChange = false;
-            this.isMarkDownContentChange = false;
-            this.getOperRecord();
-            this.getChapters();
-            // this.viewChapter();
-          }).catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消'
+        // 目录不展示内容，只展开文件夹
+        if (!data.is_dir) {
+          this.$nextTick(() => {
+            $('.w7-tree .el-tree-node').removeClass('is-checked').attr({'data-active': ''});
+          })
+          localStorage.currentData = JSON.stringify(data);
+          if (this.isFormChange || this.isApiHeaderTreeDataChange || this.isApiParamsTreeDataChange || this.isApiBodyTreeDataChange || this.isApiResTreeDataChange || this.isMarkDownContentChange) {
+            this.$confirm('您有数据尚未保存，确认保存?', '提示', {
+              showClose: false,
+              closeOnClickModal: false,
+              confirmButtonText: '确认',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              this.saveApi();
+              // location.reload();
+              this.isFormChange = false;
+              this.isApiHeaderTreeDataChange = false;
+              this.isApiParamsTreeDataChange = false;
+              this.isApiBodyTreeDataChange = false;
+              this.isApiResTreeDataChange = false;
+              this.isMarkDownContentChange = false;
+              this.getOperRecord();
+              this.getChapters();
+              // this.viewChapter();
+            }).catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消'
+              });
+              // location.reload();
+              this.isFormChange = false;
+              this.isApiHeaderTreeDataChange = false;
+              this.isApiParamsTreeDataChange = false;
+              this.isApiBodyTreeDataChange = false;
+              this.isApiResTreeDataChange = false;
+              this.isMarkDownContentChange = false;
+              // this.getOperRecord();
+              // this.getChapters();
+              this.previewId = data.id;
+              this.docTitle = data.name;
+              this.chapter_id = data.id;
+              this.viewChapter();
+              this.treeActive = true;
+              if (this.menuBarVisible) {
+                this.menuBarVisible = false
+              }
+              this.selectNodeObj = data;
+              this.setOperRecord(data); // 临时注释
+              console.log('无变化');
+              this.$nextTick(() => {
+                $('.w7-tree .is-current').attr('data-active', 'tree-active');
+              })
             });
-            // location.reload();
-            this.isFormChange = false;
-            this.isApiHeaderTreeDataChange = false;
-            this.isApiParamsTreeDataChange = false;
-            this.isApiBodyTreeDataChange = false;
-            this.isApiResTreeDataChange = false;
-            this.isMarkDownContentChange = false;
-            // this.getOperRecord();
-            // this.getChapters();
+            return false;
+          } else {
             this.previewId = data.id;
             this.docTitle = data.name;
             this.chapter_id = data.id;
@@ -1071,22 +1095,17 @@
             this.$nextTick(() => {
               $('.w7-tree .is-current').attr('data-active', 'tree-active');
             })
-          });
-          return false;
-        } else {
-          this.previewId = data.id;
-          this.docTitle = data.name;
-          this.chapter_id = data.id;
-          this.viewChapter();
-          this.treeActive = true;
-          if (this.menuBarVisible) {
-            this.menuBarVisible = false
           }
-          this.selectNodeObj = data;
-          this.setOperRecord(data); // 临时注释
-          console.log('无变化');
+        } else {
+          const currentData = JSON.parse(localStorage.currentData);
+          console.log(currentData);
+          this.defaultCheckedKeys = [currentData.id];
+          console.log(this.defaultCheckedKeys);
+          // this.treeActive = true;
+          // this.selectNodeObj = currentData;
+          // this.setOperRecord(currentData);
           this.$nextTick(() => {
-            $('.w7-tree .is-current').attr('data-active', 'tree-active');
+            $('.w7-tree .is-checked').attr('data-active', 'tree-active');
           })
         }
       },
@@ -1434,7 +1453,6 @@
         this.getChapters()
         this.showSetting = false
       },
-
       // 获取请求类型
       getMethodType() {
         getMethodType({}).then(res => {
@@ -1443,13 +1461,11 @@
           }
         })
       },
-
       // 请求类型切换
       tabRequest(tab) {
         localStorage.tab_location = tab.name;
         console.log(tab);
       },
-
       // 请求数据 输入框输入 下方新增同级node
       paramNameChange(node, data) {
         if (data.name.length) {
@@ -1463,7 +1479,6 @@
           }
         }
       },
-
       // 响应数据 输入框输入 下方新增同级node
       resParamNameChange(node, data) {
         if (data.name.length) {
@@ -1476,7 +1491,6 @@
           }
         }
       },
-
       // request请求 添加同级node
       addFirstNode() {
         const baseRequestData = JSON.parse(JSON.stringify(this.baseRequestData));
@@ -1509,7 +1523,6 @@
           apiDataFilter(this.apiBodyTreeData);
         }
       },
-
       // res响应数据 添加同级node
       addResFirstNode() {
         const This = this;
@@ -1528,7 +1541,6 @@
 
         apiDataFilter(this.apiResTreeData);
       },
-
       // 请求数据 添加下一级node
       addApiTreeNode(data) {
         // console.log('data');
@@ -1555,7 +1567,6 @@
           this.$message.warning('参数类型为Object或者为Array才可添加！')
         }
       },
-
       // 响应数据 添加下一级node
       addResApiTreeNode(data) {
         console.log('data');
@@ -1582,7 +1593,6 @@
           this.$message.warning('参数类型为Object或者为Array才可添加！')
         }
       },
-
       // 删除 请求数据node
       removeApiTreeNode(node, data) {
         const length1 = this.apiHeaderTreeData.length;
@@ -1614,7 +1624,6 @@
         const index = children.findIndex(d => d.id === data.id);
         children.splice(index, 1);
       },
-
       // 删除 响应数据数据node
       removeResApiTreeNode(node, data) {
         console.log(node);
@@ -1631,7 +1640,6 @@
         const index = children.findIndex(d => d.id === data.id);
         children.splice(index, 1);
       },
-
       insertAfter(node, data) {
         // console.log(node);
         // console.log(data);
@@ -1656,7 +1664,6 @@
           parent.data.children.push(newChild);
         }
       },
-
       // 保存文档
       saveApi() {
         // console.log('body_param_location');
@@ -1736,7 +1743,6 @@
           })
         }
       },
-
       // 清空form
       emptyForm() {
         this.docTitle = ''
@@ -1747,7 +1753,6 @@
         this.apiResTreeData = this.apiResTreeDataCopy;
         this.markDownContent = '';
       },
-
       // 查看文档
       viewChapter() {
         const chapter_id = this.chapter_id;
@@ -1773,12 +1778,12 @@
                   this.formCompared = "";
                 }
                 this.form = JSON.parse(JSON.stringify(record.api));
-                console.log(55);
+                // console.log(55);
                 this.form.tab_location = localStorage.tab_location || this.form.tab_location.toString();
                 // this.form.body_param_location = this.form.body_param_location.toString();
                 this.form.body_param_location = this.form.body_param_location;
               } else {
-                console.log(56);
+                // console.log(56);
                 this.formCompared = "";
                 this.form = JSON.parse(JSON.stringify(this.formCopy));
               }
@@ -1795,7 +1800,7 @@
               }
               // params
               if (record.body[2].length) {
-                console.log(record.body['2']);
+                // console.log(record.body['2']);
                 this.apiParamsTreeData = JSON.parse(JSON.stringify(record.body['2']));
                 this.apiParamsTreeDataCompared = JSON.parse(JSON.stringify(record.body['2']));
                 this.apiParamsTreeData.push(apiData2);
@@ -1853,13 +1858,11 @@
           this.loading.close();
         })
       },
-
       // 添加响应数据模块
       addResNode() {
         const apiData = JSON.parse(JSON.stringify(this.baseRequestData));
         this.apiResTreeData.push({description: '', data: [apiData]});
       },
-
       // 删除响应数据模块
       deleteApiItem(index) {
         this.$confirm('确认删除该数据吗?', '提示', {
@@ -2209,14 +2212,17 @@
       }
     }
   }
-
 </style>
 <style>
   [v-cloak] {
     display: none !important;
   }
 
-  .w7-tree.el-tree--highlight-current .is-current[data-active=tree-active] > .el-tree-node__content {
-     background-color: #fff !important;
-   }
+  /*增加.el-tree-node__children，去除目录选中状态*/
+  .w7-tree.el-tree--highlight-current .el-tree-node__children .is-current[data-active=tree-active] > .el-tree-node__content {
+    background-color: #fff !important;
+  }
+  .w7-tree.el-tree--highlight-current .el-tree-node__children .is-checked[data-active=tree-active] > .el-tree-node__content {
+    background-color: #fff !important;
+  }
 </style>
