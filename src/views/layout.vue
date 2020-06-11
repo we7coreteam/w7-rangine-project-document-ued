@@ -106,11 +106,12 @@
       })
     },
     exit() {
-      logout().then(res => {
-        if (res.code == 200) {
-          this.$router.push({name: 'adminLoginPage'});
-        }
-      })
+      // logout().then(res => {
+      //   if (res.code == 200) {
+      //     this.$router.push({name: 'adminLoginPage'});
+      //   }
+      // })
+      window.location.href = window.location.origin + "/common/auth/logout"
     },
   }
 }
