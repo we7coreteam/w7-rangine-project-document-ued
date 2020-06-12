@@ -25,7 +25,7 @@
       </div>
       <div class="tree-warpper">
         <el-scrollbar style="height: 100%">
-          <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text="没有与搜索条件匹配的项"
+          <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text="点击上方按钮创建"
            ref="chaptersTree"
            node-key="id"
            :expand-on-click-node="true"
@@ -946,10 +946,55 @@
           document_id: this.$route.params.id
         }).then(res => {
           if (res.code == 200) {
+            let history = '';
+            if (localStorage['currentData_' + this.$route.params.id]) {
+              history = JSON.parse(localStorage['currentData_' + this.$route.params.id]);
+            }
             if (res.data.catalog == 0) {
               this.isDocEmpty = true;
               // this.initCreateChapter();
+            } else if (res.data.catalog && !history ) {
+              console.log(555);
+              const findChapter = (arr) => {
+                if (arr.length) {
+                  console.log('arr');
+                  console.log(arr);
+                  for (const item of arr) {
+                    try {
+                      if (item.is_dir) {
+                        if (item.children.length) {
+                          findChapter(item.children);
+                        }
+                      } else {
+                        console.log('findChapter');
+                        console.log(item.id);
+                        this.isDocEmpty = false;
+                        this.$nextTick(() => {
+                          console.log('item');
+                          console.log(item);
+                          this.chapters = this.initTreeData(res.data.catalog);
+                          this.handleNodeClick(item);
+                          this.defaultExpanded = [item.parent_id];
+                          // this.$refs.chaptersTree.setCurrentKey(item.id);
+                          // this.defaultCheckedKeys = [item.id];
+                          // $('.w7-tree .is-checked').attr('data-active', 'tree-active');
+                          // const has2 = $('.w7-tree .is-current').prop('aria-expanded');
+                          // if (has2) {
+                          //   // $('.w7-tree .is-current').attr('data-active', 'tree-active');
+                          //   $('.w7-tree .is-checked').attr('data-active', 'tree-active');
+                          // }
+                        })
+                        return false;
+                      }
+                    } catch (e) {
+                      console.log(e);
+                    }
+                  }
+                }
+              }
+              findChapter(res.data.catalog);
             } else {
+              console.log(1111);
               this.isDocEmpty = false;
               this.docName = res.data.document.name;
               this.has_manage = res.data.acl.has_manage;
@@ -961,7 +1006,7 @@
                 // console.log(this.defaultSelect);
                 this.$nextTick(() => {
                   this.$refs.chaptersTree.setCurrentKey(this.defaultSelect);
-                  // console.log(3);
+                  console.log(3);
                   console.log(this.$refs.chaptersTree.getCurrentNode());
                   if (this.$refs.chaptersTree.getCurrentNode() != null) {
                     // console.log(4);
@@ -994,6 +1039,7 @@
       },
       //重新遍历树数据，给每个文档节点添加is_default属性
       initTreeData(treeData) {
+        console.log(8);
         function loopData(data, defaultId) {
           for (let i = 0; i < data.length; i++) {
             if (data[i].is_dir) {
@@ -1025,12 +1071,34 @@
       handleNodeClick(data) {
         console.log(12);
         console.log(data);
+/*
+        const This = this;
+        function findChapter(arr) {
+          if (arr.length) {
+            for (const item of arr) {
+              if (item.is_dir) {
+                findChapter(item.children)
+              } else {
+                This.defaultCheckedKeys = [item.id];
+                console.log('findChapter');
+                console.log(item.id);
+                return false;
+              }
+            }
+          }
+        }
+        findChapter(this.chapters);
+*/
         // 目录不展示内容，只展开文件夹
         if (!data.is_dir) {
           this.$nextTick(() => {
+            console.log(7);
             $('.w7-tree .el-tree-node').removeClass('is-checked').attr({'data-active': ''});
           })
-          localStorage.currentData = JSON.stringify(data);
+          // console.error(1233)
+          const document_id = this.$route.params.id;
+          // console.error('currentData_' + document_id)
+          localStorage['currentData_' + document_id] = JSON.stringify(data);
           if (this.isFormChange || this.isApiHeaderTreeDataChange || this.isApiParamsTreeDataChange || this.isApiBodyTreeDataChange || this.isApiResTreeDataChange || this.isMarkDownContentChange) {
             this.$confirm('您有数据尚未保存，确认保存?', '提示', {
               showClose: false,
@@ -1093,19 +1161,66 @@
             this.setOperRecord(data); // 临时注释
             console.log('无变化');
             this.$nextTick(() => {
-              $('.w7-tree .is-current').attr('data-active', 'tree-active');
+              const children1 = $('.w7-tree .is-current').find('.el-tree-node__children').length;
+              const children2 = $('.w7-tree .is-current').find('.el-tree-node__children .el-tree-node').length;
+              const has = $('.w7-tree .is-current').prop('aria-expanded');
+              console.log('children1 ' + children1)
+              console.log('children2 ' + children2)
+              console.log('has ' + has)
+              if ((children1 == 0 || children1 > 0) && children2 == 0 && !has) {
+                // alert(123333);
+                $('.w7-tree .is-current').attr('data-active', 'tree-active');
+                $('.w7-tree .is-checked').attr('data-active', 'tree-active');
+                $('.w7-tree .is-checked').attr('data-act', 'tree-active');
+              }
             })
           }
         } else {
-          const currentData = JSON.parse(localStorage.currentData);
-          console.log(currentData);
-          this.defaultCheckedKeys = [currentData.id];
-          console.log(this.defaultCheckedKeys);
-          // this.treeActive = true;
-          // this.selectNodeObj = currentData;
-          // this.setOperRecord(currentData);
+          const document_id = this.$route.params.id;
+          if (localStorage['currentData_' + document_id]) {
+            let currentData = JSON.parse(localStorage['currentData_' + document_id]);
+            console.log(currentData);
+            this.defaultCheckedKeys = [currentData.id];
+            console.log(this.defaultCheckedKeys);
+          } else {
+            console.log(this.chapters);
+            const This = this;
+            function findChapter(arr) {
+              if (arr.length) {
+                for (const item of arr) {
+                  if (item.is_dir) {
+                    findChapter(item.children)
+                  } else {
+                    This.defaultCheckedKeys = [item.id];
+                    console.log('findChapter');
+                    console.log(item.id);
+                    return false;
+                  }
+                }
+              }
+            }
+            findChapter(this.chapters);
+          }
           this.$nextTick(() => {
-            $('.w7-tree .is-checked').attr('data-active', 'tree-active');
+            const children1 = $('.w7-tree .is-current').find('.el-tree-node__children').length;
+            const children2 = $('.w7-tree .is-current').find('.el-tree-node__children .el-tree-node').length;
+            const has = $('.w7-tree .is-current').attr('aria-expanded');
+            console.log('children1 ' + children1)
+            console.log('children2 ' + children2)
+            console.log('has ' + has)
+            if (!localStorage['currentData_' + this.$route.params.id]) {
+              const has2 = $('.w7-tree .is-current').prop('aria-expanded');
+              if (has2) {
+                // $('.w7-tree .is-current').attr('data-active', 'tree-active');
+                $('.w7-tree .is-checked').attr('data-active', 'tree-active');
+              }
+            } else {
+              if (has) {
+                console.log(9);
+                $('.w7-tree .is-current').attr('data-active', '');
+              }
+            }
+            // $('.w7-tree .is-checked').attr('data-active', 'tree-active');
           })
         }
       },
@@ -1334,6 +1449,15 @@
             document_id: this.$route.params.id,
             chapter_id: arrId
           }).then(() => {
+            if (localStorage['currentData_' + this.$route.params.id]) {
+              const id = localStorage['currentData_' + this.$route.params.id].id;
+              arrId.forEach(item => {
+                if (item.id == id) {
+                  localStorage['currentData_' + this.$route.params.id] = '';
+                }
+              })
+             }
+
             let node = this.rightSelectNode
             let data = this.rightSelectNodeObj
             let parent = node.parent;
@@ -1763,6 +1887,7 @@
           document_id
         }).then(res => {
           this.loading.close();
+          this.defaultCheckedKeys = [chapter_id];
           if (res.code == 200) {
             this.layout = res.data.layout;
             if (res.data.layout == 1) {
@@ -2219,6 +2344,29 @@
   }
 
   /*增加.el-tree-node__children，去除目录选中状态*/
+  /*.w7-tree.el-tree--highlight-current > .is-current[data-active=tree-active] {*/
+    /*background-color: #fff !important;*/
+  /*}*/
+  /*.w7-tree.el-tree--highlight-current > .is-checked[data-active=tree-active] {*/
+    /*background-color: #fff !important;*/
+  /*}*/
+
+
+  /*.w7-tree.el-tree--highlight-current .el-tree-node__children .is-current[data-active=tree-active] {*/
+    /*background-color: #fff !important;*/
+  /*}*/
+  /*.w7-tree.el-tree--highlight-current .el-tree-node__children .is-checked[data-active=tree-active] {*/
+    /*background-color: #fff !important;*/
+  /*}*/
+  .w7-tree.el-tree--highlight-current > .is-current[data-active=tree-active] > .el-tree-node__content {
+    background-color: #fff !important;
+  }
+  /*.w7-tree.el-tree--highlight-current > .is-checked[data-active=tree-active][aria-expanded] > .el-tree-node__content {*/
+    /*background-color: transparent !important;*/
+  /*}*/
+  .w7-tree.el-tree--highlight-current > .is-checked[data-active=tree-active] > .el-tree-node__content {
+    background-color: #fff !important;
+  }
   .w7-tree.el-tree--highlight-current .el-tree-node__children .is-current[data-active=tree-active] > .el-tree-node__content {
     background-color: #fff !important;
   }
