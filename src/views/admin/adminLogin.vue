@@ -67,7 +67,7 @@
           next('/bind')
         } else {
           if (!redirect_url) {
-            console.error(2)
+            // console.error(2)
             next('/admin/document')
           } else {
             // console.error(3)
@@ -75,8 +75,8 @@
           }
         }
       }).catch(() => {
-          next('/admin-login')
-        })
+        next('/admin-login')
+      })
     } else {
       // debugger
       // console.error(6)

@@ -295,11 +295,11 @@
       }
     },
     handleNodeClick(obj) {
-      this.changeRoute(obj.id, obj.name);
-
-      // if (!obj.is_dir) {
-      //   this.changeRoute(obj.id, obj.name)
-      // }
+      // 目录不显示内容，只展开收缩文件夹
+      // this.changeRoute(obj.id, obj.name);
+      if (!obj.is_dir) {
+        this.changeRoute(obj.id, obj.name)
+      }
     },
     handleNodeExpand(obj) {
       //若default_show_chapter_id大于0 则表明有默认文档
