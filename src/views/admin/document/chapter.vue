@@ -1168,10 +1168,9 @@
               console.log('children2 ' + children2)
               console.log('has ' + has)
               if ((children1 == 0 || children1 > 0) && children2 == 0 && !has) {
-                // alert(123333);
                 $('.w7-tree .is-current').attr('data-active', 'tree-active');
                 $('.w7-tree .is-checked').attr('data-active', 'tree-active');
-                $('.w7-tree .is-checked').attr('data-act', 'tree-active');
+                // $('.w7-tree .is-checked').attr('data-act', 'tree-active');
               }
             })
           }
