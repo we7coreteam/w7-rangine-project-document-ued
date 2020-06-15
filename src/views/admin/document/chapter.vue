@@ -25,19 +25,19 @@
       </div>
       <div class="tree-warpper">
         <el-scrollbar style="height: 100%">
-          <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text="没有与搜索条件匹配的项"
-            ref="chaptersTree"
-            node-key="id"
-            :expand-on-click-node="true"
-            :highlight-current="true"
-            :default-expanded-keys="defaultExpanded"
-            :default-checked-keys="defaultCheckedKeys"
-            :filter-node-method="filterNode"
-            @node-contextmenu="rightClick"
-            @node-click="handleNodeClick"
-            draggable
-            @node-drop="handleDrop"
-            :allow-drop="allowDrop">
+          <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text="点击上方按钮创建"
+           ref="chaptersTree"
+           node-key="id"
+           :expand-on-click-node="true"
+           :highlight-current="true"
+           :default-expanded-keys="defaultExpanded"
+           :default-checked-keys="defaultCheckedKeys"
+           :filter-node-method="filterNode"
+           @node-contextmenu="rightClick"
+           @node-click="handleNodeClick"
+           draggable
+           @node-drop="handleDrop"
+           :allow-drop="allowDrop">
             <div class="custom-tree-node" slot-scope="{ node, data }">
               <span class="node-info">
                 <i class="wq wq-wendang" v-if="data.is_dir == 1"></i>
@@ -330,12 +330,12 @@
                         </el-form-item>
                       </el-col>
                       <!--<el-col :span="4">-->
-                        <!--<el-form-item label="">-->
-                          <!--<el-select v-model="data.enabled" placeholder="是否必填">-->
-                            <!--<el-option label="true" :value="2"></el-option>-->
-                            <!--<el-option label="false" :value="1"></el-option>-->
-                          <!--</el-select>-->
-                        <!--</el-form-item>-->
+                      <!--<el-form-item label="">-->
+                      <!--<el-select v-model="data.enabled" placeholder="是否必填">-->
+                      <!--<el-option label="true" :value="2"></el-option>-->
+                      <!--<el-option label="false" :value="1"></el-option>-->
+                      <!--</el-select>-->
+                      <!--</el-form-item>-->
                       <!--</el-col>-->
                       <el-col :span="4">
                         <el-form-item label="">
@@ -448,582 +448,660 @@
 </template>
 
 <script>
-  import {mapGetters} from 'vuex'
-  import {createChapter, getAllChapter, getMethodType, saveChapter, viewChapter} from '@/api/api'
-  import editors from './editors.vue'
-  import setting from './setting.vue'
+import {mapGetters} from 'vuex'
+import {createChapter, getAllChapter, getMethodType, saveChapter, viewChapter} from '@/api/api'
+import editors from './editors.vue'
+import setting from './setting.vue'
 
-  let id = 1000;
-  export default {
-    name: 'chapter',
-    components: {
-      editors,
-      setting
+let id = 1000;
+export default {
+  name: 'chapter',
+  components: {
+    editors,
+    setting
+  },
+  data() {
+    return {
+      isHeaderLast: true,
+      docName: '',
+      docTitle: '',
+      defaultCheckedKeys: [],
+      layout: '',
+      has_manage: true,
+      filterText: '',
+      chapters: [],//目录树
+      defaultProps: {
+        children: 'children',
+        label: 'name'
+      },
+      defaultExpanded: [],//默认展开节点的数组
+      defaultSelect: '',//默认选中的节点
+      menuBarVisible: false,
+      clientX: '',
+      clientY: '',
+      selectNodeObj: {},//选中的节点data
+      rightSelectNodeObj: {},//右键选中的节点Object
+      rightSelectNode: {},//右键选中的节点的Node
+      addFirst: true,//新增节点的是否为第一级
+      addNodeObj: {
+        name: '',
+        is_dir: 1,
+        layout: 0,
+      },//新增节点
+      dialogTitle: '',
+      dialogFormLabel: '',
+      dialogVisible: false,//新增弹出
+      dialogMoveVisible: false,//移动弹出
+      dialogMoveTitle: '',
+      moveDoc: '',
+      moveClass: '',
+      docList: [],
+      docChapters: [],
+      showSetting: false,
+      dialogVisibleCopy: false,
+      copyNodeName: '',
+      methodArr: [],
+      paramsArr: [
+        {type: 'String', value: 1},
+        {type: 'Number', value: 2},
+        {type: 'Boolean', value: 3},
+        {type: 'Object', value: 4},
+        {type: 'Array', value: 5},
+        {type: 'Function', value: 6},
+        {type: 'RegExp', value: 7},
+        {type: 'Null', value: 8},
+      ],
+      form: {
+        method: 1,
+        url: '',
+        description: '',
+        body_param_location: 3,
+        tab_location: '1'
+      },
+      formCompared: {},
+      formCopy: {
+        method: 1,
+        url: '',
+        description: '',
+        body_param_location: 3,
+        tab_location: '1'
+      },
+      // activeName: '1',
+      baseRequestData: {
+        already: 0,
+        isChecked: false,
+        name: '',
+        type: 1,
+        enabled: 2,
+        default_value: '',
+        description: '',
+        rule: '',
+        children: [],
+      },
+      markDownContent: '',
+      apiHeaderTreeData: [],
+      apiParamsTreeData: [],
+      apiBodyTreeData: [],
+      apiResTreeData: [],
+      apiResTreeDataCopy: [{
+        already: 0,
+        isChecked: false,
+        name: '',
+        type: 1,
+        enabled: 2,
+        default_value: '',
+        description: '',
+        rule: '',
+        children: []
+      }],
+      chapter_id: '',
+      isDocEmpty: true,
+      previewId: '',
+      loading: '',
+      confirmDisabled: false,
+      confirmCopyDisabled: false,
+      apiHeaderTreeDataCompared: '',
+      apiParamsTreeDataCompared: '',
+      apiBodyTreeDataCompared: '',
+      apiResTreeDataCompared: '',
+      markDownContentCompared: '',
+      isSave: true,
+      isFormChange: false,
+      isApiHeaderTreeDataChange: false,
+      isApiParamsTreeDataChange: false,
+      isApiBodyTreeDataChange: false,
+      isApiResTreeDataChange: false,
+      isMarkDownContentChange: false,
+      treeActive: false
+    }
+  },
+  computed: {
+    ...mapGetters({UserInfo: 'UserInfo'}),
+  },
+  watch: {
+    filterText(val) {
+      this.$refs.chaptersTree.filter(val)
     },
-    data() {
-      return {
-        isHeaderLast: true,
-        docName: '',
-        docTitle: '',
-        defaultCheckedKeys: [],
-        layout: '',
-        has_manage: true,
-        filterText: '',
-        chapters: [],//目录树
-        defaultProps: {
-          children: 'children',
-          label: 'name'
-        },
-        defaultExpanded: [],//默认展开节点的数组
-        defaultSelect: '',//默认选中的节点
-        menuBarVisible: false,
-        clientX: '',
-        clientY: '',
-        selectNodeObj: {},//选中的节点data
-        rightSelectNodeObj: {},//右键选中的节点Object
-        rightSelectNode: {},//右键选中的节点的Node
-        addFirst: true,//新增节点的是否为第一级
-        addNodeObj: {
-          name: '',
-          is_dir: 1,
-          layout: 0,
-        },//新增节点
-        dialogTitle: '',
-        dialogFormLabel: '',
-        dialogVisible: false,//新增弹出
-        dialogMoveVisible: false,//移动弹出
-        dialogMoveTitle: '',
-        moveDoc: '',
-        moveClass: '',
-        docList: [],
-        docChapters: [],
-        showSetting: false,
-        dialogVisibleCopy: false,
-        copyNodeName: '',
-        methodArr: [],
-        paramsArr: [
-          {type: 'String', value: 1},
-          {type: 'Number', value: 2},
-          {type: 'Boolean', value: 3},
-          {type: 'Object', value: 4},
-          {type: 'Array', value: 5},
-          {type: 'Function', value: 6},
-          {type: 'RegExp', value: 7},
-          {type: 'Null', value: 8},
-        ],
-        form: {
-          method: 1,
-          url: '',
-          description: '',
-          body_param_location: 3,
-          tab_location: '1'
-        },
-        formCompared: {},
-        formCopy: {
-          method: 1,
-          url: '',
-          description: '',
-          body_param_location: 3,
-          tab_location: '1'
-        },
-        // activeName: '1',
-        baseRequestData: {
-          already: 0,
-          isChecked: false,
-          name: '',
-          type: 1,
-          enabled: 2,
-          default_value: '',
-          description: '',
-          rule: '',
-          children: [],
-        },
-        markDownContent: '',
-        apiHeaderTreeData: [],
-        apiParamsTreeData: [],
-        apiBodyTreeData: [],
-        apiResTreeData: [],
-        apiResTreeDataCopy: [{
-          already: 0,
-          isChecked: false,
-          name: '',
-          type: 1,
-          enabled: 2,
-          default_value: '',
-          description: '',
-          rule: '',
-          children: []
-        }],
-        chapter_id: '',
-        isDocEmpty: true,
-        previewId: '',
-        loading: '',
-        confirmDisabled: false,
-        confirmCopyDisabled: false,
-        apiHeaderTreeDataCompared: '',
-        apiParamsTreeDataCompared: '',
-        apiBodyTreeDataCompared: '',
-        apiResTreeDataCompared: '',
-        markDownContentCompared: '',
-        isSave: true,
-        isFormChange: false,
-        isApiHeaderTreeDataChange: false,
-        isApiParamsTreeDataChange: false,
-        isApiBodyTreeDataChange: false,
-        isApiResTreeDataChange: false,
-        isMarkDownContentChange: false,
-        treeActive: false
+    dialogVisible(val) {
+      if (val) {
+        setTimeout(() => {
+          document.querySelector(".only-input-dialog .el-input__inner").focus()
+        }, 300);
       }
     },
-    computed: {
-      ...mapGetters({UserInfo: 'UserInfo'}),
+    UserInfo(val) {
+      if (val) {
+        this.getOperRecord()
+      }
     },
-    watch: {
-      filterText(val) {
-        this.$refs.chaptersTree.filter(val)
-      },
-      dialogVisible(val) {
-        if (val) {
-          setTimeout(() => {
-            document.querySelector(".only-input-dialog .el-input__inner").focus()
-          }, 300);
+    markDownContent: {
+      deep: true,
+      handler: function (newVal, oldVal) {
+        const newString = JSON.stringify(newVal);
+        const oldString = JSON.stringify(this.markDownContentCompared);
+        if (newString != oldString) {
+          console.log('markDownContent有数据差异');
+          console.log(newString);
+          console.log(oldString);
+          this.isMarkDownContentChange = true;
+        } else {
+          this.isMarkDownContentChange = false;
         }
-      },
-      UserInfo(val) {
-        if (val) {
-          this.getOperRecord()
+      }
+    },
+    form: {
+      deep: true,
+      immediate: false,
+      handler: function(newVal, oldVal) {
+        const newObj = JSON.parse(JSON.stringify(newVal));
+        delete newObj.tab_location;
+        let newString = '';
+        if (newObj.url) {
+          newString = JSON.stringify(newObj);
+        } else {
+          newString = '""';
         }
-      },
-      markDownContent: {
-        deep: true,
-        handler: function (newVal, oldVal) {
-          const newString = JSON.stringify(newVal);
-          const oldString = JSON.stringify(this.markDownContentCompared);
-          if (newString != oldString) {
-            console.log('markDownContent有数据差异');
-            console.log(newString);
-            console.log(oldString);
-            this.isMarkDownContentChange = true;
-          } else {
-            this.isMarkDownContentChange = false;
-          }
+
+        const oldObj = JSON.parse(JSON.stringify(this.formCompared));
+        delete oldObj.tab_location;
+        const oldString = JSON.stringify(oldObj);
+        // console.log(111);
+        // console.log(newString);
+        // console.log(oldString);
+        if (newString != oldString) {
+          console.log('form有数据差异');
+          console.log(newString);
+          console.log(oldString);
+          this.isFormChange = true;
+        } else {
+          this.isFormChange = false;
         }
-      },
-      form: {
-        deep: true,
-        immediate: false,
-        handler: function(newVal, oldVal) {
-          const newObj = JSON.parse(JSON.stringify(newVal));
-          delete newObj.tab_location;
+      }
+    },
+    apiHeaderTreeData: {
+      deep: true,
+      immediate: false,
+      handler: function(newVal) {
+        if (newVal) {
+          let newObj = JSON.parse(JSON.stringify(newVal));
           let newString = '';
-          if (newObj.url) {
-            newString = JSON.stringify(newObj);
-          } else {
-            newString = '""';
+          if (newObj.length) {
+            newObj.forEach(item => {
+              delete item.already;
+            })
+            newObj = newObj.filter(item => {
+              return item.name || item.description
+            })
+            if (newObj.length) {
+              newString = JSON.stringify(newObj);
+            } else {
+              newString = '""';
+            }
           }
-
-          const oldObj = JSON.parse(JSON.stringify(this.formCompared));
-          delete oldObj.tab_location;
+          let oldObj = JSON.parse(JSON.stringify(this.apiHeaderTreeDataCompared));
           const oldString = JSON.stringify(oldObj);
-          // console.log(111);
-          // console.log(newString);
-          // console.log(oldString);
           if (newString != oldString) {
-            console.log('form有数据差异');
+            console.log('apiHeaderTreeData有数据差异');
             console.log(newString);
             console.log(oldString);
-            this.isFormChange = true;
+            this.isApiHeaderTreeDataChange = true;
           } else {
-            this.isFormChange = false;
+            this.isApiHeaderTreeDataChange = false;
           }
         }
-      },
-      apiHeaderTreeData: {
-        deep: true,
-        immediate: false,
-        handler: function(newVal) {
-          if (newVal) {
-            let newObj = JSON.parse(JSON.stringify(newVal));
-            let newString = '';
+      }
+    },
+    apiParamsTreeData: {
+      deep: true,
+      immediate: false,
+      handler: function(newVal) {
+        if (newVal) {
+          let newObj = JSON.parse(JSON.stringify(newVal));
+          let newString = '';
+          if (newObj.length) {
+            newObj.forEach(item => {
+              delete item.already;
+            })
+            newObj = newObj.filter(item => {
+              return item.name || item.description
+            })
             if (newObj.length) {
-              newObj.forEach(item => {
-                delete item.already;
-              })
-              newObj = newObj.filter(item => {
-                return item.name || item.description
-              })
-              if (newObj.length) {
-                newString = JSON.stringify(newObj);
-              } else {
-                newString = '""';
-              }
-            }
-            let oldObj = JSON.parse(JSON.stringify(this.apiHeaderTreeDataCompared));
-            const oldString = JSON.stringify(oldObj);
-            if (newString != oldString) {
-              console.log('apiHeaderTreeData有数据差异');
-              console.log(newString);
-              console.log(oldString);
-              this.isApiHeaderTreeDataChange = true;
+              newString = JSON.stringify(newObj);
             } else {
-              this.isApiHeaderTreeDataChange = false;
+              newString = '""';
             }
           }
-        }
-      },
-      apiParamsTreeData: {
-        deep: true,
-        immediate: false,
-        handler: function(newVal) {
-          if (newVal) {
-            let newObj = JSON.parse(JSON.stringify(newVal));
-            let newString = '';
-            if (newObj.length) {
-              newObj.forEach(item => {
-                delete item.already;
-              })
-              newObj = newObj.filter(item => {
-                return item.name || item.description
-              })
-              if (newObj.length) {
-                newString = JSON.stringify(newObj);
-              } else {
-                newString = '""';
-              }
-            }
-            let oldObj = JSON.parse(JSON.stringify(this.apiParamsTreeDataCompared));
-            const oldString = JSON.stringify(oldObj);
+          let oldObj = JSON.parse(JSON.stringify(this.apiParamsTreeDataCompared));
+          const oldString = JSON.stringify(oldObj);
 
-            if (newString != oldString) {
-              console.log('apiParamsTreeData有数据差异');
-              console.log(newString);
-              console.log(oldString);
-              this.isApiParamsTreeDataChange = true;
-            } else {
-              this.isApiParamsTreeDataChange = false;
-            }          }
-        }
-      },
-      apiBodyTreeData: {
-        deep: true,
-        immediate: false,
-        handler: function(newVal) {
-          if (newVal) {
-            let newObj = JSON.parse(JSON.stringify(newVal));
-            let newString = '';
+          if (newString != oldString) {
+            console.log('apiParamsTreeData有数据差异');
+            console.log(newString);
+            console.log(oldString);
+            this.isApiParamsTreeDataChange = true;
+          } else {
+            this.isApiParamsTreeDataChange = false;
+          }          }
+      }
+    },
+    apiBodyTreeData: {
+      deep: true,
+      immediate: false,
+      handler: function(newVal) {
+        if (newVal) {
+          let newObj = JSON.parse(JSON.stringify(newVal));
+          let newString = '';
+          if (newObj.length) {
+            newObj.forEach(item => {
+              delete item.already;
+            })
+            newObj = newObj.filter(item => {
+              return item.name || item.description
+            })
             if (newObj.length) {
-              newObj.forEach(item => {
-                delete item.already;
-              })
-              newObj = newObj.filter(item => {
-                return item.name || item.description
-              })
-              if (newObj.length) {
-                newString = JSON.stringify(newObj);
-              } else {
-                newString = '""';
+              newString = JSON.stringify(newObj);
+            } else {
+              newString = '""';
+            }
+          }
+          let oldObj = JSON.parse(JSON.stringify(this.apiBodyTreeDataCompared));
+          const oldString = JSON.stringify(oldObj);
+          if (newString != oldString) {
+            console.log('apiBodyTreeData有数据差异');
+            console.log(newString);
+            console.log(oldString);
+            this.isApiBodyTreeDataChange = true;
+          } else {
+            this.isApiBodyTreeDataChange = false;
+          }          }
+      }
+    },
+    apiResTreeData: {
+      deep: true,
+      immediate: false,
+      handler: function(newVal) {
+        if (newVal) {
+          let newObj = JSON.parse(JSON.stringify(newVal));
+          console.log('newObj');
+          console.log(newObj);
+          if (newObj.length && newObj[0].already == 0) {
+            // console.log(222);
+            newObj = newObj.filter(item => {
+              return item.name || item.description
+            })
+          }
+          if (newObj.length) {
+            newObj.forEach(item => {
+              if (item.data && item.data.length) {
+                item.data.forEach(item2 => {
+                  delete item2.already;
+                })
+                item.data = item.data.filter(item2 => {
+                  return item2.name || item2.description
+                })
+              }
+            })
+          } else {
+            newObj = [{description: '', data: []}];
+          }
+          let newString = '';
+          newString = JSON.stringify(newObj);
+          // if (newObj.length == 1) {
+          //   if (!newObj[0].data.length && !newObj[0].description) {
+          //     newString = '""'
+          //   } else {
+          //     newString = JSON.stringify(newObj);
+          //   }
+          // } else {
+          //   newString = JSON.stringify(newObj);
+          // }
+          let oldObj = JSON.parse(JSON.stringify(this.apiResTreeDataCompared));
+          const oldString = JSON.stringify(oldObj);
+          if (newString != oldString) {
+            console.log('apiResTreeData有数据差异');
+            console.log(newString);
+            console.log(oldString);
+            this.isApiResTreeDataChange = true;
+          } else {
+            this.isApiResTreeDataChange = false;
+          }
+        }
+      }
+    }
+  },
+  created() {
+    if (this.$route.query && this.$route.query.type == 'add') {//新增项目
+      this.clickIconAddNode(true)
+    } else {
+      if (this.UserInfo) {
+        this.getOperRecord()
+      }
+      this.getChapters()
+    }
+    this.getMethodType();
+    // this.initCreateChapter();
+  },
+  mounted() {
+    // (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)
+    const This = this;
+    document.addEventListener('keydown', function (e) {
+      let currKey = 0;
+      e = e || event || window.event;
+      currKey = e.keyCode || e.which || e.charCode;
+      if ((e.ctrlKey || e.metaKey) && currKey == 83) {
+        e.preventDefault();
+        This.saveApi();
+        // return false;
+      }
+    })
+  },
+  beforeRouteLeave(to, from, next) {
+    // console.log(to)
+    // console.log(from)
+    if (this.isFormChange || this.isApiHeaderTreeDataChange || this.isApiParamsTreeDataChange || this.isApiBodyTreeDataChange || this.isApiResTreeDataChange || this.isMarkDownContentChange) {
+      this.$confirm('您有数据尚未保存，确认保存?', '提示', {
+        showClose: false,
+        closeOnClickModal: false,
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.saveApi();
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        });
+        next();
+      });
+    } else {
+      next();
+    }
+  },
+  methods: {
+    /**
+     * @打开操作记录
+     * localStorage记录的操作节点的数据结构
+     * we7_doc_user_1: {
+     *  document_10: {
+     *    defaultExpanded: [22, 33],
+     *    defaultSelect: 11
+     *  }
+     * }
+     * 注意：默认打开目录的时候，如果有默认选中的文档，需要在手动修改this.defaultExpanded，
+     *      把defaultSelect（默认选中文档）push进去，但是不可以保存在localStorage中
+     */
+    // 创建默认文档
+    initCreateChapter() {
+      createChapter({
+        document_id: this.$route.params.id,
+        parent_id: 0,
+        is_dir: 1,
+        layout: 0,
+        name: '默认目录'
+      }).then(res => {
+        this.chapter_id = res.data.id;
+        let newChild = res.data;
+        if (!this.addFirst) {
+          let data = this.rightSelectNodeObj
+          if (!data.children) {
+            this.$set(data, 'children', []);
+          }
+          data.children.push(newChild)
+        } else {
+          this.chapters.push(newChild)
+        }
+        this.$nextTick(() => {
+          //选中新建章节
+          this.$refs.chaptersTree.setCurrentKey(newChild.id)
+          this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode())
+          //展开
+          let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
+          let record = allRecords['document_' + this.$route.params.id]
+          this.defaultExpanded = record.defaultExpanded;
+          this.defaultExpanded.push(newChild.id);
+        })
+      }).catch(() => {
+      })
+    },
+    getOperRecord() {
+      var docUserKey = 'we7_doc_user_' + this.UserInfo.id//用户
+      var docUserValue = JSON.parse(localStorage.getItem(docUserKey))
+      var documentKey = 'document_' + this.$route.params.id//项目
+      var data = {}
+      data[documentKey] = {
+        defaultExpanded: [],
+        defaultSelect: ''
+      }
+      //判断当前用户名下存在记录
+      if (docUserValue) {
+        //判断是否存在当前项目的记录
+        if (docUserValue[documentKey]) {
+          this.defaultExpanded = docUserValue[documentKey].defaultExpanded
+          this.defaultSelect = docUserValue[documentKey].defaultSelect
+        } else {
+          docUserValue[documentKey] = {
+            defaultExpanded: [],
+            defaultSelect: ''
+          }
+          localStorage.setItem(docUserKey, JSON.stringify(docUserValue))
+        }
+      } else {
+        localStorage.setItem(docUserKey, JSON.stringify(data))
+      }
+    },
+    //保存操作记录
+    setOperRecord(obj) {
+      const isAdd = this.$route.query.type;
+      const id = this.$route.params.id;
+
+      if (isAdd == 'add') {
+        const records = {};
+        records['document_' + id] = {
+          defaultExpanded: [],
+          defaultSelect: ""
+        }
+        localStorage.setItem('we7_doc_user_' + this.UserInfo.id, JSON.stringify(records))
+      } else {
+        //当前用户下的所有项目tree记录
+        let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
+        let record = allRecords['document_' + this.$route.params.id];
+
+        if (obj.is_dir) {//如果是目录
+          record.defaultSelect = obj.id;
+          // let index = record.defaultExpanded.findIndex(item => item == obj.id) // 临时注释
+          // if (index > -1) {
+          //   record.defaultExpanded.splice(index, 1)
+          // } else {
+          //   record.defaultExpanded.push(obj.id)
+          // }
+        } else {
+          record.defaultSelect = obj.id
+        }
+        localStorage.setItem('we7_doc_user_' + this.UserInfo.id, JSON.stringify(allRecords))
+      }
+    },
+    getChapters() {
+      getAllChapter({
+        document_id: this.$route.params.id
+      }).then(res => {
+        if (res.code == 200) {
+          let history = '';
+          if (localStorage['currentData_' + this.$route.params.id]) {
+            history = JSON.parse(localStorage['currentData_' + this.$route.params.id]);
+          }
+          if (res.data.catalog == 0) {
+            this.isDocEmpty = true;
+            // this.initCreateChapter();
+          } else if (res.data.catalog && !history ) {
+            console.log(555);
+            const findChapter = (arr) => {
+              if (arr.length) {
+                console.log('arr');
+                console.log(arr);
+                for (const item of arr) {
+                  /*
+                  * 如果是文档首先选中排在前的文档
+                  * 如果是目录，则选中第一个目录内的第一个文档*/
+                  try {
+                    if (item.is_dir && item.children.length) {
+                      findChapter(item.children);
+                      return false;
+                    } else {
+                      console.log('findChapter');
+                      console.log(item.id);
+                      this.isDocEmpty = false;
+                      // this.$nextTick(() => {
+                        console.log('item');
+                        console.log(item);
+                        this.chapters = this.initTreeData(res.data.catalog);
+                        this.handleNodeClick(item);
+                        this.defaultExpanded = [item.parent_id];
+                        // this.$refs.chaptersTree.setCurrentKey(item.id);
+                        // this.defaultCheckedKeys = [item.id];
+                        // $('.w7-tree .is-checked').attr('data-active', 'tree-active');
+                        // const has2 = $('.w7-tree .is-current').prop('aria-expanded');
+                        // if (has2) {
+                        //   // $('.w7-tree .is-current').attr('data-active', 'tree-active');
+                        //   $('.w7-tree .is-checked').attr('data-active', 'tree-active');
+                        // }
+                      // })
+                      return false;
+                    }
+                  } catch (e) {
+                    console.log(e);
+                  }
+                }
               }
             }
-            let oldObj = JSON.parse(JSON.stringify(this.apiBodyTreeDataCompared));
-            const oldString = JSON.stringify(oldObj);
-            if (newString != oldString) {
-              console.log('apiBodyTreeData有数据差异');
-              console.log(newString);
-              console.log(oldString);
-              this.isApiBodyTreeDataChange = true;
-            } else {
-              this.isApiBodyTreeDataChange = false;
-            }          }
-        }
-      },
-      apiResTreeData: {
-        deep: true,
-        immediate: false,
-        handler: function(newVal) {
-          if (newVal) {
-            let newObj = JSON.parse(JSON.stringify(newVal));
-            console.log('newObj');
-            console.log(newObj);
-            if (newObj.length && newObj[0].already == 0) {
-              console.log(222);
-              newObj = newObj.filter(item => {
-                return item.name || item.description
-              })
-            }
-            if (newObj.length) {
-              newObj.forEach(item => {
-                if (item.data && item.data.length) {
-                  item.data.forEach(item2 => {
-                    delete item2.already;
-                  })
-                  item.data = item.data.filter(item2 => {
-                    return item2.name || item2.description
-                  })
+            findChapter(res.data.catalog);
+          } else {
+            console.log(1111);
+            this.isDocEmpty = false;
+            this.docName = res.data.document.name;
+            this.has_manage = res.data.acl.has_manage;
+            // this.chapters = res.data.catalog;
+            this.chapters = this.initTreeData(res.data.catalog); // 临时注释
+            //如果有记录的默认文档节点，则选中
+            if (this.defaultSelect) {
+              // console.log(1);
+              // console.log(this.defaultSelect);
+              this.$nextTick(() => {
+                this.$refs.chaptersTree.setCurrentKey(this.defaultSelect);
+                console.log(3);
+                console.log(this.$refs.chaptersTree.getCurrentNode());
+                if (this.$refs.chaptersTree.getCurrentNode() != null) {
+                  // console.log(4);
+                  this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode());
+                  //展开
+                  let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
+                  let record = allRecords['document_' + this.$route.params.id]
+                  this.defaultExpanded = record.defaultExpanded;
+                  this.defaultExpanded.push(this.$refs.chaptersTree.getCurrentNode().id)
+                } else {
+                  // console.log(5);
+                  this.$refs.chaptersTree.setCurrentKey(res.data.catalog[0].id);
+                  this.handleNodeClick(res.data.catalog[0]);
+                  let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
+                  let record = allRecords['document_' + this.$route.params.id]
+                  this.defaultExpanded = record.defaultExpanded;
+                  this.defaultExpanded.push(res.data.catalog[0])
                 }
               })
             } else {
-              newObj = [{description: '', data: []}];
-            }
-            let newString = '';
-            newString = JSON.stringify(newObj);
-            // if (newObj.length == 1) {
-            //   if (!newObj[0].data.length && !newObj[0].description) {
-            //     newString = '""'
-            //   } else {
-            //     newString = JSON.stringify(newObj);
-            //   }
-            // } else {
-            //   newString = JSON.stringify(newObj);
-            // }
-            let oldObj = JSON.parse(JSON.stringify(this.apiResTreeDataCompared));
-            const oldString = JSON.stringify(oldObj);
-            if (newString != oldString) {
-              console.log('apiResTreeData有数据差异');
-              console.log(newString);
-              console.log(oldString);
-              this.isApiResTreeDataChange = true;
-            } else {
-              this.isApiResTreeDataChange = false;
+              // console.log(2);
+              this.$nextTick(() => {
+                this.$refs.chaptersTree.setCurrentKey(res.data.catalog[0].id);
+                this.handleNodeClick(res.data.catalog[0]);
+              })
             }
           }
-        }
-      }
-    },
-    created() {
-      if (this.$route.query && this.$route.query.type == 'add') {//新增项目
-        this.clickIconAddNode(true)
-      } else {
-        if (this.UserInfo) {
-          this.getOperRecord()
-        }
-        this.getChapters()
-      }
-      this.getMethodType();
-      // this.initCreateChapter();
-    },
-    mounted() {
-      // (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)
-      const This = this;
-      document.addEventListener('keydown', function (e) {
-        let currKey = 0;
-        e = e || event || window.event;
-        currKey = e.keyCode || e.which || e.charCode;
-        if ((e.ctrlKey || e.metaKey) && currKey == 83) {
-          e.preventDefault();
-          This.saveApi();
-          // return false;
         }
       })
     },
-    beforeRouteLeave(to, from, next) {
-      // console.log(to)
-      // console.log(from)
-      if (this.isFormChange || this.isApiHeaderTreeDataChange || this.isApiParamsTreeDataChange || this.isApiBodyTreeDataChange || this.isApiResTreeDataChange || this.isMarkDownContentChange) {
-        this.$confirm('您有数据尚未保存，确认保存?', '提示', {
-          showClose: false,
-          closeOnClickModal: false,
-          confirmButtonText: '确认',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.saveApi();
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消'
-          });
-          next();
-        });
-      } else {
-        next();
+    //重新遍历树数据，给每个文档节点添加is_default属性
+    initTreeData(treeData) {
+      console.log(8);
+      function loopData(data, defaultId) {
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].is_dir) {
+            loopData(data[i].children, data[i].default_show_chapter_id)
+          } else {
+            data[i]['is_default'] = data[i].default_show_chapter_id == data[i].id || data[i].id == defaultId
+          }
+        }
       }
+
+      loopData(treeData)
+      // console.log('treeData');
+      // console.log(treeData);
+      return treeData
     },
-    methods: {
-      /**
-       * @打开操作记录
-       * localStorage记录的操作节点的数据结构
-       * we7_doc_user_1: {
-       *  document_10: {
-       *    defaultExpanded: [22, 33],
-       *    defaultSelect: 11
-       *  }
-       * }
-       * 注意：默认打开目录的时候，如果有默认选中的文档，需要在手动修改this.defaultExpanded，
-       *      把defaultSelect（默认选中文档）push进去，但是不可以保存在localStorage中
-       */
-      // 创建默认文档
-      initCreateChapter() {
-        createChapter({
-          document_id: this.$route.params.id,
-          parent_id: 0,
-          is_dir: 1,
-          layout: 0,
-          name: '默认目录'
-        }).then(res => {
-          this.chapter_id = res.data.id;
-          let newChild = res.data;
-          if (!this.addFirst) {
-            let data = this.rightSelectNodeObj
-            if (!data.children) {
-              this.$set(data, 'children', []);
-            }
-            data.children.push(newChild)
-          } else {
-            this.chapters.push(newChild)
-          }
-          this.$nextTick(() => {
-            //选中新建章节
-            this.$refs.chaptersTree.setCurrentKey(newChild.id)
-            this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode())
-            //展开
-            let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
-            let record = allRecords['document_' + this.$route.params.id]
-            this.defaultExpanded = record.defaultExpanded;
-            this.defaultExpanded.push(newChild.id);
-          })
-        }).catch(() => {
-        })
-      },
-      getOperRecord() {
-        var docUserKey = 'we7_doc_user_' + this.UserInfo.id//用户
-        var docUserValue = JSON.parse(localStorage.getItem(docUserKey))
-        var documentKey = 'document_' + this.$route.params.id//项目
-        var data = {}
-        data[documentKey] = {
-          defaultExpanded: [],
-          defaultSelect: ''
-        }
-        //判断当前用户名下存在记录
-        if (docUserValue) {
-          //判断是否存在当前项目的记录
-          if (docUserValue[documentKey]) {
-            this.defaultExpanded = docUserValue[documentKey].defaultExpanded
-            this.defaultSelect = docUserValue[documentKey].defaultSelect
-          } else {
-            docUserValue[documentKey] = {
-              defaultExpanded: [],
-              defaultSelect: ''
-            }
-            localStorage.setItem(docUserKey, JSON.stringify(docUserValue))
-          }
-        } else {
-          localStorage.setItem(docUserKey, JSON.stringify(data))
-        }
-      },
-      //保存操作记录
-      setOperRecord(obj) {
-        const isAdd = this.$route.query.type;
-        const id = this.$route.params.id;
-
-        if (isAdd == 'add') {
-          const records = {};
-          records['document_' + id] = {
-            defaultExpanded: [],
-            defaultSelect: ""
-          }
-          localStorage.setItem('we7_doc_user_' + this.UserInfo.id, JSON.stringify(records))
-        } else {
-          //当前用户下的所有项目tree记录
-          let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
-          let record = allRecords['document_' + this.$route.params.id];
-
-          if (obj.is_dir) {//如果是目录
-            record.defaultSelect = obj.id;
-            // let index = record.defaultExpanded.findIndex(item => item == obj.id) // 临时注释
-            // if (index > -1) {
-            //   record.defaultExpanded.splice(index, 1)
-            // } else {
-            //   record.defaultExpanded.push(obj.id)
-            // }
-          } else {
-            record.defaultSelect = obj.id
-          }
-          localStorage.setItem('we7_doc_user_' + this.UserInfo.id, JSON.stringify(allRecords))
-        }
-      },
-      getChapters() {
-        getAllChapter({
-          document_id: this.$route.params.id
-        }).then(res => {
-          if (res.code == 200) {
-            if (res.data.catalog == 0) {
-              this.isDocEmpty = true;
-              // this.initCreateChapter();
+    readDoc() {
+      // Vue路由新窗口打开
+      let routeUrl = this.$router.resolve({
+        path: "/chapter/" + this.$route.params.id,
+        query: {id: this.previewId}
+      });
+      window.open(routeUrl.href, '_blank')
+    },
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.name.indexOf(value) !== -1;
+    },
+    // 点击tree
+    handleNodeClick(data) {
+      console.log(12);
+      console.log(data);
+/*
+      const This = this;
+      function findChapter(arr) {
+        if (arr.length) {
+          for (const item of arr) {
+            if (item.is_dir) {
+              findChapter(item.children)
             } else {
-              this.isDocEmpty = false;
-              this.docName = res.data.document.name;
-              this.has_manage = res.data.acl.has_manage;
-              // this.chapters = res.data.catalog;
-              this.chapters = this.initTreeData(res.data.catalog); // 临时注释
-              //如果有记录的默认文档节点，则选中
-              if (this.defaultSelect) {
-                console.log(1);
-                // console.log(this.defaultSelect);
-                this.$nextTick(() => {
-                  this.$refs.chaptersTree.setCurrentKey(this.defaultSelect);
-                  console.log(3);
-                  console.log(this.$refs.chaptersTree.getCurrentNode());
-                  if (this.$refs.chaptersTree.getCurrentNode() != null) {
-                    console.log(4);
-                    this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode());
-                    //展开
-                    let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
-                    let record = allRecords['document_' + this.$route.params.id]
-                    this.defaultExpanded = record.defaultExpanded;
-                    this.defaultExpanded.push(this.$refs.chaptersTree.getCurrentNode().id)
-                  } else {
-                    console.log(5);
-                    this.$refs.chaptersTree.setCurrentKey(res.data.catalog[0].id);
-                    this.handleNodeClick(res.data.catalog[0]);
-                    let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
-                    let record = allRecords['document_' + this.$route.params.id]
-                    this.defaultExpanded = record.defaultExpanded;
-                    this.defaultExpanded.push(res.data.catalog[0])
-                  }
-                })
-              } else {
-                console.log(2);
-                this.$nextTick(() => {
-                  this.$refs.chaptersTree.setCurrentKey(res.data.catalog[0].id);
-                  this.handleNodeClick(res.data.catalog[0]);
-                })
-              }
-            }
-          }
-        })
-      },
-      //重新遍历树数据，给每个文档节点添加is_default属性
-      initTreeData(treeData) {
-        function loopData(data, defaultId) {
-          for (let i = 0; i < data.length; i++) {
-            if (data[i].is_dir) {
-              loopData(data[i].children, data[i].default_show_chapter_id)
-            } else {
-              data[i]['is_default'] = data[i].default_show_chapter_id == data[i].id || data[i].id == defaultId
+              This.defaultCheckedKeys = [item.id];
+              console.log('findChapter');
+              console.log(item.id);
+              return false;
             }
           }
         }
-
-        loopData(treeData)
-        // console.log('treeData');
-        // console.log(treeData);
-        return treeData
-      },
-      readDoc() {
-        // Vue路由新窗口打开
-        let routeUrl = this.$router.resolve({
-          path: "/chapter/" + this.$route.params.id,
-          query: {id: this.previewId}
-        });
-        window.open(routeUrl.href, '_blank')
-      },
-      filterNode(value, data) {
-        if (!value) return true;
-        return data.name.indexOf(value) !== -1;
-      },
-      handleNodeClick(data) {
-        console.log(12);
-        console.log(data);
+      }
+      findChapter(this.chapters);
+*/
+      // 目录不展示内容，只展开文件夹
+      if (!data.is_dir) {
+        console.log(7);
+        this.$nextTick(() => {
+          console.log(7);
+          $('.w7-tree .el-tree-node').removeClass('is-checked').attr({'data-active': ''});
+        })
+        // console.error(1233)
+        const document_id = this.$route.params.id;
+        // console.error('currentData_' + document_id)
+        localStorage['currentData_' + document_id] = JSON.stringify(data);
         if (this.isFormChange || this.isApiHeaderTreeDataChange || this.isApiParamsTreeDataChange || this.isApiBodyTreeDataChange || this.isApiResTreeDataChange || this.isMarkDownContentChange) {
           this.$confirm('您有数据尚未保存，确认保存?', '提示', {
             showClose: false,
@@ -1067,7 +1145,7 @@
             }
             this.selectNodeObj = data;
             this.setOperRecord(data); // 临时注释
-            console.log('无变化');
+            console.log('无变化1');
             this.$nextTick(() => {
               $('.w7-tree .is-current').attr('data-active', 'tree-active');
             })
@@ -1084,127 +1162,241 @@
           }
           this.selectNodeObj = data;
           this.setOperRecord(data); // 临时注释
-          console.log('无变化');
+          console.log('无变化2');
           this.$nextTick(() => {
-            $('.w7-tree .is-current').attr('data-active', 'tree-active');
+            const children1 = $('.w7-tree .is-current').find('.el-tree-node__children').length;
+            const children2 = $('.w7-tree .is-current').find('.el-tree-node__children .el-tree-node').length;
+            if ((children1 == 0 || children1 > 0) && children2 == 0) {
+              setTimeout(() => {
+                const has = $('.w7-tree .is-current').prop('aria-expanded');
+                const has2 = $('.w7-tree .is-checked').prop('aria-expanded');
+                console.log('children1 ' + children1)
+                console.log('children2 ' + children2)
+                console.log('has ' + has)
+                console.log('has2 ' + has2)
+                if (!has) {
+                  $('.w7-tree .is-current').attr('data-active', 'tree-active');
+                }
+                if (!has2) {
+                  // 取is-checked最后一个
+                  $('.w7-tree .is-checked:last').attr('data-active', 'tree-active');
+                }
+              }, 500)
+            }
           })
         }
-      },
-      updateXY(event) {
-        this.clientX = event.clientX
-        this.clientY = event.clientY
-      },
-      shortcut(object, Node) {
-        this.rightSelectNodeObj = object
-        this.rightSelectNode = Node
-        this.addChildNode(false)
-      },
-      leftClick(object, Node) {
-        if (this.menuBarVisible == true) {
-          this.menuBarVisible = false
-          return
-        }
-        this.rightClick(false, object, Node)
-      },
-      rightClick(MouseEvent, object, Node) {
-        // console.log('右键被点击---event:', MouseEvent)
-        // console.log('右键被点击---传递给 data 属性的数组中该节点所对应的对象:', object)
-        // console.log('右键被点击---节点对应的 Node:', Node)
-        // console.log('右键被点击---节点组件本身:', element)
-        this.rightSelectNodeObj = object
-        this.rightSelectNode = Node
-        this.menuBarVisible = false // 先把模态框关死，目的是 第二次或者第n次右键鼠标的时候 它默认的是true
-        this.menuBarVisible = true  // 显示模态窗口，跳出自定义菜单栏
-        this.$nextTick(() => {
-          const menuBar = document.querySelector('#menu-bar')
-          let height = window.innerHeight
-          let menuHeight = menuBar.offsetHeight
-          if (!MouseEvent) {//鼠标左键
-            if (height - this.clientY > menuHeight) {
-              menuBar.style.top = (this.clientY + 20) + 'px'
-              menuBar.className = 'menu-bar bottom'
-            } else {
-              menuBar.style.top = (this.clientY - menuHeight - 20) + 'px'
-              menuBar.className = 'menu-bar top'
+      } else {
+        const document_id = this.$route.params.id;
+        if (localStorage['currentData_' + document_id]) {
+          let currentData = JSON.parse(localStorage['currentData_' + document_id]);
+          console.log(currentData);
+          this.defaultCheckedKeys = [currentData.id];
+          console.log(this.defaultCheckedKeys);
+        } else {
+          console.log(this.chapters);
+          const This = this;
+          function findChapter(arr) {
+            if (arr.length) {
+              for (const item of arr) {
+                if (item.is_dir) {
+                  findChapter(item.children)
+                } else {
+                  This.defaultCheckedKeys = [item.id];
+                  console.log('findChapter');
+                  console.log(item.id);
+                  return false;
+                }
+              }
             }
-            menuBar.style.left = (this.clientX - 50) + 'px'
-          } else {//鼠标右键
-            if (height - MouseEvent.clientY > menuHeight) {
-              menuBar.style.top = (MouseEvent.clientY + 20) + 'px'
-              menuBar.className = 'menu-bar bottom'
-            } else {
-              menuBar.style.top = (MouseEvent.clientY - menuHeight - 10) + 'px'
-              menuBar.className = 'menu-bar top'
-            }
-            menuBar.style.left = (MouseEvent.clientX - 50) + 'px'
           }
+          findChapter(this.chapters);
+        }
+        this.$nextTick(() => {
+          const children1 = $('.w7-tree .is-current').find('.el-tree-node__children').length;
+          const children2 = $('.w7-tree .is-current').find('.el-tree-node__children .el-tree-node').length;
+          const has = $('.w7-tree .is-current').prop('aria-expanded');
+          console.log('children1 ' + children1)
+          console.log('children2 ' + children2)
+          console.log('has ' + has)
+          if (!localStorage['currentData_' + this.$route.params.id]) {
+            const has2 = $('.w7-tree .is-current').prop('aria-expanded');
+            if (has2) {
+              // $('.w7-tree .is-current').attr('data-active', 'tree-active');
+              $('.w7-tree .is-checked').attr('data-active', 'tree-active');
+            }
+          } else {
+            if (has) {
+              console.log(9);
+              $('.w7-tree .is-current').attr('data-active', '');
+            }
+          }
+          // $('.w7-tree .is-checked').attr('data-active', 'tree-active');
         })
-        // 给整个document添加监听鼠标事件，点击任何位置执行removeRightClickEvent
-        document.addEventListener('click', this.removeRightClickEvent)
-      },
-      removeRightClickEvent() {
+      }
+    },
+    updateXY(event) {
+      this.clientX = event.clientX
+      this.clientY = event.clientY
+    },
+    shortcut(object, Node) {
+      this.rightSelectNodeObj = object
+      this.rightSelectNode = Node
+      this.addChildNode(false)
+    },
+    leftClick(object, Node) {
+      if (this.menuBarVisible == true) {
         this.menuBarVisible = false
-        document.removeEventListener('click', this.removeRightClickEvent)
-      },
-      clickIconAddNode(bool) {
-        this.addFirst = true
-        this.dialogTitle = bool ? '新建目录' : '新建文档'
-        this.dialogFormLabel = bool ? '目录名称' : '文档名称'
-        this.addNodeObj.name = ''
-        this.addNodeObj.is_dir = bool ? 1 : 0
-        this.addNodeObj.layout = bool ? 0 : 1
-        this.dialogVisible = true
-        this.rightSelectNode = {}
-        this.rightSelectNodeObj = {}
-      },
-      updateNode(bool) {
-        this.dialogTitle = '重命名';
-        localStorage.rename = this.rightSelectNodeObj.name;
-        this.addNodeObj.name = this.rightSelectNodeObj.name
-        this.dialogFormLabel = bool ? '新的目录名称' : '新的文档名称'
-        this.dialogVisible = true
-      },
-      copyNode() {
-        this.copyNodeName = this.rightSelectNodeObj.name
-        this.dialogVisibleCopy = true
-      },
-      addChildNode(bool) {
-        this.addFirst = false
-        // console.log(this.rightSelectNode)
-        // 五级文档
-        if (this.rightSelectNode.level == 5 && bool) {
-          this.$message('第五级只能为文档！')
-          return
+        return
+      }
+      this.rightClick(false, object, Node)
+    },
+    rightClick(MouseEvent, object, Node) {
+      // console.log('右键被点击---event:', MouseEvent)
+      // console.log('右键被点击---传递给 data 属性的数组中该节点所对应的对象:', object)
+      // console.log('右键被点击---节点对应的 Node:', Node)
+      // console.log('右键被点击---节点组件本身:', element)
+      this.rightSelectNodeObj = object
+      this.rightSelectNode = Node
+      this.menuBarVisible = false // 先把模态框关死，目的是 第二次或者第n次右键鼠标的时候 它默认的是true
+      this.menuBarVisible = true  // 显示模态窗口，跳出自定义菜单栏
+      this.$nextTick(() => {
+        const menuBar = document.querySelector('#menu-bar')
+        let height = window.innerHeight
+        let menuHeight = menuBar.offsetHeight
+        if (!MouseEvent) {//鼠标左键
+          if (height - this.clientY > menuHeight) {
+            menuBar.style.top = (this.clientY + 20) + 'px'
+            menuBar.className = 'menu-bar bottom'
+          } else {
+            menuBar.style.top = (this.clientY - menuHeight - 20) + 'px'
+            menuBar.className = 'menu-bar top'
+          }
+          menuBar.style.left = (this.clientX - 50) + 'px'
+        } else {//鼠标右键
+          if (height - MouseEvent.clientY > menuHeight) {
+            menuBar.style.top = (MouseEvent.clientY + 20) + 'px'
+            menuBar.className = 'menu-bar bottom'
+          } else {
+            menuBar.style.top = (MouseEvent.clientY - menuHeight - 10) + 'px'
+            menuBar.className = 'menu-bar top'
+          }
+          menuBar.style.left = (MouseEvent.clientX - 50) + 'px'
         }
-        this.dialogTitle = bool ? '新建目录' : '新建文档'
-        this.dialogFormLabel = bool ? '目录名称' : '文档名称'
-        this.addNodeObj.name = ''
-        this.addNodeObj.is_dir = bool ? 1 : 0
-        this.dialogVisible = true
-      },
-      confirmBtnCopy() {
-        if (!this.copyNodeName) {
-          this.$message('章节名称不能为空！')
-          return
+      })
+      // 给整个document添加监听鼠标事件，点击任何位置执行removeRightClickEvent
+      document.addEventListener('click', this.removeRightClickEvent)
+    },
+    removeRightClickEvent() {
+      this.menuBarVisible = false
+      document.removeEventListener('click', this.removeRightClickEvent)
+    },
+    clickIconAddNode(bool) {
+      this.addFirst = true
+      this.dialogTitle = bool ? '新建目录' : '新建文档'
+      this.dialogFormLabel = bool ? '目录名称' : '文档名称'
+      this.addNodeObj.name = ''
+      this.addNodeObj.is_dir = bool ? 1 : 0
+      this.addNodeObj.layout = bool ? 0 : 1
+      this.dialogVisible = true
+      this.rightSelectNode = {}
+      this.rightSelectNodeObj = {}
+    },
+    updateNode(bool) {
+      this.dialogTitle = '重命名';
+      localStorage.rename = this.rightSelectNodeObj.name;
+      this.addNodeObj.name = this.rightSelectNodeObj.name
+      this.dialogFormLabel = bool ? '新的目录名称' : '新的文档名称'
+      this.dialogVisible = true
+    },
+    copyNode() {
+      this.copyNodeName = this.rightSelectNodeObj.name
+      this.dialogVisibleCopy = true
+    },
+    addChildNode(bool) {
+      this.addFirst = false
+      // console.log(this.rightSelectNode)
+      // 五级文档
+      if (this.rightSelectNode.level == 5 && bool) {
+        this.$message('第五级只能为文档！')
+        return
+      }
+      this.dialogTitle = bool ? '新建目录' : '新建文档'
+      this.dialogFormLabel = bool ? '目录名称' : '文档名称'
+      this.addNodeObj.name = ''
+      this.addNodeObj.is_dir = bool ? 1 : 0
+      this.dialogVisible = true
+    },
+    confirmBtnCopy() {
+      if (!this.copyNodeName) {
+        this.$message('章节名称不能为空！')
+        return
+      }
+      this.confirmCopyDisabled = true;
+      this.$post('/admin/chapter/copy', {
+        document_id: this.$route.params.id,
+        chapter_id: this.rightSelectNodeObj.id,
+        parent_id: this.rightSelectNodeObj.parent_id,
+        name: this.copyNodeName
+      }).then(res => {
+        let newChild = res.data;
+        this.confirmCopyDisabled = false;
+        if (this.rightSelectNodeObj.parent_id != 0) {
+          let node = this.rightSelectNode
+          let parent = node.parent
+          parent.data.children.push(newChild)
+        } else {
+          this.chapters.push(newChild)
         }
-        this.confirmCopyDisabled = true;
-        this.$post('/admin/chapter/copy', {
+        this.$message('复制成功！')
+        this.dialogVisibleCopy = false
+        this.$nextTick(() => {
+          //选中新建章节
+          this.$refs.chaptersTree.setCurrentKey(newChild.id)
+          this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode())
+          //展开
+          let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
+          let record = allRecords['document_' + this.$route.params.id]
+          this.defaultExpanded = record.defaultExpanded
+          this.defaultExpanded.push(newChild.id)
+        })
+      })
+    },
+    confirmBtn() {
+      if (!this.addNodeObj.name) {
+        this.$message('章节名称不能为空！')
+        return
+      }
+      this.confirmDisabled = true;
+      if (this.dialogTitle == '新建目录' || this.dialogTitle == '新建文档') {
+        this.formCompared = '';
+        this.markDownContentCompared = '';
+        this.apiResTreeDataCompared = [];
+        this.apiResTreeDataCompared.push({description: '', data: []});
+        createChapter({
           document_id: this.$route.params.id,
-          chapter_id: this.rightSelectNodeObj.id,
-          parent_id: this.rightSelectNodeObj.parent_id,
-          name: this.copyNodeName
+          parent_id: this.addFirst ? 0 : this.rightSelectNode.data.id,
+          is_dir: this.addNodeObj.is_dir,
+          layout: this.addNodeObj.layout,
+          name: this.addNodeObj.name
         }).then(res => {
+          this.chapter_id = res.data.id;
+          this.confirmDisabled = false;
           let newChild = res.data;
-          this.confirmCopyDisabled = false;
-          if (this.rightSelectNodeObj.parent_id != 0) {
-            let node = this.rightSelectNode
-            let parent = node.parent
-            parent.data.children.push(newChild)
+          if (!this.addFirst) {
+            let data = this.rightSelectNodeObj
+            if (!data.children) {
+              this.$set(data, 'children', []);
+            }
+            data.children.push(newChild)
           } else {
             this.chapters.push(newChild)
           }
-          this.$message('复制成功！')
-          this.dialogVisibleCopy = false
+          this.$message('新增成功！');
+
+          this.emptyForm();
+          this.isDocEmpty = false;
+          this.dialogVisible = false;
+
           this.$nextTick(() => {
             //选中新建章节
             this.$refs.chaptersTree.setCurrentKey(newChild.id)
@@ -1213,667 +1405,616 @@
             let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
             let record = allRecords['document_' + this.$route.params.id]
             this.defaultExpanded = record.defaultExpanded
-            this.defaultExpanded.push(newChild.id)
-          })
-        })
-      },
-      confirmBtn() {
-        if (!this.addNodeObj.name) {
-          this.$message('章节名称不能为空！')
-          return
-        }
-        this.confirmDisabled = true;
-        if (this.dialogTitle == '新建目录' || this.dialogTitle == '新建文档') {
-          this.formCompared = '';
-          this.markDownContentCompared = '';
-          this.apiResTreeDataCompared = [];
-          this.apiResTreeDataCompared.push({description: '', data: []});
-          createChapter({
-            document_id: this.$route.params.id,
-            parent_id: this.addFirst ? 0 : this.rightSelectNode.data.id,
-            is_dir: this.addNodeObj.is_dir,
-            layout: this.addNodeObj.layout,
-            name: this.addNodeObj.name
-          }).then(res => {
-            this.chapter_id = res.data.id;
-            this.confirmDisabled = false;
-            let newChild = res.data;
-            if (!this.addFirst) {
-              let data = this.rightSelectNodeObj
-              if (!data.children) {
-                this.$set(data, 'children', []);
-              }
-              data.children.push(newChild)
-            } else {
-              this.chapters.push(newChild)
-            }
-            this.$message('新增成功！');
-
-            this.emptyForm();
-            this.isDocEmpty = false;
-            this.dialogVisible = false;
-
-            this.$nextTick(() => {
-              //选中新建章节
-              this.$refs.chaptersTree.setCurrentKey(newChild.id)
-              this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode())
-              //展开
-              let allRecords = JSON.parse(localStorage.getItem('we7_doc_user_' + this.UserInfo.id))
-              let record = allRecords['document_' + this.$route.params.id]
-              this.defaultExpanded = record.defaultExpanded
-              this.defaultExpanded.push(newChild.id);
-            })
-          }).catch(() => {
-            this.dialogVisible = false
-            this.confirmDisabled = false;
-          })
-        }
-        if (this.dialogTitle == '重命名') {
-          this.$post('/admin/chapter/update', {
-            document_id: this.$route.params.id,
-            chapter_id: this.rightSelectNodeObj.id,
-            name: this.addNodeObj.name
-          }).then(() => {
-            this.$message('修改成功！')
-            this.rightSelectNodeObj.name = this.addNodeObj.name
-            this.dialogVisible = false;
-            this.confirmDisabled = false;
-            const docTitle = this.docTitle;
-            const rename = localStorage.rename;
-            if (docTitle == rename) {
-              this.docTitle = this.addNodeObj.name;
-            }
-            // location.reload();
-          }).catch(() => {
-            this.dialogVisible = false
-            this.confirmDisabled = false;
-          })
-        }
-      },
-      removeNode() {
-        var arrId = []
-        arrId.push(this.rightSelectNodeObj.id)
-        //删除的为目录,切存在子节点
-        if (this.rightSelectNodeObj.is_dir && this.rightSelectNodeObj.children && this.rightSelectNodeObj.children.length) {
-          let getArrId = function (array) {
-            array.forEach(item => {
-              arrId.push(item.id)
-              if (item.children && item.children.length) {
-                getArrId(item.children)
-              }
-            })
-          }
-          getArrId(this.rightSelectNodeObj.children)
-        }
-        this.$confirm('确定删除该章节吗?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          //这里鼠标左右键，都是只有右键this.rightSelectNode有值，左键没值
-          this.$post('/admin/chapter/delete', {
-            document_id: this.$route.params.id,
-            chapter_id: arrId
-          }).then(() => {
-            let node = this.rightSelectNode
-            let data = this.rightSelectNodeObj
-            let parent = node.parent;
-            let children = parent.data.children || parent.data
-            let index = children.findIndex(d => d.id === data.id)
-            children.splice(index, 1)
-            this.$message('删除成功！')
-            console.log('defaultSelect2');
-            console.log(this.defaultSelect);
-            console.log(arrId);
-            // this.emptyForm();
-            // this.getChapters();
-            // this.selectNodeObj = {}
-            // 使用刷新页面替代
-            location.reload();
+            this.defaultExpanded.push(newChild.id);
           })
         }).catch(() => {
+          this.dialogVisible = false
+          this.confirmDisabled = false;
         })
-      },
-      handleDrop(draggingNode, dropNode, dropType) {
-        this.$post('/admin/chapter/sort', {
-          document_id: this.$route.params.id,
-          chapter_id: draggingNode.data.id,
-          target: {
-            chapter_id: dropNode.data.id,
-            parent_id: dropNode.data.parent_id,
-            position: dropType
-          }
-        })
-          .then(() => {
-            this.$message('修改成功！')
-          })
-      },
-      allowDrop(draggingNode, dropNode, type) {
-        if (dropNode.data.is_dir || type !== 'inner') {
-          return true
-        }
-      },
-      openMoveDialog(bool) {
-        this.dialogMoveTitle = bool ? '移动目录' : '移动文档'
-        this.moveDoc = ''
-        this.moveClass = ''
-        this.dialogMoveVisible = true
-      },
-      remoteMethod(query) {
-        if (query !== '') {
-          this.$post('/admin/document/all', {
-            keyword: query
-          }).then(res => {
-            this.docList = res.data.data
-          })
-        } else {
-          this.options = [];
-        }
-      },
-      changeDoc(id) {
-        this.$post('/admin/chapter/detail', {
-          document_id: id
-        })
-          .then(res => {
-            //去掉所有文档和最后一个children
-            this.docChapters = this.deleteA(this.deleteA(res.catalog))
-          })
-      },
-      deleteA(arr) {
-        if (arr.length) {
-          for (let i = arr.length - 1; i >= 0; i--) {
-            if (!arr[i]['is_dir']) {
-              arr.splice(i, 1)
-            } else if (arr[i].children && !arr[i].children.length) {
-              delete arr[i].children
-            } else if (arr[i].children) {
-              this.deleteA(arr[i]['children'])
-            }
-          }
-        }
-        return arr
-      },
-      moveNode() {
-        if (!this.moveDoc) {
-          this.$message('项目不能为空！')
-          return
-        }
-        let id = 0
-        if (this.moveClass.length == 1) {
-          id = this.moveClass[0]
-        } else if (this.moveClass.length == 2) {
-          id = this.moveClass[1]
-        }
-        this.$post('/admin/chapter/sort', {
+      }
+      if (this.dialogTitle == '重命名') {
+        this.$post('/admin/chapter/update', {
           document_id: this.$route.params.id,
           chapter_id: this.rightSelectNodeObj.id,
-          target: {
-            document_id: this.moveDoc,
-            chapter_id: id,
-            position: 'move'
+          name: this.addNodeObj.name
+        }).then(() => {
+          this.$message('修改成功！')
+          this.rightSelectNodeObj.name = this.addNodeObj.name
+          this.dialogVisible = false;
+          this.confirmDisabled = false;
+          const docTitle = this.docTitle;
+          const rename = localStorage.rename;
+          if (docTitle == rename) {
+            this.docTitle = this.addNodeObj.name;
           }
+          // location.reload();
+        }).catch(() => {
+          this.dialogVisible = false
+          this.confirmDisabled = false;
         })
-          .then(() => {
-            this.$message('移动成功！')
-            this.dialogMoveVisible = false
-            this.getChapters()
+      }
+    },
+    removeNode() {
+      var arrId = []
+      arrId.push(this.rightSelectNodeObj.id)
+      //删除的为目录,切存在子节点
+      if (this.rightSelectNodeObj.is_dir && this.rightSelectNodeObj.children && this.rightSelectNodeObj.children.length) {
+        let getArrId = function (array) {
+          array.forEach(item => {
+            arrId.push(item.id)
+            if (item.children && item.children.length) {
+              getArrId(item.children)
+            }
           })
-      },
-      defaultFile() {
-        this.$post('/admin/chapter/default-show', {
+        }
+        getArrId(this.rightSelectNodeObj.children)
+      }
+      this.$confirm('确定删除该章节吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        //这里鼠标左右键，都是只有右键this.rightSelectNode有值，左键没值
+        this.$post('/admin/chapter/delete', {
           document_id: this.$route.params.id,
-          chapter_id: this.rightSelectNodeObj.parent_id,
-          show_chapter_id: this.rightSelectNodeObj.id
+          chapter_id: arrId
+        }).then(() => {
+          if (localStorage['currentData_' + this.$route.params.id]) {
+            const id = localStorage['currentData_' + this.$route.params.id].id;
+            arrId.forEach(item => {
+              if (item.id == id) {
+                localStorage['currentData_' + this.$route.params.id] = '';
+              }
+            })
+           }
+
+          let node = this.rightSelectNode
+          let data = this.rightSelectNodeObj
+          let parent = node.parent;
+          let children = parent.data.children || parent.data
+          let index = children.findIndex(d => d.id === data.id)
+          children.splice(index, 1)
+          this.$message('删除成功！')
+          console.log('defaultSelect2');
+          console.log(this.defaultSelect);
+          console.log(arrId);
+          // this.emptyForm();
+          // this.getChapters();
+          // this.selectNodeObj = {}
+          // 使用刷新页面替代
+          location.reload();
         })
-          .then(() => {
-            this.getChapters()
-            this.$message('设置默认文档成功！')
-          })
-      },
-      handleClose() {
-        this.getChapters()
-        this.showSetting = false
-      },
-
-      // 获取请求类型
-      getMethodType() {
-        getMethodType({}).then(res => {
-          if (res.data && res.data.methodLabel) {
-            this.methodArr = res.data.methodLabel.option;
-          }
+      }).catch(() => {
+      })
+    },
+    handleDrop(draggingNode, dropNode, dropType) {
+      this.$post('/admin/chapter/sort', {
+        document_id: this.$route.params.id,
+        chapter_id: draggingNode.data.id,
+        target: {
+          chapter_id: dropNode.data.id,
+          parent_id: dropNode.data.parent_id,
+          position: dropType
+        }
+      })
+        .then(() => {
+          this.$message('修改成功！')
         })
-      },
-
-      // 请求类型切换
-      tabRequest(tab) {
-        localStorage.tab_location = tab.name;
-        console.log(tab);
-      },
-
-      // 请求数据 输入框输入 下方新增同级node
-      paramNameChange(node, data) {
-        if (data.name.length) {
-          data.already = Number(data.already) + 1;
-          // console.log(data);
-          // console.log(data.already);
-          // 防止不断输入添加多个同级node
-          if (data.already == 1) {
-            // this.addFirstNode();
-            this.insertAfter(node, data);
+    },
+    allowDrop(draggingNode, dropNode, type) {
+      if (dropNode.data.is_dir || type !== 'inner') {
+        return true
+      }
+    },
+    openMoveDialog(bool) {
+      this.dialogMoveTitle = bool ? '移动目录' : '移动文档'
+      this.moveDoc = ''
+      this.moveClass = ''
+      this.dialogMoveVisible = true
+    },
+    remoteMethod(query) {
+      if (query !== '') {
+        this.$post('/admin/document/all', {
+          keyword: query
+        }).then(res => {
+          this.docList = res.data.data
+        })
+      } else {
+        this.options = [];
+      }
+    },
+    changeDoc(id) {
+      this.$post('/admin/chapter/detail', {
+        document_id: id
+      })
+        .then(res => {
+          //去掉所有文档和最后一个children
+          this.docChapters = this.deleteA(this.deleteA(res.catalog))
+        })
+    },
+    deleteA(arr) {
+      if (arr.length) {
+        for (let i = arr.length - 1; i >= 0; i--) {
+          if (!arr[i]['is_dir']) {
+            arr.splice(i, 1)
+          } else if (arr[i].children && !arr[i].children.length) {
+            delete arr[i].children
+          } else if (arr[i].children) {
+            this.deleteA(arr[i]['children'])
           }
         }
-      },
-
-      // 响应数据 输入框输入 下方新增同级node
-      resParamNameChange(node, data) {
-        if (data.name.length) {
-          data.already = Number(data.already) + 1;
-          // console.log(data);
-          // console.log(data.already);
-          // 防止不断输入添加多个同级node
-          if (data.already == 1) {
-            this.insertAfter(node, data);
-          }
+      }
+      return arr
+    },
+    moveNode() {
+      if (!this.moveDoc) {
+        this.$message('项目不能为空！')
+        return
+      }
+      let id = 0
+      if (this.moveClass.length == 1) {
+        id = this.moveClass[0]
+      } else if (this.moveClass.length == 2) {
+        id = this.moveClass[1]
+      }
+      this.$post('/admin/chapter/sort', {
+        document_id: this.$route.params.id,
+        chapter_id: this.rightSelectNodeObj.id,
+        target: {
+          document_id: this.moveDoc,
+          chapter_id: id,
+          position: 'move'
         }
-      },
-
-      // request请求 添加同级node
-      addFirstNode() {
-        const baseRequestData = JSON.parse(JSON.stringify(this.baseRequestData));
-        const This = this;
-
-        function apiDataFilter(data) {
-          const last = data.length - 1;
-          if (data[last].name == '' && data[last].description == '') {
-            This.$message.warning('已存在空白行，请勿再次添加！')
-          } else {
-            data.push(baseRequestData);
-          }
+      })
+        .then(() => {
+          this.$message('移动成功！')
+          this.dialogMoveVisible = false
+          this.getChapters()
+        })
+    },
+    defaultFile() {
+      this.$post('/admin/chapter/default-show', {
+        document_id: this.$route.params.id,
+        chapter_id: this.rightSelectNodeObj.parent_id,
+        show_chapter_id: this.rightSelectNodeObj.id
+      })
+        .then(() => {
+          this.getChapters()
+          this.$message('设置默认文档成功！')
+        })
+    },
+    handleClose() {
+      this.getChapters()
+      this.showSetting = false
+    },
+    // 获取请求类型
+    getMethodType() {
+      getMethodType({}).then(res => {
+        if (res.data && res.data.methodLabel) {
+          this.methodArr = res.data.methodLabel.option;
         }
-
-        /*
-        *或者按照这种push
-        * baseRequestData = {isChecked: false, name: '',type: 1, enabled: '', default_value: '', description: '', rule: '',children: []}
-        * */
-
-        const tab_location = this.form.tab_location;
-
-        if (tab_location == 1) {
-          // this.apiHeaderTreeData.push(baseRequestData);
-          apiDataFilter(this.apiHeaderTreeData);
-        } else if (tab_location == 2) {
-          // this.apiParamsTreeData.push(baseRequestData);
-          apiDataFilter(this.apiParamsTreeData);
-        } else if (tab_location == 3) {
-          // this.apiBodyTreeData.push(baseRequestData);
-          apiDataFilter(this.apiBodyTreeData);
-        }
-      },
-
-      // res响应数据 添加同级node
-      addResFirstNode() {
-        const This = this;
-        const baseRequestData = JSON.parse(JSON.stringify(this.baseRequestData));
-
-        // this.apiResTreeData.push(baseRequestData);
-
-        function apiDataFilter(data) {
-          const last = data.length - 1;
-          if (data[last].name == '' && data[last].description == '') {
-            This.$message.warning('已存在空白行，请勿再次添加！')
-          } else {
-            data.push(baseRequestData);
-          }
-        }
-
-        apiDataFilter(this.apiResTreeData);
-      },
-
-      // 请求数据 添加下一级node
-      addApiTreeNode(data) {
-        // console.log('data');
+      })
+    },
+    // 请求类型切换
+    tabRequest(tab) {
+      localStorage.tab_location = tab.name;
+      console.log(tab);
+    },
+    // 请求数据 输入框输入 下方新增同级node
+    paramNameChange(node, data) {
+      if (data.name.length) {
+        data.already = Number(data.already) + 1;
         // console.log(data);
-        // const newChild = {};
-        const newChild = {
-          id: id++,
-          already: 0,
-          isChecked: false,
-          name: '',
-          type: 1,
-          enabled: 2,
-          default_value: '',
-          description: '',
-          rule: '',
-          children: [],
-        };
-        if (!data.children) {
-          this.$set(data, 'children', []);
+        // console.log(data.already);
+        // 防止不断输入添加多个同级node
+        if (data.already == 1) {
+          // this.addFirstNode();
+          this.insertAfter(node, data);
         }
-        if (data.type == 4 || data.type == 5) {
-          data.children.push(newChild);
+      }
+    },
+    // 响应数据 输入框输入 下方新增同级node
+    resParamNameChange(node, data) {
+      if (data.name.length) {
+        data.already = Number(data.already) + 1;
+        // console.log(data);
+        // console.log(data.already);
+        // 防止不断输入添加多个同级node
+        if (data.already == 1) {
+          this.insertAfter(node, data);
+        }
+      }
+    },
+    // request请求 添加同级node
+    addFirstNode() {
+      const baseRequestData = JSON.parse(JSON.stringify(this.baseRequestData));
+      const This = this;
+
+      function apiDataFilter(data) {
+        const last = data.length - 1;
+        if (data[last].name == '' && data[last].description == '') {
+          This.$message.warning('已存在空白行，请勿再次添加！')
         } else {
-          this.$message.warning('参数类型为Object或者为Array才可添加！')
+          data.push(baseRequestData);
         }
-      },
+      }
 
-      // 响应数据 添加下一级node
-      addResApiTreeNode(data) {
-        console.log('data');
-        console.log(data);
-        // const newChild = {};
-        const newChild = {
-          id: id++,
-          already: 0,
-          isChecked: false,
-          name: '',
-          type: 1,
-          enabled: 2,
-          default_value: '',
-          description: '',
-          rule: '',
-          children: [],
-        };
-        if (!data.children) {
-          this.$set(data, 'children', []);
-        }
-        if (data.type == 4 || data.type == 5) {
-          data.children.push(newChild);
+      /*
+      *或者按照这种push
+      * baseRequestData = {isChecked: false, name: '',type: 1, enabled: '', default_value: '', description: '', rule: '',children: []}
+      * */
+
+      const tab_location = this.form.tab_location;
+
+      if (tab_location == 1) {
+        // this.apiHeaderTreeData.push(baseRequestData);
+        apiDataFilter(this.apiHeaderTreeData);
+      } else if (tab_location == 2) {
+        // this.apiParamsTreeData.push(baseRequestData);
+        apiDataFilter(this.apiParamsTreeData);
+      } else if (tab_location == 3) {
+        // this.apiBodyTreeData.push(baseRequestData);
+        apiDataFilter(this.apiBodyTreeData);
+      }
+    },
+    // res响应数据 添加同级node
+    addResFirstNode() {
+      const This = this;
+      const baseRequestData = JSON.parse(JSON.stringify(this.baseRequestData));
+
+      // this.apiResTreeData.push(baseRequestData);
+
+      function apiDataFilter(data) {
+        const last = data.length - 1;
+        if (data[last].name == '' && data[last].description == '') {
+          This.$message.warning('已存在空白行，请勿再次添加！')
         } else {
-          this.$message.warning('参数类型为Object或者为Array才可添加！')
+          data.push(baseRequestData);
         }
-      },
+      }
 
-      // 删除 请求数据node
-      removeApiTreeNode(node, data) {
-        const length1 = this.apiHeaderTreeData.length;
-        const length2 = this.apiParamsTreeData.length;
-        const length3 = this.apiBodyTreeData.length;
-        const tab_location = this.form.tab_location;
+      apiDataFilter(this.apiResTreeData);
+    },
+    // 请求数据 添加下一级node
+    addApiTreeNode(data) {
+      // console.log('data');
+      // console.log(data);
+      // const newChild = {};
+      const newChild = {
+        id: id++,
+        already: 0,
+        isChecked: false,
+        name: '',
+        type: 1,
+        enabled: 2,
+        default_value: '',
+        description: '',
+        rule: '',
+        children: [],
+      };
+      if (!data.children) {
+        this.$set(data, 'children', []);
+      }
+      if (data.type == 4 || data.type == 5) {
+        data.children.push(newChild);
+      } else {
+        this.$message.warning('参数类型为Object或者为Array才可添加！')
+      }
+    },
+    // 响应数据 添加下一级node
+    addResApiTreeNode(data) {
+      console.log('data');
+      console.log(data);
+      // const newChild = {};
+      const newChild = {
+        id: id++,
+        already: 0,
+        isChecked: false,
+        name: '',
+        type: 1,
+        enabled: 2,
+        default_value: '',
+        description: '',
+        rule: '',
+        children: [],
+      };
+      if (!data.children) {
+        this.$set(data, 'children', []);
+      }
+      if (data.type == 4 || data.type == 5) {
+        data.children.push(newChild);
+      } else {
+        this.$message.warning('参数类型为Object或者为Array才可添加！')
+      }
+    },
+    // 删除 请求数据node
+    removeApiTreeNode(node, data) {
+      const length1 = this.apiHeaderTreeData.length;
+      const length2 = this.apiParamsTreeData.length;
+      const length3 = this.apiBodyTreeData.length;
+      const tab_location = this.form.tab_location;
 
-        if (tab_location == 1) {
-          if (length1 == 1 && node.level == 1) {
-            this.$message.error('已经是最后一个了，勿删！')
-            return false;
-          }
-        }
-        if (tab_location == 2) {
-          if (length2 == 1 && node.level == 1) {
-            this.$message.error('已经是最后一个了，勿删！')
-            return false;
-          }
-        }
-        if (tab_location == 3) {
-          if (length3 == 1 && node.level == 1) {
-            this.$message.error('已经是最后一个了，勿删！')
-            return false;
-          }
-        }
-
-        const parent = node.parent;
-        const children = parent.data.children || parent.data;
-        const index = children.findIndex(d => d.id === data.id);
-        children.splice(index, 1);
-      },
-
-      // 删除 响应数据数据node
-      removeResApiTreeNode(node, data) {
-        console.log(node);
-
-        const length = this.apiResTreeData.length;
-        console.log(length);
-
-        if (length == 1 && node.level == 1) {
+      if (tab_location == 1) {
+        if (length1 == 1 && node.level == 1) {
           this.$message.error('已经是最后一个了，勿删！')
           return false;
         }
-        const parent = node.parent;
-        const children = parent.data.children || parent.data;
-        const index = children.findIndex(d => d.id === data.id);
-        children.splice(index, 1);
-      },
-
-      insertAfter(node, data) {
-        // console.log(node);
-        // console.log(data);
-
-        const parent = node.parent;
-        const newChild = {
-          id: id++,
-          already: 0,
-          isChecked: false,
-          name: '',
-          type: 1,
-          enabled: 2,
-          default_value: '',
-          description: '',
-          rule: '',
-          children: []
-        };
-
-        if (Array.isArray(parent.data)) {
-          parent.data.push(newChild);
-        } else {
-          parent.data.children.push(newChild);
+      }
+      if (tab_location == 2) {
+        if (length2 == 1 && node.level == 1) {
+          this.$message.error('已经是最后一个了，勿删！')
+          return false;
         }
-      },
-
-      // 保存文档
-      saveApi() {
-        // console.log('body_param_location');
-        // console.log(this.form.body_param_location);
-        const tab_location = this.form.tab_location;
-        const body_param_location = this.form.body_param_location;
-        let chapter_id = '';
-        let record = {};
-        let body = {};
-        body = {};
-        // if (tab_location == '3') {
-        //   if (body_param_location == 3) {
-        //     body['3'] = this.apiBodyTreeData;
-        //   } else if (body_param_location == 4) {
-        //     body['4'] = this.apiBodyTreeData;
-        //   } else if (body_param_location == 5) {
-        //     body['5'] = this.apiBodyTreeData;
-        //   } else if (body_param_location == 6) {
-        //     body['6'] = this.apiBodyTreeData;
-        //   }
-        // }
-
-        body['1'] = this.apiHeaderTreeData;
-        body['2'] = this.apiParamsTreeData;
-        body['request_body'] = this.apiBodyTreeData;
-        // body['reponse_body'] = this.apiResTreeData;
-        record.api = this.form;
-        record.body = body;
-        record.reponse = this.apiResTreeData;
-        record.extend = this.markDownContent;
-        chapter_id = this.chapter_id;
-
-        if (this.layout == 1) {
-          // alert(1);
-          saveChapter({
-            document_id: this.$route.params.id,
-            chapter_id,
-            layout: 1,
-            record
-          }).then(res => {
-            if (res.code == 200) {
-              this.$message.success('保存成功！');
-              this.isFormChange = false;
-              this.isApiHeaderTreeDataChange = false;
-              this.isApiParamsTreeDataChange = false;
-              this.isApiBodyTreeDataChange = false;
-              this.isApiResTreeDataChange = false;
-              this.isMarkDownContentChange = false;
-              console.log(1);
-              // this.getOperRecord();
-              // this.getChapters();
-              // this.viewChapter();
-            }
-          })
-        } else {
-          saveChapter({
-            document_id: this.$route.params.id,
-            chapter_id,
-            layout: 0,
-            content: this.markDownContent
-          }).then(res => {
-            if (res.code == 200) {
-              this.$message.success('保存成功！');
-              this.isFormChange = false;
-              this.isApiHeaderTreeDataChange = false;
-              this.isApiParamsTreeDataChange = false;
-              this.isApiBodyTreeDataChange = false;
-              this.isApiResTreeDataChange = false;
-              this.isMarkDownContentChange = false;
-              console.log(2);
-              // this.getOperRecord();
-              // this.getChapters();
-              // this.viewChapter();
-            }
-            // console.log('form');
-            // console.log(this.form);
-          })
+      }
+      if (tab_location == 3) {
+        if (length3 == 1 && node.level == 1) {
+          this.$message.error('已经是最后一个了，勿删！')
+          return false;
         }
-      },
+      }
 
-      // 清空form
-      emptyForm() {
-        this.docTitle = ''
-        this.form = this.formCopy;
-        this.apiHeaderTreeData = this.apiTreeDataCopy;
-        this.apiParamsTreeData = this.apiTreeDataCopy;
-        this.apiBodyTreeData = this.apiTreeDataCopy;
-        this.apiResTreeData = this.apiResTreeDataCopy;
-        this.markDownContent = '';
-      },
+      const parent = node.parent;
+      const children = parent.data.children || parent.data;
+      const index = children.findIndex(d => d.id === data.id);
+      children.splice(index, 1);
+    },
+    // 删除 响应数据数据node
+    removeResApiTreeNode(node, data) {
+      console.log(node);
 
-      // 查看文档
-      viewChapter() {
-        const chapter_id = this.chapter_id;
-        const document_id = this.$route.params.id;
-        this.loading = this.$loading();
-        viewChapter({
+      const length = this.apiResTreeData.length;
+      console.log(length);
+
+      if (length == 1 && node.level == 1) {
+        this.$message.error('已经是最后一个了，勿删！')
+        return false;
+      }
+      const parent = node.parent;
+      const children = parent.data.children || parent.data;
+      const index = children.findIndex(d => d.id === data.id);
+      children.splice(index, 1);
+    },
+    insertAfter(node, data) {
+      // console.log(node);
+      // console.log(data);
+
+      const parent = node.parent;
+      const newChild = {
+        id: id++,
+        already: 0,
+        isChecked: false,
+        name: '',
+        type: 1,
+        enabled: 2,
+        default_value: '',
+        description: '',
+        rule: '',
+        children: []
+      };
+
+      if (Array.isArray(parent.data)) {
+        parent.data.push(newChild);
+      } else {
+        parent.data.children.push(newChild);
+      }
+    },
+    // 保存文档
+    saveApi() {
+      // console.log('body_param_location');
+      // console.log(this.form.body_param_location);
+      const tab_location = this.form.tab_location;
+      const body_param_location = this.form.body_param_location;
+      let chapter_id = '';
+      let record = {};
+      let body = {};
+      body = {};
+      // if (tab_location == '3') {
+      //   if (body_param_location == 3) {
+      //     body['3'] = this.apiBodyTreeData;
+      //   } else if (body_param_location == 4) {
+      //     body['4'] = this.apiBodyTreeData;
+      //   } else if (body_param_location == 5) {
+      //     body['5'] = this.apiBodyTreeData;
+      //   } else if (body_param_location == 6) {
+      //     body['6'] = this.apiBodyTreeData;
+      //   }
+      // }
+
+      body['1'] = this.apiHeaderTreeData;
+      body['2'] = this.apiParamsTreeData;
+      body['request_body'] = this.apiBodyTreeData;
+      // body['reponse_body'] = this.apiResTreeData;
+      record.api = this.form;
+      record.body = body;
+      record.reponse = this.apiResTreeData;
+      record.extend = this.markDownContent;
+      chapter_id = this.chapter_id;
+
+      if (this.layout == 1) {
+        // alert(1);
+        saveChapter({
+          document_id: this.$route.params.id,
           chapter_id,
-          document_id
+          layout: 1,
+          record
         }).then(res => {
           if (res.code == 200) {
-            this.layout = res.data.layout;
-            if (res.data.layout == 1) {
-              // api文档
-              let record = JSON.parse(JSON.stringify(res.data.record));
-              const apiData1 = JSON.parse(JSON.stringify(this.baseRequestData));
-              const apiData2 = JSON.parse(JSON.stringify(this.baseRequestData));
-              const apiData3 = JSON.parse(JSON.stringify(this.baseRequestData));
-              const apiData4 = JSON.parse(JSON.stringify(this.baseRequestData));
-              if (record.api) {
-                this.formCompared = JSON.parse(JSON.stringify(record.api));
-                if (!this.formCompared.url) {
-                  this.formCompared = "";
-                }
-                this.form = JSON.parse(JSON.stringify(record.api));
-                console.log(55);
-                this.form.tab_location = localStorage.tab_location || this.form.tab_location.toString();
-                // this.form.body_param_location = this.form.body_param_location.toString();
-                this.form.body_param_location = this.form.body_param_location;
-              } else {
-                console.log(56);
-                this.formCompared = "";
-                this.form = JSON.parse(JSON.stringify(this.formCopy));
-              }
-
-              // header
-              if (record.body[1].length) {
-                this.apiHeaderTreeData = JSON.parse(JSON.stringify(record.body['1']));
-                this.apiHeaderTreeDataCompared = JSON.parse(JSON.stringify(record.body['1']));
-                this.apiHeaderTreeData.push(apiData1);
-              } else {
-                // const apiData1 = JSON.parse(JSON.stringify(this.baseRequestData));
-                this.apiHeaderTreeDataCompared = "";
-                this.apiHeaderTreeData = [apiData1];
-              }
-              // params
-              if (record.body[2].length) {
-                console.log(record.body['2']);
-                this.apiParamsTreeData = JSON.parse(JSON.stringify(record.body['2']));
-                this.apiParamsTreeDataCompared = JSON.parse(JSON.stringify(record.body['2']));
-                this.apiParamsTreeData.push(apiData2);
-              } else {
-                // const apiData2 = JSON.parse(JSON.stringify(this.baseRequestData));
-                this.apiParamsTreeDataCompared = "";
-                this.apiParamsTreeData = [apiData2];
-              }
-              // request body
-              if (record.body.request_body.length) {
-                this.apiBodyTreeData = JSON.parse(JSON.stringify(record.body.request_body));
-                this.apiBodyTreeDataCompared = JSON.parse(JSON.stringify(record.body.request_body));
-                this.apiBodyTreeData.push(apiData3);
-              } else {
-                // const apiData3 = JSON.parse(JSON.stringify(this.baseRequestData));
-                this.apiBodyTreeDataCompared = "";
-                this.apiBodyTreeData = [apiData3];
-              }
-              // reponse body
-              if (record.reponse.length) {
-                // console.error(1)
-                this.apiResTreeData = JSON.parse(JSON.stringify(record.reponse));
-                this.apiResTreeData.forEach(item1 => {
-                  item1.data.push(apiData4)
-                })
-                this.apiResTreeDataCompared = JSON.parse(JSON.stringify(record.reponse));
-              } else {
-                // console.error(2)
-                const apiData = JSON.parse(JSON.stringify(this.baseRequestData));
-                this.apiResTreeDataCompared = [];
-                this.apiResTreeDataCompared.push({description: '', data: []});
-                this.apiResTreeData = [{description: '', data: [apiData]}];
-              }
-              // markDown
-              if (record.extend == null) {
-                this.markDownContent = '';
-                this.markDownContentCompared = "";
-              } else {
-                this.markDownContent = JSON.parse(JSON.stringify(record.extend));
-                this.markDownContentCompared = JSON.parse(JSON.stringify(record.extend));
-              }
-            } else {
-              // 普通文档
-              if (res.data.content == null) {
-                this.markDownContent = '';
-                this.markDownContentCompared = ''
-              } else {
-                this.markDownContent = res.data.content;
-                this.markDownContentCompared = res.data.content;
-              }
-            }
-            this.loading.close();
+            this.$message.success('保存成功！');
+            this.isFormChange = false;
+            this.isApiHeaderTreeDataChange = false;
+            this.isApiParamsTreeDataChange = false;
+            this.isApiBodyTreeDataChange = false;
+            this.isApiResTreeDataChange = false;
+            this.isMarkDownContentChange = false;
+            console.log(1);
+            // this.getOperRecord();
+            // this.getChapters();
+            // this.viewChapter();
           }
         })
-      },
-
-      // 添加响应数据模块
-      addResNode() {
-        const apiData = JSON.parse(JSON.stringify(this.baseRequestData));
-        this.apiResTreeData.push({description: '', data: [apiData]});
-      },
-
-      // 删除响应数据模块
-      deleteApiItem(index) {
-        this.$confirm('确认删除该数据吗?', '提示', {
-          confirmButtonText: '确认',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.apiResTreeData.splice(index, 1);
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消'
-          });
-        });
+      } else {
+        saveChapter({
+          document_id: this.$route.params.id,
+          chapter_id,
+          layout: 0,
+          content: this.markDownContent
+        }).then(res => {
+          if (res.code == 200) {
+            this.$message.success('保存成功！');
+            this.isFormChange = false;
+            this.isApiHeaderTreeDataChange = false;
+            this.isApiParamsTreeDataChange = false;
+            this.isApiBodyTreeDataChange = false;
+            this.isApiResTreeDataChange = false;
+            this.isMarkDownContentChange = false;
+            console.log(2);
+            // this.getOperRecord();
+            // this.getChapters();
+            // this.viewChapter();
+          }
+          // console.log('form');
+          // console.log(this.form);
+        })
       }
+    },
+    // 清空form
+    emptyForm() {
+      this.docTitle = ''
+      this.form = this.formCopy;
+      this.apiHeaderTreeData = this.apiTreeDataCopy;
+      this.apiParamsTreeData = this.apiTreeDataCopy;
+      this.apiBodyTreeData = this.apiTreeDataCopy;
+      this.apiResTreeData = this.apiResTreeDataCopy;
+      this.markDownContent = '';
+    },
+    // 查看文档
+    viewChapter() {
+      const chapter_id = this.chapter_id;
+      const document_id = this.$route.params.id;
+      this.loading = this.$loading();
+      viewChapter({
+        chapter_id,
+        document_id
+      }).then(res => {
+        this.loading.close();
+        this.defaultCheckedKeys = [chapter_id];
+        if (res.code == 200) {
+          this.layout = res.data.layout;
+          if (res.data.layout == 1) {
+            // api文档
+            let record = JSON.parse(JSON.stringify(res.data.record));
+            const apiData1 = JSON.parse(JSON.stringify(this.baseRequestData));
+            const apiData2 = JSON.parse(JSON.stringify(this.baseRequestData));
+            const apiData3 = JSON.parse(JSON.stringify(this.baseRequestData));
+            const apiData4 = JSON.parse(JSON.stringify(this.baseRequestData));
+            if (record.api) {
+              this.formCompared = JSON.parse(JSON.stringify(record.api));
+              if (!this.formCompared.url) {
+                this.formCompared = "";
+              }
+              this.form = JSON.parse(JSON.stringify(record.api));
+              // console.log(55);
+              this.form.tab_location = localStorage.tab_location || this.form.tab_location.toString();
+              // this.form.body_param_location = this.form.body_param_location.toString();
+              this.form.body_param_location = this.form.body_param_location;
+            } else {
+              // console.log(56);
+              this.formCompared = "";
+              this.form = JSON.parse(JSON.stringify(this.formCopy));
+            }
+
+            // header
+            if (record.body[1].length) {
+              this.apiHeaderTreeData = JSON.parse(JSON.stringify(record.body['1']));
+              this.apiHeaderTreeDataCompared = JSON.parse(JSON.stringify(record.body['1']));
+              this.apiHeaderTreeData.push(apiData1);
+            } else {
+              // const apiData1 = JSON.parse(JSON.stringify(this.baseRequestData));
+              this.apiHeaderTreeDataCompared = "";
+              this.apiHeaderTreeData = [apiData1];
+            }
+            // params
+            if (record.body[2].length) {
+              // console.log(record.body['2']);
+              this.apiParamsTreeData = JSON.parse(JSON.stringify(record.body['2']));
+              this.apiParamsTreeDataCompared = JSON.parse(JSON.stringify(record.body['2']));
+              this.apiParamsTreeData.push(apiData2);
+            } else {
+              // const apiData2 = JSON.parse(JSON.stringify(this.baseRequestData));
+              this.apiParamsTreeDataCompared = "";
+              this.apiParamsTreeData = [apiData2];
+            }
+            // request body
+            if (record.body.request_body.length) {
+              this.apiBodyTreeData = JSON.parse(JSON.stringify(record.body.request_body));
+              this.apiBodyTreeDataCompared = JSON.parse(JSON.stringify(record.body.request_body));
+              this.apiBodyTreeData.push(apiData3);
+            } else {
+              // const apiData3 = JSON.parse(JSON.stringify(this.baseRequestData));
+              this.apiBodyTreeDataCompared = "";
+              this.apiBodyTreeData = [apiData3];
+            }
+            // reponse body
+            if (record.reponse.length) {
+              // console.error(1)
+              this.apiResTreeData = JSON.parse(JSON.stringify(record.reponse));
+              this.apiResTreeData.forEach(item1 => {
+                item1.data.push(apiData4)
+              })
+              this.apiResTreeDataCompared = JSON.parse(JSON.stringify(record.reponse));
+            } else {
+              // console.error(2)
+              const apiData = JSON.parse(JSON.stringify(this.baseRequestData));
+              this.apiResTreeDataCompared = [];
+              this.apiResTreeDataCompared.push({description: '', data: []});
+              this.apiResTreeData = [{description: '', data: [apiData]}];
+            }
+            // markDown
+            if (record.extend == null) {
+              this.markDownContent = '';
+              this.markDownContentCompared = "";
+            } else {
+              this.markDownContent = JSON.parse(JSON.stringify(record.extend));
+              this.markDownContentCompared = JSON.parse(JSON.stringify(record.extend));
+            }
+          } else {
+            // 普通文档
+            if (res.data.content == null) {
+              this.markDownContent = '';
+              this.markDownContentCompared = ''
+            } else {
+              this.markDownContent = res.data.content;
+              this.markDownContentCompared = res.data.content;
+            }
+          }
+        }
+      }).catch(e => {
+        console.log(e);
+        this.loading.close();
+      })
+    },
+    // 添加响应数据模块
+    addResNode() {
+      const apiData = JSON.parse(JSON.stringify(this.baseRequestData));
+      this.apiResTreeData.push({description: '', data: [apiData]});
+    },
+    // 删除响应数据模块
+    deleteApiItem(index) {
+      this.$confirm('确认删除该数据吗?', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.apiResTreeData.splice(index, 1);
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        });
+      });
     }
   }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -2206,14 +2347,40 @@
       }
     }
   }
-
 </style>
 <style>
   [v-cloak] {
     display: none !important;
   }
 
-  .w7-tree.el-tree--highlight-current .is-current[data-active=tree-active] > .el-tree-node__content {
-     background-color: #fff !important;
-   }
+  /*增加.el-tree-node__children，去除目录选中状态*/
+  /*.w7-tree.el-tree--highlight-current > .is-current[data-active=tree-active] {*/
+    /*background-color: #fff !important;*/
+  /*}*/
+  /*.w7-tree.el-tree--highlight-current > .is-checked[data-active=tree-active] {*/
+    /*background-color: #fff !important;*/
+  /*}*/
+
+
+  /*.w7-tree.el-tree--highlight-current .el-tree-node__children .is-current[data-active=tree-active] {*/
+    /*background-color: #fff !important;*/
+  /*}*/
+  /*.w7-tree.el-tree--highlight-current .el-tree-node__children .is-checked[data-active=tree-active] {*/
+    /*background-color: #fff !important;*/
+  /*}*/
+  .w7-tree.el-tree--highlight-current > .is-current[data-active=tree-active] > .el-tree-node__content {
+    background-color: #fff !important;
+  }
+  /*.w7-tree.el-tree--highlight-current > .is-checked[data-active=tree-active][aria-expanded] > .el-tree-node__content {*/
+    /*background-color: transparent !important;*/
+  /*}*/
+  .w7-tree.el-tree--highlight-current > .is-checked[data-active=tree-active] > .el-tree-node__content {
+    background-color: #fff !important;
+  }
+  .w7-tree.el-tree--highlight-current .el-tree-node__children .is-current[data-active=tree-active] > .el-tree-node__content {
+    background-color: #fff !important;
+  }
+  .w7-tree.el-tree--highlight-current .el-tree-node__children .is-checked[data-active=tree-active] > .el-tree-node__content {
+    background-color: #fff !important;
+  }
 </style>

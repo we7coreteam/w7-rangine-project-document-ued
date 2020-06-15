@@ -1,4 +1,4 @@
-import axios from '@/utils/axios'
+import axios from '@/utils/fetch'
 
 export const createDoc = (data) => axios({
   url: '/admin/document/create',
@@ -52,6 +52,12 @@ export const logout = (data) => axios({
   url: '/common/auth/logout',
   data,
   method: 'post'
+})
+
+export const logouturl = (data) => axios({
+  url: '/common/auth/getlogouturl',
+  data,
+  method: 'get'
 })
 
 

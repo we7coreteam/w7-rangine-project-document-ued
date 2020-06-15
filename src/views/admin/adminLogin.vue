@@ -35,7 +35,7 @@
 </template>
 
 <script>
-  import axios from '@/utils/axios'
+  import axios from '@/utils/fetch'
 
   export default {
   name: 'adminLogin',
@@ -58,16 +58,16 @@
     let app_id = to.query.app_id
     // console.log(10);
     if (code) {
+      // debugger
       axios.post('/common/auth/third-party-login', {
         code,
         app_id
       }).then(res => {
         if (res && res.is_need_bind) {//跳转到绑定
-          console.error(5)
           next('/bind')
         } else {
           if (!redirect_url) {
-            console.error(2)
+            // console.error(2)
             next('/admin/document')
           } else {
             // console.error(3)
@@ -75,9 +75,10 @@
           }
         }
       }).catch(() => {
-          next('/admin-login')
-        })
+        next('/admin-login')
+      })
     } else {
+      // debugger
       // console.error(6)
       // console.log(6)
       if (process.env.NODE_ENV == 'production') {
@@ -120,27 +121,27 @@
       //     return false
       //   }
       // }
-      this.$post('/common/auth/login', this.formData)
-        .then(() => {
-          let msg = this.$message('登录成功')
-          setTimeout(() => {
-            msg.close();
-            const href = localStorage.recordHref;
-
-            if (href) {
-              location.href = href;
-            } else {
-              // console.error(1)
-              this.$router.push('/admin/document')
-            }
-          }, 500)
-        }).catch(() => {
-          this.formData.code = ''
-          document.getElementsByClassName("el-input__inner")[2].focus()
-          this.getCode()
-        })
+      // debugger
+      this.$post('/common/auth/login', this.formData).then(() => {
+        let msg = this.$message('登录成功')
+        setTimeout(() => {
+          msg.close();
+          const href = localStorage.recordHref;
+          if (href) {
+            location.href = href;
+          } else {
+            this.$router.push('/admin/document')
+          }
+        }, 500)
+      }).catch(() => {
+        this.formData.code = ''
+        document.getElementsByClassName("el-input__inner")[2].focus()
+        this.getCode()
+      })
     },
     getThirdParty() {
+      console.log('redirect_url');
+      console.log(localStorage.redirect_url);
       this.$post('/common/auth/method', {
         redirect_url: localStorage.recordHref || this.$route.query.redirect_url
       }).then(res => {
