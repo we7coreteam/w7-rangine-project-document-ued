@@ -124,7 +124,8 @@
                   <span class="text">请求数据</span>
                 </div>
                 <!--<el-button type="primary" plain icon="el-icon-plus" @click="addFirstNode">添加</el-button>-->
-                <el-button type="default" plain icon="el-icon-upload" v-if="false">导入</el-button>
+                <el-button type="default" icon="el-icon-upload" v-if="false">导入</el-button>
+                <el-button type="primary" size="mini" icon="el-icon-view" @click="viewRequestMock">预览</el-button>
               </div>
               <div class="c-con">
                 <el-tabs v-model="form.tab_location" @tab-click="tabRequest">
@@ -135,13 +136,13 @@
                       <el-tree :data="apiHeaderTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
                         <div class="custom-tree-node" slot-scope="{ node, data }">
                           <el-row :gutter="10">
-                            <el-col :span="4">
+                            <el-col :span="3">
                               <el-form-item label="">
                                 <el-input @input="paramNameChange(node, data)" v-model="data.name"
                                           placeholder="参数名"></el-input>
                               </el-form-item>
                             </el-col>
-                            <el-col :span="4">
+                            <el-col :span="3">
                               <el-form-item label="">
                                 <el-select v-model="data.type" placeholder="">
                                   <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
@@ -149,7 +150,7 @@
                                 </el-select>
                               </el-form-item>
                             </el-col>
-                            <el-col :span="4">
+                            <el-col :span="3">
                               <el-form-item label="">
                                 <el-select v-model="data.enabled" placeholder="是否必填">
                                   <el-option label="true" :value="2"></el-option>
@@ -157,12 +158,17 @@
                                 </el-select>
                               </el-form-item>
                             </el-col>
+                            <el-col :span="3">
+                              <el-form-item label="">
+                                <el-input v-model="data.rule" placeholder="生成规则"></el-input>
+                              </el-form-item>
+                            </el-col>
                             <el-col :span="4">
                               <el-form-item label="">
                                 <el-input v-model="data.default_value" placeholder="默认值"></el-input>
                               </el-form-item>
                             </el-col>
-                            <el-col :span="6">
+                            <el-col :span="3">
                               <el-form-item label="">
                                 <el-input v-model="data.description" placeholder="描述"></el-input>
                               </el-form-item>
@@ -183,13 +189,13 @@
                       <el-tree :data="apiParamsTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
                         <div class="custom-tree-node" slot-scope="{ node, data }">
                           <el-row :gutter="5">
-                            <el-col :span="4">
+                            <el-col :span="3">
                               <el-form-item label="">
                                 <el-input @input="paramNameChange(node, data)" v-model="data.name"
                                           placeholder="参数名"></el-input>
                               </el-form-item>
                             </el-col>
-                            <el-col :span="4">
+                            <el-col :span="3">
                               <el-form-item label="">
                                 <el-select v-model="data.type" placeholder="">
                                   <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
@@ -197,7 +203,7 @@
                                 </el-select>
                               </el-form-item>
                             </el-col>
-                            <el-col :span="4">
+                            <el-col :span="3">
                               <el-form-item label="">
                                 <el-select v-model="data.enabled" placeholder="是否必填">
                                   <el-option label="true" :value="2"></el-option>
@@ -205,12 +211,17 @@
                                 </el-select>
                               </el-form-item>
                             </el-col>
-                            <el-col :span="4">
+                            <el-col :span="3">
+                              <el-form-item label="">
+                                <el-input v-model="data.rule" placeholder="生成规则"></el-input>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :span="3">
                               <el-form-item label="">
                                 <el-input v-model="data.default_value" placeholder="默认值"></el-input>
                               </el-form-item>
                             </el-col>
-                            <el-col :span="6">
+                            <el-col :span="3">
                               <el-form-item label="">
                                 <el-input v-model="data.description" placeholder="描述"></el-input>
                               </el-form-item>
@@ -240,13 +251,13 @@
                         <el-tree :data="apiBodyTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
                           <div class="custom-tree-node" slot-scope="{ node, data }">
                             <el-row :gutter="5">
-                              <el-col :span="4">
+                              <el-col :span="3">
                                 <el-form-item label="">
                                   <el-input @input="paramNameChange(node, data)" v-model="data.name"
                                             placeholder="参数名"></el-input>
                                 </el-form-item>
                               </el-col>
-                              <el-col :span="4">
+                              <el-col :span="3">
                                 <el-form-item label="">
                                   <el-select v-model="data.type" placeholder="">
                                     <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
@@ -254,7 +265,7 @@
                                   </el-select>
                                 </el-form-item>
                               </el-col>
-                              <el-col :span="4">
+                              <el-col :span="3">
                                 <el-form-item label="">
                                   <el-select v-model="data.enabled" placeholder="是否必填">
                                     <el-option label="true" :value="2"></el-option>
@@ -262,12 +273,17 @@
                                   </el-select>
                                 </el-form-item>
                               </el-col>
-                              <el-col :span="4">
+                              <el-col :span="3">
+                                <el-form-item label="">
+                                  <el-input v-model="data.rule" placeholder="生成规则"></el-input>
+                                </el-form-item>
+                              </el-col>
+                              <el-col :span="3">
                                 <el-form-item label="">
                                   <el-input v-model="data.default_value" placeholder="默认值"></el-input>
                                 </el-form-item>
                               </el-col>
-                              <el-col :span="6">
+                              <el-col :span="3">
                                 <el-form-item label="">
                                   <el-input v-model="data.description" placeholder="描述"></el-input>
                                 </el-form-item>
@@ -285,6 +301,26 @@
                   </el-tab-pane>
                 </el-tabs>
               </div>
+              <div class="c-bottom" v-if="isViewRequest">
+                <el-row :gutter="20">
+                  <el-col :span="12">
+                    <div class="mock">
+                      <div class="m-tit">请求模板</div>
+                      <div class="m-con">
+                        <pre>{{ requestMockTemplate }}</pre>
+                      </div>
+                    </div>
+                  </el-col>
+                  <el-col :span="12">
+                    <div class="mock">
+                      <div class="m-tit">请求数据 <i class="el-icon-refresh" @click="refreshRequestMock"></i></div>
+                      <div class="m-con">
+                        <pre>{{ requestMockJson }}</pre>
+                      </div>
+                    </div>
+                  </el-col>
+                </el-row>
+              </div>
             </div>
 
             <!--响应数据-->
@@ -293,20 +329,21 @@
                 <div class="line-wrap">
                   <span class="line"></span>
                   <span class="text">响应数据</span>
+                  <el-button type="default" size="mini" icon="el-icon-plus" @click="addResNode">添加</el-button>
                 </div>
-                <el-button type="primary" size="mini" icon="el-icon-plus" @click="addResNode">添加</el-button>
                 <el-button type="default" plain icon="el-icon-upload" v-if="false">导入</el-button>
+                <el-button type="primary" size="mini" icon="el-icon-view">预览</el-button>
               </div>
               <div class="c-con" v-for="(item, index) in apiResTreeData" :key="index">
                 <el-row :gutter="5">
-                  <el-col :span="18">
+                  <el-col :span="15">
                     <div style="padding-left: 24px;">
                       <el-form-item label="">
                         <el-input style="width: calc(100% + 5px)" v-model="item.description" placeholder="响应数据描述"></el-input>
                       </el-form-item>
                     </div>
                   </el-col>
-                  <el-col :span="6">
+                  <el-col :span="9">
                     <div style="text-align: right;">
                       <el-button type="danger" size="mini" @click="deleteApiItem(index)">删除</el-button>
                     </div>
@@ -315,13 +352,13 @@
                 <el-tree :data="item.data" node-key="id" default-expand-all :expand-on-click-node="false">
                   <div class="custom-tree-node" slot-scope="{ node, data }">
                     <el-row :gutter="5">
-                      <el-col :span="4">
+                      <el-col :span="3">
                         <el-form-item label="">
                           <el-input @input="resParamNameChange(node, data)" v-model="data.name"
                                     placeholder="参数名"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="4">
+                      <el-col :span="3">
                         <el-form-item label="">
                           <el-select v-model="data.type" placeholder="">
                             <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
@@ -329,7 +366,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <!--<el-col :span="4">-->
+                      <!--<el-col :span="3">-->
                       <!--<el-form-item label="">-->
                       <!--<el-select v-model="data.enabled" placeholder="是否必填">-->
                       <!--<el-option label="true" :value="2"></el-option>-->
@@ -337,12 +374,17 @@
                       <!--</el-select>-->
                       <!--</el-form-item>-->
                       <!--</el-col>-->
-                      <el-col :span="4">
+                      <el-col :span="3">
+                        <el-form-item label="">
+                          <el-input v-model="data.rule" placeholder="生成规则"></el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="3">
                         <el-form-item label="">
                           <el-input v-model="data.default_value" placeholder="默认值"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="6">
+                      <el-col :span="3">
                         <el-form-item label="">
                           <el-input v-model="data.description" placeholder="描述"></el-input>
                         </el-form-item>
@@ -448,6 +490,12 @@
 </template>
 
 <script>
+console.log('process')
+console.log(process)
+process.version = '12.18.0';
+process.versions.node = '12.18.0';
+console.log(process.versions.node)
+const { VM } = require('vm2')
 import {mapGetters} from 'vuex'
 import {createChapter, getAllChapter, getMethodType, saveChapter, viewChapter} from '@/api/api'
 import editors from './editors.vue'
@@ -572,7 +620,11 @@ export default {
       isApiBodyTreeDataChange: false,
       isApiResTreeDataChange: false,
       isMarkDownContentChange: false,
-      treeActive: false
+      treeActive: false,
+      isViewRequest: false,
+      isViewResponse: false,
+      requestMockTemplate: '',
+      requestMockJson: '',
     }
   },
   computed: {
@@ -2012,6 +2064,147 @@ export default {
           message: '已取消'
         });
       });
+    },
+    // 预览请求数据mock
+    viewRequestMock() {
+      this.isViewRequest = !this.isViewRequest;
+      this.refreshRequestMock();
+    },
+    // 刷新请求数据mock
+    refreshRequestMock() {
+      function TreeToTemplate1(tree) {
+        function parse(item, result) {
+          let rule = item.rule ? ('|' + item.rule) : ''
+          let value = item.value
+          if (item.value && item.value.indexOf('[') === 0 && item.value.substring(item.value.length - 1) === ']') {
+            try {
+              result[item.name + rule] = vm.run(`(${item.value})`)
+            } catch (e) {
+              result[item.name + rule] = item.value
+            }
+          } else {
+            switch (item.type) {
+              case 'String':
+                result[item.name + rule] = item.value
+                break
+              case 'Number':
+                if (value === '') value = 1
+                let parsed = parseFloat(value)
+                if (!isNaN(parsed)) value = parsed
+                result[item.name + rule] = value
+                break
+              case 'Boolean':
+                if (value === 'true') value = true
+                if (value === 'false') value = false
+                if (value === '0') value = false
+                value = !!value
+                result[item.name + rule] = value
+                break
+              case 'Function':
+              case 'RegExp':
+                try {
+                  // result[item.name + rule] = vm.run('(' + item.value + ')')
+                  result[item.name + rule] = item.value
+                } catch (e) {
+                  console.warn(`TreeToTemplate ${e.message}: ${item.type} { ${item.name}${rule}: ${item.value} }`) // TODO 2.2 怎么消除异常值？
+                  result[item.name + rule] = item.value
+                }
+                break
+              case 'Object':
+                if (item.value) {
+                  try {
+                    // result[item.name + rule] = vm.run(`(${item.value})`)
+                    result[item.name + rule] = item.value
+                  } catch (e) {
+                    result[item.name + rule] = item.value
+                  }
+                } else {
+                  result[item.name + rule] = {}
+                  item.children.forEach((child) => {
+                    parse(child, result[item.name + rule])
+                  })
+                }
+                break
+              case 'Array':
+                if (item.value) {
+                  try {
+                    // result[item.name + rule] = vm.run(`(${item.value})`)
+                    result[item.name + rule] = item.value
+                  } catch (e) {
+                    result[item.name + rule] = item.value
+                  }
+                } else {
+                  result[item.name + rule] = item.children.length ? [{}] : []
+                  item.children.forEach((child) => {
+                    parse(child, result[item.name + rule][0])
+                  })
+                }
+                break
+              case 'Null':
+                // tslint:disable-next-line: no-null-keyword
+                result[item.name + rule] = null
+                break
+            }
+          }
+        }
+        let result = {}
+        tree.forEach(child => {
+          parse(child, result)
+        })
+        return result
+      }
+      function treeToTemplate(arr) {
+        const vm = new VM({
+          sandbox: {},
+          timeout: 1000
+        })
+        let result = {};
+        arr.forEach(item => {
+          let rule = item.rule ? ('|' + item.rule) : '';
+          let value = item.default_value;
+          if (item.name) {
+            if (item.type == 1) {
+              // String
+              result[item.name + rule] = value;
+            } else if (item.type == 2) {
+              // Number
+              if (value === '') value = 0;
+              let parsed = parseFloat(value);
+              if (!isNaN(parsed)) value = parsed;
+              result[item.name + rule] = value;
+            } else if (item.type == 3) {
+              // Boolean
+              if (value === 'true') value = true
+              if (value === 'false') value = false
+              if (value === '0') value = false
+              value = !!value
+              result[item.name + rule] = value
+            } else if (item.type == 4) {
+              // Object
+            } else if (item.type == 5) {
+              // Array
+            } else if (item.type == 6) {
+              // Function
+              try {
+                result[item.name + rule] = vm.run('(' + item.default_value + ')')
+              } catch (e) {
+                console.warn(`TreeToTemplate ${e.message}: ${item.type} { ${item.name}${rule}: ${item.value} }`) // 怎么消除异常值？
+                result[item.name + rule] = item.value
+              }
+            }
+          }
+        })
+        return result
+      }
+
+      const tab_location = this.form.tab_location;
+      if (tab_location == 1) {
+        this.requestMockTemplate = JSON.stringify(treeToTemplate(this.apiHeaderTreeData), null, 2);
+        this.requestMockJson = JSON.stringify(this.$mock.mock(JSON.parse(this.requestMockTemplate)), null, 2);
+        console.log('requestMockJson');
+        console.log(this.requestMockJson);
+        console.log(this.apiHeaderTreeData);
+      }
     }
   }
 }
@@ -2223,6 +2416,7 @@ export default {
         .top {
           display: flex;
           align-items: center;
+          justify-content: space-between;
           margin-bottom: 20px;
 
           .line-wrap {
@@ -2311,6 +2505,37 @@ export default {
             float: left;
             font-size: 24px;
             cursor: pointer;
+          }
+        }
+
+        .c-bottom {
+          .mock {
+            .m-tit {
+              color: #333;
+              margin-bottom: 10px;
+              font-size: 14px;
+
+              .el-icon-refresh {
+                color: #3296fa;
+                font-weight: 600;
+                font-size: 15px;
+                cursor: pointer;
+              }
+            }
+
+            .m-con {
+              border: 1px solid #eee;
+              border-radius: 2px;
+              background-color: #f0f0f0;
+              max-height: 90vh;
+              height: 100%;
+              overflow: auto;
+              padding: 15px;
+
+              pre {
+                margin: 0;
+              }
+            }
           }
         }
 

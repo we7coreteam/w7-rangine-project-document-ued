@@ -26,6 +26,8 @@ module.exports = {
     // }
   },
   chainWebpack: config => {
+    // console.log('config');
+    // console.log(config);
     config.resolve.alias.set('@', resolve('src'))
     config.plugins.delete('prefetch') // 移除prefetch
   },
@@ -42,6 +44,8 @@ module.exports = {
     if(process.env.NODE_ENV === 'production'){
       config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
     }
+    // console.log('config');
+    // console.log(config);
     return {
       performance: {
         hints: false

@@ -17,6 +17,7 @@
     "qrcode.vue": "^1.7.0",
     "terser-webpack-plugin": "^3.0.2",
     "tocbot": "^4.11.1",
+    "vm2": "^3.8.4",
     "vue": "^2.6.11",
     "vue-clipboard2": "^0.3.1",
     "vue-router": "^3.1.6",
@@ -34,5 +35,13 @@
     "node-sass": "^4.13.1",
     "sass-loader": "^7.3.1",
     "vue-template-compiler": "^2.6.11"
-  }
+  },
+  "description": "```\r npm install\r ```",
+  "main": ".eslintrc.js",
+  "repository": {
+    "type": "git",
+    "url": "git@gitee.com:we7coreteam/ued_document.git"
+  },
+  "author": "",
+  "license": "ISC"
 }
