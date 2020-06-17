@@ -490,18 +490,14 @@
 </template>
 
 <script>
-console.log('process')
-console.log(process)
-process.version = '12.18.0';
-process.versions.node = '12.18.0';
-console.log(process.versions.node)
-const { VM } = require('vm2')
-import {mapGetters} from 'vuex'
-import {createChapter, getAllChapter, getMethodType, saveChapter, viewChapter} from '@/api/api'
-import editors from './editors.vue'
-import setting from './setting.vue'
+  // process.versions.node = '12.18.0';
+  // const { VM } = require('vm2')
+  import {mapGetters} from 'vuex'
+  import {createChapter, getAllChapter, getMethodType, saveChapter, viewChapter} from '@/api/api'
+  import editors from './editors.vue'
+  import setting from './setting.vue'
 
-let id = 1000;
+  let id = 1000;
 export default {
   name: 'chapter',
   components: {
@@ -2154,10 +2150,11 @@ export default {
         return result
       }
       function treeToTemplate(arr) {
-        const vm = new VM({
-          sandbox: {},
-          timeout: 1000
-        })
+        // const vm = new VM({
+        //   sandbox: {},
+        //   timeout: 1000,
+        //   compiler: 'coffeescript'
+        // })
         let result = {};
         arr.forEach(item => {
           let rule = item.rule ? ('|' + item.rule) : '';
@@ -2186,10 +2183,20 @@ export default {
             } else if (item.type == 6) {
               // Function
               try {
-                result[item.name + rule] = vm.run('(' + item.default_value + ')')
+                result[item.name + rule] = item.default_value
+                // 1
+                // let fun = eval(item.default_value);
+                // result[item.name + rule] = fun();
+
+                // 2
+                // let funcTest = new Function('return ' + item.default_value);
+                // result[item.name + rule] = funcTest()()
+                // vm2 报错
+                // result[item.name + rule] = vm.run('(' + item.default_value + ')')
               } catch (e) {
-                console.warn(`TreeToTemplate ${e.message}: ${item.type} { ${item.name}${rule}: ${item.value} }`) // 怎么消除异常值？
-                result[item.name + rule] = item.value
+                console.error(e);
+                console.warn(`TreeToTemplate ${e.message}: ${item.type} { ${item.name}${rule}: ${item.default_value} }`) // 怎么消除异常值？
+                result[item.name + rule] = item.default_value
               }
             }
           }
@@ -2199,8 +2206,13 @@ export default {
 
       const tab_location = this.form.tab_location;
       if (tab_location == 1) {
-        this.requestMockTemplate = JSON.stringify(treeToTemplate(this.apiHeaderTreeData), null, 2);
-        this.requestMockJson = JSON.stringify(this.$mock.mock(JSON.parse(this.requestMockTemplate)), null, 2);
+        console.log(treeToTemplate(this.apiHeaderTreeData));
+        this.requestMockTemplate = treeToTemplate(this.apiHeaderTreeData);
+        // this.requestMockTemplate = JSON.stringify(treeToTemplate(this.apiHeaderTreeData), null, 2);
+        this.requestMockJson = this.$mock.mock(this.requestMockTemplate);
+        // this.requestMockJson = JSON.stringify(this.$mock.mock(JSON.parse(this.requestMockTemplate)), null, 2);
+        console.log('requestMockTemplate');
+        console.log(this.requestMockTemplate);
         console.log('requestMockJson');
         console.log(this.requestMockJson);
         console.log(this.apiHeaderTreeData);
