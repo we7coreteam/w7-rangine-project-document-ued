@@ -144,7 +144,7 @@
                             </el-col>
                             <el-col :span="3">
                               <el-form-item label="">
-                                <el-select v-model="data.type" placeholder="">
+                                <el-select v-model="data.type" placeholder="" @change="typeChange(data)">
                                   <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
                                              :value="val.value"></el-option>
                                 </el-select>
@@ -165,7 +165,7 @@
                             </el-col>
                             <el-col :span="4">
                               <el-form-item label="">
-                                <el-input v-model="data.default_value" placeholder="默认值"></el-input>
+                                <el-input :disabled="data.type == 4" v-model="data.default_value" placeholder="默认值"></el-input>
                               </el-form-item>
                             </el-col>
                             <el-col :span="3">
@@ -617,7 +617,7 @@ export default {
       isApiResTreeDataChange: false,
       isMarkDownContentChange: false,
       treeActive: false,
-      isViewRequest: false,
+      isViewRequest: true,
       isViewResponse: false,
       requestMockTemplate: '',
       requestMockJson: '',
@@ -2061,6 +2061,13 @@ export default {
         });
       });
     },
+    // object 类型输入框禁用
+    typeChange(data) {
+      console.log(data);
+      if (data.type == 4 || data.type == 5) {
+        data.default_value = '';
+      }
+    },
     // 预览请求数据mock
     viewRequestMock() {
       this.isViewRequest = !this.isViewRequest;
@@ -2068,139 +2075,111 @@ export default {
     },
     // 刷新请求数据mock
     refreshRequestMock() {
-      function TreeToTemplate1(tree) {
+      // num为1，对函数类型、正则执行函数，得到函数返回值
+      function treeToTemplate(tree, num = 0) {
         function parse(item, result) {
-          let rule = item.rule ? ('|' + item.rule) : ''
-          let value = item.value
-          if (item.value && item.value.indexOf('[') === 0 && item.value.substring(item.value.length - 1) === ']') {
+          let rule = item.rule ? ('|' + item.rule) : '';
+          let value = item.default_value;
+          if (item.default_value && item.default_value.indexOf('[') === 0 && item.default_value.substring(item.default_value.length - 1) === ']') {
             try {
-              result[item.name + rule] = vm.run(`(${item.value})`)
+              // result[item.name + rule] = vm.run(`(${item.value})`)
+              result[item.name + rule] = value
             } catch (e) {
-              result[item.name + rule] = item.value
+              result[item.name + rule] = value
             }
           } else {
-            switch (item.type) {
-              case 'String':
-                result[item.name + rule] = item.value
-                break
-              case 'Number':
-                if (value === '') value = 1
-                let parsed = parseFloat(value)
-                if (!isNaN(parsed)) value = parsed
-                result[item.name + rule] = value
-                break
-              case 'Boolean':
-                if (value === 'true') value = true
-                if (value === 'false') value = false
-                if (value === '0') value = false
-                value = !!value
-                result[item.name + rule] = value
-                break
-              case 'Function':
-              case 'RegExp':
-                try {
-                  // result[item.name + rule] = vm.run('(' + item.value + ')')
-                  result[item.name + rule] = item.value
-                } catch (e) {
-                  console.warn(`TreeToTemplate ${e.message}: ${item.type} { ${item.name}${rule}: ${item.value} }`) // TODO 2.2 怎么消除异常值？
-                  result[item.name + rule] = item.value
-                }
-                break
-              case 'Object':
-                if (item.value) {
-                  try {
+            if (item.name.length) {
+              switch (item.type) {
+                case 1:
+                  // String
+                  result[item.name + rule] = value
+                  break
+                case 2:
+                  // Number
+                  if (value === '') value = 1
+                  let parsed = parseFloat(value)
+                  if (!isNaN(parsed)) value = parsed
+                  result[item.name + rule] = value
+                  break
+                case 3:
+                  // Boolean
+                  if (value === 'true') value = true
+                  if (value === 'false') value = false
+                  if (value === '0') value = false
+                  value = !!value
+                  result[item.name + rule] = value
+                  break
+                case 4:
+                  // Object
+                  if (value) {
                     // result[item.name + rule] = vm.run(`(${item.value})`)
-                    result[item.name + rule] = item.value
-                  } catch (e) {
-                    result[item.name + rule] = item.value
+                    result[item.name + rule] = {};
+                    item.children.forEach((child) => {
+                      parse(child, result[item.name + rule])
+                    })
+                  } else {
+                    result[item.name + rule] = {}
+                    item.children.forEach((child) => {
+                      parse(child, result[item.name + rule])
+                    })
                   }
-                } else {
-                  result[item.name + rule] = {}
-                  item.children.forEach((child) => {
-                    parse(child, result[item.name + rule])
-                  })
-                }
-                break
-              case 'Array':
-                if (item.value) {
-                  try {
-                    // result[item.name + rule] = vm.run(`(${item.value})`)
-                    result[item.name + rule] = item.value
-                  } catch (e) {
-                    result[item.name + rule] = item.value
+                  break
+                case 5:
+                  // Array
+                  if (value) {
+                    try {
+                      // result[item.name + rule] = vm.run(`(${item.value})`)
+                      result[item.name + rule] = value
+                    } catch (e) {
+                      result[item.name + rule] = item.value
+                    }
+                  } else {
+                    result[item.name + rule] = item.children.length ? [{}] : []
+                    item.children.forEach((child) => {
+                      parse(child, result[item.name + rule][0])
+                    })
                   }
-                } else {
-                  result[item.name + rule] = item.children.length ? [{}] : []
-                  item.children.forEach((child) => {
-                    parse(child, result[item.name + rule][0])
-                  })
-                }
-                break
-              case 'Null':
-                // tslint:disable-next-line: no-null-keyword
-                result[item.name + rule] = null
-                break
+                  break
+                case 6:
+                case 7:
+                  // Function
+                  // RegExp
+                  if (num == 1) {
+                    try {
+                      // 1
+                      let fun = eval(item.default_value);
+                      result[item.name + rule] = fun();
+
+                      // 2
+                      // let funcTest = new Function('return ' + item.default_value);
+                      // result[item.name + rule] = funcTest()()
+
+                      // vm2 报错
+                      // result[item.name + rule] = vm.run('(' + item.default_value + ')')
+                    } catch (e) {
+                      // console.error(e);
+                      console.warn(`TreeToTemplate ${e.message}: ${item.type} { ${item.name}${rule}: ${item.default_value} }`) // 怎么消除异常值？
+                      result[item.name + rule] = item.default_value
+                    }
+                  } else {
+                    result[item.name + rule] = value
+                  }
+                  break
+                case 8:
+                  // Null
+                  // tslint:disable-next-line: no-null-keyword
+                  result[item.name + rule] = null
+                  break
+              }
             }
           }
         }
         let result = {}
-        tree.forEach(child => {
-          parse(child, result)
-        })
-        return result
-      }
-      function treeToTemplate(arr) {
-        // const vm = new VM({
-        //   sandbox: {},
-        //   timeout: 1000,
-        //   compiler: 'coffeescript'
-        // })
-        let result = {};
-        arr.forEach(item => {
-          let rule = item.rule ? ('|' + item.rule) : '';
-          let value = item.default_value;
-          if (item.name) {
-            if (item.type == 1) {
-              // String
-              result[item.name + rule] = value;
-            } else if (item.type == 2) {
-              // Number
-              if (value === '') value = 0;
-              let parsed = parseFloat(value);
-              if (!isNaN(parsed)) value = parsed;
-              result[item.name + rule] = value;
-            } else if (item.type == 3) {
-              // Boolean
-              if (value === 'true') value = true
-              if (value === 'false') value = false
-              if (value === '0') value = false
-              value = !!value
-              result[item.name + rule] = value
-            } else if (item.type == 4) {
-              // Object
-            } else if (item.type == 5) {
-              // Array
-            } else if (item.type == 6) {
-              // Function
-              try {
-                result[item.name + rule] = item.default_value
-                // 1
-                // let fun = eval(item.default_value);
-                // result[item.name + rule] = fun();
-
-                // 2
-                // let funcTest = new Function('return ' + item.default_value);
-                // result[item.name + rule] = funcTest()()
-                // vm2 报错
-                // result[item.name + rule] = vm.run('(' + item.default_value + ')')
-              } catch (e) {
-                console.error(e);
-                console.warn(`TreeToTemplate ${e.message}: ${item.type} { ${item.name}${rule}: ${item.default_value} }`) // 怎么消除异常值？
-                result[item.name + rule] = item.default_value
-              }
-            }
-          }
-        })
+        if (tree.length) {
+          tree.forEach(child => {
+            parse(child, result)
+          })
+        }
         return result
       }
 
@@ -2208,9 +2187,7 @@ export default {
       if (tab_location == 1) {
         console.log(treeToTemplate(this.apiHeaderTreeData));
         this.requestMockTemplate = treeToTemplate(this.apiHeaderTreeData);
-        // this.requestMockTemplate = JSON.stringify(treeToTemplate(this.apiHeaderTreeData), null, 2);
-        this.requestMockJson = this.$mock.mock(this.requestMockTemplate);
-        // this.requestMockJson = JSON.stringify(this.$mock.mock(JSON.parse(this.requestMockTemplate)), null, 2);
+        this.requestMockJson = this.$mock.mock(treeToTemplate(this.apiHeaderTreeData, 1));
         console.log('requestMockTemplate');
         console.log(this.requestMockTemplate);
         console.log('requestMockJson');
