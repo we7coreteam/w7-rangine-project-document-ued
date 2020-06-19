@@ -197,7 +197,7 @@
                             </el-col>
                             <el-col :span="3">
                               <el-form-item label="">
-                                <el-select v-model="data.type" placeholder="">
+                                <el-select v-model="data.type" placeholder="" @change="typeChange(data)">
                                   <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
                                              :value="val.value"></el-option>
                                 </el-select>
@@ -218,7 +218,7 @@
                             </el-col>
                             <el-col :span="3">
                               <el-form-item label="">
-                                <el-input v-model="data.default_value" placeholder="默认值"></el-input>
+                                <el-input :disabled="data.type == 4" v-model="data.default_value" placeholder="默认值"></el-input>
                               </el-form-item>
                             </el-col>
                             <el-col :span="3">
@@ -259,7 +259,7 @@
                               </el-col>
                               <el-col :span="3">
                                 <el-form-item label="">
-                                  <el-select v-model="data.type" placeholder="">
+                                  <el-select v-model="data.type" placeholder="" @change="typeChange(data)">
                                     <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
                                                :value="val.value"></el-option>
                                   </el-select>
@@ -280,7 +280,7 @@
                               </el-col>
                               <el-col :span="3">
                                 <el-form-item label="">
-                                  <el-input v-model="data.default_value" placeholder="默认值"></el-input>
+                                  <el-input :disabled="data.type == 4" v-model="data.default_value" placeholder="默认值"></el-input>
                                 </el-form-item>
                               </el-col>
                               <el-col :span="3">
@@ -332,7 +332,7 @@
                   <el-button type="default" size="mini" icon="el-icon-plus" @click="addResNode">添加</el-button>
                 </div>
                 <el-button type="default" plain icon="el-icon-upload" v-if="false">导入</el-button>
-                <el-button type="primary" size="mini" icon="el-icon-view">预览</el-button>
+                <el-button type="primary" size="mini" icon="el-icon-view" @click="viewResponseMock">预览</el-button>
               </div>
               <div class="c-con" v-for="(item, index) in apiResTreeData" :key="index">
                 <el-row :gutter="5">
@@ -360,7 +360,7 @@
                       </el-col>
                       <el-col :span="3">
                         <el-form-item label="">
-                          <el-select v-model="data.type" placeholder="">
+                          <el-select v-model="data.type" placeholder="" @change="typeChange(data)">
                             <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
                                        :value="val.value"></el-option>
                           </el-select>
@@ -381,7 +381,7 @@
                       </el-col>
                       <el-col :span="3">
                         <el-form-item label="">
-                          <el-input v-model="data.default_value" placeholder="默认值"></el-input>
+                          <el-input :disabled="data.type == 4" v-model="data.default_value" placeholder="默认值"></el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="3">
@@ -397,6 +397,26 @@
                     </el-row>
                   </div>
                 </el-tree>
+              </div>
+              <div class="c-bottom" v-if="isViewResponse">
+                <el-row :gutter="20">
+                  <el-col :span="12">
+                    <div class="mock">
+                      <div class="m-tit">响应模板</div>
+                      <div class="m-con" v-for="(item, index) in responseMockTemplate">
+                        <pre style="margin-bottom: 30px;" :key="index">{{ item }}</pre>
+                      </div>
+                    </div>
+                  </el-col>
+                  <el-col :span="12">
+                    <div class="mock">
+                      <div class="m-tit">响应数据 <i class="el-icon-refresh" @click="refreshResponseMock"></i></div>
+                      <div class="m-con">
+                        <pre style="margin-bottom: 30px;" v-for="(item, index) in responseMockJson" :key="index">{{ item }}</pre>
+                      </div>
+                    </div>
+                  </el-col>
+                </el-row>
               </div>
             </div>
           </el-form>
@@ -498,6 +518,144 @@
   import setting from './setting.vue'
 
   let id = 1000;
+
+// num为1，对函数类型、正则执行函数，得到函数返回值
+function treeToTemplate(tree, num = 0) {
+  function parse(item, result) {
+    let rule = item.rule ? ('|' + item.rule) : '';
+    let value = item.default_value;
+    if (item.default_value && item.default_value.indexOf('[') === 0 && item.default_value.substring(item.default_value.length - 1) === ']') {
+      try {
+        let reg = /\s*/g;
+        let reg2 = /\"/g;
+        value = value.substring(1, value.length - 1).replace(reg, '').replace(reg2, '').split(',');
+        // console.error(123)
+        // console.log(value)
+        result[item.name + rule] = value
+        // result[item.name + rule] = vm.run(`(${item.value})`)
+      } catch (e) {
+        result[item.name + rule] = value
+      }
+    } else {
+      if (item.name.length) {
+        switch (item.type) {
+          case 1:
+            // String
+            result[item.name + rule] = value
+            break
+          case 2:
+            // Number
+            if (value === '') value = 1
+            let parsed = parseFloat(value)
+            if (!isNaN(parsed)) value = parsed
+            result[item.name + rule] = value
+            break
+          case 3:
+            // Boolean
+            if (value === 'true') value = true
+            if (value === 'false') value = false
+            if (value === '0') value = false
+            value = !!value
+            result[item.name + rule] = value
+            break
+          case 4:
+            // Object
+            if (value) {
+              // result[item.name + rule] = vm.run(`(${item.value})`)
+              result[item.name + rule] = {};
+              item.children.forEach((child) => {
+                parse(child, result[item.name + rule])
+              })
+            } else {
+              result[item.name + rule] = {}
+              item.children.forEach((child) => {
+                parse(child, result[item.name + rule])
+              })
+            }
+            break
+          case 5:
+            // Array
+            if (value) {
+              try {
+                // result[item.name + rule] = vm.run(`(${item.value})`)
+                result[item.name + rule] = value
+              } catch (e) {
+                result[item.name + rule] = item.value
+              }
+            } else {
+              result[item.name + rule] = item.children.length ? [{}] : []
+              item.children.forEach((child) => {
+                parse(child, result[item.name + rule][0])
+              })
+            }
+            break
+          case 6:
+            // Function
+            if (num == 1) {
+              try {
+                // 1
+                let fun = eval(item.default_value);
+                result[item.name + rule] = fun();
+
+                // 2
+                // let funcTest = new Function('return ' + item.default_value);
+                // result[item.name + rule] = funcTest()()
+              } catch (e) {
+                // console.error(e);
+                console.warn(`TreeToTemplate ${e.message}: ${item.type} { ${item.name}${rule}: ${item.default_value} }`) // 怎么消除异常值？
+                result[item.name + rule] = item.default_value
+              }
+            } else {
+              result[item.name + rule] = value
+            }
+            break
+          case 7:
+            // RegExp
+            if (num == 1) {
+              try {
+                result[item.name + rule] = new RegExp(item.default_value);
+              } catch (e) {
+                console.warn(`TreeToTemplate ${e.message}: ${item.type} { ${item.name}${rule}: ${item.default_value} }`) // 怎么消除异常值？
+                result[item.name + rule] = item.default_value
+              }
+            } else {
+              let reg = /\\/g;
+              result[item.name + rule] = item.default_value.replace(reg,"");
+            }
+            break
+          case 8:
+            // Null
+            // tslint:disable-next-line: no-null-keyword
+            result[item.name + rule] = null
+            break
+        }
+      }
+    }
+  }
+  let result = {}
+  if (tree.length) {
+    tree.forEach(child => {
+      parse(child, result)
+    })
+  }
+  return result
+}
+
+// 移除mock生成数据的'/'
+function romoveSlash(obj) {
+  let newObj = {}
+  let reg = /\//g;
+  for (let item in obj) {
+    if (typeof obj[item] == 'string' && reg.test(obj[item])) {
+      console.log(obj[item]);
+      newObj[item] = obj[item].replace(reg,"");
+    } else {
+      newObj[item] = obj[item]
+    }
+  }
+  return newObj
+}
+
 export default {
   name: 'chapter',
   components: {
@@ -617,10 +775,12 @@ export default {
       isApiResTreeDataChange: false,
       isMarkDownContentChange: false,
       treeActive: false,
-      isViewRequest: true,
-      isViewResponse: false,
+      isViewRequest: false,
+      isViewResponse: true,
       requestMockTemplate: '',
       requestMockJson: '',
+      responseMockTemplate: '',
+      responseMockJson: '',
     }
   },
   computed: {
@@ -1646,6 +1806,7 @@ export default {
     // 请求类型切换
     tabRequest(tab) {
       localStorage.tab_location = tab.name;
+      this.refreshRequestMock();
       console.log(tab);
     },
     // 请求数据 输入框输入 下方新增同级node
@@ -2075,125 +2236,41 @@ export default {
     },
     // 刷新请求数据mock
     refreshRequestMock() {
-      // num为1，对函数类型、正则执行函数，得到函数返回值
-      function treeToTemplate(tree, num = 0) {
-        function parse(item, result) {
-          let rule = item.rule ? ('|' + item.rule) : '';
-          let value = item.default_value;
-          if (item.default_value && item.default_value.indexOf('[') === 0 && item.default_value.substring(item.default_value.length - 1) === ']') {
-            try {
-              // result[item.name + rule] = vm.run(`(${item.value})`)
-              result[item.name + rule] = value
-            } catch (e) {
-              result[item.name + rule] = value
-            }
-          } else {
-            if (item.name.length) {
-              switch (item.type) {
-                case 1:
-                  // String
-                  result[item.name + rule] = value
-                  break
-                case 2:
-                  // Number
-                  if (value === '') value = 1
-                  let parsed = parseFloat(value)
-                  if (!isNaN(parsed)) value = parsed
-                  result[item.name + rule] = value
-                  break
-                case 3:
-                  // Boolean
-                  if (value === 'true') value = true
-                  if (value === 'false') value = false
-                  if (value === '0') value = false
-                  value = !!value
-                  result[item.name + rule] = value
-                  break
-                case 4:
-                  // Object
-                  if (value) {
-                    // result[item.name + rule] = vm.run(`(${item.value})`)
-                    result[item.name + rule] = {};
-                    item.children.forEach((child) => {
-                      parse(child, result[item.name + rule])
-                    })
-                  } else {
-                    result[item.name + rule] = {}
-                    item.children.forEach((child) => {
-                      parse(child, result[item.name + rule])
-                    })
-                  }
-                  break
-                case 5:
-                  // Array
-                  if (value) {
-                    try {
-                      // result[item.name + rule] = vm.run(`(${item.value})`)
-                      result[item.name + rule] = value
-                    } catch (e) {
-                      result[item.name + rule] = item.value
-                    }
-                  } else {
-                    result[item.name + rule] = item.children.length ? [{}] : []
-                    item.children.forEach((child) => {
-                      parse(child, result[item.name + rule][0])
-                    })
-                  }
-                  break
-                case 6:
-                case 7:
-                  // Function
-                  // RegExp
-                  if (num == 1) {
-                    try {
-                      // 1
-                      let fun = eval(item.default_value);
-                      result[item.name + rule] = fun();
-
-                      // 2
-                      // let funcTest = new Function('return ' + item.default_value);
-                      // result[item.name + rule] = funcTest()()
-
-                      // vm2 报错
-                      // result[item.name + rule] = vm.run('(' + item.default_value + ')')
-                    } catch (e) {
-                      // console.error(e);
-                      console.warn(`TreeToTemplate ${e.message}: ${item.type} { ${item.name}${rule}: ${item.default_value} }`) // 怎么消除异常值？
-                      result[item.name + rule] = item.default_value
-                    }
-                  } else {
-                    result[item.name + rule] = value
-                  }
-                  break
-                case 8:
-                  // Null
-                  // tslint:disable-next-line: no-null-keyword
-                  result[item.name + rule] = null
-                  break
-              }
-            }
-          }
-        }
-        let result = {}
-        if (tree.length) {
-          tree.forEach(child => {
-            parse(child, result)
-          })
-        }
-        return result
-      }
-
       const tab_location = this.form.tab_location;
       if (tab_location == 1) {
-        console.log(treeToTemplate(this.apiHeaderTreeData));
+        // console.log(treeToTemplate(this.apiHeaderTreeData));
         this.requestMockTemplate = treeToTemplate(this.apiHeaderTreeData);
         this.requestMockJson = this.$mock.mock(treeToTemplate(this.apiHeaderTreeData, 1));
-        console.log('requestMockTemplate');
-        console.log(this.requestMockTemplate);
-        console.log('requestMockJson');
-        console.log(this.requestMockJson);
-        console.log(this.apiHeaderTreeData);
+        this.requestMockJson = romoveSlash(this.requestMockJson);
+        // console.log('requestMockTemplate');
+        // console.log(this.requestMockTemplate);
+        // console.log('requestMockJson');
+        // console.log(this.requestMockJson);
+      } else if (tab_location == 2) {
+        this.requestMockTemplate = treeToTemplate(this.apiParamsTreeData);
+        this.requestMockJson = this.$mock.mock(treeToTemplate(this.apiParamsTreeData, 1));
+        this.requestMockJson = romoveSlash(this.requestMockJson);
+      } else {
+        this.requestMockTemplate = treeToTemplate(this.apiBodyTreeData);
+        this.requestMockJson = this.$mock.mock(treeToTemplate(this.apiBodyTreeData, 1));
+        this.requestMockJson = romoveSlash(this.requestMockJson);
       }
+    },
+
+    // 预览响应数据mock responseMockTemplate
+    viewResponseMock() {
+      this.isViewResponse = !this.isViewResponse;
+      this.refreshResponseMock();
+    },
+    // 刷新响应数据mock
+    refreshResponseMock() {
+      this.responseMockTemplate = [];
+      this.responseMockJson = [];
+      this.apiResTreeData.forEach(item => {
+        this.responseMockTemplate.push(treeToTemplate(item.data));
+        this.responseMockJson.push(this.$mock.mock(treeToTemplate(item.data, 1)));
+        // this.responseMockJson = romoveSlash(this.requestMockJson);
+      })
     }
   }
 }
@@ -2516,8 +2593,8 @@ export default {
               border: 1px solid #eee;
               border-radius: 2px;
               background-color: #f0f0f0;
-              max-height: 90vh;
-              height: 100%;
+              /*max-height: 90vh;*/
+              height: 350px;
               overflow: auto;
               padding: 15px;
 
