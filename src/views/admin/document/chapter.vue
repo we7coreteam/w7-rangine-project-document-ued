@@ -403,8 +403,11 @@
                   <el-col :span="12">
                     <div class="mock">
                       <div class="m-tit">响应模板</div>
-                      <div class="m-con" v-for="(item, index) in responseMockTemplate">
-                        <pre style="margin-bottom: 30px;" :key="index">{{ item }}</pre>
+                      <div class="m-con">
+                        <div v-for="(item, index) in responseMockTemplate" :key="index">
+                          <div style="margin-bottom: 10px; font-size: 12px;">响应{{ apiResTreeData[index].description }}：</div>
+                          <pre style="margin-bottom: 30px;">{{ item }}</pre>
+                        </div>
                       </div>
                     </div>
                   </el-col>
@@ -412,7 +415,10 @@
                     <div class="mock">
                       <div class="m-tit">响应数据 <i class="el-icon-refresh" @click="refreshResponseMock"></i></div>
                       <div class="m-con">
-                        <pre style="margin-bottom: 30px;" v-for="(item, index) in responseMockJson" :key="index">{{ item }}</pre>
+                        <div v-for="(item, index) in responseMockJson" :key="index">
+                          <div style="margin-bottom: 10px; font-size: 12px;">响应{{ apiResTreeData[index].description }}:</div>
+                          <pre style="margin-bottom: 30px;">{{ item }}</pre>
+                        </div>
                       </div>
                     </div>
                   </el-col>
