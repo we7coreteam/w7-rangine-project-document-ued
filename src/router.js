@@ -64,7 +64,7 @@ const router = new Router({
               path: 'involved',
               name: 'documentInvolved',
               component: () => import('@/views/admin/document/involved.vue'),
-            }
+            },
           ]
         },
         {
@@ -140,7 +140,13 @@ const router = new Router({
           path: 'account-info',
           name: 'accountInfo',
           component: () => import('@/views/admin/accountInfo.vue')
-        }
+        },
+        {
+          path: 'viewMock',
+          name: 'viewMock',
+          component: () => import('@/views/admin/mock/mock.vue')
+        },
+
       ]
     },
     // {

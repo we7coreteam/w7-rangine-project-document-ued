@@ -113,6 +113,15 @@
                     </el-form-item>
                   </el-col>
                 </el-row>
+                <el-row :gutter="10">
+                  <el-col :md="14">
+                    <el-form-item label="Mock Api地址" class="mock-api">
+                      <el-tooltip class="item" effect="dark" popper-class="mock-api-tip" content="点击链接自动复制" placement="top">
+                        <el-input v-clipboard:copy="mockApiUrl" v-clipboard:success="onCopy" v-model="mockApiUrl" readonly placeholder=""></el-input>
+                      </el-tooltip>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
               </div>
             </div>
 
@@ -786,13 +795,14 @@ export default {
       isMarkDownContentChange: false,
       treeActive: false,
       isViewRequest: false,
-      isViewResponse: true,
+      isViewResponse: false,
       requestMockTemplate: '',
       requestMockJson: '',
       responseMockTemplate: '',
       responseMockJson: '',
       requestMockHeight: '',
-      responseMockHeight: ''
+      responseMockHeight: '',
+      mockApiUrl: ''
     }
   },
   computed: {
@@ -1293,24 +1303,24 @@ export default {
     handleNodeClick(data) {
       console.log(12);
       console.log(data);
-/*
-      const This = this;
-      function findChapter(arr) {
-        if (arr.length) {
-          for (const item of arr) {
-            if (item.is_dir) {
-              findChapter(item.children)
-            } else {
-              This.defaultCheckedKeys = [item.id];
-              console.log('findChapter');
-              console.log(item.id);
-              return false;
+      /*
+            const This = this;
+            function findChapter(arr) {
+              if (arr.length) {
+                for (const item of arr) {
+                  if (item.is_dir) {
+                    findChapter(item.children)
+                  } else {
+                    This.defaultCheckedKeys = [item.id];
+                    console.log('findChapter');
+                    console.log(item.id);
+                    return false;
+                  }
+                }
+              }
             }
-          }
-        }
-      }
-      findChapter(this.chapters);
-*/
+            findChapter(this.chapters);
+      */
       // 目录不展示内容，只展开文件夹
       if (!data.is_dir) {
         console.log(7);
@@ -2113,6 +2123,7 @@ export default {
       const chapter_id = this.chapter_id;
       const document_id = this.$route.params.id;
       this.loading = this.$loading();
+      this.mockApiUrl = location.origin + `/admin/viewMock?chapter_id=${chapter_id}&document_id=${this.$route.params.id}`
       viewChapter({
         chapter_id,
         document_id
@@ -2319,6 +2330,9 @@ export default {
           this.responseMockHeight = responseMockRightHeight;
         }
       })
+    },
+    onCopy (e){
+      this.$message.success('复制成功');
     }
   }
 }
@@ -2676,6 +2690,22 @@ export default {
         }
       }
 
+      .basic-information {
+        .mock-api {
+          /deep/ {
+            .el-form-item__content {
+              display: inline-block;
+              width: calc(100% - 105px);
+              cursor: pointer;
+
+              input {
+                padding: 0 0 0 10px;
+                cursor: pointer;
+              }
+            }
+          }
+        }
+      }
     }
   }
 
@@ -2690,6 +2720,10 @@ export default {
 <style>
   [v-cloak] {
     display: none !important;
+  }
+
+  .mock-api-tip {
+    top: 270px !important;
   }
 
   /*增加.el-tree-node__children，去除目录选中状态*/
