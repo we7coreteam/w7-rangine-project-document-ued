@@ -116,7 +116,7 @@
                 <el-row :gutter="10">
                   <el-col :md="14">
                     <el-form-item label="Mock Api地址" class="mock-api">
-                      <el-tooltip class="item" effect="dark" popper-class="mock-api-tip" content="点击链接自动复制" placement="top">
+                      <el-tooltip class="item" effect="dark" popper-class="mock-api-tip" content="点击复制链接" placement="top">
                         <el-input v-clipboard:copy="mockApiUrl" v-clipboard:success="onCopy" v-model="mockApiUrl" readonly placeholder=""></el-input>
                       </el-tooltip>
                     </el-form-item>
@@ -416,7 +416,7 @@
                         <div ref="responseMockLeftHeight">
                           <div v-for="(item, index) in responseMockTemplate" :key="index">
                             <div style="margin-bottom: 10px; font-size: 12px;">响应{{ apiResTreeData[index].description }}：</div>
-                            <pre style="margin-bottom: 30px;">{{ item }}</pre>
+                            <pre :style="{'margin-bottom': index > 0 ? '30px' : '' }">{{ item }}</pre>
                           </div>
                         </div>
                       </div>
@@ -429,7 +429,7 @@
                         <div ref="responseMockRightHeight">
                           <div v-for="(item, index) in responseMockJson" :key="index">
                             <div style="margin-bottom: 10px; font-size: 12px;">响应{{ apiResTreeData[index].description }}:</div>
-                            <pre style="margin-bottom: 30px;">{{ item }}</pre>
+                            <pre :style="{'margin-bottom': index > 0 ? '30px' : '' }">{{ item }}</pre>
                           </div>
                         </div>
                       </div>
@@ -2317,8 +2317,8 @@ export default {
       this.responseMockJson = newArr;
 
       this.$nextTick(() => {
-        let responseMockLeftHeight = this.$refs.responseMockLeftHeight.offsetHeight + 80;
-        let responseMockRightHeight = this.$refs.responseMockRightHeight.offsetHeight + 80;
+        let responseMockLeftHeight = this.$refs.responseMockLeftHeight.offsetHeight + 50;
+        let responseMockRightHeight = this.$refs.responseMockRightHeight.offsetHeight + 50;
         // console.log('responseMockLeftHeight');
         // console.log(responseMockLeftHeight);
         // console.log(responseMockRightHeight);
