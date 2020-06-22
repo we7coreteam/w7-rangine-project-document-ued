@@ -306,16 +306,16 @@
                   <el-col :span="12">
                     <div class="mock">
                       <div class="m-tit">请求模板</div>
-                      <div class="m-con">
-                        <pre>{{ requestMockTemplate }}</pre>
+                      <div class="m-con" :style="{height: requestMockHeight + 'px'}">
+                        <pre ref="requestMockLeftHeight">{{ requestMockTemplate }}</pre>
                       </div>
                     </div>
                   </el-col>
                   <el-col :span="12">
                     <div class="mock">
                       <div class="m-tit">请求数据 <i class="el-icon-refresh" @click="refreshRequestMock"></i></div>
-                      <div class="m-con">
-                        <pre>{{ requestMockJson }}</pre>
+                      <div class="m-con" :style="{height: requestMockHeight + 'px'}">
+                        <pre ref="requestMockRightHeight">{{ requestMockJson }}</pre>
                       </div>
                     </div>
                   </el-col>
@@ -403,10 +403,12 @@
                   <el-col :span="12">
                     <div class="mock">
                       <div class="m-tit">响应模板</div>
-                      <div class="m-con">
-                        <div v-for="(item, index) in responseMockTemplate" :key="index">
-                          <div style="margin-bottom: 10px; font-size: 12px;">响应{{ apiResTreeData[index].description }}：</div>
-                          <pre style="margin-bottom: 30px;">{{ item }}</pre>
+                      <div class="m-con" :style="{height: responseMockHeight + 'px'}">
+                        <div ref="responseMockLeftHeight">
+                          <div v-for="(item, index) in responseMockTemplate" :key="index">
+                            <div style="margin-bottom: 10px; font-size: 12px;">响应{{ apiResTreeData[index].description }}：</div>
+                            <pre style="margin-bottom: 30px;">{{ item }}</pre>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -414,10 +416,12 @@
                   <el-col :span="12">
                     <div class="mock">
                       <div class="m-tit">响应数据 <i class="el-icon-refresh" @click="refreshResponseMock"></i></div>
-                      <div class="m-con">
-                        <div v-for="(item, index) in responseMockJson" :key="index">
-                          <div style="margin-bottom: 10px; font-size: 12px;">响应{{ apiResTreeData[index].description }}:</div>
-                          <pre style="margin-bottom: 30px;">{{ item }}</pre>
+                      <div class="m-con" :style="{height: responseMockHeight + 'px'}">
+                        <div ref="responseMockRightHeight">
+                          <div v-for="(item, index) in responseMockJson" :key="index">
+                            <div style="margin-bottom: 10px; font-size: 12px;">响应{{ apiResTreeData[index].description }}:</div>
+                            <pre style="margin-bottom: 30px;">{{ item }}</pre>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -787,6 +791,8 @@ export default {
       requestMockJson: '',
       responseMockTemplate: '',
       responseMockJson: '',
+      requestMockHeight: '',
+      responseMockHeight: ''
     }
   },
   computed: {
@@ -2261,6 +2267,20 @@ export default {
         this.requestMockJson = this.$mock.mock(treeToTemplate(this.apiBodyTreeData, 1));
         this.requestMockJson = romoveSlash(this.requestMockJson);
       }
+      this.$nextTick(() => {
+        let requestMockLeftHeight = this.$refs.requestMockLeftHeight.offsetHeight + 32;
+        let requestMockRightHeight = this.$refs.requestMockRightHeight.offsetHeight + 32;
+        console.log('requestMockLeftHeight');
+        console.log(requestMockLeftHeight);
+        console.log(requestMockRightHeight);
+        if (requestMockLeftHeight > requestMockRightHeight) {
+          this.requestMockHeight = requestMockLeftHeight;
+        } else if (requestMockLeftHeight < requestMockRightHeight) {
+          this.requestMockHeight = requestMockRightHeight;
+        } else {
+          this.requestMockHeight = requestMockLeftHeight;
+        }
+      })
     },
 
     // 预览响应数据mock responseMockTemplate
@@ -2276,6 +2296,28 @@ export default {
         this.responseMockTemplate.push(treeToTemplate(item.data));
         this.responseMockJson.push(this.$mock.mock(treeToTemplate(item.data, 1)));
         // this.responseMockJson = romoveSlash(this.requestMockJson);
+      })
+      console.log('responseMockJson1');
+      console.log(this.responseMockJson);
+      let newArr = [];
+      this.responseMockJson.forEach(item => {
+        newArr.push(romoveSlash(item));
+      })
+      this.responseMockJson = newArr;
+
+      this.$nextTick(() => {
+        let responseMockLeftHeight = this.$refs.responseMockLeftHeight.offsetHeight + 80;
+        let responseMockRightHeight = this.$refs.responseMockRightHeight.offsetHeight + 80;
+        // console.log('responseMockLeftHeight');
+        // console.log(responseMockLeftHeight);
+        // console.log(responseMockRightHeight);
+        if (responseMockLeftHeight > responseMockRightHeight) {
+          this.responseMockHeight = responseMockLeftHeight;
+        } else if (responseMockLeftHeight < responseMockRightHeight) {
+          this.responseMockHeight = responseMockRightHeight;
+        } else {
+          this.responseMockHeight = responseMockRightHeight;
+        }
       })
     }
   }
@@ -2599,8 +2641,8 @@ export default {
               border: 1px solid #eee;
               border-radius: 2px;
               background-color: #f0f0f0;
-              /*max-height: 90vh;*/
-              height: 350px;
+              max-height: 90vh;
+              height: 100%;
               overflow: auto;
               padding: 15px;
 

@@ -5,6 +5,11 @@ html {
     height: 100%;
   }
 }
+
+* {
+  box-sizing: border-box;
+}
+
 /* 改变主题色变量 */
 $--color-primary: #3296fa;
 /* 改变 icon 字体路径变量，必需 */
