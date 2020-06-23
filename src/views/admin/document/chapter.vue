@@ -1308,6 +1308,8 @@ export default {
     handleNodeClick(data) {
       console.log(12);
       console.log(data);
+      this.isViewRequest = false;
+      this.isViewResponse = false;
       /*
             const This = this;
             function findChapter(arr) {
