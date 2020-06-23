@@ -113,6 +113,15 @@
                     </el-form-item>
                   </el-col>
                 </el-row>
+                <el-row :gutter="10">
+                  <el-col :md="14">
+                    <el-form-item label="Mock Api地址" class="mock-api">
+                      <el-tooltip class="item" effect="dark" popper-class="mock-api-tip" content="点击复制链接" placement="top">
+                        <el-input v-clipboard:copy="mockApiUrl" v-clipboard:success="onCopy" v-model="mockApiUrl" readonly placeholder=""></el-input>
+                      </el-tooltip>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
               </div>
             </div>
 
@@ -124,7 +133,8 @@
                   <span class="text">请求数据</span>
                 </div>
                 <!--<el-button type="primary" plain icon="el-icon-plus" @click="addFirstNode">添加</el-button>-->
-                <el-button type="default" plain icon="el-icon-upload" v-if="false">导入</el-button>
+                <el-button type="default" icon="el-icon-upload" v-if="false">导入</el-button>
+                <el-button type="primary" size="mini" icon="el-icon-view" @click="viewRequestMock">预览</el-button>
               </div>
               <div class="c-con">
                 <el-tabs v-model="form.tab_location" @tab-click="tabRequest">
@@ -135,21 +145,21 @@
                       <el-tree :data="apiHeaderTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
                         <div class="custom-tree-node" slot-scope="{ node, data }">
                           <el-row :gutter="10">
-                            <el-col :span="4">
+                            <el-col :span="3">
                               <el-form-item label="">
                                 <el-input @input="paramNameChange(node, data)" v-model="data.name"
                                           placeholder="参数名"></el-input>
                               </el-form-item>
                             </el-col>
-                            <el-col :span="4">
+                            <el-col :span="3">
                               <el-form-item label="">
-                                <el-select v-model="data.type" placeholder="">
+                                <el-select v-model="data.type" placeholder="" @change="typeChange(data)">
                                   <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
                                              :value="val.value"></el-option>
                                 </el-select>
                               </el-form-item>
                             </el-col>
-                            <el-col :span="4">
+                            <el-col :span="3">
                               <el-form-item label="">
                                 <el-select v-model="data.enabled" placeholder="是否必填">
                                   <el-option label="true" :value="2"></el-option>
@@ -157,12 +167,18 @@
                                 </el-select>
                               </el-form-item>
                             </el-col>
-                            <el-col :span="4">
-                              <el-form-item label="">
-                                <el-input v-model="data.default_value" placeholder="默认值"></el-input>
+                            <el-col :span="3">
+                              <el-form-item label="" class="rule-question">
+                                <el-input v-model="data.rule" placeholder="生成规则"></el-input>
+                                <i v-if="apiHeaderTreeData && apiHeaderTreeData[0].id == data.id" @click="goMock" class="wq wq-wenhao rule-icon"></i>
                               </el-form-item>
                             </el-col>
-                            <el-col :span="6">
+                            <el-col :span="4">
+                              <el-form-item label="">
+                                <el-input :disabled="data.type == 4" v-model="data.default_value" placeholder="默认值"></el-input>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :span="3">
                               <el-form-item label="">
                                 <el-input v-model="data.description" placeholder="描述"></el-input>
                               </el-form-item>
@@ -183,21 +199,21 @@
                       <el-tree :data="apiParamsTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
                         <div class="custom-tree-node" slot-scope="{ node, data }">
                           <el-row :gutter="5">
-                            <el-col :span="4">
+                            <el-col :span="3">
                               <el-form-item label="">
                                 <el-input @input="paramNameChange(node, data)" v-model="data.name"
                                           placeholder="参数名"></el-input>
                               </el-form-item>
                             </el-col>
-                            <el-col :span="4">
+                            <el-col :span="3">
                               <el-form-item label="">
-                                <el-select v-model="data.type" placeholder="">
+                                <el-select v-model="data.type" placeholder="" @change="typeChange(data)">
                                   <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
                                              :value="val.value"></el-option>
                                 </el-select>
                               </el-form-item>
                             </el-col>
-                            <el-col :span="4">
+                            <el-col :span="3">
                               <el-form-item label="">
                                 <el-select v-model="data.enabled" placeholder="是否必填">
                                   <el-option label="true" :value="2"></el-option>
@@ -205,12 +221,18 @@
                                 </el-select>
                               </el-form-item>
                             </el-col>
-                            <el-col :span="4">
-                              <el-form-item label="">
-                                <el-input v-model="data.default_value" placeholder="默认值"></el-input>
+                            <el-col :span="3">
+                              <el-form-item label="" class="rule-question">
+                                <el-input v-model="data.rule" placeholder="生成规则"></el-input>
+                                <i v-if="apiParamsTreeData && apiParamsTreeData[0].id == data.id" @click="goMock" class="wq wq-wenhao rule-icon"></i>
                               </el-form-item>
                             </el-col>
-                            <el-col :span="6">
+                            <el-col :span="3">
+                              <el-form-item label="">
+                                <el-input :disabled="data.type == 4" v-model="data.default_value" placeholder="默认值"></el-input>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :span="3">
                               <el-form-item label="">
                                 <el-input v-model="data.description" placeholder="描述"></el-input>
                               </el-form-item>
@@ -240,21 +262,21 @@
                         <el-tree :data="apiBodyTreeData" node-key="id" default-expand-all :expand-on-click-node="false">
                           <div class="custom-tree-node" slot-scope="{ node, data }">
                             <el-row :gutter="5">
-                              <el-col :span="4">
+                              <el-col :span="3">
                                 <el-form-item label="">
                                   <el-input @input="paramNameChange(node, data)" v-model="data.name"
                                             placeholder="参数名"></el-input>
                                 </el-form-item>
                               </el-col>
-                              <el-col :span="4">
+                              <el-col :span="3">
                                 <el-form-item label="">
-                                  <el-select v-model="data.type" placeholder="">
+                                  <el-select v-model="data.type" placeholder="" @change="typeChange(data)">
                                     <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
                                                :value="val.value"></el-option>
                                   </el-select>
                                 </el-form-item>
                               </el-col>
-                              <el-col :span="4">
+                              <el-col :span="3">
                                 <el-form-item label="">
                                   <el-select v-model="data.enabled" placeholder="是否必填">
                                     <el-option label="true" :value="2"></el-option>
@@ -262,12 +284,18 @@
                                   </el-select>
                                 </el-form-item>
                               </el-col>
-                              <el-col :span="4">
-                                <el-form-item label="">
-                                  <el-input v-model="data.default_value" placeholder="默认值"></el-input>
+                              <el-col :span="3">
+                                <el-form-item label="" class="rule-question">
+                                  <el-input v-model="data.rule" placeholder="生成规则"></el-input>
+                                  <i v-if="apiBodyTreeData && apiBodyTreeData[0].id == data.id" @click="goMock" class="wq wq-wenhao rule-icon"></i>
                                 </el-form-item>
                               </el-col>
-                              <el-col :span="6">
+                              <el-col :span="3">
+                                <el-form-item label="">
+                                  <el-input :disabled="data.type == 4" v-model="data.default_value" placeholder="默认值"></el-input>
+                                </el-form-item>
+                              </el-col>
+                              <el-col :span="3">
                                 <el-form-item label="">
                                   <el-input v-model="data.description" placeholder="描述"></el-input>
                                 </el-form-item>
@@ -285,6 +313,26 @@
                   </el-tab-pane>
                 </el-tabs>
               </div>
+              <div class="c-bottom" v-if="isViewRequest">
+                <el-row :gutter="20">
+                  <el-col :span="12">
+                    <div class="mock">
+                      <div class="m-tit">请求模板</div>
+                      <div class="m-con" :style="{height: requestMockHeight + 'px'}">
+                        <pre ref="requestMockLeftHeight">{{ requestMockTemplate }}</pre>
+                      </div>
+                    </div>
+                  </el-col>
+                  <el-col :span="12">
+                    <div class="mock">
+                      <div class="m-tit">请求数据 <i class="el-icon-refresh" @click="refreshRequestMock"></i></div>
+                      <div class="m-con" :style="{height: requestMockHeight + 'px'}">
+                        <pre ref="requestMockRightHeight">{{ requestMockJson }}</pre>
+                      </div>
+                    </div>
+                  </el-col>
+                </el-row>
+              </div>
             </div>
 
             <!--响应数据-->
@@ -293,20 +341,21 @@
                 <div class="line-wrap">
                   <span class="line"></span>
                   <span class="text">响应数据</span>
+                  <el-button type="default" size="mini" icon="el-icon-plus" @click="addResNode">添加</el-button>
                 </div>
-                <el-button type="primary" size="mini" icon="el-icon-plus" @click="addResNode">添加</el-button>
                 <el-button type="default" plain icon="el-icon-upload" v-if="false">导入</el-button>
+                <el-button type="primary" size="mini" icon="el-icon-view" @click="viewResponseMock">预览</el-button>
               </div>
               <div class="c-con" v-for="(item, index) in apiResTreeData" :key="index">
                 <el-row :gutter="5">
-                  <el-col :span="18">
+                  <el-col :span="15">
                     <div style="padding-left: 24px;">
                       <el-form-item label="">
                         <el-input style="width: calc(100% + 5px)" v-model="item.description" placeholder="响应数据描述"></el-input>
                       </el-form-item>
                     </div>
                   </el-col>
-                  <el-col :span="6">
+                  <el-col :span="9">
                     <div style="text-align: right;">
                       <el-button type="danger" size="mini" @click="deleteApiItem(index)">删除</el-button>
                     </div>
@@ -315,21 +364,21 @@
                 <el-tree :data="item.data" node-key="id" default-expand-all :expand-on-click-node="false">
                   <div class="custom-tree-node" slot-scope="{ node, data }">
                     <el-row :gutter="5">
-                      <el-col :span="4">
+                      <el-col :span="3">
                         <el-form-item label="">
                           <el-input @input="resParamNameChange(node, data)" v-model="data.name"
                                     placeholder="参数名"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="4">
+                      <el-col :span="3">
                         <el-form-item label="">
-                          <el-select v-model="data.type" placeholder="">
+                          <el-select v-model="data.type" placeholder="" @change="typeChange(data)">
                             <el-option v-for="val in paramsArr" :key="val.value" :label="val.type"
                                        :value="val.value"></el-option>
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <!--<el-col :span="4">-->
+                      <!--<el-col :span="3">-->
                       <!--<el-form-item label="">-->
                       <!--<el-select v-model="data.enabled" placeholder="是否必填">-->
                       <!--<el-option label="true" :value="2"></el-option>-->
@@ -337,12 +386,18 @@
                       <!--</el-select>-->
                       <!--</el-form-item>-->
                       <!--</el-col>-->
-                      <el-col :span="4">
-                        <el-form-item label="">
-                          <el-input v-model="data.default_value" placeholder="默认值"></el-input>
+                      <el-col :span="3">
+                        <el-form-item label="" class="rule-question">
+                          <el-input v-model="data.rule" placeholder="生成规则"></el-input>
+                          <i v-if="item.data[0].id == data.id" @click="goMock" class="wq wq-wenhao rule-icon"></i>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="6">
+                      <el-col :span="3">
+                        <el-form-item label="">
+                          <el-input :disabled="data.type == 4" v-model="data.default_value" placeholder="默认值"></el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :span="3">
                         <el-form-item label="">
                           <el-input v-model="data.description" placeholder="描述"></el-input>
                         </el-form-item>
@@ -355,6 +410,36 @@
                     </el-row>
                   </div>
                 </el-tree>
+              </div>
+              <div class="c-bottom" v-if="isViewResponse">
+                <el-row :gutter="20">
+                  <el-col :span="12">
+                    <div class="mock">
+                      <div class="m-tit">响应模板</div>
+                      <div class="m-con" :style="{height: responseMockHeight + 'px'}">
+                        <div ref="responseMockLeftHeight">
+                          <div :style="{'margin-top': index > 0 ? '30px' : '' }" v-for="(item, index) in responseMockTemplate" :key="index">
+                            <div style="margin-bottom: 10px; font-size: 12px;">响应{{ apiResTreeData[index].description }}：</div>
+                            <pre>{{ item }}</pre>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </el-col>
+                  <el-col :span="12">
+                    <div class="mock">
+                      <div class="m-tit">响应数据 <i class="el-icon-refresh" @click="refreshResponseMock"></i></div>
+                      <div class="m-con" :style="{height: responseMockHeight + 'px'}">
+                        <div ref="responseMockRightHeight">
+                          <div :style="{'margin-top': index > 0 ? '30px' : '' }" v-for="(item, index) in responseMockJson" :key="index">
+                            <div style="margin-bottom: 10px; font-size: 12px;">响应{{ apiResTreeData[index].description }}:</div>
+                            <pre>{{ item }}</pre>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </el-col>
+                </el-row>
               </div>
             </div>
           </el-form>
@@ -448,12 +533,152 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
-import {createChapter, getAllChapter, getMethodType, saveChapter, viewChapter} from '@/api/api'
-import editors from './editors.vue'
-import setting from './setting.vue'
+  // process.versions.node = '12.18.0';
+  // const { VM } = require('vm2')
+  import {mapGetters} from 'vuex'
+  import {createChapter, getAllChapter, getMethodType, saveChapter, viewChapter} from '@/api/api'
+  import editors from './editors.vue'
+  import setting from './setting.vue'
 
-let id = 1000;
+  let id = 1000;
+
+// num为1，对函数类型、正则执行函数，得到函数返回值
+function treeToTemplate(tree, num = 0) {
+  function parse(item, result) {
+    let rule = item.rule ? ('|' + item.rule) : '';
+    let value = item.default_value;
+    if (item.default_value && item.default_value.indexOf('[') === 0 && item.default_value.substring(item.default_value.length - 1) === ']') {
+      try {
+        let reg = /\s*/g;
+        let reg2 = /\"/g;
+        value = value.substring(1, value.length - 1).replace(reg, '').replace(reg2, '').split(',');
+        // console.error(123)
+        // console.log(value)
+        result[item.name + rule] = value
+        // result[item.name + rule] = vm.run(`(${item.value})`)
+      } catch (e) {
+        result[item.name + rule] = value
+      }
+    } else {
+      if (item.name.length) {
+        switch (item.type) {
+          case 1:
+            // String
+            result[item.name + rule] = value
+            break
+          case 2:
+            // Number
+            if (value === '') value = 1
+            let parsed = parseFloat(value)
+            if (!isNaN(parsed)) value = parsed
+            result[item.name + rule] = value
+            break
+          case 3:
+            // Boolean
+            if (value === 'true') value = true
+            if (value === 'false') value = false
+            if (value === '0') value = false
+            value = !!value
+            result[item.name + rule] = value
+            break
+          case 4:
+            // Object
+            if (value) {
+              // result[item.name + rule] = vm.run(`(${item.value})`)
+              result[item.name + rule] = {};
+              item.children.forEach((child) => {
+                parse(child, result[item.name + rule])
+              })
+            } else {
+              result[item.name + rule] = {}
+              item.children.forEach((child) => {
+                parse(child, result[item.name + rule])
+              })
+            }
+            break
+          case 5:
+            // Array
+            if (value) {
+              try {
+                // result[item.name + rule] = vm.run(`(${item.value})`)
+                result[item.name + rule] = value
+              } catch (e) {
+                result[item.name + rule] = item.value
+              }
+            } else {
+              result[item.name + rule] = item.children.length ? [{}] : []
+              item.children.forEach((child) => {
+                parse(child, result[item.name + rule][0])
+              })
+            }
+            break
+          case 6:
+            // Function
+            if (num == 1) {
+              try {
+                // 1
+                let fun = eval(item.default_value);
+                result[item.name + rule] = fun();
+
+                // 2
+                // let funcTest = new Function('return ' + item.default_value);
+                // result[item.name + rule] = funcTest()()
+              } catch (e) {
+                // console.error(e);
+                console.warn(`TreeToTemplate ${e.message}: ${item.type} { ${item.name}${rule}: ${item.default_value} }`) // 怎么消除异常值？
+                result[item.name + rule] = item.default_value
+              }
+            } else {
+              result[item.name + rule] = value
+            }
+            break
+          case 7:
+            // RegExp
+            if (num == 1) {
+              try {
+                result[item.name + rule] = new RegExp(item.default_value);
+              } catch (e) {
+                console.warn(`TreeToTemplate ${e.message}: ${item.type} { ${item.name}${rule}: ${item.default_value} }`) // 怎么消除异常值？
+                result[item.name + rule] = item.default_value
+              }
+            } else {
+              let reg = /\\/g;
+              result[item.name + rule] = item.default_value.replace(reg,"");
+            }
+            break
+          case 8:
+            // Null
+            // tslint:disable-next-line: no-null-keyword
+            result[item.name + rule] = null
+            break
+        }
+      }
+    }
+  }
+  let result = {}
+  if (tree.length) {
+    tree.forEach(child => {
+      parse(child, result)
+    })
+  }
+  return result
+}
+
+// 移除mock生成数据的'/'
+function romoveSlash(obj) {
+  let newObj = {}
+  let reg = /\//g;
+  for (let item in obj) {
+    if (typeof obj[item] == 'string' && reg.test(obj[item])) {
+      console.log(obj[item]);
+      newObj[item] = obj[item].replace(reg,"");
+    } else {
+      newObj[item] = obj[item]
+    }
+  }
+  return newObj
+}
+
 export default {
   name: 'chapter',
   components: {
@@ -572,7 +797,16 @@ export default {
       isApiBodyTreeDataChange: false,
       isApiResTreeDataChange: false,
       isMarkDownContentChange: false,
-      treeActive: false
+      treeActive: false,
+      isViewRequest: false,
+      isViewResponse: false,
+      requestMockTemplate: '',
+      requestMockJson: '',
+      responseMockTemplate: '',
+      responseMockJson: '',
+      requestMockHeight: '',
+      responseMockHeight: '',
+      mockApiUrl: ''
     }
   },
   computed: {
@@ -851,6 +1085,7 @@ export default {
      * 注意：默认打开目录的时候，如果有默认选中的文档，需要在手动修改this.defaultExpanded，
      *      把defaultSelect（默认选中文档）push进去，但是不可以保存在localStorage中
      */
+
     // 创建默认文档
     initCreateChapter() {
       createChapter({
@@ -1073,24 +1308,26 @@ export default {
     handleNodeClick(data) {
       console.log(12);
       console.log(data);
-/*
-      const This = this;
-      function findChapter(arr) {
-        if (arr.length) {
-          for (const item of arr) {
-            if (item.is_dir) {
-              findChapter(item.children)
-            } else {
-              This.defaultCheckedKeys = [item.id];
-              console.log('findChapter');
-              console.log(item.id);
-              return false;
+      this.isViewRequest = false;
+      this.isViewResponse = false;
+      /*
+            const This = this;
+            function findChapter(arr) {
+              if (arr.length) {
+                for (const item of arr) {
+                  if (item.is_dir) {
+                    findChapter(item.children)
+                  } else {
+                    This.defaultCheckedKeys = [item.id];
+                    console.log('findChapter');
+                    console.log(item.id);
+                    return false;
+                  }
+                }
+              }
             }
-          }
-        }
-      }
-      findChapter(this.chapters);
-*/
+            findChapter(this.chapters);
+      */
       // 目录不展示内容，只展开文件夹
       if (!data.is_dir) {
         console.log(7);
@@ -1598,10 +1835,13 @@ export default {
     // 请求类型切换
     tabRequest(tab) {
       localStorage.tab_location = tab.name;
+      this.refreshRequestMock();
       console.log(tab);
     },
     // 请求数据 输入框输入 下方新增同级node
     paramNameChange(node, data) {
+      // console.log(node);
+      // console.log(data);
       if (data.name.length) {
         data.already = Number(data.already) + 1;
         // console.log(data);
@@ -1892,6 +2132,7 @@ export default {
       const chapter_id = this.chapter_id;
       const document_id = this.$route.params.id;
       this.loading = this.$loading();
+      this.mockApiUrl = location.origin + `/admin/viewMock?chapter_id=${chapter_id}&document_id=${this.$route.params.id}`
       viewChapter({
         chapter_id,
         document_id
@@ -2012,6 +2253,102 @@ export default {
           message: '已取消'
         });
       });
+    },
+    // object 类型输入框禁用
+    typeChange(data) {
+      console.log(data);
+      if (data.type == 4 || data.type == 5) {
+        data.default_value = '';
+      }
+    },
+    // 预览请求数据mock
+    viewRequestMock() {
+      this.isViewRequest = !this.isViewRequest;
+      if (this.isViewRequest) {
+        this.refreshRequestMock();
+      }
+    },
+    // 刷新请求数据mock
+    refreshRequestMock() {
+      const tab_location = this.form.tab_location;
+      if (tab_location == 1) {
+        // console.log(treeToTemplate(this.apiHeaderTreeData));
+        this.requestMockTemplate = treeToTemplate(this.apiHeaderTreeData);
+        this.requestMockJson = this.$mock.mock(treeToTemplate(this.apiHeaderTreeData, 1));
+        this.requestMockJson = romoveSlash(this.requestMockJson);
+        // console.log('requestMockTemplate');
+        // console.log(this.requestMockTemplate);
+        // console.log('requestMockJson');
+        // console.log(this.requestMockJson);
+      } else if (tab_location == 2) {
+        this.requestMockTemplate = treeToTemplate(this.apiParamsTreeData);
+        this.requestMockJson = this.$mock.mock(treeToTemplate(this.apiParamsTreeData, 1));
+        this.requestMockJson = romoveSlash(this.requestMockJson);
+      } else {
+        this.requestMockTemplate = treeToTemplate(this.apiBodyTreeData);
+        this.requestMockJson = this.$mock.mock(treeToTemplate(this.apiBodyTreeData, 1));
+        this.requestMockJson = romoveSlash(this.requestMockJson);
+      }
+      this.$nextTick(() => {
+        let requestMockLeftHeight = this.$refs.requestMockLeftHeight.offsetHeight + 32;
+        let requestMockRightHeight = this.$refs.requestMockRightHeight.offsetHeight + 32;
+        console.log('requestMockLeftHeight');
+        console.log(requestMockLeftHeight);
+        console.log(requestMockRightHeight);
+        if (requestMockLeftHeight > requestMockRightHeight) {
+          this.requestMockHeight = requestMockLeftHeight;
+        } else if (requestMockLeftHeight < requestMockRightHeight) {
+          this.requestMockHeight = requestMockRightHeight;
+        } else {
+          this.requestMockHeight = requestMockLeftHeight;
+        }
+      })
+    },
+
+    // 预览响应数据mock responseMockTemplate
+    viewResponseMock() {
+      this.isViewResponse = !this.isViewResponse;
+      if (this.isViewResponse) {
+        this.refreshResponseMock();
+      }
+    },
+    // 刷新响应数据mock
+    refreshResponseMock() {
+      this.responseMockTemplate = [];
+      this.responseMockJson = [];
+      this.apiResTreeData.forEach(item => {
+        this.responseMockTemplate.push(treeToTemplate(item.data));
+        this.responseMockJson.push(this.$mock.mock(treeToTemplate(item.data, 1)));
+        // this.responseMockJson = romoveSlash(this.requestMockJson);
+      })
+      console.log('responseMockJson1');
+      console.log(this.responseMockJson);
+      let newArr = [];
+      this.responseMockJson.forEach(item => {
+        newArr.push(romoveSlash(item));
+      })
+      this.responseMockJson = newArr;
+
+      this.$nextTick(() => {
+        let responseMockLeftHeight = this.$refs.responseMockLeftHeight.offsetHeight + 32;
+        let responseMockRightHeight = this.$refs.responseMockRightHeight.offsetHeight + 32;
+        console.log('responseMockLeftHeight');
+        console.log(responseMockLeftHeight);
+        console.log(responseMockRightHeight);
+        if (responseMockLeftHeight > responseMockRightHeight) {
+          this.responseMockHeight = responseMockLeftHeight;
+        } else if (responseMockLeftHeight < responseMockRightHeight) {
+          this.responseMockHeight = responseMockRightHeight;
+        } else {
+          this.responseMockHeight = responseMockRightHeight;
+        }
+      })
+    },
+    onCopy(e){
+      this.$message.success('复制成功');
+    },
+    goMock() {
+      window.open('https://github.com/nuysoft/Mock/wiki/Syntax-Specification');
     }
   }
 }
@@ -2223,6 +2560,7 @@ export default {
         .top {
           display: flex;
           align-items: center;
+          justify-content: space-between;
           margin-bottom: 20px;
 
           .line-wrap {
@@ -2281,6 +2619,23 @@ export default {
           .el-row {
             .el-form-item {
               margin-bottom: 10px;
+
+              &.rule-question {
+                position: relative;
+
+                .rule-icon {
+                  position: absolute;
+                  right: 10px;
+                  color: #999;
+                  font-size: 12px;
+                  line-height: 40px;
+
+                  &:hover {
+                    color: #3296fa;
+                  }
+                }
+
+              }
             }
 
             &:last-of-type {
@@ -2314,6 +2669,37 @@ export default {
           }
         }
 
+        .c-bottom {
+          .mock {
+            .m-tit {
+              color: #333;
+              margin-bottom: 10px;
+              font-size: 14px;
+
+              .el-icon-refresh {
+                color: #3296fa;
+                font-weight: 600;
+                font-size: 15px;
+                cursor: pointer;
+              }
+            }
+
+            .m-con {
+              border: 1px solid #eee;
+              border-radius: 2px;
+              background-color: #f0f0f0;
+              max-height: 90vh;
+              height: 100%;
+              overflow: auto;
+              padding: 15px;
+
+              pre {
+                margin: 0;
+              }
+            }
+          }
+        }
+
         .el-select {
           width: 100%;
         }
@@ -2337,6 +2723,22 @@ export default {
         }
       }
 
+      .basic-information {
+        .mock-api {
+          /deep/ {
+            .el-form-item__content {
+              display: inline-block;
+              width: calc(100% - 105px);
+              cursor: pointer;
+
+              input {
+                padding: 0 0 0 10px;
+                cursor: pointer;
+              }
+            }
+          }
+        }
+      }
     }
   }
 
@@ -2351,6 +2753,10 @@ export default {
 <style>
   [v-cloak] {
     display: none !important;
+  }
+
+  .mock-api-tip {
+    top: 270px !important;
   }
 
   /*增加.el-tree-node__children，去除目录选中状态*/

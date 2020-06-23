@@ -11,7 +11,6 @@ import 'mavon-editor/dist/css/index.css'
 import './assets/scss/element-variables.scss'
 
 let Mock = require('mockjs')
-
 Vue.use(ElementUI)
 Vue.use(mavonEditor)
 Vue.use(VueClipboard)
@@ -19,13 +18,14 @@ Vue.use(VueClipboard)
 Vue.prototype.$http = axios;
 Vue.prototype.$post = axios.post;
 Vue.prototype.$mock = Mock;
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 const vm = new Vue({
   router,
   store,
   render: h => h(App)
 }).$mount('#app')
+
 export default vm;
 
 router.beforeEach((to, from, next) => {
