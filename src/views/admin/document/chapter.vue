@@ -2757,6 +2757,7 @@ export default {
 
   .mock-api-tip {
     top: 270px !important;
+    left: 580px !important;
   }
 
   /*增加.el-tree-node__children，去除目录选中状态*/
