@@ -8,15 +8,15 @@
               <div class="m-tit">请求模板</div>
               <div class="m-con" :style="{height: requestMockHeight + 'px'}">
                 <div ref="requestMockLeftHeight">
-                  <div class="pre-wrap">
+                  <div class="pre-wrap" v-if="apiHeaderTreeData.length">
                     <div>Header</div>
                     <pre>{{ requestHeaderMockTemplate }}</pre>
                   </div>
-                  <div class="pre-wrap">
+                  <div class="pre-wrap" v-if="apiParamsTreeData.length">
                     <div>Params</div>
                     <pre>{{ requestParamsMockTemplate }}</pre>
                   </div>
-                  <div class="pre-wrap">
+                  <div class="pre-wrap" v-if="apiBodyTreeData.length">
                     <div>Body</div>
                     <pre>{{ requestBodyMockTemplate }}</pre>
                   </div>
@@ -29,15 +29,15 @@
               <div class="m-tit">请求数据</div>
               <div class="m-con" :style="{height: requestMockHeight + 'px'}">
                 <div ref="requestMockRightHeight">
-                  <div class="pre-wrap">
+                  <div class="pre-wrap" v-if="apiHeaderTreeData.length">
                     <div>Header</div>
                     <pre>{{ requestHeaderMockJson }}</pre>
                   </div>
-                  <div class="pre-wrap">
+                  <div class="pre-wrap" v-if="apiParamsTreeData.length">
                     <div>Params</div>
                     <pre>{{ requesParamstMockJson }}</pre>
                   </div>
-                  <div class="pre-wrap">
+                  <div class="pre-wrap" v-if="apiBodyTreeData.length">
                     <div>Body</div>
                     <pre>{{ requestBodyMockJson }}</pre>
                   </div>
@@ -54,10 +54,12 @@
               <div class="m-tit">响应模板</div>
               <div class="m-con" :style="{height: responseMockHeight + 'px'}">
                 <div ref="responseMockLeftHeight">
-                  <div class="pre-wrap" v-for="(item, index) in responseMockTemplate" :key="index">
-                    <div>响应{{ apiResTreeData[index].description }}：</div>
-                    <pre>{{ item }}</pre>
-                  </div>
+                    <div class="pre-wrap" v-for="(item, index) in responseMockTemplate" :key="index">
+                      <template v-if="apiResTreeData[index].data.length">
+                        <div>响应{{ apiResTreeData[index].description }}：</div>
+                        <pre>{{ item }}</pre>
+                      </template>
+                    </div>
                 </div>
               </div>
             </div>
@@ -68,8 +70,10 @@
               <div class="m-con" :style="{height: responseMockHeight + 'px'}">
                 <div ref="responseMockRightHeight">
                   <div class="pre-wrap" v-for="(item, index) in responseMockJson" :key="index">
-                    <div>响应{{ apiResTreeData[index].description }}:</div>
-                    <pre>{{ item }}</pre>
+                    <template v-if="apiResTreeData[index].data.length">
+                      <div>响应{{ apiResTreeData[index].description }}:</div>
+                      <pre>{{ item }}</pre>
+                    </template>
                   </div>
                 </div>
               </div>
@@ -295,8 +299,8 @@ export default {
 
     initMock() {
       // Header
-      console.log('requestHeaderMockTemplat');
-      console.log(this.requestHeaderMockTemplat);
+      console.log('requestHeaderMockTemplate');
+      console.log(this.requestHeaderMockTemplate);
       this.requestHeaderMockTemplate = treeToTemplate(this.apiHeaderTreeData);
       this.requestHeaderMockJson = this.$mock.mock(treeToTemplate(this.apiHeaderTreeData, 1));
       this.requestHeaderMockJson = romoveSlash(this.requestHeaderMockJson);
@@ -310,6 +314,8 @@ export default {
       this.requestBodyMockTemplate = treeToTemplate(this.apiBodyTreeData);
       this.requestBodyMockJson = this.$mock.mock(treeToTemplate(this.apiBodyTreeData, 1));
       this.requestBodyMockJson = romoveSlash(this.requestBodyMockJson);
+      console.log(666);
+      console.log(this.requestBodyMockJson);
 
       // reponse
       this.responseMockTemplate = [];

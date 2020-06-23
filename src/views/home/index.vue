@@ -77,6 +77,13 @@
                       <i class="wi wi-star"></i>
                     </div>
                   </el-tooltip>
+                  <el-tooltip effect="dark" content="复制Mock链接" placement="bottom">
+                    <div class="share-block"
+                         v-clipboard:copy="mockUrl"
+                         v-clipboard:success="onCopy">
+                      <i class="wq-fuzhi wq"></i>
+                    </div>
+                  </el-tooltip>
                 </div>
               </div>
               <div class="markdown-body" >
@@ -163,7 +170,8 @@
       shareUrl: '',
       showShareWechat: false,
       projectName: '',
-      loading: ''
+      loading: '',
+      mockUrl: ''
     }
   },
   computed: {
@@ -180,7 +188,8 @@
     }
   },
   created () {
-    this.getDocumentName()
+    this.getDocumentName();
+    this.mockUrl = location.origin + `/admin/viewMock?chapter_id=${this.$route.query.id}&document_id=${this.$route.params.id}`
   },
   mounted () {
     // this.projectName = localStorage.projectName;
@@ -298,7 +307,8 @@
       // 目录不显示内容，只展开收缩文件夹
       // this.changeRoute(obj.id, obj.name);
       if (!obj.is_dir) {
-        this.changeRoute(obj.id, obj.name)
+        this.changeRoute(obj.id, obj.name);
+        this.mockUrl = location.origin + `/admin/viewMock?chapter_id=${this.$route.query.id}&document_id=${this.$route.params.id}`
       }
     },
     handleNodeExpand(obj) {
@@ -471,7 +481,7 @@
       window.open(url, '_blank')
     },
     onCopy() {
-      this.$message('复制成功！')
+      this.$message.success('复制成功！')
     },
     operStar() {
       let url = this.articleContent.star_id ? '/admin/star/delete' : '/admin/star/add'
