@@ -246,8 +246,8 @@ export default {
   },
   methods: {
     viewChapter() {
-      const chapter_id = this.$route.query.chapter_id || 1660;
-      const document_id = this.$route.query.document_id || 185;
+      const chapter_id = this.$route.query.chapter_id;
+      const document_id = this.$route.query.document_id;
       this.loading = this.$loading();
       viewChapter({
         chapter_id,

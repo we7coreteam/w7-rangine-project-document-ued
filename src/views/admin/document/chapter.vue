@@ -168,8 +168,9 @@
                               </el-form-item>
                             </el-col>
                             <el-col :span="3">
-                              <el-form-item label="">
+                              <el-form-item label="" class="rule-question">
                                 <el-input v-model="data.rule" placeholder="生成规则"></el-input>
+                                <i v-if="apiHeaderTreeData && apiHeaderTreeData[0].id == data.id" @click="goMock" class="wq wq-wenhao rule-icon"></i>
                               </el-form-item>
                             </el-col>
                             <el-col :span="4">
@@ -221,8 +222,9 @@
                               </el-form-item>
                             </el-col>
                             <el-col :span="3">
-                              <el-form-item label="">
+                              <el-form-item label="" class="rule-question">
                                 <el-input v-model="data.rule" placeholder="生成规则"></el-input>
+                                <i v-if="apiParamsTreeData && apiParamsTreeData[0].id == data.id" @click="goMock" class="wq wq-wenhao rule-icon"></i>
                               </el-form-item>
                             </el-col>
                             <el-col :span="3">
@@ -283,8 +285,9 @@
                                 </el-form-item>
                               </el-col>
                               <el-col :span="3">
-                                <el-form-item label="">
+                                <el-form-item label="" class="rule-question">
                                   <el-input v-model="data.rule" placeholder="生成规则"></el-input>
+                                  <i v-if="apiBodyTreeData && apiBodyTreeData[0].id == data.id" @click="goMock" class="wq wq-wenhao rule-icon"></i>
                                 </el-form-item>
                               </el-col>
                               <el-col :span="3">
@@ -384,8 +387,9 @@
                       <!--</el-form-item>-->
                       <!--</el-col>-->
                       <el-col :span="3">
-                        <el-form-item label="">
+                        <el-form-item label="" class="rule-question">
                           <el-input v-model="data.rule" placeholder="生成规则"></el-input>
+                          <i v-if="item.data[0].id == data.id" @click="goMock" class="wq wq-wenhao rule-icon"></i>
                         </el-form-item>
                       </el-col>
                       <el-col :span="3">
@@ -414,9 +418,9 @@
                       <div class="m-tit">响应模板</div>
                       <div class="m-con" :style="{height: responseMockHeight + 'px'}">
                         <div ref="responseMockLeftHeight">
-                          <div v-for="(item, index) in responseMockTemplate" :key="index">
+                          <div :style="{'margin-top': index > 0 ? '30px' : '' }" v-for="(item, index) in responseMockTemplate" :key="index">
                             <div style="margin-bottom: 10px; font-size: 12px;">响应{{ apiResTreeData[index].description }}：</div>
-                            <pre :style="{'margin-bottom': index > 0 ? '30px' : '' }">{{ item }}</pre>
+                            <pre>{{ item }}</pre>
                           </div>
                         </div>
                       </div>
@@ -427,9 +431,9 @@
                       <div class="m-tit">响应数据 <i class="el-icon-refresh" @click="refreshResponseMock"></i></div>
                       <div class="m-con" :style="{height: responseMockHeight + 'px'}">
                         <div ref="responseMockRightHeight">
-                          <div v-for="(item, index) in responseMockJson" :key="index">
+                          <div :style="{'margin-top': index > 0 ? '30px' : '' }" v-for="(item, index) in responseMockJson" :key="index">
                             <div style="margin-bottom: 10px; font-size: 12px;">响应{{ apiResTreeData[index].description }}:</div>
-                            <pre :style="{'margin-bottom': index > 0 ? '30px' : '' }">{{ item }}</pre>
+                            <pre>{{ item }}</pre>
                           </div>
                         </div>
                       </div>
@@ -1081,6 +1085,7 @@ export default {
      * 注意：默认打开目录的时候，如果有默认选中的文档，需要在手动修改this.defaultExpanded，
      *      把defaultSelect（默认选中文档）push进去，但是不可以保存在localStorage中
      */
+
     // 创建默认文档
     initCreateChapter() {
       createChapter({
@@ -1833,6 +1838,8 @@ export default {
     },
     // 请求数据 输入框输入 下方新增同级node
     paramNameChange(node, data) {
+      // console.log(node);
+      // console.log(data);
       if (data.name.length) {
         data.already = Number(data.already) + 1;
         // console.log(data);
@@ -2255,7 +2262,9 @@ export default {
     // 预览请求数据mock
     viewRequestMock() {
       this.isViewRequest = !this.isViewRequest;
-      this.refreshRequestMock();
+      if (this.isViewRequest) {
+        this.refreshRequestMock();
+      }
     },
     // 刷新请求数据mock
     refreshRequestMock() {
@@ -2297,7 +2306,9 @@ export default {
     // 预览响应数据mock responseMockTemplate
     viewResponseMock() {
       this.isViewResponse = !this.isViewResponse;
-      this.refreshResponseMock();
+      if (this.isViewResponse) {
+        this.refreshResponseMock();
+      }
     },
     // 刷新响应数据mock
     refreshResponseMock() {
@@ -2317,11 +2328,11 @@ export default {
       this.responseMockJson = newArr;
 
       this.$nextTick(() => {
-        let responseMockLeftHeight = this.$refs.responseMockLeftHeight.offsetHeight + 50;
-        let responseMockRightHeight = this.$refs.responseMockRightHeight.offsetHeight + 50;
-        // console.log('responseMockLeftHeight');
-        // console.log(responseMockLeftHeight);
-        // console.log(responseMockRightHeight);
+        let responseMockLeftHeight = this.$refs.responseMockLeftHeight.offsetHeight + 32;
+        let responseMockRightHeight = this.$refs.responseMockRightHeight.offsetHeight + 32;
+        console.log('responseMockLeftHeight');
+        console.log(responseMockLeftHeight);
+        console.log(responseMockRightHeight);
         if (responseMockLeftHeight > responseMockRightHeight) {
           this.responseMockHeight = responseMockLeftHeight;
         } else if (responseMockLeftHeight < responseMockRightHeight) {
@@ -2331,8 +2342,11 @@ export default {
         }
       })
     },
-    onCopy (e){
+    onCopy(e){
       this.$message.success('复制成功');
+    },
+    goMock() {
+      window.open('https://github.com/nuysoft/Mock/wiki/Syntax-Specification');
     }
   }
 }
@@ -2603,6 +2617,23 @@ export default {
           .el-row {
             .el-form-item {
               margin-bottom: 10px;
+
+              &.rule-question {
+                position: relative;
+
+                .rule-icon {
+                  position: absolute;
+                  right: 10px;
+                  color: #999;
+                  font-size: 12px;
+                  line-height: 40px;
+
+                  &:hover {
+                    color: #3296fa;
+                  }
+                }
+
+              }
             }
 
             &:last-of-type {
