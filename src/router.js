@@ -142,8 +142,8 @@ const router = new Router({
           component: () => import('@/views/admin/accountInfo.vue')
         },
         {
-          path: 'viewMock',
-          name: 'viewMock',
+          path: 'mock/:chapter_id/:document_id',
+          name: 'mock',
           component: () => import('@/views/admin/mock/mock.vue')
         },
 

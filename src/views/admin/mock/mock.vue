@@ -225,7 +225,7 @@ function romoveSlash(obj) {
 }
 
 export default {
-  name: '',
+  name: 'mock',
   data() {
     return {
       loading: '',
@@ -250,8 +250,8 @@ export default {
   },
   methods: {
     viewChapter() {
-      const chapter_id = this.$route.query.chapter_id;
-      const document_id = this.$route.query.document_id;
+      const chapter_id = this.$route.params.chapter_id;
+      const document_id = this.$route.params.document_id;
       this.loading = this.$loading();
       viewChapter({
         chapter_id,

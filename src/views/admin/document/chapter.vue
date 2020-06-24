@@ -2132,7 +2132,8 @@ export default {
       const chapter_id = this.chapter_id;
       const document_id = this.$route.params.id;
       this.loading = this.$loading();
-      this.mockApiUrl = location.origin + `/admin/viewMock?chapter_id=${chapter_id}&document_id=${this.$route.params.id}`
+      // this.mockApiUrl = location.origin + `/admin/mock?chapter_id=${chapter_id}&document_id=${this.$route.params.id}`
+      this.mockApiUrl = location.origin + `/admin/mock/${chapter_id}/${this.$route.params.id}`
       viewChapter({
         chapter_id,
         document_id
