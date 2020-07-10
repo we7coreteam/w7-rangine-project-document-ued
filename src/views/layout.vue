@@ -1,9 +1,9 @@
 <template>
   <el-container class="admin-view">
     <el-header :class="NavMenu.theme">
-      <router-link :to="UserInfo.username ? '/admin' : ''" class="logo">
+      <span @click="goIndex" class="logo">
         <i class="wi wi-wendang-logo"></i>文档控制台
-      </router-link>
+      </span>
       <template v-if="docName">
         <div class="menu-line"></div>
         <div class="menu-icon" @click="goto('admin')"><i class="wi wi-shouye"></i></div>
@@ -82,6 +82,11 @@
     this.isReadFnc()
   },
   methods: {
+    goIndex() {
+      if (this.UserInfo.username) {
+        this.$router.push('/admin')
+      }
+    },
     isReadFnc() {//F5刷新
       if (this.$route.name == 'homeChild') {
         this.isRead = true
@@ -135,6 +140,7 @@
       margin-right: 20px;
       display: flex;
       font-size: 24px;
+      cursor: pointer;
 
       .wi {
         font-size: 30px;
