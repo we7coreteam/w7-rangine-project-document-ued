@@ -1,20 +1,8 @@
 <template>
   <div class="mock-wrap">
-    <el-row :gutter="20">
-      <el-col :span="12">
-        <div class="mock">
-          <div class="m-con">
-            <div ref="responseMockRightHeight">
-              <div class="pre-wrap" v-if="responseMockJson.length">
-                <template>
-                  <pre>{{ responseMockJson[reponseIndex] }}</pre>
-                </template>
-              </div>
-            </div>
-          </div>
-        </div>
-      </el-col>
-    </el-row>
+    <template v-if="responseMockJson.length">
+      <pre>{{ responseMockJson[reponseIndex] }}</pre>
+    </template>
   </div>
 </template>
 <script>
@@ -269,47 +257,3 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-
-  .mock-wrap {
-    width: 1200px;
-    margin: 0 auto 30px;
-
-    .mock {
-      .m-tit {
-        color: #333;
-        margin-bottom: 10px;
-        font-size: 14px;
-
-        .el-icon-refresh {
-          color: #3296fa;
-          font-weight: 600;
-          font-size: 15px;
-          cursor: pointer;
-        }
-      }
-
-      .m-con {
-        border: 1px solid #eee;
-        border-radius: 2px;
-        background-color: #f0f0f0;
-        height: 100%;
-        overflow: auto;
-        padding: 15px;
-
-        .pre-wrap {
-          margin-bottom: 30px;
-
-          &:last-of-type {
-            margin-bottom: 0;
-          }
-
-          pre {
-            margin: 10px 0 0;
-          }
-        }
-
-      }
-    }
-  }
-</style>
