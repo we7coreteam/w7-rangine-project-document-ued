@@ -2170,7 +2170,7 @@ export default {
               this.form.tab_location = localStorage.tab_location || this.form.tab_location.toString();
               // this.form.body_param_location = this.form.body_param_location.toString();
               this.form.body_param_location = this.form.body_param_location;
-              this.mockApiUrl2 = location.origin + `/mock/${chapter_id}/${this.$route.params.id}`
+              this.mockApiUrl2 = location.origin + `/mock/${this.$route.params.id}/${chapter_id}`
               this.mockApiUrl = location.origin + `/document/mockApiReponse/${this.$route.params.id}` + '/' + this.form.url
             } else {
               // console.log(56);
