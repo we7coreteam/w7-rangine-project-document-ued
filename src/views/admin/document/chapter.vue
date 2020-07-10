@@ -1870,8 +1870,9 @@ export default {
     resParamNameChange(node, data) {
       if (data.name.length) {
         data.already = Number(data.already) + 1;
-        // console.log(data);
-        // console.log(data.already);
+        console.log(111);
+        console.log(data);
+        console.log(data.already);
         // 防止不断输入添加多个同级node
         if (data.already == 1) {
           this.insertAfter(node, data);
@@ -2214,7 +2215,7 @@ export default {
               // console.error(1)
               this.apiResTreeData = JSON.parse(JSON.stringify(record.reponse));
               this.apiResTreeData.forEach(item1 => {
-                item1.data.push(apiData4)
+                item1.data.push(JSON.parse(JSON.stringify(apiData4)))
               })
               this.apiResTreeDataCompared = JSON.parse(JSON.stringify(record.reponse));
             } else {
