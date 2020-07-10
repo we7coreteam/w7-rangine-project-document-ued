@@ -1,21 +1,88 @@
 <template>
-  <div class="mock-wrap">
-    <el-row :gutter="20">
-      <el-col :span="12">
-        <div class="mock">
-          <div class="m-con">
-            <div ref="responseMockRightHeight">
-              <div class="pre-wrap" v-if="responseMockJson.length">
-                <template>
-                  <pre>{{ responseMockJson[reponseIndex] }}</pre>
-                </template>
+  <el-container class="w7-document-chapter">
+    <el-main v-cloak>
+      <div class="mock-wrap">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <div class="mock">
+              <div class="m-tit">请求模板</div>
+              <div class="m-con" :style="{height: requestMockHeight + 'px'}">
+                <div ref="requestMockLeftHeight">
+                  <div class="pre-wrap" v-if="apiHeaderTreeData.length">
+                    <div>Header</div>
+                    <pre>{{ requestHeaderMockTemplate }}</pre>
+                  </div>
+                  <div class="pre-wrap" v-if="apiParamsTreeData.length">
+                    <div>Params</div>
+                    <pre>{{ requestParamsMockTemplate }}</pre>
+                  </div>
+                  <div class="pre-wrap" v-if="apiBodyTreeData.length">
+                    <div>Body</div>
+                    <pre>{{ requestBodyMockTemplate }}</pre>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </el-col>
-    </el-row>
-  </div>
+          </el-col>
+          <el-col :span="12">
+            <div class="mock">
+              <div class="m-tit">请求数据</div>
+              <div class="m-con" :style="{height: requestMockHeight + 'px'}">
+                <div ref="requestMockRightHeight">
+                  <div class="pre-wrap" v-if="apiHeaderTreeData.length">
+                    <div>Header</div>
+                    <pre>{{ requestHeaderMockJson }}</pre>
+                  </div>
+                  <div class="pre-wrap" v-if="apiParamsTreeData.length">
+                    <div>Params</div>
+                    <pre>{{ requesParamstMockJson }}</pre>
+                  </div>
+                  <div class="pre-wrap" v-if="apiBodyTreeData.length">
+                    <div>Body</div>
+                    <pre>{{ requestBodyMockJson }}</pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+      <div class="mock-wrap">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <div class="mock">
+              <div class="m-tit">响应模板</div>
+              <div class="m-con" :style="{height: responseMockHeight + 'px'}">
+                <div ref="responseMockLeftHeight">
+                  <div class="pre-wrap" v-for="(item, index) in responseMockTemplate" :key="index">
+                    <template v-if="apiResTreeData[index].data.length">
+                      <div>响应{{ apiResTreeData[index].description }}：</div>
+                      <pre>{{ item }}</pre>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </el-col>
+          <el-col :span="12">
+            <div class="mock">
+              <div class="m-tit">响应数据</div>
+              <div class="m-con" :style="{height: responseMockHeight + 'px'}">
+                <div ref="responseMockRightHeight">
+                  <div class="pre-wrap" v-for="(item, index) in responseMockJson" :key="index">
+                    <template v-if="apiResTreeData[index].data.length">
+                      <div>响应{{ apiResTreeData[index].description }}:</div>
+                      <pre>{{ item }}</pre>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </el-main>
+  </el-container>
 </template>
 <script>
   import {mockDetail} from '@/api/api'
@@ -162,6 +229,7 @@ export default {
   data() {
     return {
       loading: '',
+      requestMockHeight: '',
       requestHeaderMockTemplate: '',
       requestParamsMockTemplate: '',
       requestBodyMockTemplate: '',
@@ -169,17 +237,16 @@ export default {
       requesParamstMockJson: '',
       requestBodyMockJson: '',
       responseMockTemplate: '',
+      responseMockHeight: '',
       apiHeaderTreeData: [],
       apiParamsTreeData: [],
       apiBodyTreeData: [],
       apiResTreeData: [],
-      responseMockJson: '',
-      reponseIndex: 0
+      responseMockJson: ''
     }
   },
   created() {
     this.mockDetail();
-    this.reponseIndex = this.$route.query.reponse
   },
   methods: {
     mockDetail() {
@@ -265,6 +332,31 @@ export default {
         newArr.push(romoveSlash(item));
       })
       this.responseMockJson = newArr;
+
+
+      this.$nextTick(() => {
+        let requestMockLeftHeight = this.$refs.requestMockLeftHeight.offsetHeight + 32;
+        let requestMockRightHeight = this.$refs.requestMockRightHeight.offsetHeight + 32;
+
+        let responseMockLeftHeight = this.$refs.responseMockLeftHeight.offsetHeight + 32;
+        let responseMockRightHeight = this.$refs.responseMockRightHeight.offsetHeight + 32;
+
+        if (requestMockLeftHeight > requestMockRightHeight) {
+          this.requestMockHeight = requestMockLeftHeight;
+        } else if (requestMockLeftHeight < requestMockRightHeight) {
+          this.requestMockHeight = requestMockRightHeight;
+        } else {
+          this.requestMockHeight = requestMockLeftHeight;
+        }
+
+        if (responseMockLeftHeight > responseMockRightHeight) {
+          this.responseMockHeight = responseMockLeftHeight;
+        } else if (responseMockLeftHeight < responseMockRightHeight) {
+          this.responseMockHeight = responseMockRightHeight;
+        } else {
+          this.responseMockHeight = responseMockRightHeight;
+        }
+      })
     }
   }
 }

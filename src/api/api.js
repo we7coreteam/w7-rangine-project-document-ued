@@ -60,6 +60,15 @@ export const logouturl = (data) => axios({
   method: 'get'
 })
 
+// mock查看
+export const mockDetail = (data) => axios({
+  url: '/document/chapter/record',
+  data,
+  method: 'post'
+})
+
+
+
 
 
 
