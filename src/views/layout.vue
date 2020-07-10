@@ -83,9 +83,9 @@
   },
   methods: {
     goIndex() {
-      if (this.UserInfo.username) {
+      // if (this.UserInfo.username) {
         this.$router.push('/admin')
-      }
+      // }
     },
     isReadFnc() {//F5刷新
       if (this.$route.name == 'homeChild') {
