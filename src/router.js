@@ -22,6 +22,11 @@ const router = new Router({
       component: () => import('@/views/admin/bind.vue')
     },
     {
+      path: '/install',
+      name: 'install',
+      component: () => import('@/views/install/install.vue')
+    },
+    {
       path: '/mock/:document_id/:chapter_id',
       name: 'mock',
       component: () => import('@/views/admin/mock/mock.vue')

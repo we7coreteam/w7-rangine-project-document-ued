@@ -3,13 +3,33 @@
     <div class="login-box">
       <h2>文档管理系统</h2>
       <el-tabs v-model="active">
-        <el-tab-pane label="账号登录" name="first">
+        <el-tab-pane label="账号登录" name="account">
           <div class="login-form">
             <el-input v-model="formData.username" prefix-icon="el-icon-user-solid" placeholder="用户名/手机号"></el-input>
             <el-input type="password" v-model="formData.userpass" prefix-icon="el-icon-s-goods" placeholder="输入密码"></el-input>
             <el-input class="code-input" v-model="formData.code" prefix-icon="el-icon-s-goods" placeholder="输入图形验证码" @keyup.enter.native="login">
               <img :src="code" @click="getCode" slot="append" alt="">
             </el-input>
+          </div>
+          <div class="login-thirdParty" v-if="thirdPartyList.length">
+            <span class="title">第三方账号登录</span>
+            <div class="icon-list">
+              <img class="icon-block"
+                   v-for="icon in thirdPartyList" :key="icon.name"
+                   :src="icon.logo"
+                   :title="icon.name"
+                   @click="thirdPartyIconClick(icon.redirect_url)">
+            </div>
+          </div>
+          <!-- <div class="login-action">
+            <el-button type="text" @click="showFind">找回密码?</el-button>
+          </div> -->
+          <el-button class="login-btn" @click="login">登录</el-button>
+        </el-tab-pane>
+        <el-tab-pane label="手机快捷登录" name="phone">
+          <div class="login-form">
+            <el-input v-model="formData.phone" prefix-icon="el-icon-user-solid" placeholder="请输入手机号"></el-input>
+            <el-input class="code-input" v-model="formData.phoneCode" prefix-icon="el-icon-s-goods" placeholder="请输入短信验证码" @keyup.enter.native="login"></el-input>
           </div>
           <div class="login-thirdParty" v-if="thirdPartyList.length">
             <span class="title">第三方账号登录</span>
@@ -42,12 +62,14 @@
   data() {
     return {
       autofocus: false,
-      active: 'first',
+      active: 'account',
       code: '',
       formData: {
         username: '',
         userpass: '',
-        code: ''
+        code: '',
+        phone: '',
+        phoneCode: ''
       },
       thirdPartyList: []
     }

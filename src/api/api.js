@@ -67,6 +67,13 @@ export const mockDetail = (data) => axios({
   method: 'post'
 })
 
+// 系统检测
+export const systemDetection = (data) => axios({
+  url: '/install/systemDetection',
+  data,
+  method: 'post'
+})
+
 
 
 
