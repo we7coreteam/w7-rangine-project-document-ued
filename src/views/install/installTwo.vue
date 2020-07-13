@@ -89,7 +89,7 @@
         ruleForm: {
           api_host: '',
           server_port: '',
-          cache_driver: '',
+          cache_driver: 'default',
           cache_host: '',
           cache_port: '',
           db_host: '',
@@ -195,6 +195,12 @@
 </script>
 
 <style scoped lang="scss">
+  /deep/ {
+    .install-con {
+      margin-bottom: 0;
+    }
+  }
+
   .install {
       width: 1200px;
       margin: 0 auto;
