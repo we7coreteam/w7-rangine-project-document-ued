@@ -74,6 +74,13 @@ export const systemDetection = (data) => axios({
   method: 'post'
 })
 
+// 系统安装
+export const install = (data) => axios({
+  url: '/install/install',
+  data,
+  method: 'post'
+})
+
 
 
 

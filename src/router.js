@@ -24,7 +24,20 @@ const router = new Router({
     {
       path: '/install',
       name: 'install',
-      component: () => import('@/views/install/install.vue')
+      redirect: '/install/installOne',
+      component: () => import('@/views/install/install.vue'),
+      children: [
+        {
+          path: 'installOne',
+          name: 'installOne',
+          component: () => import('@/views/install/installOne.vue')
+        },
+        {
+          path: '/installTwo',
+          name: 'installTwo',
+          component: () => import('@/views/install/installTwo.vue')
+        }
+      ]
     },
     {
       path: '/mock/:document_id/:chapter_id',
