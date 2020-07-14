@@ -35,7 +35,7 @@
           </ul>
         </div>
       </div>
-      <router-link class="item" to="/admin/login" v-if="!UserInfo.username">登录</router-link>
+      <router-link class="item" to="/admin-login" v-if="!UserInfo.username">登录</router-link>
     </el-header>
     <div class="admin-content">
       <router-view></router-view>
