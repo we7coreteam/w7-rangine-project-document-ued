@@ -29,11 +29,16 @@ const vm = new Vue({
 export default vm;
 
 router.beforeEach((to, from, next) => {
-  // console.log(to);
-  // console.log(from);
+  console.log(to);
+  console.log(from);
   if (to.name == 'adminLoginPage') {
     const recordHref = location.href;
-    localStorage.recordHref = recordHref;
+    let install = recordHref.indexOf('install');
+    console.log('install');
+    console.log(install);
+    if (install < 0) {
+      localStorage.recordHref = recordHref;
+    }
   }
   next();
   // setTimeout(() => {
