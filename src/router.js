@@ -2,6 +2,15 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 Vue.use(Router);
+/*
+ * 重写路由的push方法
+ * 解决，相同路由跳转时，报错
+ * */
+const routerPush = Router.prototype.push
+Router.prototype.push = function push(location) {
+  return routerPush.call(this, location).catch(error=> error)
+}
+
 const router = new Router({
   mode: 'history',
   // base: process.env.BASE_URL,
