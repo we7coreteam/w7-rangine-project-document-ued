@@ -59,6 +59,7 @@
 <script>
   import axios from '@/utils/fetch'
   import {systemDetection} from '@/api/api'
+  import vm from '@/main'
 
   export default {
   name: 'adminLogin',
@@ -106,23 +107,38 @@
       // debugger
       // console.error(6)
       // console.log(6)
-      if (process.env.NODE_ENV == 'production') {
-        // console.log('production');
-        axios.post('/common/auth/default-login-url').then(res => {
-          if (res.data) {
-            window.open(res.data, '_self')
-          } else {
-            next()
+      systemDetection().then(res => {
+        if (res.code == 200) {
+          for (const item of res.data) {
+            if (item.id == 1 && !item.enable) {
+              // console.log('router');
+              // console.log(vm);
+              vm.$router.push({name: 'install'})
+              next()
+            } else {
+              if (process.env.NODE_ENV == 'production') {
+                // console.log('production');
+                axios.post('/common/auth/default-login-url').then(res => {
+                  if (res.data) {
+                    window.open(res.data, '_self')
+                  } else {
+                    next()
+                  }
+                })
+              } else {
+                // console.error(7)
+                next()
+              }
+            }
           }
-        })
-      } else {
-        // console.error(7)
-        next()
-      }
+        }
+      }).catch(e => {
+        console.log(e);
+      })
     }
   },
   created() {
-    this.systemDetection();
+    // this.systemDetection();
     this.getCode();
     this.getThirdParty();
   },

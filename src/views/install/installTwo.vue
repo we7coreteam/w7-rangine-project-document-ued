@@ -3,24 +3,26 @@
     <div class="i-con" v-if="init">
       <div class="c-top">
         <div class="t-tit">配置数据库参数</div>
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px">
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="200px">
           <el-form-item label="服务器地址" prop="api_host">
             <el-input v-model="ruleForm.api_host"></el-input>
           </el-form-item>
           <el-form-item label="服务器端口号" prop="server_port">
             <el-input v-model="ruleForm.server_port"></el-input>
           </el-form-item>
+<!--
           <el-form-item label="缓存驱动" prop="cache_driver">
             <el-select v-model="ruleForm.cache_driver" placeholder="请选择缓存驱动">
               <el-option label="default" value="default"></el-option>
               <el-option label="redis" value="redis"></el-option>
             </el-select>
           </el-form-item>
+-->
           <template v-if="ruleForm.cache_driver == 'redis'">
-            <el-form-item label="缓存服务器地址" prop="cache_host">
+            <el-form-item label="redis缓存服务器地址" prop="cache_host">
               <el-input v-model="ruleForm.cache_host"></el-input>
             </el-form-item>
-            <el-form-item label="缓存服务器端口号" prop="cache_port">
+            <el-form-item label="redis缓存服务器端口号" prop="cache_port">
               <el-input v-model="ruleForm.cache_port"></el-input>
             </el-form-item>
           </template>
@@ -102,10 +104,10 @@
           admin_password: '',
         },
         ruleForm: {
-          api_host: 'http://192.168.168.31',
+          api_host: '',
           server_port: '99',
           cache_driver: 'redis',
-          cache_host: 'redis',
+          cache_host: '127.0.0.1',
           cache_port: '6379',
           db_host: '192.168.168.23',
           db_port: '3306',
@@ -160,6 +162,7 @@
       }
     },
     created() {
+      this.ruleForm.api_host = location.origin + '/';
     },
     methods: {
       submit(formName) {
