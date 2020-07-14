@@ -33,8 +33,8 @@ router.beforeEach((to, from, next) => {
   console.log(to);
   console.log(from);
   if (to.name == 'adminLoginPage') {
-    // const recordHref = location.href;
-    const recordHref = from.name;
+    const recordHref = location.href;
+    // const recordHref = from.name;
     let install = recordHref.indexOf('install');
     console.log('install');
     console.log(install);
