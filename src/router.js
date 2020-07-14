@@ -16,6 +16,10 @@ const router = new Router({
   // base: process.env.BASE_URL,
   routes: [
     {
+      path: '/',
+      redirect: '/admin-login',
+    },
+    {
       path: '/login',
       name: 'adminLogin',
       component: () => import('@/views/admin/login.vue')
