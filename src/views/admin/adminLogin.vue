@@ -3,7 +3,7 @@
     <div class="login-box">
       <h2>文档管理系统</h2>
       <el-tabs v-model="active">
-        <el-tab-pane label="账号登录" name="first">
+        <el-tab-pane label="账号登录" name="account">
           <div class="login-form">
             <el-input v-model="formData.username" prefix-icon="el-icon-user-solid" placeholder="用户名/手机号"></el-input>
             <el-input type="password" v-model="formData.userpass" prefix-icon="el-icon-s-goods" placeholder="输入密码"></el-input>
@@ -26,6 +26,28 @@
           </div> -->
           <el-button class="login-btn" @click="login">登录</el-button>
         </el-tab-pane>
+<!--
+        <el-tab-pane label="手机快捷登录" name="phone">
+          <div class="login-form">
+            <el-input v-model="formData.phone" prefix-icon="el-icon-user-solid" placeholder="请输入手机号"></el-input>
+            <el-input class="code-input" v-model="formData.phoneCode" prefix-icon="el-icon-s-goods" placeholder="请输入短信验证码" @keyup.enter.native="login"></el-input>
+          </div>
+          <div class="login-thirdParty" v-if="thirdPartyList.length">
+            <span class="title">第三方账号登录</span>
+            <div class="icon-list">
+              <img class="icon-block"
+                   v-for="icon in thirdPartyList" :key="icon.name"
+                   :src="icon.logo"
+                   :title="icon.name"
+                   @click="thirdPartyIconClick(icon.redirect_url)">
+            </div>
+          </div>
+          &lt;!&ndash; <div class="login-action">
+            <el-button type="text" @click="showFind">找回密码?</el-button>
+          </div> &ndash;&gt;
+          <el-button class="login-btn" @click="login">登录</el-button>
+        </el-tab-pane>
+-->
       </el-tabs>
     </div>
     <div class="footer">
@@ -36,18 +58,22 @@
 
 <script>
   import axios from '@/utils/fetch'
+  import {systemDetection} from '@/api/api'
+  import vm from '@/main'
 
   export default {
   name: 'adminLogin',
   data() {
     return {
       autofocus: false,
-      active: 'first',
+      active: 'account',
       code: '',
       formData: {
         username: '',
         userpass: '',
-        code: ''
+        code: '',
+        phone: '',
+        phoneCode: ''
       },
       thirdPartyList: []
     }
@@ -81,26 +107,57 @@
       // debugger
       // console.error(6)
       // console.log(6)
-      if (process.env.NODE_ENV == 'production') {
-        // console.log('production');
-        axios.post('/common/auth/default-login-url').then(res => {
-          if (res.data) {
-            window.open(res.data, '_self')
-          } else {
-            next()
+      systemDetection().then(res => {
+        if (res.code == 200) {
+          for (const item of res.data) {
+            if (item.id == 1 && !item.enable) {
+              // console.log('router');
+              // console.log(vm);
+              vm.$router.push({name: 'install'})
+              next()
+            } else if (item.id == 1 && item.enable) {
+              // if (process.env.NODE_ENV) {
+              if (process.env.NODE_ENV == 'production') {
+                console.log('production');
+                axios.post('/common/auth/default-login-url').then(res => {
+                  if (res.data) {
+                    window.open(res.data, '_self')
+                  } else {
+                    next()
+                  }
+                })
+              } else {
+                // console.error(7)
+                next()
+              }
+            }
           }
-        })
-      } else {
-        // console.error(7)
-        next()
-      }
+        }
+      }).catch(e => {
+        console.log(e);
+      })
     }
   },
-  created () {
+  created() {
+    // this.systemDetection();
     this.getCode();
     this.getThirdParty();
   },
   methods: {
+    // 验证是否安装文档，未安装，跳转到安装页面
+    systemDetection() {
+      systemDetection().then(res => {
+        if (res.code == 200) {
+          for (const item of res.data) {
+            if (item.id == 1 && !item.enable) {
+              this.$router.push({name: 'install'})
+            }
+          }
+        }
+      }).catch(e => {
+        console.log(e);
+      })
+    },
     showFind() {
       this.$message({message: '请联系管理员修改或使用密码找回工具修改'})
     },
@@ -115,19 +172,13 @@
         })
     },
     login() {
-      // for(let index in this.formData) {
-      //   if(!this.formData[index]) {
-      //     this.$message('请填写完整表单')
-      //     return false
-      //   }
-      // }
-      // debugger
       this.$post('/common/auth/login', this.formData).then(() => {
         let msg = this.$message('登录成功')
         setTimeout(() => {
           msg.close();
           const href = localStorage.recordHref;
           if (href) {
+            // this.$router.push({name: href});
             location.href = href;
           } else {
             this.$router.push('/admin/document')

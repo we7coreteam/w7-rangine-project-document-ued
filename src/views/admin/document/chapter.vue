@@ -102,7 +102,7 @@
                   </el-col>
                   <el-col :md="10">
                     <el-form-item label="">
-                      <el-input v-model="form.url" placeholder="请求地址，如：/api/test"></el-input>
+                      <el-input v-model="form.url" @input="urlChange" placeholder="请求地址，如：api/test"></el-input>
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -122,6 +122,17 @@
                     </el-form-item>
                   </el-col>
                 </el-row>
+<!--
+                <el-row :gutter="10">
+                  <el-col :md="14">
+                    <el-form-item label="Mock Api地址" class="mock-api">
+                      <el-tooltip class="item" effect="dark" popper-class="mock-api-tip" content="点击复制链接" placement="top">
+                        <el-input v-clipboard:copy="mockApiUrl2" v-clipboard:success="onCopy" v-model="mockApiUrl2" readonly placeholder=""></el-input>
+                      </el-tooltip>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+-->
               </div>
             </div>
 
@@ -806,7 +817,8 @@ export default {
       responseMockJson: '',
       requestMockHeight: '',
       responseMockHeight: '',
-      mockApiUrl: ''
+      mockApiUrl: '',
+      mockApiUrl2: ''
     }
   },
   computed: {
@@ -1086,6 +1098,9 @@ export default {
      *      把defaultSelect（默认选中文档）push进去，但是不可以保存在localStorage中
      */
 
+    urlChange() {
+      this.mockApiUrl = location.origin + `/document/mockApiReponse/${this.$route.params.id}` + '/' + this.form.url
+    },
     // 创建默认文档
     initCreateChapter() {
       createChapter({
@@ -1857,8 +1872,9 @@ export default {
     resParamNameChange(node, data) {
       if (data.name.length) {
         data.already = Number(data.already) + 1;
-        // console.log(data);
-        // console.log(data.already);
+        console.log(111);
+        console.log(data);
+        console.log(data.already);
         // 防止不断输入添加多个同级node
         if (data.already == 1) {
           this.insertAfter(node, data);
@@ -2132,7 +2148,6 @@ export default {
       const chapter_id = this.chapter_id;
       const document_id = this.$route.params.id;
       this.loading = this.$loading();
-      this.mockApiUrl = location.origin + `/admin/viewMock?chapter_id=${chapter_id}&document_id=${this.$route.params.id}`
       viewChapter({
         chapter_id,
         document_id
@@ -2158,6 +2173,8 @@ export default {
               this.form.tab_location = localStorage.tab_location || this.form.tab_location.toString();
               // this.form.body_param_location = this.form.body_param_location.toString();
               this.form.body_param_location = this.form.body_param_location;
+              this.mockApiUrl2 = location.origin + `/mock/${this.$route.params.id}/${chapter_id}`
+              this.mockApiUrl = location.origin + `/document/mockApiReponse/${this.$route.params.id}` + '/' + this.form.url
             } else {
               // console.log(56);
               this.formCompared = "";
@@ -2200,7 +2217,7 @@ export default {
               // console.error(1)
               this.apiResTreeData = JSON.parse(JSON.stringify(record.reponse));
               this.apiResTreeData.forEach(item1 => {
-                item1.data.push(apiData4)
+                item1.data.push(JSON.parse(JSON.stringify(apiData4)))
               })
               this.apiResTreeDataCompared = JSON.parse(JSON.stringify(record.reponse));
             } else {

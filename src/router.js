@@ -2,10 +2,23 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 Vue.use(Router);
+/*
+ * 重写路由的push方法
+ * 解决，相同路由跳转时，报错
+ * */
+const routerPush = Router.prototype.push
+Router.prototype.push = function push(location) {
+  return routerPush.call(this, location).catch(error=> error)
+}
+
 const router = new Router({
   mode: 'history',
   // base: process.env.BASE_URL,
   routes: [
+    {
+      path: '/',
+      redirect: '/admin-login',
+    },
     {
       path: '/login',
       name: 'adminLogin',
@@ -20,6 +33,29 @@ const router = new Router({
       path: '/bind',
       name: 'adminBind',
       component: () => import('@/views/admin/bind.vue')
+    },
+    {
+      path: '/install',
+      name: 'install',
+      redirect: '/install/installOne',
+      component: () => import('@/views/install/install.vue'),
+      children: [
+        {
+          path: 'installOne',
+          name: 'installOne',
+          component: () => import('@/views/install/installOne.vue')
+        },
+        {
+          path: '/installTwo',
+          name: 'installTwo',
+          component: () => import('@/views/install/installTwo.vue')
+        }
+      ]
+    },
+    {
+      path: '/mock/:document_id/:chapter_id',
+      name: 'mock',
+      component: () => import('@/views/admin/mock/mock.vue')
     },
     {
       path: '/admin',
@@ -140,13 +176,7 @@ const router = new Router({
           path: 'account-info',
           name: 'accountInfo',
           component: () => import('@/views/admin/accountInfo.vue')
-        },
-        {
-          path: 'viewMock',
-          name: 'viewMock',
-          component: () => import('@/views/admin/mock/mock.vue')
-        },
-
+        }
       ]
     },
     // {
@@ -175,11 +205,11 @@ const router = new Router({
         }
       ]
     },
-    {
-      path: '*',
-      redirect: '/admin/document',
-      // component: () => import('@/views/admin/layout.vue')
-    }
+    // {
+    //   path: '*',
+    //   redirect: '/admin-login',
+    //   // component: () => import('@/views/admin/layout.vue')
+    // }
   ],
   scrollBehavior: (to) => {
     if (to.hash) {
