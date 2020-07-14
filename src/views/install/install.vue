@@ -61,6 +61,7 @@
     .install-con {
       width: 1200px;
       margin: 0 auto;
+      min-height: 740px;
     }
 
     footer {

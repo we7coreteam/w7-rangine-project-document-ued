@@ -16,7 +16,7 @@
         <li class="li1">
           <span class="l-left">检测参数</span>
           <span class="l-center">检测结果</span>
-          <span class="l-right">处理方式</span>
+          <span class="l-right"></span>
         </li>
         <li v-for="(item, index) in list" :key="index">
           <span class="l-left">{{ item.name }}</span>
@@ -32,10 +32,10 @@
           </span>
           <span class="l-right">
             <template v-if="item.id == 1">
-              <a v-if="item.enable" href="###">修复异常</a>
+              <span v-if="item.enable">异常</span>
             </template>
             <template v-else>
-              <a v-if="!item.enable" href="###">修复异常</a>
+              <span v-if="!item.enable">异常</span>
             </template>
           </span>
         </li>
@@ -129,10 +129,7 @@
     padding: 0;
   }
 
-
   .install {
-    margin-bottom: 120px;
-
     .i-header {
       font-size: 32px;
       color: #333;
@@ -199,8 +196,8 @@
             width: 100px;
             text-align: right;
 
-            a {
-              color: #3296fa;
+            span {
+              color: #e63d2e;
             }
           }
         }

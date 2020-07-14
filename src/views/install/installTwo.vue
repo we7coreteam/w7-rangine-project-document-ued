@@ -86,7 +86,7 @@
         init: true,
         loading: false,
         success: false,
-        ruleForm: {
+        ruleForm1: {
           api_host: '',
           server_port: '',
           cache_driver: 'default',
@@ -101,7 +101,7 @@
           admin_username: '',
           admin_password: '',
         },
-        ruleForm2: {
+        ruleForm: {
           api_host: 'http://192.168.168.31',
           server_port: '99',
           cache_driver: 'redis',
@@ -188,158 +188,149 @@
         })
       },
       goLogin() {
-        this.$router.push({name: 'adminLogin'})
+        this.$router.push({name: 'adminLoginPage'})
       }
     }
   }
 </script>
 
 <style scoped lang="scss">
-  /deep/ {
-    .install-con {
-      margin-bottom: 0;
-    }
-  }
-
   .install {
-      width: 1200px;
-      margin: 0 auto;
+    .i-header {
+      font-size: 32px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      margin-bottom: 50px;
 
-      .i-header {
-        font-size: 32px;
-        color: #333;
-        display: flex;
-        align-items: center;
+      img {
+        margin-right: 10px;
+      }
+    }
+
+    .i-con {
+      display: flex;
+      align-items: center;
+      flex-flow: column;
+
+      .c-top {
+        width: 650px;
         margin-bottom: 50px;
 
-        img {
-          margin-right: 10px;
-        }
-      }
-
-      .i-con {
-        display: flex;
-        align-items: center;
-        flex-flow: column;
-
-        .c-top {
-          width: 650px;
+        .t-tit {
+          text-align: right;
           margin-bottom: 50px;
-
-          .t-tit {
-            text-align: right;
-            margin-bottom: 50px;
-            color: #333;
-            font-size: 28px;
-          }
-
-          .loading {
-            display: flex;
-            flex-flow: column;
-            align-items: center;
-
-            img {
-              margin-bottom: 20px;
-            }
-
-            .text {
-              color: #333;
-              display: flex;
-              align-items: center;
-
-              i {
-                margin-left: 5px;
-                font-size: 20px;
-              }
-            }
-          }
-
-          /deep/ {
-            .el-form-item__label {
-              padding-right: 30px;
-            }
-
-            .el-select {
-              width: 100%;
-            }
-          }
+          color: #333;
+          font-size: 28px;
         }
 
-        .c-bottom {
-          text-align: center;
+        .loading {
           display: flex;
+          flex-flow: column;
           align-items: center;
-          justify-content: center;
-          margin-bottom: 70px;
 
-          .btn {
-            color: #fff;
-            background-color: #3296fa;
-            width: 270px;
-            line-height: 60px;
-            text-align: center;
-            cursor: pointer;
-          }
-        }
-      }
-
-      .success {
-        display: flex;
-        align-items: center;
-        flex-flow: column;
-        justify-content: center;
-        padding-top: 150px;
-
-        .s-top {
-          margin-bottom: 30px;
-
-          .top {
-            font-size: 30px;
-            color: #333;
+          img {
             margin-bottom: 20px;
+          }
+
+          .text {
+            color: #333;
+            display: flex;
+            align-items: center;
 
             i {
-              color: #3bb64c;
-              font-size: 30px;
-              margin-right: 10px;
+              margin-left: 5px;
+              font-size: 20px;
             }
           }
-
-          .center {
-            margin-bottom: 10px;
-            padding-left: 45px;
-          }
-
-          .bottom {
-            display: flex;
-            align-items: center;
-            padding-left: 45px;
-
-            span {
-              background-color: #000;
-              color: #fff;
-              padding: 0 10px;
-            }
-          }
-
         }
 
-        .c-bottom {
-          text-align: center;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-bottom: 70px;
+        /deep/ {
+          .el-form-item__label {
+            padding-right: 30px;
+          }
 
-          .btn {
-            color: #fff;
-            background-color: #3296fa;
-            width: 270px;
-            line-height: 60px;
-            text-align: center;
-            cursor: pointer;
+          .el-select {
+            width: 100%;
           }
         }
       }
+
+      .c-bottom {
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 70px;
+
+        .btn {
+          color: #fff;
+          background-color: #3296fa;
+          width: 270px;
+          line-height: 60px;
+          text-align: center;
+          cursor: pointer;
+        }
+      }
+    }
+
+    .success {
+      display: flex;
+      align-items: center;
+      flex-flow: column;
+      justify-content: center;
+      padding-top: 150px;
+
+      .s-top {
+        margin-bottom: 30px;
+
+        .top {
+          font-size: 30px;
+          color: #333;
+          margin-bottom: 20px;
+
+          i {
+            color: #3bb64c;
+            font-size: 30px;
+            margin-right: 10px;
+          }
+        }
+
+        .center {
+          margin-bottom: 10px;
+          padding-left: 45px;
+        }
+
+        .bottom {
+          display: flex;
+          align-items: center;
+          padding-left: 45px;
+
+          span {
+            background-color: #000;
+            color: #fff;
+            padding: 0 10px;
+          }
+        }
+
+      }
+
+      .c-bottom {
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 70px;
+
+        .btn {
+          color: #fff;
+          background-color: #3296fa;
+          width: 270px;
+          line-height: 60px;
+          text-align: center;
+          cursor: pointer;
+        }
+      }
+    }
   }
 </style>

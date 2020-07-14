@@ -26,6 +26,7 @@
           </div> -->
           <el-button class="login-btn" @click="login">登录</el-button>
         </el-tab-pane>
+<!--
         <el-tab-pane label="手机快捷登录" name="phone">
           <div class="login-form">
             <el-input v-model="formData.phone" prefix-icon="el-icon-user-solid" placeholder="请输入手机号"></el-input>
@@ -41,11 +42,12 @@
                    @click="thirdPartyIconClick(icon.redirect_url)">
             </div>
           </div>
-          <!-- <div class="login-action">
+          &lt;!&ndash; <div class="login-action">
             <el-button type="text" @click="showFind">找回密码?</el-button>
-          </div> -->
+          </div> &ndash;&gt;
           <el-button class="login-btn" @click="login">登录</el-button>
         </el-tab-pane>
+-->
       </el-tabs>
     </div>
     <div class="footer">
@@ -56,6 +58,7 @@
 
 <script>
   import axios from '@/utils/fetch'
+  import {systemDetection} from '@/api/api'
 
   export default {
   name: 'adminLogin',
@@ -118,11 +121,26 @@
       }
     }
   },
-  created () {
+  created() {
+    this.systemDetection();
     this.getCode();
     this.getThirdParty();
   },
   methods: {
+    // 验证是否安装文档，未安装，跳转到安装页面
+    systemDetection() {
+      systemDetection().then(res => {
+        if (res.code == 200) {
+          for (const item of res.data) {
+            if (item.id == 1 && !item.enable) {
+              this.$router.push({name: 'install'})
+            }
+          }
+        }
+      }).catch(e => {
+        console.log(e);
+      })
+    },
     showFind() {
       this.$message({message: '请联系管理员修改或使用密码找回工具修改'})
     },
@@ -137,13 +155,6 @@
         })
     },
     login() {
-      // for(let index in this.formData) {
-      //   if(!this.formData[index]) {
-      //     this.$message('请填写完整表单')
-      //     return false
-      //   }
-      // }
-      // debugger
       this.$post('/common/auth/login', this.formData).then(() => {
         let msg = this.$message('登录成功')
         setTimeout(() => {
