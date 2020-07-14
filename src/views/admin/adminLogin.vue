@@ -115,9 +115,10 @@
               // console.log(vm);
               vm.$router.push({name: 'install'})
               next()
-            } else {
+            } else if (item.id == 1 && item.enable) {
+              // if (process.env.NODE_ENV) {
               if (process.env.NODE_ENV == 'production') {
-                // console.log('production');
+                console.log('production');
                 axios.post('/common/auth/default-login-url').then(res => {
                   if (res.data) {
                     window.open(res.data, '_self')
