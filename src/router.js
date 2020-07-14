@@ -194,7 +194,7 @@ const router = new Router({
     },
     {
       path: '*',
-      redirect: '/admin-login',
+      redirect: '/admin/document',
       // component: () => import('@/views/admin/layout.vue')
     }
   ],
