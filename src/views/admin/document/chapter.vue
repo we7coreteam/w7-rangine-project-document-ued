@@ -122,6 +122,7 @@
                     </el-form-item>
                   </el-col>
                 </el-row>
+<!--
                 <el-row :gutter="10">
                   <el-col :md="14">
                     <el-form-item label="Mock Api地址" class="mock-api">
@@ -131,6 +132,7 @@
                     </el-form-item>
                   </el-col>
                 </el-row>
+-->
               </div>
             </div>
 
