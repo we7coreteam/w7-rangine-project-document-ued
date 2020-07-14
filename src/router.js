@@ -203,7 +203,7 @@ const router = new Router({
     },
     {
       path: '*',
-      redirect: '/admin/document',
+      redirect: '/admin-login',
       // component: () => import('@/views/admin/layout.vue')
     }
   ],

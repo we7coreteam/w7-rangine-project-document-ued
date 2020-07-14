@@ -178,6 +178,7 @@
           msg.close();
           const href = localStorage.recordHref;
           if (href) {
+            this.$router.push({name: href});
             location.href = href;
           } else {
             this.$router.push('/admin/document')
