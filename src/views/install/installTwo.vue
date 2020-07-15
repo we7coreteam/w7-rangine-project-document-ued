@@ -75,13 +75,7 @@
       <div class="s-top">
         <div class="top"><i class="el-icon-success"></i>恭喜您，《文档管理系统》安装成功！</div>
         <div class="center">特别提醒：安装完毕，请复制命令到服务器手动重启服务</div>
-        <div class="bottom">命令：
-          <span>
-            关闭服务<br>
-            bin/server stop<br>
-            开启服务<br>
-            bin/server start
-          </span>
+        <div class="bottom">重启服务：<span>sh restart.sh</span>
         </div>
       </div>
       <div class="c-bottom">
@@ -115,7 +109,6 @@
           callback();
         }
       };
-
 
       return {
         init: true,
@@ -341,14 +334,15 @@
 
         .bottom {
           display: flex;
-          align-items: flex-start;
-          padding-left: 45px;
+          align-items: center;
+          padding-left: 125px;
 
           span {
-            background-color: #000;
-            color: #fff;
-            padding: 5px 10px;
+            background-color: #d9dde0;
+            color: #333;
+            padding: 5px 45px;
             font-size: 14px;
+            border: 1px solid #ddd;
           }
         }
 
