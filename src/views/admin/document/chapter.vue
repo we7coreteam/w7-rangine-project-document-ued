@@ -791,7 +791,7 @@ export default {
         children: []
       }],
       chapter_id: '',
-      isDocEmpty: true,
+      isDocEmpty: false,
       previewId: '',
       loading: '',
       confirmDisabled: false,
@@ -1204,11 +1204,11 @@ export default {
             this.isDocEmpty = true;
             // this.initCreateChapter();
           } else if (res.data.catalog && !history ) {
-            console.log(555);
+            // console.log(555);
             const findChapter = (arr) => {
               if (arr.length) {
-                console.log('arr');
-                console.log(arr);
+                // console.log('arr');
+                // console.log(arr);
                 for (const item of arr) {
                   /*
                   * 如果是文档首先选中排在前的文档
@@ -1218,12 +1218,12 @@ export default {
                       findChapter(item.children);
                       return false;
                     } else {
-                      console.log('findChapter');
-                      console.log(item.id);
+                      // console.log('findChapter');
+                      // console.log(item.id);
                       this.isDocEmpty = false;
                       // this.$nextTick(() => {
-                        console.log('item');
-                        console.log(item);
+                      //   console.log('item');
+                      //   console.log(item);
                         this.chapters = this.initTreeData(res.data.catalog);
                         this.handleNodeClick(item);
                         this.defaultExpanded = [item.parent_id];
@@ -1246,7 +1246,7 @@ export default {
             }
             findChapter(res.data.catalog);
           } else {
-            console.log(1111);
+            // console.log(1111);
             this.isDocEmpty = false;
             this.docName = res.data.document.name;
             this.has_manage = res.data.acl.has_manage;
@@ -1258,8 +1258,8 @@ export default {
               // console.log(this.defaultSelect);
               this.$nextTick(() => {
                 this.$refs.chaptersTree.setCurrentKey(this.defaultSelect);
-                console.log(3);
-                console.log(this.$refs.chaptersTree.getCurrentNode());
+                // console.log(3);
+                // console.log(this.$refs.chaptersTree.getCurrentNode());
                 if (this.$refs.chaptersTree.getCurrentNode() != null) {
                   // console.log(4);
                   this.handleNodeClick(this.$refs.chaptersTree.getCurrentNode());
@@ -1291,7 +1291,7 @@ export default {
     },
     //重新遍历树数据，给每个文档节点添加is_default属性
     initTreeData(treeData) {
-      console.log(8);
+      // console.log(8);
       function loopData(data, defaultId) {
         for (let i = 0; i < data.length; i++) {
           if (data[i].is_dir) {
@@ -1321,8 +1321,8 @@ export default {
     },
     // 点击tree
     handleNodeClick(data) {
-      console.log(12);
-      console.log(data);
+      // console.log(12);
+      // console.log(data);
       this.isViewRequest = false;
       this.isViewResponse = false;
       /*
@@ -1345,9 +1345,9 @@ export default {
       */
       // 目录不展示内容，只展开文件夹
       if (!data.is_dir) {
-        console.log(7);
+        // console.log(7);
         this.$nextTick(() => {
-          console.log(7);
+          // console.log(7);
           $('.w7-tree .el-tree-node').removeClass('is-checked').attr({'data-active': ''});
         })
         // console.error(1233)
@@ -1371,7 +1371,7 @@ export default {
             this.isApiResTreeDataChange = false;
             this.isMarkDownContentChange = false;
             this.getOperRecord();
-            this.getChapters();
+            // this.getChapters();
             // this.viewChapter();
           }).catch(() => {
             this.$message({
@@ -1397,7 +1397,7 @@ export default {
             }
             this.selectNodeObj = data;
             this.setOperRecord(data); // 临时注释
-            console.log('无变化1');
+            // console.log('无变化1');
             this.$nextTick(() => {
               $('.w7-tree .is-current').attr('data-active', 'tree-active');
             })
@@ -1414,7 +1414,7 @@ export default {
           }
           this.selectNodeObj = data;
           this.setOperRecord(data); // 临时注释
-          console.log('无变化2');
+          // console.log('无变化2');
           this.$nextTick(() => {
             const children1 = $('.w7-tree .is-current').find('.el-tree-node__children').length;
             const children2 = $('.w7-tree .is-current').find('.el-tree-node__children .el-tree-node').length;
@@ -1422,10 +1422,10 @@ export default {
               setTimeout(() => {
                 const has = $('.w7-tree .is-current').prop('aria-expanded');
                 const has2 = $('.w7-tree .is-checked').prop('aria-expanded');
-                console.log('children1 ' + children1)
-                console.log('children2 ' + children2)
-                console.log('has ' + has)
-                console.log('has2 ' + has2)
+                // console.log('children1 ' + children1)
+                // console.log('children2 ' + children2)
+                // console.log('has ' + has)
+                // console.log('has2 ' + has2)
                 if (!has) {
                   $('.w7-tree .is-current').attr('data-active', 'tree-active');
                 }
@@ -1441,11 +1441,11 @@ export default {
         const document_id = this.$route.params.id;
         if (localStorage['currentData_' + document_id]) {
           let currentData = JSON.parse(localStorage['currentData_' + document_id]);
-          console.log(currentData);
+          // console.log(currentData);
           this.defaultCheckedKeys = [currentData.id];
-          console.log(this.defaultCheckedKeys);
+          // console.log(this.defaultCheckedKeys);
         } else {
-          console.log(this.chapters);
+          // console.log(this.chapters);
           const This = this;
           function findChapter(arr) {
             if (arr.length) {
@@ -1454,8 +1454,8 @@ export default {
                   findChapter(item.children)
                 } else {
                   This.defaultCheckedKeys = [item.id];
-                  console.log('findChapter');
-                  console.log(item.id);
+                  // console.log('findChapter');
+                  // console.log(item.id);
                   return false;
                 }
               }
@@ -1467,9 +1467,9 @@ export default {
           const children1 = $('.w7-tree .is-current').find('.el-tree-node__children').length;
           const children2 = $('.w7-tree .is-current').find('.el-tree-node__children .el-tree-node').length;
           const has = $('.w7-tree .is-current').prop('aria-expanded');
-          console.log('children1 ' + children1)
-          console.log('children2 ' + children2)
-          console.log('has ' + has)
+          // console.log('children1 ' + children1)
+          // console.log('children2 ' + children2)
+          // console.log('has ' + has)
           if (!localStorage['currentData_' + this.$route.params.id]) {
             const has2 = $('.w7-tree .is-current').prop('aria-expanded');
             if (has2) {
@@ -1478,7 +1478,7 @@ export default {
             }
           } else {
             if (has) {
-              console.log(9);
+              // console.log(9);
               $('.w7-tree .is-current').attr('data-active', '');
             }
           }
@@ -1727,9 +1727,9 @@ export default {
           let index = children.findIndex(d => d.id === data.id)
           children.splice(index, 1)
           this.$message('删除成功！')
-          console.log('defaultSelect2');
-          console.log(this.defaultSelect);
-          console.log(arrId);
+          // console.log('defaultSelect2');
+          // console.log(this.defaultSelect);
+          // console.log(arrId);
           // this.emptyForm();
           // this.getChapters();
           // this.selectNodeObj = {}
@@ -1822,6 +1822,7 @@ export default {
           this.$message('移动成功！')
           this.dialogMoveVisible = false
           this.getChapters()
+          // console.error(55);
         })
     },
     defaultFile() {
@@ -1832,11 +1833,13 @@ export default {
       })
         .then(() => {
           this.getChapters()
+          // console.error(11);
           this.$message('设置默认文档成功！')
         })
     },
     handleClose() {
       this.getChapters()
+      // console.log(33);
       this.showSetting = false
     },
     // 获取请求类型
@@ -1851,7 +1854,7 @@ export default {
     tabRequest(tab) {
       localStorage.tab_location = tab.name;
       this.refreshRequestMock();
-      console.log(tab);
+      // console.log(tab);
     },
     // 请求数据 输入框输入 下方新增同级node
     paramNameChange(node, data) {
@@ -1872,9 +1875,9 @@ export default {
     resParamNameChange(node, data) {
       if (data.name.length) {
         data.already = Number(data.already) + 1;
-        console.log(111);
-        console.log(data);
-        console.log(data.already);
+        // console.log(111);
+        // console.log(data);
+        // console.log(data.already);
         // 防止不断输入添加多个同级node
         if (data.already == 1) {
           this.insertAfter(node, data);
@@ -1959,8 +1962,8 @@ export default {
     },
     // 响应数据 添加下一级node
     addResApiTreeNode(data) {
-      console.log('data');
-      console.log(data);
+      // console.log('data');
+      // console.log(data);
       // const newChild = {};
       const newChild = {
         id: id++,
@@ -2016,10 +2019,10 @@ export default {
     },
     // 删除 响应数据数据node
     removeResApiTreeNode(node, data) {
-      console.log(node);
+      // console.log(node);
 
       const length = this.apiResTreeData.length;
-      console.log(length);
+      // console.log(length);
 
       if (length == 1 && node.level == 1) {
         this.$message.error('已经是最后一个了，勿删！')
@@ -2102,7 +2105,6 @@ export default {
             this.isApiBodyTreeDataChange = false;
             this.isApiResTreeDataChange = false;
             this.isMarkDownContentChange = false;
-            console.log(1);
             // this.getOperRecord();
             // this.getChapters();
             // this.viewChapter();
@@ -2123,7 +2125,7 @@ export default {
             this.isApiBodyTreeDataChange = false;
             this.isApiResTreeDataChange = false;
             this.isMarkDownContentChange = false;
-            console.log(2);
+            // console.log(2);
             // this.getOperRecord();
             // this.getChapters();
             // this.viewChapter();
@@ -2280,7 +2282,8 @@ export default {
     },
     // 预览请求数据mock
     viewRequestMock() {
-      this.isViewRequest = !this.isViewRequest;
+      // this.isViewRequest = !this.isViewRequest;
+      this.isViewRequest = true;
       if (this.isViewRequest) {
         this.refreshRequestMock();
       }
@@ -2324,7 +2327,8 @@ export default {
 
     // 预览响应数据mock responseMockTemplate
     viewResponseMock() {
-      this.isViewResponse = !this.isViewResponse;
+      // this.isViewResponse = !this.isViewResponse;
+      this.isViewResponse = true;
       if (this.isViewResponse) {
         this.refreshResponseMock();
       }
