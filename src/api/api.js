@@ -80,6 +80,7 @@ export const install = (data) => axios({
   data,
   method: 'post'
 })
+//
 
 
 
