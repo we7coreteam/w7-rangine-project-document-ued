@@ -4,12 +4,14 @@
       <div class="c-top">
         <div class="t-tit">配置数据库参数</div>
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="200px">
-          <el-form-item label="服务器地址" prop="api_host">
+          <el-form-item label="服务器地址" prop="api_host" :placeholder="'示例：' + api_host + ':99'">
             <el-input v-model="ruleForm.api_host"></el-input>
           </el-form-item>
+<!--
           <el-form-item label="服务器端口号" prop="server_port">
             <el-input v-model="ruleForm.server_port"></el-input>
           </el-form-item>
+-->
 <!--
           <el-form-item label="缓存驱动" prop="cache_driver">
             <el-select v-model="ruleForm.cache_driver" placeholder="请选择缓存驱动">
@@ -19,22 +21,26 @@
           </el-form-item>
 -->
           <template v-if="ruleForm.cache_driver == 'redis'">
-            <el-form-item label="redis缓存服务器地址" prop="cache_host">
+            <el-form-item label="redis缓存服务器地址" prop="cache_host" placeholder="示例：127.0.0.1:6739">
               <el-input v-model="ruleForm.cache_host"></el-input>
             </el-form-item>
+<!--
             <el-form-item label="redis缓存服务器端口号" prop="cache_port">
               <el-input v-model="ruleForm.cache_port"></el-input>
             </el-form-item>
+-->
           </template>
           <el-form-item label="数据库名称" prop="db_database">
             <el-input v-model="ruleForm.db_database"></el-input>
           </el-form-item>
-          <el-form-item label="数据库地址" prop="db_host">
+          <el-form-item label="数据库地址" prop="db_host" placeholder="示例：200.64.35.80:8080">
             <el-input v-model="ruleForm.db_host"></el-input>
           </el-form-item>
+<!--
           <el-form-item label="数据库端口" prop="db_port">
             <el-input v-model="ruleForm.db_port"></el-input>
           </el-form-item>
+-->
           <el-form-item label="数据库用户名" prop="db_username">
             <el-input v-model="ruleForm.db_username"></el-input>
           </el-form-item>
