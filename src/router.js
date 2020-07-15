@@ -46,7 +46,7 @@ const router = new Router({
           component: () => import('@/views/install/installOne.vue')
         },
         {
-          path: '/installTwo',
+          path: 'installTwo',
           name: 'installTwo',
           component: () => import('@/views/install/installTwo.vue')
         }
