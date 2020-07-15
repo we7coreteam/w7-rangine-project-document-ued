@@ -96,7 +96,27 @@
 
   export default {
     name: "installTwo",
-    data() {
+    data: function () {
+      var validateApi_host = (rule, value, callback) => {
+        let has = value.lastIndexOf(':');
+        let hasHttp = value.lastIndexOf('http');
+        if (has < 0) {
+          has = false
+        } else if (has == 4) {
+          has = false
+        } else if (has == 5) {
+          has = false
+        } else {
+          has = true
+        }
+        if (value === '' || !has || hasHttp < 0) {
+          callback(new Error('请输入正确的服务器地址与端口号'));
+        } else {
+          callback();
+        }
+      };
+
+
       return {
         init: true,
         loading: false,
@@ -122,24 +142,25 @@
           cache_driver: 'redis',
           cache_host: '127.0.0.1:6379',
           // cache_port: '6379',
-          db_host: '212.64.37.80:3306',
+          db_host: '127.0.0.1:3306',
           // db_port: '3306',
-          db_username: 'develop',
-          db_password: 'TRn3Sb3i4CKsljEa',
-          db_database: 'document_test3',
+          db_username: '',//develop
+          db_password: '',//TRn3Sb3i4CKsljEa
+          db_database: 'document',
           db_prefix: 'ims_',
-          admin_username: 'admin',
-          admin_password: '123456',
+          admin_username: '',
+          admin_password: '',
         },
         rules: {
           api_host: [
-            {required: true, message: '服务器地址必填', trigger: 'blur'},
+            // {required: true, message: '服务器地址必填', trigger: 'blur'},
+            {validator: validateApi_host, trigger: 'blur'}
           ],
           server_port: [
             {required: true, message: '服务器端口号必填', trigger: 'blur'},
           ],
           cache_driver: [
-            { required: true, message: '请选择活动区域', trigger: 'change' }
+            {required: true, message: '请选择活动区域', trigger: 'change'}
           ],
           cache_host: [
             {required: true, message: '缓存服务器地址必填', trigger: 'blur'},
@@ -175,7 +196,8 @@
       }
     },
     created() {
-      this.ruleForm.api_host = location.origin + ':99';
+      const port = location.port;
+      this.ruleForm.api_host = location.origin + ':' + port;
     },
     methods: {
       submit(formName) {
