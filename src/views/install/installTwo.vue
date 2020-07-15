@@ -75,7 +75,7 @@
       <div class="s-top">
         <div class="top"><i class="el-icon-success"></i>恭喜您，《文档管理系统》安装成功！</div>
         <div class="center">特别提醒：安装完毕，请复制命令到服务器手动重启服务</div>
-        <div class="bottom">重启服务：<span>sh restart.sh</span>
+        <div class="bottom" v-clipboard:copy="restart" v-clipboard:success="onCopy">重启服务：<span>sh restart.sh</span>
         </div>
       </div>
       <div class="c-bottom">
@@ -111,6 +111,7 @@
       };
 
       return {
+        restart: 'sh restart.sh',
         init: true,
         loading: false,
         success: false,
@@ -191,8 +192,12 @@
     created() {
       const port = location.port;
       this.ruleForm.api_host = location.origin + ':' + port;
+      // this.success = true
     },
     methods: {
+      onCopy(){
+        this.$message.success('复制成功');
+      },
       submit(formName) {
         const  This = this;
         this.$refs[formName].validate((valid) => {
@@ -343,6 +348,7 @@
             padding: 5px 45px;
             font-size: 14px;
             border: 1px solid #ddd;
+            cursor: pointer;
           }
         }
 
