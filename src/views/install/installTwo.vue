@@ -5,11 +5,13 @@
         <div class="t-tit">配置数据库参数</div>
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="200px">
           <el-form-item label="服务器地址" prop="api_host">
-            <el-input v-model="ruleForm.api_host"></el-input>
+            <el-input v-model="ruleForm.api_host" placeholder="示例：200.64.35.80:8080"></el-input>
           </el-form-item>
+<!--
           <el-form-item label="服务器端口号" prop="server_port">
             <el-input v-model="ruleForm.server_port"></el-input>
           </el-form-item>
+-->
 <!--
           <el-form-item label="缓存驱动" prop="cache_driver">
             <el-select v-model="ruleForm.cache_driver" placeholder="请选择缓存驱动">
@@ -20,21 +22,25 @@
 -->
           <template v-if="ruleForm.cache_driver == 'redis'">
             <el-form-item label="redis缓存服务器地址" prop="cache_host">
-              <el-input v-model="ruleForm.cache_host"></el-input>
+              <el-input v-model="ruleForm.cache_host" placeholder="示例：127.0.0.1:6739"></el-input>
             </el-form-item>
+<!--
             <el-form-item label="redis缓存服务器端口号" prop="cache_port">
               <el-input v-model="ruleForm.cache_port"></el-input>
             </el-form-item>
+-->
           </template>
           <el-form-item label="数据库名称" prop="db_database">
             <el-input v-model="ruleForm.db_database"></el-input>
           </el-form-item>
           <el-form-item label="数据库地址" prop="db_host">
-            <el-input v-model="ruleForm.db_host"></el-input>
+            <el-input v-model="ruleForm.db_host" placeholder="示例：200.64.35.80:8080"></el-input>
           </el-form-item>
+<!--
           <el-form-item label="数据库端口" prop="db_port">
             <el-input v-model="ruleForm.db_port"></el-input>
           </el-form-item>
+-->
           <el-form-item label="数据库用户名" prop="db_username">
             <el-input v-model="ruleForm.db_username"></el-input>
           </el-form-item>
@@ -95,14 +101,14 @@
         init: true,
         loading: false,
         success: false,
-        ruleForm1: {
+        ruleForm2: {
           api_host: '',
-          server_port: '',
-          cache_driver: 'default',
+          // server_port: '',
+          cache_driver: 'redis',
           cache_host: '',
-          cache_port: '',
+          // cache_port: '',
           db_host: '',
-          db_port: '',
+          // db_port: '',
           db_username: '',
           db_password: '',
           db_database: '',
@@ -112,12 +118,12 @@
         },
         ruleForm: {
           api_host: '',
-          server_port: '99',
+          // server_port: '99',
           cache_driver: 'redis',
-          cache_host: '127.0.0.1',
-          cache_port: '6379',
-          db_host: '212.64.37.80',
-          db_port: '3306',
+          cache_host: '127.0.0.1:6379',
+          // cache_port: '6379',
+          db_host: '212.64.37.80:3306',
+          // db_port: '3306',
           db_username: 'develop',
           db_password: 'TRn3Sb3i4CKsljEa',
           db_database: 'document_test3',
@@ -169,7 +175,7 @@
       }
     },
     created() {
-      this.ruleForm.api_host = location.origin + '/';
+      this.ruleForm.api_host = location.origin + ':99';
     },
     methods: {
       submit(formName) {
