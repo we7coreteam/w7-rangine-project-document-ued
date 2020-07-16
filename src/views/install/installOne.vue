@@ -76,7 +76,7 @@
               if (item.id == 1 && !item.enable) {
                 this.list = res.data.slice(1, res.data.length);
                 this.num = this.list.length;
-              } else if (item.id == 1 && item.enable) {
+              } else if (item.id == 1 && item.enable == 1) {
                 this.list = res.data.slice(0, 2);
                 this.num = 1;
                 this.errorNum = 1;
@@ -84,6 +84,8 @@
                 this.testSuccess = false;
                 this.testError = true;
                 return false
+              } else if (item.id == 1 && item.enable == 2) {
+                this.$router.push({name: 'adminLoginPage'})
               }
             }
             let listError = [];

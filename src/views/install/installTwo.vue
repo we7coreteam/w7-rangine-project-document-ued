@@ -71,16 +71,6 @@
         </div>
       </div>
     </div>
-    <div class="success" v-if="success">
-      <div class="s-top">
-        <div class="top"><i class="el-icon-success"></i>恭喜您，《文档管理系统》安装成功！</div>
-        <div class="center">特别提醒：安装完毕，请复制命令到服务器手动重启服务</div>
-        <div class="bottom" v-clipboard:copy="restart" v-clipboard:success="onCopy">重启服务：<span>sh restart.sh</span></div>
-      </div>
-      <div class="c-bottom">
-        <span class="btn" @click="goLogin">进入管理中心</span>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -113,7 +103,6 @@
         restart: 'sh restart.sh',
         init: true,
         loading: false,
-        success: false,
         ruleForm2: {
           api_host: '',
           // server_port: '99',
@@ -193,7 +182,6 @@
     created() {
       // const port = location.port;
       this.ruleForm.api_host = location.origin + ':' + 99;
-      // this.success = true
     },
     beforeRouteEnter(to, from, next) {
       systemDetection().then(res => {
@@ -201,8 +189,10 @@
           for (const item of res.data) {
             if (item.id == 1 && !item.enable) {
               next()
-            } else if (item.id == 1 && item.enable) {
+            } else if (item.id == 1 && item.enable == 1) {
               vm.$router.push({name: 'installOne'})
+            } else if (item.id == 1 && item.enable == 2) {
+              vm.$router.push({name: 'adminLoginPage'})
             }
           }
         }
@@ -222,7 +212,6 @@
             if (res1.code === 200) {
               try {
                 This.init = false;
-                This.success = false;
                 This.loading = true;
                 this.ruleForm.option = 'send';
                 try {
@@ -230,21 +219,21 @@
                   if (res2.code == 200) {
                     This.loading = false;
                     This.init = false;
-                    This.success = true;
                     localStorage.db_database = '';
-                    localStorage.db_database = this.ruleForm.db_database
+                    localStorage.db_database = this.ruleForm.db_database;
+                    setTimeout(() => {
+                      This.$router.push({name: 'installTree'});
+                    }, 500)
                   }
                 } catch (e) {
                   console.log(e);
                   This.init = true;
-                  This.success = false;
                   This.loading = false;
                   this.ruleForm.option = 'check';
                 }
               } catch (e) {
                 console.log(e);
                 This.init = true;
-                This.success = false;
                 This.loading = false;
               }
             }
