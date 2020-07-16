@@ -75,8 +75,7 @@
       <div class="s-top">
         <div class="top"><i class="el-icon-success"></i>恭喜您，《文档管理系统》安装成功！</div>
         <div class="center">特别提醒：安装完毕，请复制命令到服务器手动重启服务</div>
-        <div class="bottom" v-clipboard:copy="restart" v-clipboard:success="onCopy">重启服务：<span>sh restart.sh</span>
-        </div>
+        <div class="bottom" v-clipboard:copy="restart" v-clipboard:success="onCopy">重启服务：<span>sh restart.sh</span></div>
       </div>
       <div class="c-bottom">
         <span class="btn" @click="goLogin">进入管理中心</span>
@@ -86,7 +85,7 @@
 </template>
 
 <script>
-  import {install} from '@/api/api'
+  import {install, installConfig} from '@/api/api'
 
   export default {
     name: "installTwo",
@@ -109,7 +108,6 @@
           callback();
         }
       };
-
       return {
         restart: 'sh restart.sh',
         init: true,
@@ -136,7 +134,7 @@
           cache_driver: 'redis',
           cache_host: '127.0.0.1:6379',
           // cache_port: '6379',
-          db_host: '127.0.0.1:3306',
+          db_host: '127.0.0.1:3306', // 212.64.37.80:3306 // 212.64.83.243:3306
           // db_port: '3306',
           db_username: '',//develop
           db_password: '',//TRn3Sb3i4CKsljEa
@@ -210,6 +208,7 @@
                 This.loading = false;
                 This.init = false;
                 This.success = true;
+                localStorage.db_database = this.ruleForm.db_database
               }
             }).catch(e => {
               console.log(e);
@@ -224,7 +223,20 @@
         })
       },
       goLogin() {
-        this.$router.push({name: 'adminLoginPage'})
+        installConfig().then(res => {
+          if (res.code == 200) {
+            const db_username = localStorage.db_database;
+            if (db_username == res.data.db_database && res.data.is_install) {
+              this.$router.push({name: 'adminLoginPage'})
+            } else {
+              this.$message.error({
+                message: '请先重启服务后进入管理中心',
+              });
+            }
+          }
+        }).catch(e => {
+          console.log(e);
+        })
       }
     }
   }
