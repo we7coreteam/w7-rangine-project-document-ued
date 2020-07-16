@@ -49,6 +49,11 @@ const router = new Router({
           path: 'installTwo',
           name: 'installTwo',
           component: () => import('@/views/install/installTwo.vue')
+        },
+        {
+          path: 'installTree',
+          name: 'installTree',
+          component: () => import('@/views/install/installTree.vue')
         }
       ]
     },
