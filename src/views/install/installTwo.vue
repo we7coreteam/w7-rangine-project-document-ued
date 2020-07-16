@@ -198,22 +198,12 @@
     beforeRouteEnter(to, from, next) {
       systemDetection().then(res => {
         if (res.code == 200) {
-          console.log(res.data);
-          let enable1 = true;
-          let enable2 = true;
           for (const item of res.data) {
-            console.log(item);
-            if (item.id === 1 && !item.enable) {
-              enable1 = false;
+            if (item.id == 1 && !item.enable) {
               next()
-            } else if ((item.id === 12 && !item.enable)) {
-              enable2 = false;
+            } else if (item.id == 1 && item.enable) {
+              vm.$router.push({name: 'installOne'})
             }
-          }
-          if (enable1 && !enable2) {
-            vm.$router.push({name: 'adminLoginPage'})
-          } else {
-            vm.$router.push({name: 'installOne'})
           }
         }
       }).catch(e => {

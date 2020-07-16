@@ -79,7 +79,7 @@
               } else if (item.id == 1 && item.enable) {
                 this.list = res.data.slice(0, 2);
                 this.num = 1;
-                this.errorNum = 2;
+                this.errorNum = 1;
                 this.testLoading = false;
                 this.testSuccess = false;
                 this.testError = true;
