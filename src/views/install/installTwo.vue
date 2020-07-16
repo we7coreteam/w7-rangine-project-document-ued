@@ -190,8 +190,8 @@
       }
     },
     created() {
-      const port = location.port;
-      this.ruleForm.api_host = location.origin + ':' + port;
+      // const port = location.port;
+      this.ruleForm.api_host = location.origin + ':' + 99;
       // this.success = true
     },
     methods: {
