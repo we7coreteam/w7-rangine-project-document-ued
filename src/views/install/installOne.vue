@@ -14,14 +14,14 @@
       </div>
       <ul>
         <li class="li1">
-          <span class="l-left">检测参数</span>
+          <span class="l-left">检测记录</span>
           <span class="l-center">检测结果</span>
           <span class="l-right"></span>
         </li>
         <li v-for="(item, index) in list" :key="index">
           <span class="l-left">{{ item.name }}</span>
           <span class="l-center">
-            <template v-if="item.id == 1">
+            <template v-if="item.id == 1 || item.id == 12">
               <img src="@/assets/img/icon-4.png">
             </template>
             <template v-else>
@@ -31,7 +31,7 @@
             {{ item.result }}
           </span>
           <span class="l-right">
-            <template v-if="item.id == 1">
+            <template v-if="item.id == 1 || item.id == 12">
               <span v-if="item.enable">异常</span>
             </template>
             <template v-else>
@@ -77,9 +77,9 @@
                 this.list = res.data.slice(1, res.data.length);
                 this.num = this.list.length;
               } else if (item.id == 1 && item.enable) {
-                this.list = res.data.slice(0, 1);
+                this.list = res.data.slice(0, 2);
                 this.num = 1;
-                this.errorNum = 1;
+                this.errorNum = 2;
                 this.testLoading = false;
                 this.testSuccess = false;
                 this.testError = true;
