@@ -1046,6 +1046,7 @@ export default {
     }
     this.getMethodType();
     // this.initCreateChapter();
+    this.mockApiUrl = location.origin + `/document/mockApiReponse/${this.$route.params.id}` + '/'
   },
   mounted() {
     // (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)

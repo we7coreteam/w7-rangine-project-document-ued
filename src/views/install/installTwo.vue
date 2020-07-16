@@ -116,18 +116,19 @@
         success: false,
         ruleForm2: {
           api_host: '',
-          // server_port: '',
+          // server_port: '99',
           cache_driver: 'redis',
-          cache_host: '',
-          // cache_port: '',
-          db_host: '',
-          // db_port: '',
+          cache_host: '127.0.0.1:6379',
+          // cache_port: '6379',
+          db_host: '127.0.0.1:3306',
+          // db_port: '3306',
           db_username: '',
           db_password: '',
-          db_database: '',
-          db_prefix: '',
+          db_database: 'document',
+          db_prefix: 'ims_',
           admin_username: '',
           admin_password: '',
+          option: 'check'
         },
         ruleForm: {
           api_host: '',
@@ -201,7 +202,7 @@
             if (item.id == 1 && !item.enable) {
               next()
             } else if (item.id == 1 && item.enable) {
-              vm.$router.push({name: 'adminLoginPage'})
+              vm.$router.push({name: 'installOne'})
             }
           }
         }
@@ -230,6 +231,7 @@
                     This.loading = false;
                     This.init = false;
                     This.success = true;
+                    localStorage.db_database = '';
                     localStorage.db_database = this.ruleForm.db_database
                   }
                 } catch (e) {
