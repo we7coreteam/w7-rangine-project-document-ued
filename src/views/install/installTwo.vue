@@ -85,7 +85,8 @@
 </template>
 
 <script>
-  import {install, installConfig} from '@/api/api'
+  import {install, installConfig, systemDetection} from '@/api/api'
+  import vm from '@/main'
 
   export default {
     name: "installTwo",
@@ -142,6 +143,7 @@
           db_prefix: 'ims_',
           admin_username: '',
           admin_password: '',
+          option: 'check'
         },
         rules: {
           api_host: [
@@ -192,30 +194,58 @@
       this.ruleForm.api_host = location.origin + ':' + 99;
       // this.success = true
     },
+    beforeRouteEnter(to, from, next) {
+      systemDetection().then(res => {
+        if (res.code == 200) {
+          for (const item of res.data) {
+            if (item.id == 1 && !item.enable) {
+              next()
+            } else if (item.id == 1 && item.enable) {
+              vm.$router.push({name: 'adminLoginPage'})
+            }
+          }
+        }
+      }).catch(e => {
+        console.log(e);
+      })
+    },
     methods: {
       onCopy(){
         this.$message.success('复制成功');
       },
       submit(formName) {
         const  This = this;
-        this.$refs[formName].validate((valid) => {
+        this.$refs[formName].validate(async (valid) => {
           if (valid) {
-            This.init = false;
-            This.success = false;
-            This.loading = true;
-            install(this.ruleForm).then(res => {
-              if (res.code == 200) {
-                This.loading = false;
+            const res1 = await install(this.ruleForm);
+            if (res1.code === 200) {
+              try {
                 This.init = false;
-                This.success = true;
-                localStorage.db_database = this.ruleForm.db_database
+                This.success = false;
+                This.loading = true;
+                this.ruleForm.option = 'send';
+                try {
+                  const res2 = await install(this.ruleForm);
+                  if (res2.code == 200) {
+                    This.loading = false;
+                    This.init = false;
+                    This.success = true;
+                    localStorage.db_database = this.ruleForm.db_database
+                  }
+                } catch (e) {
+                  console.log(e);
+                  This.init = true;
+                  This.success = false;
+                  This.loading = false;
+                  this.ruleForm.option = 'check';
+                }
+              } catch (e) {
+                console.log(e);
+                This.init = true;
+                This.success = false;
+                This.loading = false;
               }
-            }).catch(e => {
-              console.log(e);
-              This.init = true;
-              This.success = false;
-              This.loading = false;
-            })
+            }
           } else {
             console.log('error submit!!');
             return false;

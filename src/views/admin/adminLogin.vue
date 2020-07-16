@@ -62,7 +62,7 @@
   import vm from '@/main'
 
   export default {
-  name: 'adminLogin',
+  name: 'adminLoginPage',
   data() {
     return {
       autofocus: false,
