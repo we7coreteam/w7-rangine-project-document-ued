@@ -51,10 +51,10 @@
             <el-input v-model="ruleForm.db_prefix"></el-input>
           </el-form-item>
           <el-form-item label="管理员账户" prop="admin_username">
-            <el-input v-model="ruleForm.admin_username" placeholder="默认账号：admin"></el-input>
+            <el-input v-model="ruleForm.admin_username" placeholder=""></el-input>
           </el-form-item>
           <el-form-item label="管理员密码" prop="admin_password">
-            <el-input v-model="ruleForm.admin_password" placeholder="默认密码：123456"></el-input>
+            <el-input v-model="ruleForm.admin_password" placeholder=""></el-input>
           </el-form-item>
         </el-form>
       </div>
