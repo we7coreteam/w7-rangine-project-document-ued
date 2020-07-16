@@ -74,7 +74,7 @@
           if (res.code == 200) {
             for (const item of res.data) {
               if (item.id == 1 && !item.enable) {
-                this.list = res.data.slice(1, res.data.length - 1);
+                this.list = res.data.slice(1, res.data.length);
                 this.num = this.list.length;
               } else if (item.id == 1 && item.enable) {
                 this.list = res.data.slice(0, 1);
@@ -116,6 +116,7 @@
       },
       // 下一步
       nextStep() {
+        console.log(123);
         this.$router.push({name: 'installTwo'});
       }
     }
