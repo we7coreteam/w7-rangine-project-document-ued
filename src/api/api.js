@@ -80,6 +80,13 @@ export const install = (data) => axios({
   data,
   method: 'post'
 })
+
+// 系统安装检测
+export const installConfig = (data) => axios({
+  url: '/install/config',
+  data,
+  method: 'post'
+})
 //
 
 
