@@ -135,10 +135,10 @@
           cache_driver: 'redis',
           cache_host: '127.0.0.1:6379',
           // cache_port: '6379',
-          db_host: '127.0.0.1:3306', // 212.64.37.80:3306 // 212.64.83.243:3306
+          db_host: '127.0.0.1:3306',
           // db_port: '3306',
-          db_username: '',//develop
-          db_password: '',//TRn3Sb3i4CKsljEa
+          db_username: '',
+          db_password: '',
           db_database: 'document',
           db_prefix: 'ims_',
           admin_username: '',
