@@ -415,7 +415,7 @@
                       </el-col>
                       <span class="add" @click="() => addResApiTreeNode(data)"><span
                           class="iconfont wq-add"></span></span>
-                      <span class="delete" @click="() => removeResApiTreeNode(node, data)"><span
+                      <span class="delete" @click="() => removeResApiTreeNode(node, data, index)"><span
                           class="iconfont wq-delete"></span></span>
                       <span class="delete" @click="() => insertAfter(node, data)"><!--<span class="iconfont wq-delete"></span>--></span>
                     </el-row>
@@ -1996,18 +1996,21 @@ export default {
 
       if (tab_location == 1) {
         if (length1 == 1 && node.level == 1) {
+          this.$message.closeAll();
           this.$message.error('已经是最后一个了，勿删！')
           return false;
         }
       }
       if (tab_location == 2) {
         if (length2 == 1 && node.level == 1) {
+          this.$message.closeAll();
           this.$message.error('已经是最后一个了，勿删！')
           return false;
         }
       }
       if (tab_location == 3) {
         if (length3 == 1 && node.level == 1) {
+          this.$message.closeAll();
           this.$message.error('已经是最后一个了，勿删！')
           return false;
         }
@@ -2019,13 +2022,14 @@ export default {
       children.splice(index, 1);
     },
     // 删除 响应数据数据node
-    removeResApiTreeNode(node, data) {
+    removeResApiTreeNode(node, data, i) {
       // console.log(node);
 
-      const length = this.apiResTreeData.length;
-      // console.log(length);
+      const length = this.apiResTreeData[i].data.length;
+      console.log(this.apiResTreeData);
 
       if (length == 1 && node.level == 1) {
+        this.$message.closeAll();
         this.$message.error('已经是最后一个了，勿删！')
         return false;
       }
@@ -2099,6 +2103,7 @@ export default {
           record
         }).then(res => {
           if (res.code == 200) {
+            this.$message.closeAll();
             this.$message.success('保存成功！');
             this.isFormChange = false;
             this.isApiHeaderTreeDataChange = false;
@@ -2119,6 +2124,7 @@ export default {
           content: this.markDownContent
         }).then(res => {
           if (res.code == 200) {
+            this.$message.closeAll();
             this.$message.success('保存成功！');
             this.isFormChange = false;
             this.isApiHeaderTreeDataChange = false;

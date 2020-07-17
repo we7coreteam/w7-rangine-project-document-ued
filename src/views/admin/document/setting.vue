@@ -254,7 +254,12 @@ export default {
       })
     },
     handleAvatarSuccess(res) {
-      this.docData.cover = res.data.url;
+      console.log(res);
+      if (res.code === 200) {
+        this.docData.cover = res.data.url;
+      } else {
+        this.$message.error(res.message);
+      }
     },
     beforeAvatarUpload(file) {
       const isFormat = file.type === 'image/jpg' || file.type === 'image/jpeg' || file.type === 'image/png';
