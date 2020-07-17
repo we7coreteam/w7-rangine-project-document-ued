@@ -195,7 +195,6 @@
     },
     created() {
       this.getDocumentName();
-      this.mockUrl = location.origin + `/admin/viewMock?chapter_id=${this.$route.query.id}&document_id=${this.$route.params.id}`
     },
     mounted() {
       // this.projectName = localStorage.projectName;
@@ -355,6 +354,7 @@
           if (res.code == 200) {
             this.articleContent = res.data;
             this.loading.close();
+            this.mockUrl = location.origin + `/document/mockApiReponse/${this.$route.params.id}` + '/' + res.data.api.url;
             if (res.data.document) {
               this.projectName = res.data.document.name;
             }
