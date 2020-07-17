@@ -347,7 +347,7 @@
             </div>
 
             <!--响应数据-->
-            <div class="api-con">
+            <div class="api-con response-api">
               <div class="top">
                 <div class="line-wrap">
                   <span class="line"></span>
@@ -1989,6 +1989,8 @@ export default {
     },
     // 删除 请求数据node
     removeApiTreeNode(node, data) {
+      console.log(node);
+      console.log(data);
       const length1 = this.apiHeaderTreeData.length;
       const length2 = this.apiParamsTreeData.length;
       const length3 = this.apiBodyTreeData.length;
@@ -2024,7 +2026,6 @@ export default {
     // 删除 响应数据数据node
     removeResApiTreeNode(node, data, i) {
       // console.log(node);
-
       const length = this.apiResTreeData[i].data.length;
       console.log(this.apiResTreeData);
 
@@ -2569,7 +2570,6 @@ export default {
     }
   }
 
-  // wyg 2020/04/09
   .w7-aside-chapter {
     .custom-tree-node {
       /*height: 40px;*/
@@ -2695,6 +2695,18 @@ export default {
             font-size: 24px;
             cursor: pointer;
           }
+
+          /deep/ {
+            .el-tabs {
+              .el-tree {
+                >.el-tree-node:nth-last-child(2) {
+                 .delete {
+                   display: none;
+                 }
+                }
+              }
+            }
+          }
         }
 
         .c-bottom {
@@ -2730,6 +2742,20 @@ export default {
 
         .el-select {
           width: 100%;
+        }
+
+        &.response-api {
+          .c-con {
+            /deep/ {
+              .el-tree {
+                >.el-tree-node:nth-last-child(2) {
+                  .delete {
+                    display: none;
+                  }
+                }
+              }
+            }
+          }
         }
 
         /deep/ .el-tree-node__content {
