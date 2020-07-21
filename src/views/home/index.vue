@@ -79,7 +79,7 @@
                       <i class="wi wi-star"></i>
                     </div>
                   </el-tooltip>
-                  <el-tooltip effect="dark" content="复制Mock链接" placement="bottom">
+                  <el-tooltip v-if="mockUrl" effect="dark" content="复制Mock链接" placement="bottom">
                     <div class="share-block"
                          v-clipboard:copy="mockUrl"
                          v-clipboard:success="onCopy">
@@ -315,7 +315,7 @@
         // this.changeRoute(obj.id, obj.name);
         if (!obj.is_dir) {
           this.changeRoute(obj.id, obj.name);
-          this.mockUrl = location.origin + `/admin/viewMock?chapter_id=${this.$route.query.id}&document_id=${this.$route.params.id}`
+          // this.mockUrl = location.origin + `/admin/viewMock?chapter_id=${this.$route.query.id}&document_id=${this.$route.params.id}`
         }
       },
       handleNodeExpand(obj) {
@@ -354,7 +354,11 @@
           if (res.code == 200) {
             this.articleContent = res.data;
             this.loading.close();
-            this.mockUrl = location.origin + `/document/mockApiReponse/${this.$route.params.id}` + '/' + res.data.api.url;
+            if (res.data.api) {
+              this.mockUrl = location.origin + `/document/mockApiReponse/${this.$route.params.id}` + '/' + res.data.api.url;
+            } else {
+              this.mockUrl = '';
+            }
             if (res.data.document) {
               this.projectName = res.data.document.name;
             }
