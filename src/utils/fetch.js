@@ -5,7 +5,7 @@ import qs from 'qs'
 
 // axios.defaults.withCredentials=true
 const instance = axios.create({
-  withCredentials: true
+  withCredentials: true,
 })
 
 instance.interceptors.request.use(request => {
@@ -18,6 +18,8 @@ instance.interceptors.response.use(response => {
   if (response.data.code >= 200 && response.data.code < 300) {
     return response.data;
   } else {
+    console.log('response');
+    console.log(response);
     if (response.data.code == 444) {
       router.push('/admin-login?redirect_url='+ window.location.href)
       // router.push({name: 'adminLoginPage'});
