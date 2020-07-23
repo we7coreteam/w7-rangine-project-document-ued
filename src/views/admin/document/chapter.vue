@@ -1267,11 +1267,9 @@ export default {
             // this.chapters = res.data.catalog;
             this.chapters = this.initTreeData(res.data.catalog); // 临时注释
             //如果有记录的默认文档节点，则选中
-            if (this.defaultSelect) {
-              // console.log(1);
-              // console.log(this.defaultSelect);
+            if (history) {
               this.$nextTick(() => {
-                this.$refs.chaptersTree.setCurrentKey(this.defaultSelect);
+                this.$refs.chaptersTree.setCurrentKey(history.id);
                 // console.log(3);
                 // console.log(this.$refs.chaptersTree.getCurrentNode());
                 if (this.$refs.chaptersTree.getCurrentNode() != null) {
@@ -1364,6 +1362,7 @@ export default {
         this.$nextTick(() => {
           // console.log(7);
           if (!this.isDelete) {
+            console.log(222);
             $('.w7-tree .el-tree-node').removeClass('is-checked').attr({'data-active': ''});
           }
           this.isDelete = false;
@@ -1371,6 +1370,8 @@ export default {
         // console.error(1233)
         const document_id = this.$route.params.id;
         // console.error('currentData_' + document_id)
+        console.log('data123');
+        console.log(data);
         localStorage['currentData_' + document_id] = JSON.stringify(data);
         if (this.isFormChange || this.isApiHeaderTreeDataChange || this.isApiParamsTreeDataChange || this.isApiBodyTreeDataChange || this.isApiResTreeDataChange || this.isMarkDownContentChange) {
           this.$confirm('您有数据尚未保存，确认保存?', '提示', {
@@ -1426,6 +1427,9 @@ export default {
           this.previewId = data.id;
           this.docTitle = data.name;
           this.chapter_id = data.id;
+          console.log('chapter_id');
+          console.log(data);
+          console.log(this.chapter_id);
           this.selectNodeObj = data;
           this.viewChapter();
           this.treeActive = true;
@@ -1462,6 +1466,7 @@ export default {
           })
         }
       } else {
+        console.log(6665552);
         const document_id = this.$route.params.id;
         if (localStorage['currentData_' + document_id]) {
           let currentData = JSON.parse(localStorage['currentData_' + document_id]);
@@ -1759,6 +1764,8 @@ export default {
       }
     },
     removeNode() {
+      console.log(2323);
+      console.log(this.rightSelectNodeObj.id);
       var arrId = []
       arrId.push(this.rightSelectNodeObj.id)
       //删除的为目录,切存在子节点
@@ -1784,13 +1791,23 @@ export default {
           chapter_id: arrId
         }).then(() => {
           if (localStorage['currentData_' + this.$route.params.id]) {
-            const id = localStorage['currentData_' + this.$route.params.id].id;
-            arrId.forEach(item => {
-              if (item.id == id) {
-                localStorage['currentData_' + this.$route.params.id] = '';
-              }
-            })
-           }
+            const currentData = JSON.parse(localStorage['currentData_' + this.$route.params.id]);
+            if (currentData) {
+              const id = currentData.id;
+              console.log('arrId');
+              console.log(arrId);
+              arrId.forEach(item => {
+                console.log('item id');
+                console.log(item);
+                console.log(currentData);
+                console.log(id);
+                if (item.id == id) {
+                  console.log(7878);
+                  localStorage['currentData_' + this.$route.params.id] = '';
+                }
+              })
+            }
+          }
 
           let node = this.rightSelectNode
           let data = this.rightSelectNodeObj
