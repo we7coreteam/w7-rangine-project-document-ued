@@ -1797,11 +1797,10 @@ export default {
               console.log('arrId');
               console.log(arrId);
               arrId.forEach(item => {
-                console.log('item id');
+                console.log('item');
                 console.log(item);
-                console.log(currentData);
                 console.log(id);
-                if (item.id == id) {
+                if (item === id) {
                   console.log(7878);
                   localStorage['currentData_' + this.$route.params.id] = '';
                 }
