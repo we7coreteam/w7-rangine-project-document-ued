@@ -26,8 +26,9 @@ module.exports = {
     // }
   },
   chainWebpack: config => {
-    config.resolve.alias.set('@', resolve('src'))
-    config.plugins.delete('prefetch') // 移除prefetch
+    config.resolve.symlinks(true);
+    config.resolve.alias.set('@', resolve('src'));
+    config.plugins.delete('prefetch'); // 移除prefetch
   },
   productionSourceMap: false,
   runtimeCompiler: false,
