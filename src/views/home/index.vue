@@ -1,144 +1,153 @@
 <template>
-  <div class="chapter-warpper">
-    <el-scrollbar>
-      <el-container class="home-container">
-        <el-aside class="w7-aside-home" width="220px">
-          <div class="w7-aside-home-box">
-            <p class="w7-aside-home-head">{{projectName}}</p>
-            <div class="w7-aside-home-search">
-              <el-autocomplete
-                  popper-class="my-autocomplete"
-                  v-model="filterWord"
-                  :fetch-suggestions="querySearch"
-                  :trigger-on-focus="false"
-                  placeholder="搜索文档"
-                  @select="handleSelect">
-                <i
-                    class="el-icon-search el-input__icon"
-                    slot="suffix"
-                >
-                </i>
-                <template slot-scope="{ item }">
-                  <div class="name text-over">{{ item.name }}</div>
-                </template>
-              </el-autocomplete>
-            </div>
-            <el-scrollbar class="w7-aside-home-content">
-              <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text=""
-                       ref="chaptersTree"
-                       node-key="id"
-                       :highlight-current="true"
-                       :default-expanded-keys="expandIdArray"
-                       @node-click="handleNodeClick"
-                       @node-expand="handleNodeExpand">
+  <div>
+    <div class="search-wrap">
+      <div class="h1">微擎开发文档</div>
+      <el-input placeholder="请输入内容" v-model="searchValue" class="input-wrap">
+        <img slot="prepend" src="@/assets/img/icon-search.png">
+        <span slot="append">搜索</span>
+      </el-input>
+    </div>
+    <div class="chapter-warpper">
+      <el-scrollbar>
+        <el-container class="home-container">
+          <el-aside class="w7-aside-home" width="220px">
+            <div class="w7-aside-home-box">
+              <p class="w7-aside-home-head">{{projectName}}</p>
+              <div class="w7-aside-home-search">
+                <el-autocomplete
+                    popper-class="my-autocomplete"
+                    v-model="filterWord"
+                    :fetch-suggestions="querySearch"
+                    :trigger-on-focus="false"
+                    placeholder="搜索文档"
+                    @select="handleSelect">
+                  <i
+                      class="el-icon-search el-input__icon"
+                      slot="suffix"
+                  >
+                  </i>
+                  <template slot-scope="{ item }">
+                    <div class="name text-over">{{ item.name }}</div>
+                  </template>
+                </el-autocomplete>
+              </div>
+              <el-scrollbar class="w7-aside-home-content">
+                <el-tree class="w7-tree" :data="chapters" :props="defaultProps" empty-text=""
+                         ref="chaptersTree"
+                         node-key="id"
+                         :highlight-current="true"
+                         :default-expanded-keys="expandIdArray"
+                         @node-click="handleNodeClick"
+                         @node-expand="handleNodeExpand">
                 <span class="custom-tree-node" v-if="node.label" :class="{doc: !data.is_dir}"
                       slot-scope="{ node, data }">
                   <div class="text-over">
                     <span :title="node.label">{{ node.label }}</span>
                   </div>
                 </span>
-              </el-tree>
-            </el-scrollbar>
-          </div>
-        </el-aside>
-        <el-main id="home-index">
-          <!-- <div class="search">
-            <el-input placeholder="请输入关键字搜索" v-model="keyword" @keyup.enter.native="search">
-              <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
-            </el-input>
-          </div> -->
-          <div class="line" v-if="!articleFlag"></div>
-          <div class="warpper">
-            <div class="article" v-show="articleFlag">
-              <p class="title">{{ articleContent.name }}</p>
-              <div class="info">
-                <span class="time" v-show="articleContent.updated_at">更新时间：{{ articleContent.updated_at }}</span>
-                <span class="author"
-                      v-show="articleContent.author.username">作者：{{ articleContent.author.username }}</span>
-                <div class="share" v-show="articleContent.content">
-                  <el-tooltip effect="dark" content="分享到新浪微博" placement="bottom">
-                    <div class="share-block" @click="shareToWeibo"><i class="wi wi-weibo"></i></div>
-                  </el-tooltip>
-                  <el-tooltip effect="dark" content="分享到微信" placement="bottom">
-                    <div class="share-block" @click="showShareWechat = true"><i class="wi wi-weixin"></i></div>
-                  </el-tooltip>
-                  <el-tooltip effect="dark" content="分享到QQ" placement="bottom">
-                    <div class="share-block" @click="shareToQQ"><i class="wi wi-qq"></i></div>
-                  </el-tooltip>
-                  <el-tooltip effect="dark" content="复制链接" placement="bottom">
-                    <div class="share-block"
-                         v-clipboard:copy="shareUrl"
-                         v-clipboard:success="onCopy">
-                      <i class="wi wi-link"></i>
-                    </div>
-                  </el-tooltip>
-                  <el-tooltip effect="dark" :content="articleContent.star_id ? '取消星标' : '添加星标'" placement="bottom">
-                    <div class="share-block"
-                         :class="{'checked': articleContent.star_id}"
-                         @click="operStar()">
-                      <i class="wi wi-star"></i>
-                    </div>
-                  </el-tooltip>
-                  <el-tooltip v-if="mockUrl" effect="dark" content="复制Mock链接" placement="bottom">
-                    <div class="share-block"
-                         v-clipboard:copy="mockUrl"
-                         v-clipboard:success="onCopy">
-                      <i class="wq-fuzhi wq"></i>
-                    </div>
-                  </el-tooltip>
-                </div>
-              </div>
-              <div class="markdown-body">
-                <div class="markdown-content" v-html="articleContent.content"></div>
-                <el-scrollbar class="markdown-menu ">
-                  <div class="js-toc toc toc-right"></div>
-                </el-scrollbar>
-              </div>
-              <!-- <div class="markdown-bottom">
-                <router-link class="prev item" v-if=""></router-link>
-                <router-link class="nxet item"></router-link>
-              </div> -->
-              <mavon-editor ref="mavonEditor" v-show="false"></mavon-editor>
+                </el-tree>
+              </el-scrollbar>
             </div>
+          </el-aside>
+          <el-main id="home-index">
+            <!-- <div class="search">
+              <el-input placeholder="请输入关键字搜索" v-model="keyword" @keyup.enter.native="search">
+                <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
+              </el-input>
+            </div> -->
+            <div class="line" v-if="!articleFlag"></div>
+            <div class="warpper">
+              <div class="article" v-show="articleFlag">
+                <p class="title">{{ articleContent.name }}</p>
+                <div class="info">
+                  <span class="time" v-show="articleContent.updated_at">更新时间：{{ articleContent.updated_at }}</span>
+                  <span class="author"
+                        v-show="articleContent.author.username">作者：{{ articleContent.author.username }}</span>
+                  <div class="share" v-show="articleContent.content">
+                    <el-tooltip effect="dark" content="分享到新浪微博" placement="bottom">
+                      <div class="share-block" @click="shareToWeibo"><i class="wi wi-weibo"></i></div>
+                    </el-tooltip>
+                    <el-tooltip effect="dark" content="分享到微信" placement="bottom">
+                      <div class="share-block" @click="showShareWechat = true"><i class="wi wi-weixin"></i></div>
+                    </el-tooltip>
+                    <el-tooltip effect="dark" content="分享到QQ" placement="bottom">
+                      <div class="share-block" @click="shareToQQ"><i class="wi wi-qq"></i></div>
+                    </el-tooltip>
+                    <el-tooltip effect="dark" content="复制链接" placement="bottom">
+                      <div class="share-block"
+                           v-clipboard:copy="shareUrl"
+                           v-clipboard:success="onCopy">
+                        <i class="wi wi-link"></i>
+                      </div>
+                    </el-tooltip>
+                    <el-tooltip effect="dark" :content="articleContent.star_id ? '取消星标' : '添加星标'" placement="bottom">
+                      <div class="share-block"
+                           :class="{'checked': articleContent.star_id}"
+                           @click="operStar()">
+                        <i class="wi wi-star"></i>
+                      </div>
+                    </el-tooltip>
+                    <el-tooltip v-if="mockUrl" effect="dark" content="复制Mock链接" placement="bottom">
+                      <div class="share-block"
+                           v-clipboard:copy="mockUrl"
+                           v-clipboard:success="onCopy">
+                        <i class="wq-fuzhi wq"></i>
+                      </div>
+                    </el-tooltip>
+                  </div>
+                </div>
+                <div class="markdown-body">
+                  <div class="markdown-content" v-html="articleContent.content"></div>
+                  <el-scrollbar class="markdown-menu">
+                    <div class="js-toc toc toc-right"></div>
+                  </el-scrollbar>
+                </div>
+                <!-- <div class="markdown-bottom">
+                  <router-link class="prev item" v-if=""></router-link>
+                  <router-link class="nxet item"></router-link>
+                </div> -->
+                <mavon-editor ref="mavonEditor" v-show="false"></mavon-editor>
+              </div>
 
 
-            <div class="article-list" v-if="!articleFlag">
-              <el-button class="back" type="text" @click="articleFlag = !articleFlag">返回</el-button>
-              <p class="number-result">{{articleInfoList.length}}条结果"{{keyword}}"</p>
-              <div class="list-content" v-for="articleInfo in articleInfoList" v-bind:key="articleInfo.id"
-                   v-show="articleInfoList.length">
-                <div class="header">
-                  <p class="title" v-html="articleInfo.name"
+              <div class="article-list" v-if="!articleFlag">
+                <el-button class="back" type="text" @click="articleFlag = !articleFlag">返回</el-button>
+                <p class="number-result">{{articleInfoList.length}}条结果"{{keyword}}"</p>
+                <div class="list-content" v-for="articleInfo in articleInfoList" v-bind:key="articleInfo.id"
+                     v-show="articleInfoList.length">
+                  <div class="header">
+                    <p class="title" v-html="articleInfo.name"
+                       @click="changeRoute(articleInfo.id, articleInfo.name, true)"></p>
+                    <p class="info">
+                      <span>作者：{{articleInfo.username}}</span>
+                      <span>更新时间：{{articleInfo.updated_at}}</span>
+                    </p>
+                  </div>
+                  <p class="content" v-html="articleInfo.content"
                      @click="changeRoute(articleInfo.id, articleInfo.name, true)"></p>
-                  <p class="info">
-                    <span>作者：{{articleInfo.username}}</span>
-                    <span>更新时间：{{articleInfo.updated_at}}</span>
-                  </p>
                 </div>
-                <p class="content" v-html="articleInfo.content"
-                   @click="changeRoute(articleInfo.id, articleInfo.name, true)"></p>
+                <p class="no-result" v-if="!articleInfoList.length">没有找到相关内容"{{keyword}}"</p>
               </div>
-              <p class="no-result" v-if="!articleInfoList.length">没有找到相关内容"{{keyword}}"</p>
             </div>
-          </div>
-        </el-main>
-      </el-container>
-    </el-scrollbar>
-    <el-backtop :bottom="100">
-      <div class="w7-top">
-        <i class="el-icon-arrow-up"></i>
-        <p>TOP</p>
-      </div>
-    </el-backtop>
-    <!-- 二维码 -->
-    <div class="share-wechat" v-if="showShareWechat">
-      <div class="head">
-        <span>分享到微信朋友圈</span>
-        <i class="el-icon-close" @click="showShareWechat = false"></i>
-      </div>
-      <qrcode-vue class="content" :value="shareUrl" :size="160" level="H"></qrcode-vue>
-      <div class="foot">
-        打开微信，点击底部的“发现”，<br/>使用“扫一扫”即可将网页分享至朋友圈。
+          </el-main>
+        </el-container>
+      </el-scrollbar>
+      <el-backtop :bottom="100">
+        <div class="w7-top">
+          <i class="el-icon-arrow-up"></i>
+          <p>TOP</p>
+        </div>
+      </el-backtop>
+      <!-- 二维码 -->
+      <div class="share-wechat" v-if="showShareWechat">
+        <div class="head">
+          <span>分享到微信朋友圈</span>
+          <i class="el-icon-close" @click="showShareWechat = false"></i>
+        </div>
+        <qrcode-vue class="content" :value="shareUrl" :size="160" level="H"></qrcode-vue>
+        <div class="foot">
+          打开微信，点击底部的“发现”，<br/>使用“扫一扫”即可将网页分享至朋友圈。
+        </div>
       </div>
     </div>
   </div>
@@ -177,7 +186,8 @@
         showShareWechat: false,
         projectName: '',
         loading: '',
-        mockUrl: ''
+        mockUrl: '',
+        searchValue: ''
       }
     },
     computed: {
@@ -409,10 +419,10 @@
             contentSelector: '.markdown-content',
             tocSelector: '.js-toc',
             headingSelector: 'h1, h2, h3 ',
-            // scrollSmooth: !0,
+            scrollSmooth: true,
             // scrollSmoothDuration: 500,
             // scrollContainer: '.js-toc',
-            // scrollSmoothOffset: -80,
+            scrollSmoothOffset: -260,
             // headingsOffset: -500,
             // hasInnerContainers: true,
             scrollEndCallback: () => {
@@ -510,13 +520,67 @@
             this.articleContent.star_id = res.data.star_id || ''
           })
       }
-    },
+    }
   }
 </script>
 
 <style lang="scss">
   body {
     background-color: #FFF
+  }
+
+  .search-wrap {
+    background: url("~@/assets/img/bg-1.png") no-repeat center;
+    height: 180px;
+    position: fixed;
+    width: 100%;
+    top: 60px;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-flow: column;
+
+    .h1 {
+      font-size: 24px;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    .input-wrap {
+      width: 670px;
+
+      .el-input-group__prepend {
+        background-color: #fff;
+        padding: 0 10px 0 20px;
+        align-items: center;
+
+        img {
+          position: relative;
+          top: 2px;
+        }
+      }
+
+      .el-input-group__append {
+        background-color: #fff;
+        padding: 0 35px;
+        color: #333;
+        cursor: pointer;
+      }
+
+      .el-input__inner {
+        height: 48px;
+        line-height: 46px;
+        border-left: none;
+
+        &:focus {
+          border-color: #dcdfe6;
+        }
+        &:hover {
+          border-color: #dcdfe6;
+        }
+      }
+    }
   }
 
   .transition--300 {
@@ -583,11 +647,12 @@
   }
 
   #home-index {
-    min-height: calc(100vh - 140px);
+    /*min-height: calc(100vh - 140px);*/
   }
 
   .chapter-warpper {
-    background: linear-gradient(to right, #f7f8fa 50%, #ffffff 50%);
+    /*background: linear-gradient(to right, #f7f8fa 50%, #ffffff 50%);*/
+    margin-top: 180px;
 
     .share-wechat {
       position: fixed;
@@ -632,11 +697,12 @@
     position: relative;
 
     .w7-aside-home {
-      background-color: #f7f8fa;
-      border-right: #f1f2f3 1px solid;
+      /*background-color: #f7f8fa;*/
+      /*border-right: #f1f2f3 1px solid;*/
       min-width: 221px;
       width: calc(50% - 700px + 220px) !important;
       position: fixed;
+      top: 220px;
       height: calc(100vh - 60px);
 
       .w7-aside-home-box {
@@ -780,8 +846,7 @@
     .el-main {
       padding: 0;
       padding-left: calc(50% - 700px + 220px);
-      background-color: #ffffff;
-      height: 100%;
+      /*height: 100%;*/
       @media (max-width: 1420px) {
         padding-left: 220px;
       }
@@ -826,10 +891,11 @@
             font-size: 14px;
             line-height: 1;
             background-color: #fff;
-            top: 100px;
-            bottom: 160px;
+            top: 260px;
+            /*bottom: 160px;*/
             box-sizing: border-box;
             position: fixed;
+            z-index: 1000;
             right: 26px;
             @media (min-width: 1600px) {
               left: calc(50% + 500px);
