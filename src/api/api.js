@@ -88,7 +88,11 @@ export const installConfig = (data) => axios({
   method: 'post'
 })
 //
-
+export const getUser = (data) => axios({
+  url: '/admin/user/all',
+  data,
+  method: 'post'
+})
 
 
 

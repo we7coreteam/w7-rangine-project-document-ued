@@ -136,7 +136,21 @@
     <div class="add-manage-body" v-if="showAddManage">
       <el-form :model="addManageData" ref="addManageForm" key="addManage" :rules="rules" class="w7-form__no-required-icon" label-width="85px" label-position="left">
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="addManageData.username"></el-input>
+          <el-select
+            v-model="addManageData.username"
+            filterable
+            remote
+            reserve-keyword
+            placeholder="请输入关键词"
+            :remote-method="remoteMethod"
+            :loading="loading">
+              <el-option
+                v-for="item in userOptions"
+                :key="item.username"
+                :label="item.username"
+                :value="item.username">
+              </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="操作员权限">
           <el-select v-model="addManageData.role">
@@ -158,7 +172,9 @@
 </template>
 
 <script>
-export default {
+  import {getUser} from '@/api/api'
+
+  export default {
   name: 'setting',
   props: ['id'],
   data() {
@@ -189,7 +205,9 @@ export default {
       historyList: [],
       currentPageHistory: 1,//当前页码
       pageCountHistory: 0,//总页数
-      totalHistory: 0//总数
+      totalHistory: 0,//总数
+      userOptions: [],
+      loading: false
     }
   },
   watch: {
@@ -355,6 +373,15 @@ export default {
         role: this.role_list[0].id || ''
       }
       this.showAddManage = true
+      getUser({
+        no_self: 1
+      }).then(res => {
+        this.userOptions = res.data;
+        console.log(123);
+        console.log(this.userOptions);
+      }).catch(e => {
+        console.log(e);
+      })
     },
     addManage() {
       let flag = true
@@ -381,10 +408,27 @@ export default {
         }
       })
     },
-
     uploadCover () {
       this.$refs.upload.uploadFiles();
       console.log(this.$refs.upload.uploadFiles());
+    },
+    remoteMethod(query) {
+      if (query !== '') {
+        this.loading = true;
+        console.log(query);
+        getUser({
+          no_self: 1,
+          username: query
+        }).then(res => {
+          this.loading = false;
+          this.userOptions = res.data;
+        }).catch(e => {
+          console.log(e);
+          this.loading = false;
+        })
+      } else {
+        this.userOptions = [];
+      }
     }
   }
 }
