@@ -81,7 +81,7 @@
             </el-table-column>
             <el-table-column label="操作" align="right">
               <div class="oper" slot-scope="scope">
-                <el-tooltip v-if="false" effect="dark" content="编辑" placement="bottom">
+                <el-tooltip  effect="dark" content="编辑" placement="bottom">
                   <i class="wi wi-edit" @click="editManage(scope.row)" v-if="details.acl.has_manage && scope.row.acl.role != 1"></i>
                 </el-tooltip>
                 <el-tooltip effect="dark" content="删除" placement="bottom">
@@ -232,6 +232,8 @@
         document_id : this.id
       }).then(res => {
         this.details = res.data;
+        console.log('details');
+        console.log(this.details);
         let is_public = '';
         let login_preview = '';
         if (res.data.is_public == 1) {
@@ -345,11 +347,10 @@
         user_id: this.selectUserId,
         document_id: this.id,
         permission: this.selectUserRole
+      }).then(() => {
+        this.getdetails()
+        this.shwoEditRole = false
       })
-        .then(() => {
-          this.getdetails()
-          this.shwoEditRole = false
-        })
     },
     removeManage(id) {
       this.$confirm('确定删除该操作员吗?', '提示', {
@@ -480,7 +481,6 @@
 
     }
 
-
     .project {
       padding: 50px 100px;
       .el-form-item__content {
@@ -535,12 +535,13 @@
       }
       .w7-table {
         margin-top: 0;
-        /*overflow: inherit;*/
+        overflow: inherit;
         .el-table th, .el-table td {
           padding: 6px 0;
+          position: relative;
         }
         .el-table__body-wrapper, .cell {
-          /*overflow: inherit;*/
+          overflow: inherit;
         }
         .identity {
           margin: 0 auto;
@@ -553,22 +554,23 @@
           border-radius: 4px;
         }
         .oper {
-          position: relative;
+          /*position: relative;*/
+
           .edit-role {
             position: absolute;
-            top: 35px;
-            right: -70px;
+            top: 42px;
+            right: 0;
             width: 360px;
             height: 150px;
-            background-color: #ffffff;
+            background-color: #fff;
             border-radius: 5px;
-            box-shadow:0px 3px 18px 1px	rgba(194, 192, 192, 0.84);
-            z-index: 3000;
+            box-shadow: 0 3px 18px 1px rgba(194, 192, 192, .85);
+            z-index: 9999;
             &::before {
               content: '';
               position: absolute;
               top: -10px;
-              right: 98px;
+              right: 40px;
               width: 0;
               height: 0;
               border-color: transparent;
