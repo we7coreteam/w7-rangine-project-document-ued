@@ -181,6 +181,11 @@ const router = new Router({
           path: 'account-info',
           name: 'accountInfo',
           component: () => import('@/views/admin/accountInfo.vue')
+        },
+        {
+          path: 'search',
+          name: 'searchResults',
+          component: () => import('@/views/search/searchResults.vue')
         }
       ]
     },
