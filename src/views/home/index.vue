@@ -12,7 +12,7 @@
         <el-container class="home-container">
           <el-aside class="w7-aside-home" width="220px">
             <div class="w7-aside-home-box">
-              <p class="w7-aside-home-head">{{projectName}}</p>
+              <p class="w7-aside-home-head">{{document_name}}</p>
 <!--
               <div class="w7-aside-home-search">
                 <el-autocomplete
@@ -296,11 +296,35 @@
               document.title = name ? (name + ' — ' + this.document_name) : this.document_name
               this.getArticle()
             } else {
-              // this.goDefaultChaper(res)
-              if (res.data.length) {
-                this.selectNode(res.data[0].id);
-                this.handleNodeClick(res.data[0])
+              const findChapter = (arr) => {
+                if (arr.length) {
+                  for (const item of arr) {
+                    /*
+                    * 如果是文档首先选中排在前的文档
+                    * 如果是目录，则选中第一个目录内的第一个文档*/
+                    try {
+                      if (item.is_dir && item.children.length) {
+                        findChapter(item.children);
+                        return false;
+                      } else if (!item.is_dir) {
+                        this.handleNodeClick(item);
+                        this.selectNode(item.id)
+                        this.defaultExpanded = [item.parent_id];
+                        return false;
+                      } else {
+                      }
+                    } catch (e) {
+                      console.log(e);
+                    }
+                  }
+                }
               }
+              findChapter(res.data);
+              // this.goDefaultChaper(res)
+              // if (res.data.length) {
+              //   this.selectNode(res.data[0].id);
+              //   this.handleNodeClick(res.data[0])
+              // }
             }
           })
         })
@@ -532,6 +556,73 @@
     }
   }
 </script>
+
+<style lang="scss" scoped>
+  .el-main {
+    min-height: 550px;
+  }
+
+  .w7-aside-home-content {
+    /deep/ {
+      .el-scrollbar__view {
+        border: 1px solid #eee;
+        border-radius: 5px;
+
+        .el-tree-node__expand-icon {
+          position: absolute;
+          right: 0;
+          /*top: 8px;*/
+          z-index: 2;
+          font-size: 16px;
+          color: #606266;
+          font-size: 16px;
+
+          &::before {
+            top: 0 !important;
+            transform: translateY(0) !important;
+            margin-top: 0 !important;
+            position: static !important;
+            content: '\e6e0';
+            font-size: 16px;
+          }
+
+          &.expanded {
+            transform: unset;
+
+            &::before {
+              content: '\e790';
+            }
+          }
+        }
+
+        .el-tree-node__expand-icon.is-leaf {
+          color: transparent;
+        }
+
+        .custom-tree-node {
+          border-bottom: 1px solid #eee;
+          padding-left: 10px !important;
+          /*color: #333;*/
+        }
+
+        .el-tree {
+          .el-tree-node:nth-last-child(2) {
+            .custom-tree-node {
+              border-bottom: none;
+            }
+          }
+        }
+
+        .el-tree-node__expand-icon.expanded::before {
+          content: '\e6df' !important;
+        }
+        .w7-tree .is-current > .el-tree-node__content {
+          /*background-color: #fcfcfc !important;*/
+        }
+      }
+    }
+  }
+</style>
 
 <style lang="scss">
   body {
@@ -789,27 +880,27 @@
           }
 
           .el-tree-node__expand-icon {
-            padding: 0;
-            padding-left: 5px;
-            position: absolute;
-            top: 8px;
-            bottom: 0;
-            z-index: 2;
-            display: inline-block;
-            font-size: 20px;
+            /*padding: 0;*/
+            /*padding-left: 5px;*/
+            /*position: absolute;*/
+            /*top: 8px;*/
+            /*bottom: 0;*/
+            /*z-index: 2;*/
+            /*display: inline-block;*/
+            /*font-size: 20px;*/
 
             &::before {
-              top: 50%;
+              /*top: 50%;
               transform: translateY(-50%);
               margin-top: -3px;
-              position: absolute;
+              position: absolute;*/
             }
 
             &.expanded {
-              transform: unset;
+              /*transform: unset;*/
 
               &::before {
-                content: '\e790';
+                /*content: '\e790';*/
               }
             }
           }

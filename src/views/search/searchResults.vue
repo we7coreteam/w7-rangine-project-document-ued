@@ -19,7 +19,6 @@
                   :data="chapters"
                   :props="defaultProps"
                   empty-text=""
-                  icon-class="el-icon-arrow-right"
                   ref="chaptersTree"
                   node-key="id"
                   :highlight-current="true"
@@ -41,7 +40,7 @@
                 <mavon-editor ref="mavonEditor" v-show="false"></mavon-editor>
                 <div class="total">搜索<span>“{{ keywords }}”</span>的相关结果，共{{ total }}条</div>
                 <div class="list">
-                  <div class="con" v-for="(item, index) in list" :key="index">
+                  <div class="con" v-for="(item, index) in list" :key="index" @click="goViewChapter(item)">
                     <div class="name">{{ item.name }}</div>
 <!--
                     <div class="markdown-body">
@@ -398,6 +397,14 @@
         const document_id = this.$route.params.id;
         const keywords = this.keywords;
         this.$router.push({name: 'searchResults', query: {document_id, keywords}})
+      },
+      goViewChapter(item) {
+        this.$router.push({path: '/chapter/' + this.document_id, query: {id: item.chapter_id}})
+        // this.$router.push({
+        //   path: '/chapter/',
+        //   params: {id: this.document_id},
+        //   query: {id: item.id}
+        // })http://localhost:8080/chapter/155?id=1033
       }
     }
   }
@@ -417,12 +424,15 @@
           z-index: 2;
           font-size: 16px;
           color: #606266;
+          font-size: 16px;
 
           &::before {
-            /*top: 50%;
-            transform: translateY(-50%);
-            margin-top: -3px;
-            position: absolute;*/
+            top: 0 !important;
+            transform: translateY(0) !important;
+            margin-top: 0 !important;
+            position: static !important;
+            content: '\e6e0';
+            font-size: 16px;
           }
 
           &.expanded {
@@ -443,6 +453,15 @@
           padding-left: 10px !important;
           /*color: #333;*/
         }
+
+        .el-tree {
+          .el-tree-node:nth-last-child(2) {
+            .custom-tree-node {
+              border-bottom: none;
+            }
+          }
+        }
+
         .el-tree-node__expand-icon.expanded::before {
           content: '\e6df' !important;
         }
@@ -470,12 +489,14 @@
         font-size: 18px;
         color: #333;
         margin-bottom: 5px;
+        cursor: pointer;
       }
 
       .content {
         margin-bottom: 10px;
         color: #666;
         line-height: 1.6;
+        cursor: pointer;
       }
     }
   }
