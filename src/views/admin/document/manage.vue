@@ -27,33 +27,41 @@
              v-for="(item,index) in docList" :key="index"
              :style="{backgroundImage: 'url('+ item.cover +')'}"
              @click="goChapter(item)">
+            <img class="mask-icon" src="@/assets/img/doc-bg-2.png">
             <div class="mask" v-if="item.cover"></div>
             <div class="mask-content">
-              <div class="w7-card-title">
+              <!--<div class="w7-card-title" :class="{'has-cover': !item.cover}">-->
+              <div class="w7-card-title has-cover">
                 {{item.name}}
               </div>
               <div class="time-wrap">
-                <i class="wi wi-lock" v-if="!item.is_public"></i>
+                <img v-if="!item.is_public" src="@/assets/img/icon-lock.png">
+                <!--<i class="wi wi-lock" v-if="!item.is_public"></i>-->
                 <div class="w7-card-time">{{format(item.operator.time)}} {{item.operator.name}}</div>
               </div>
               <div class="icon-box">
                 <el-tooltip effect="dark" content="转让项目" placement="bottom" v-if="item.acl.has_manage">
-                  <i class="wi wi-transfer" @click.stop="transferDoc(item.id)"></i>
+                  <img src="@/assets/img/icon-refresh.png" @click.stop="transferDoc(item.id)">
+                  <!--<i class="wi wi-transfer" @click.stop="transferDoc(item.id)"></i>-->
                 </el-tooltip>
                 <el-tooltip effect="dark" content="预览" placement="bottom">
-                  <i class="wq wq-chakan" @click.stop="readDoc(item)"></i>
+                  <img src="@/assets/img/icon-view.png" @click.stop="readDoc(item)">
+                  <!--<i class="wq wq-chakan" @click.stop="readDoc(item)"></i>-->
                 </el-tooltip>
                 <el-tooltip effect="dark" content="进入管理" placement="bottom" v-if="item.acl.has_manage">
-                  <i class="wi wi-guanli" @click.stop="settingDoc(item.id)"></i>
+                  <img src="@/assets/img/icon-management.png" @click.stop="settingDoc(item.id)">
+                  <!--<i class="wi wi-guanli" @click.stop="settingDoc(item.id)"></i>-->
                 </el-tooltip>
               </div>
               <div class="line"></div>
             </div>
           </div>
           <div class="w7-card add-project" @click="dialogDocShow">
+            <!--<i class="el-icon-circle-plus"></i>-->
+            <img class="mask-icon" src="@/assets/img/doc-bg-1.png">
+            <img src="@/assets/img/icon-add.png">
             <div class="add-text">新建项目</div>
-            <i class="el-icon-circle-plus"></i>
-            <div class="line"></div>
+            <!--<div class="line"></div>-->
           </div>
         </div>
       </div>
@@ -305,6 +313,7 @@ methods: {
 
   .card-box {
     margin-top: 30px;
+    width: 90%;
   }
 
   .card-warpper {
@@ -312,6 +321,7 @@ methods: {
     flex-wrap: wrap;
     margin: 0 -10px;
 
+/*
     .line {
       position: absolute;
       left: 15px;
@@ -322,35 +332,62 @@ methods: {
       height: 270px;
       border-radius: 3px;
     }
+*/
   }
 
   .w7-card {
     position: relative;
     /*top: 0;*/
-    margin: 10px;
-    width: calc((100% - 120px) / 6);
-    height: 310px;
+    margin: 10px 20px 10px 10px;
+    width: 215px;
+    height: 300px;
     transition: 300ms;
     box-sizing: border-box;
     background-position: center;
     background-size: 100% 100%;
     background-repeat: no-repeat;
-    background-color: rgba(230,242,255,1);
-    border-radius: 12px;
+    background-color: #e6f2ff;
+    border-radius: 10px 20px 20px 10px;
 
-    &-title {
+    .w7-card-title {
       font-size: 16px;
       color: #333;
-      padding: 0 20px 0 40px;
+      padding: 0 10px;
       margin-top: 100px;
-      text-align: center;
+      height: 64px;
+      line-height: 32px;
+      color: #2f2f2f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+
+      &.has-cover {
+        background-image: linear-gradient(to right, #e7f3ff , #f5f9fd);
+      }
+    }
+
+    .mask-icon {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      right: -12px;
     }
 
     .time-wrap {
       position: absolute;
       bottom: 30px;
-      right: 20px;
+      right: 10px;
       text-align: right;
+
+
+      img {
+        /*margin-bottom: 15px;*/
+      }
 
       .wi-lock {
         font-size: 22px;
@@ -358,9 +395,9 @@ methods: {
         margin-bottom: 15px;
       }
 
-      .w7-card-time-time {
-        font-size: 16px;
-        color: #666;
+      .w7-card-time {
+        font-size: 14px;
+        color: #818d9b;
       }
     }
 
@@ -371,13 +408,14 @@ methods: {
     .icon-box {
       display: none;
       position: absolute;
+      width: 100%;
       left: 0;
-      right: 0;
+      right: 3px;
       bottom: 0;
       padding: 10px;
       text-align: right;
-      background-color: rgba(0,0,0,.2);
-      border-radius: 0 0 12px 12px;
+      background-color: #b7cee8;
+      border-radius: 0 0 20px 10px;
 
       i {
         color: #fff;
@@ -425,6 +463,10 @@ methods: {
           }
         }
       }
+
+      img {
+        margin-left: 10px;
+      }
     }
 
     .el-icon-lock:hover {
@@ -466,7 +508,7 @@ methods: {
       }
 
       .time-wrap {
-        bottom: 50px;
+        bottom: 60px;
       }
     }
   }
@@ -474,21 +516,27 @@ methods: {
   .add-project {
     background: #fff;
     color: #b6b5b5;
-    background: rgba(245,245,245,1);
+    background: #f5f5f5;
     display: flex;
     align-items: center;
     flex-flow: column;
     justify-content: center;
 
-    .add-text {
-      font-size: 16px;
-      color: #333;
-      margin-bottom: 15px;
+    img {
+      margin-bottom: 10px;
     }
 
+    .add-text {
+      font-size: 16px;
+      color: #2f2f2f;
+      /*margin-bottom: 15px;*/
+    }
+
+/*
     i {
       font-size: 50px;
     }
+*/
   }
 
   .ownership {
@@ -513,13 +561,6 @@ methods: {
       margin-right: 10px;
       font-size: 18px;
       color: #f76260;
-    }
-  }
-
-  @media (max-width: 1800px) {
-    .w7-card {
-      width: calc((100% - 80px) / 4);
-      height: 250px;
     }
   }
 </style>
