@@ -113,7 +113,7 @@
     </div>
     <!-- 文档设置 -->
     <el-dialog class="we7-dialog dialog-setting" title="项目设置" width="1000px" :visible.sync="showSetting"
-               :close-on-click-modal="false" :before-close="handleClose">
+               :before-close="handleClose">
       <setting :id="settingDocId"></setting>
     </el-dialog>
   </div>
@@ -357,14 +357,17 @@ methods: {
       height: 64px;
       line-height: 32px;
       color: #2f2f2f;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      /*display: flex;*/
+      /*align-items: center;*/
+      /*justify-content: center;*/
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
       -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
+      /*-webkit-box-orient: vertical;*/
+      -webkit-box-align: center;
+      -webkit-box-pack: center;
+
 
       &.has-cover {
         background-image: linear-gradient(to right, #e7f3ff , #f5f9fd);

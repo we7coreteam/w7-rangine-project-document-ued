@@ -88,7 +88,23 @@ export const installConfig = (data) => axios({
   method: 'post'
 })
 //
+export const getUser = (data) => axios({
+  url: '/admin/user/all',
+  data,
+  method: 'post'
+})
 
+export const getSearchResults = (data) => axios({
+  url: '/document/chapter/search',
+  data,
+  method: 'post'
+})
+
+export const getDocumentDetail = (data) => axios({
+  url: '/document/detail',
+  data,
+  method: 'post'
+})
 
 
 

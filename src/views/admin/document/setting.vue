@@ -81,7 +81,7 @@
             </el-table-column>
             <el-table-column label="操作" align="right">
               <div class="oper" slot-scope="scope">
-                <el-tooltip v-if="false" effect="dark" content="编辑" placement="bottom">
+                <el-tooltip  effect="dark" content="编辑" placement="bottom">
                   <i class="wi wi-edit" @click="editManage(scope.row)" v-if="details.acl.has_manage && scope.row.acl.role != 1"></i>
                 </el-tooltip>
                 <el-tooltip effect="dark" content="删除" placement="bottom">
@@ -136,7 +136,21 @@
     <div class="add-manage-body" v-if="showAddManage">
       <el-form :model="addManageData" ref="addManageForm" key="addManage" :rules="rules" class="w7-form__no-required-icon" label-width="85px" label-position="left">
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="addManageData.username"></el-input>
+          <el-select
+            v-model="addManageData.username"
+            filterable
+            remote
+            reserve-keyword
+            placeholder="请输入关键词"
+            :remote-method="remoteMethod"
+            :loading="loading">
+              <el-option
+                v-for="item in userOptions"
+                :key="item.username"
+                :label="item.username"
+                :value="item.username">
+              </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="操作员权限">
           <el-select v-model="addManageData.role">
@@ -158,7 +172,9 @@
 </template>
 
 <script>
-export default {
+  import {getUser} from '@/api/api'
+
+  export default {
   name: 'setting',
   props: ['id'],
   data() {
@@ -189,7 +205,9 @@ export default {
       historyList: [],
       currentPageHistory: 1,//当前页码
       pageCountHistory: 0,//总页数
-      totalHistory: 0//总数
+      totalHistory: 0,//总数
+      userOptions: [],
+      loading: false
     }
   },
   watch: {
@@ -214,6 +232,8 @@ export default {
         document_id : this.id
       }).then(res => {
         this.details = res.data;
+        console.log('details');
+        console.log(this.details);
         let is_public = '';
         let login_preview = '';
         if (res.data.is_public == 1) {
@@ -327,11 +347,10 @@ export default {
         user_id: this.selectUserId,
         document_id: this.id,
         permission: this.selectUserRole
+      }).then(() => {
+        this.getdetails()
+        this.shwoEditRole = false
       })
-        .then(() => {
-          this.getdetails()
-          this.shwoEditRole = false
-        })
     },
     removeManage(id) {
       this.$confirm('确定删除该操作员吗?', '提示', {
@@ -355,6 +374,15 @@ export default {
         role: this.role_list[0].id || ''
       }
       this.showAddManage = true
+      getUser({
+        no_self: 1
+      }).then(res => {
+        this.userOptions = res.data;
+        console.log(123);
+        console.log(this.userOptions);
+      }).catch(e => {
+        console.log(e);
+      })
     },
     addManage() {
       let flag = true
@@ -381,10 +409,27 @@ export default {
         }
       })
     },
-
     uploadCover () {
       this.$refs.upload.uploadFiles();
       console.log(this.$refs.upload.uploadFiles());
+    },
+    remoteMethod(query) {
+      if (query !== '') {
+        this.loading = true;
+        console.log(query);
+        getUser({
+          no_self: 1,
+          username: query
+        }).then(res => {
+          this.loading = false;
+          this.userOptions = res.data;
+        }).catch(e => {
+          console.log(e);
+          this.loading = false;
+        })
+      } else {
+        this.userOptions = [];
+      }
     }
   }
 }
@@ -435,7 +480,6 @@ export default {
       /*align-items: center;*/
 
     }
-
 
     .project {
       padding: 50px 100px;
@@ -491,12 +535,13 @@ export default {
       }
       .w7-table {
         margin-top: 0;
-        /*overflow: inherit;*/
+        overflow: inherit;
         .el-table th, .el-table td {
           padding: 6px 0;
+          position: relative;
         }
         .el-table__body-wrapper, .cell {
-          /*overflow: inherit;*/
+          overflow: inherit;
         }
         .identity {
           margin: 0 auto;
@@ -509,22 +554,23 @@ export default {
           border-radius: 4px;
         }
         .oper {
-          position: relative;
+          /*position: relative;*/
+
           .edit-role {
             position: absolute;
-            top: 35px;
-            right: -70px;
+            top: 42px;
+            right: 0;
             width: 360px;
             height: 150px;
-            background-color: #ffffff;
+            background-color: #fff;
             border-radius: 5px;
-            box-shadow:0px 3px 18px 1px	rgba(194, 192, 192, 0.84);
-            z-index: 3000;
+            box-shadow: 0 3px 18px 1px rgba(194, 192, 192, .85);
+            z-index: 9999;
             &::before {
               content: '';
               position: absolute;
               top: -10px;
-              right: 98px;
+              right: 40px;
               width: 0;
               height: 0;
               border-color: transparent;

@@ -29,10 +29,10 @@ instance.interceptors.response.use(response => {
       Message.error(response.data.message);
       router.push('/admin/document');
     } else if (response.data.code == 446) {
+      // 是否有权限查看文档
       Message.error(response.data.message);
-      setTimeout(() => {
-        router.push('/admin/document');
-      }, 3000)
+      localStorage.recordHref = ''
+      router.push('/admin/document');
     } else {
       Message.closeAll();
       Message.error(response.data.message);
