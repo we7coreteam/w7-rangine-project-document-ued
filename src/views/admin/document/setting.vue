@@ -141,7 +141,7 @@
             filterable
             remote
             reserve-keyword
-            placeholder="请输入关键词"
+            placeholder="请输入用户名"
             :remote-method="remoteMethod"
             :loading="loading">
               <el-option
@@ -541,7 +541,7 @@
           position: relative;
         }
         .el-table__body-wrapper, .cell {
-          overflow: inherit;
+          overflow: auto;
         }
         .identity {
           margin: 0 auto;

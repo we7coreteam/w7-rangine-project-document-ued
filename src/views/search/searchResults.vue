@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="search-wrap">
-      <div class="h1">微擎开发文档</div>
-      <el-input placeholder="请输入内容" v-model="keywords" class="input-wrap" @keyup.native.enter="goSearch">
-        <img slot="prepend" src="@/assets/img/icon-search.png">
-        <span slot="append" @click="goSearch">搜索</span>
+      <div class="h1">{{document_name}}</div>
+      <el-input placeholder="请输入内容" v-model="keywords" class="input-wrap" @keyup.native.enter="getSearchResults">
+        <img slot="prepend" @click="getSearchResults" src="@/assets/img/icon-search.png">
+        <span slot="append" @click="getSearchResults">搜索</span>
       </el-input>
     </div>
     <div class="chapter-warpper">
@@ -12,7 +12,6 @@
         <el-container class="home-container">
           <el-aside class="w7-aside-home" width="220px">
             <div class="w7-aside-home-box">
-              <p class="w7-aside-home-head">{{document_name}}</p>
               <el-scrollbar class="w7-aside-home-content">
                 <el-tree class="w7-tree"
                   v-if="chapters.length"
@@ -111,7 +110,13 @@
           this.document_name = res.data.name;
           this.getChapters()
         })
-        const keywords = this.$route.query.keywords;
+        this.getSearchResults();
+      },
+      getSearchResults() {
+        // const keywords = this.$route.query.keywords;
+        const keywords = this.keywords;
+        const id = this.document_id;
+        this.$router.push({query: {id, keywords}})
         getSearchResults({
           document_id: this.document_id,
           keywords
@@ -131,7 +136,12 @@
               // item.content = this.highlight(item.content)
               const reg = "/" + keywords + "/ig";
               item.content = item.content.replace(/[\-\_\,\!\|\~\`\(\)\#\$\%\^\&\*\{\}\:\;\"\L\<\>\?]/g, '');
-              item.content = item.content.substr(item.content.indexOf(keywords), 400) + '...'
+              const hasKeywords = item.content.indexOf(keywords);
+              if (hasKeywords != -1) {
+                item.content = item.content.substr(item.content.indexOf(keywords), 400) + '...'
+              } else {
+                item.content = item.content.substr(0, 400) + '...';
+              }
               item.content = item.content.replace(eval(reg),`<span style="color: #ff3939">${keywords}</span>`)
             })
           }
@@ -269,7 +279,7 @@
               // window.scroll({
               //   top: total
               // })
-              this.initToc()
+              // this.initToc()
               let hash = this.$route.hash
               if (hash) {
                 window.location.hash = ''
