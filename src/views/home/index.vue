@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="search-wrap">
-      <div class="h1">微擎开发文档</div>
+      <div class="h1">{{document_name}}</div>
       <el-input placeholder="请输入内容" v-model="keywords" class="input-wrap" @keyup.native.enter="goSearch">
-        <img slot="prepend" src="@/assets/img/icon-search.png">
+        <img slot="prepend" @click="goSearch" src="@/assets/img/icon-search.png">
         <span slot="append" @click="goSearch">搜索</span>
       </el-input>
     </div>
@@ -12,7 +12,6 @@
         <el-container class="home-container">
           <el-aside class="w7-aside-home" width="220px">
             <div class="w7-aside-home-box">
-              <p class="w7-aside-home-head">{{document_name}}</p>
 <!--
               <div class="w7-aside-home-search">
                 <el-autocomplete
@@ -455,7 +454,9 @@
             // hasInnerContainers: true,
             scrollEndCallback: () => {
               document.body.style.paddingBottom = '1px'
-              document.querySelector('.markdown-menu .el-scrollbar__wrap').scrollTop = document.querySelector('.is-active-li') ? (document.querySelector('.is-active-li').offsetTop - 200) : 0
+              if (document.querySelector('.markdown-menu .el-scrollbar__wrap')) {
+                document.querySelector('.markdown-menu .el-scrollbar__wrap').scrollTop = document.querySelector('.is-active-li') ? (document.querySelector('.is-active-li').offsetTop - 200) : 0
+              }
               setTimeout(() => {
                 document.body.style.paddingBottom = 0
               }, 100)
@@ -658,6 +659,7 @@
         img {
           position: relative;
           top: 2px;
+          cursor: pointer;
         }
       }
 
@@ -806,7 +808,7 @@
       height: calc(100vh - 60px);
 
       .w7-aside-home-box {
-        padding-left: calc(100% - 200px);
+        padding-left: calc(100% - 220px);
       }
 
       .w7-aside-home-head {
