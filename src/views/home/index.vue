@@ -560,7 +560,11 @@
       goSearch() {
         const id = this.$route.params.id;
         const keywords = this.keywords;
-        this.$router.push({name: 'searchResults', query: {id, keywords}})
+        if (keywords) {
+          this.$router.push({name: 'searchResults', query: {id, keywords}})
+        } else {
+          this.$message.error('搜索关键字不能为空！')
+        }
       }
     }
   }
