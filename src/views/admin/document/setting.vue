@@ -75,7 +75,7 @@
             <el-table-column prop="username" label="名称" width="300px"></el-table-column>
             <el-table-column label="身份" align="center">
               <template slot-scope="scope">
-                <el-select class="edit-role" v-if="shwoEditRole && selectUserId == scope.row.id" v-model="selectUserRole" @change="editRole">
+                <el-select class="edit-role-change" v-if="shwoEditRole && selectUserId == scope.row.id" v-model="selectUserRole" @change="editRole">
                   <el-option
                       v-for="item in role_list"
                       :key="item.id"
@@ -453,6 +453,13 @@
 }
 </script>
 
+<style lang="scss" scoped>
+  .document-setting {
+    .edit-role-change {
+      width: 120px;
+    }
+  }
+</style>
 <style lang="scss">
 .document-setting {
   .document-setting-warpper {

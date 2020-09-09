@@ -10,7 +10,7 @@
     <div class="chapter-warpper">
       <el-scrollbar>
         <el-container class="home-container">
-          <el-aside class="w7-aside-home" width="220px">
+          <el-aside class="w7-aside-home" width="220px" v-if="!noData">
             <div class="w7-aside-home-box">
 <!--
               <div class="w7-aside-home-search">
@@ -56,80 +56,85 @@
                 <i slot="suffix" class="el-input__icon el-icon-search" @click="search"></i>
               </el-input>
             </div> -->
-            <div class="line" v-if="!articleFlag"></div>
-            <div class="warpper">
-              <div class="article" v-show="articleFlag">
-                <p class="title">{{ articleContent.name }}</p>
-                <div class="info">
-                  <span class="time" v-show="articleContent.updated_at">更新时间：{{ articleContent.updated_at }}</span>
-                  <span class="author"
-                        v-show="articleContent.author.username">作者：{{ articleContent.author.username }}</span>
-                  <div class="share" v-show="articleContent.content">
-                    <el-tooltip effect="dark" content="分享到新浪微博" placement="bottom">
-                      <div class="share-block" @click="shareToWeibo"><i class="wi wi-weibo"></i></div>
-                    </el-tooltip>
-                    <el-tooltip effect="dark" content="分享到微信" placement="bottom">
-                      <div class="share-block" @click="showShareWechat = true"><i class="wi wi-weixin"></i></div>
-                    </el-tooltip>
-                    <el-tooltip effect="dark" content="分享到QQ" placement="bottom">
-                      <div class="share-block" @click="shareToQQ"><i class="wi wi-qq"></i></div>
-                    </el-tooltip>
-                    <el-tooltip effect="dark" content="复制链接" placement="bottom">
-                      <div class="share-block"
-                           v-clipboard:copy="shareUrl"
-                           v-clipboard:success="onCopy">
-                        <i class="wi wi-link"></i>
-                      </div>
-                    </el-tooltip>
-                    <el-tooltip effect="dark" :content="articleContent.star_id ? '取消星标' : '添加星标'" placement="bottom">
-                      <div class="share-block"
-                           :class="{'checked': articleContent.star_id}"
-                           @click="operStar()">
-                        <i class="wi wi-star"></i>
-                      </div>
-                    </el-tooltip>
-                    <el-tooltip v-if="mockUrl" effect="dark" content="复制Mock链接" placement="bottom">
-                      <div class="share-block"
-                           v-clipboard:copy="mockUrl"
-                           v-clipboard:success="onCopy">
-                        <i class="wq-fuzhi wq"></i>
-                      </div>
-                    </el-tooltip>
-                  </div>
-                </div>
-                <div class="markdown-body">
-                  <div class="markdown-content" v-html="articleContent.content"></div>
-                  <el-scrollbar class="markdown-menu">
-                    <div class="js-toc toc toc-right"></div>
-                  </el-scrollbar>
-                </div>
-                <!-- <div class="markdown-bottom">
-                  <router-link class="prev item" v-if=""></router-link>
-                  <router-link class="nxet item"></router-link>
-                </div> -->
-                <mavon-editor ref="mavonEditor" v-show="false"></mavon-editor>
-              </div>
-
-
-              <div class="article-list" v-if="!articleFlag">
-                <el-button class="back" type="text" @click="articleFlag = !articleFlag">返回</el-button>
-                <p class="number-result">{{articleInfoList.length}}条结果"{{keyword}}"</p>
-                <div class="list-content" v-for="articleInfo in articleInfoList" v-bind:key="articleInfo.id"
-                     v-show="articleInfoList.length">
-                  <div class="header">
-                    <p class="title" v-html="articleInfo.name"
-                       @click="changeRoute(articleInfo.id, articleInfo.name, true)"></p>
-                    <p class="info">
-                      <span>作者：{{articleInfo.username}}</span>
-                      <span>更新时间：{{articleInfo.updated_at}}</span>
-                    </p>
-                  </div>
-                  <p class="content" v-html="articleInfo.content"
-                     @click="changeRoute(articleInfo.id, articleInfo.name, true)"></p>
-                </div>
-                <p class="no-result" v-if="!articleInfoList.length">没有找到相关内容"{{keyword}}"</p>
-              </div>
+            <div v-if="noData" style="padding: 20px 0 0 450px;">
+              暂无数据
             </div>
+            <template v-else>
+              <div class="line" v-if="!articleFlag"></div>
+              <div class="warpper">
+                <div class="article" v-show="articleFlag">
+                  <p class="title">{{ articleContent.name }}</p>
+                  <div class="info">
+                    <span class="time" v-show="articleContent.updated_at">更新时间：{{ articleContent.updated_at }}</span>
+                    <span class="author"
+                          v-show="articleContent.author.username">作者：{{ articleContent.author.username }}</span>
+                    <div class="share" v-show="articleContent.content">
+                      <el-tooltip effect="dark" content="分享到新浪微博" placement="bottom">
+                        <div class="share-block" @click="shareToWeibo"><i class="wi wi-weibo"></i></div>
+                      </el-tooltip>
+                      <el-tooltip effect="dark" content="分享到微信" placement="bottom">
+                        <div class="share-block" @click="showShareWechat = true"><i class="wi wi-weixin"></i></div>
+                      </el-tooltip>
+                      <el-tooltip effect="dark" content="分享到QQ" placement="bottom">
+                        <div class="share-block" @click="shareToQQ"><i class="wi wi-qq"></i></div>
+                      </el-tooltip>
+                      <el-tooltip effect="dark" content="复制链接" placement="bottom">
+                        <div class="share-block"
+                             v-clipboard:copy="shareUrl"
+                             v-clipboard:success="onCopy">
+                          <i class="wi wi-link"></i>
+                        </div>
+                      </el-tooltip>
+                      <el-tooltip effect="dark" :content="articleContent.star_id ? '取消星标' : '添加星标'" placement="bottom">
+                        <div class="share-block"
+                             :class="{'checked': articleContent.star_id}"
+                             @click="operStar()">
+                          <i class="wi wi-star"></i>
+                        </div>
+                      </el-tooltip>
+                      <el-tooltip v-if="mockUrl" effect="dark" content="复制Mock链接" placement="bottom">
+                        <div class="share-block"
+                             v-clipboard:copy="mockUrl"
+                             v-clipboard:success="onCopy">
+                          <i class="wq-fuzhi wq"></i>
+                        </div>
+                      </el-tooltip>
+                    </div>
+                  </div>
+                  <div class="markdown-body">
+                    <div class="markdown-content" v-html="articleContent.content"></div>
+                    <el-scrollbar class="markdown-menu">
+                      <div class="js-toc toc toc-right"></div>
+                    </el-scrollbar>
+                  </div>
+                  <!-- <div class="markdown-bottom">
+                    <router-link class="prev item" v-if=""></router-link>
+                    <router-link class="nxet item"></router-link>
+                  </div> -->
+                  <mavon-editor ref="mavonEditor" v-show="false"></mavon-editor>
+                </div>
+
+
+                <div class="article-list" v-if="!articleFlag">
+                  <el-button class="back" type="text" @click="articleFlag = !articleFlag">返回</el-button>
+                  <p class="number-result">{{articleInfoList.length}}条结果"{{keyword}}"</p>
+                  <div class="list-content" v-for="articleInfo in articleInfoList" v-bind:key="articleInfo.id"
+                       v-show="articleInfoList.length">
+                    <div class="header">
+                      <p class="title" v-html="articleInfo.name"
+                         @click="changeRoute(articleInfo.id, articleInfo.name, true)"></p>
+                      <p class="info">
+                        <span>作者：{{articleInfo.username}}</span>
+                        <span>更新时间：{{articleInfo.updated_at}}</span>
+                      </p>
+                    </div>
+                    <p class="content" v-html="articleInfo.content"
+                       @click="changeRoute(articleInfo.id, articleInfo.name, true)"></p>
+                  </div>
+                  <p class="no-result" v-if="!articleInfoList.length">没有找到相关内容"{{keyword}}"</p>
+                </div>
+              </div>
+            </template>
           </el-main>
         </el-container>
       </el-scrollbar>
@@ -188,7 +193,8 @@
         projectName: '',
         loading: '',
         mockUrl: '',
-        keywords: ''
+        keywords: '',
+        noData: false
       }
     },
     computed: {
@@ -257,11 +263,12 @@
           document_id: this.$route.params.id
         }).then(res => {
           if (!res.data.length) {
+            this.noData = true
             return
           }
           res.data.forEach(item => {
             if (item.is_dir && item.children.length == 0) {
-              item.children.push({is_dir: false})
+              // item.children.push({is_dir: false})
             } else {
               item.children.forEach(child => {
                 if (child.is_dir && child.children.length == 0) {
@@ -305,10 +312,11 @@
                       if (item.is_dir && item.children.length) {
                         findChapter(item.children);
                         return false;
-                      } else if (!item.is_dir) {
+                      } else if (!item.is_dir && item.id) {
                         this.handleNodeClick(item);
                         this.selectNode(item.id)
                         this.defaultExpanded = [item.parent_id];
+                        // this.$router.push({path: '/chapter/' + this.$route.params.id, query: {id: item.id}}) // 临时注释
                         return false;
                       } else {
                       }
@@ -560,7 +568,7 @@
 
 <style lang="scss" scoped>
   .el-main {
-    min-height: 600px;
+    min-height: 550px;
     margin-bottom: 50px;
   }
 

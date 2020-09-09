@@ -96,7 +96,7 @@
           <el-button @click="dialogDocInfoVisible = false">取 消</el-button>
         </div>
       </el-dialog>
-      <el-dialog class="w7-dialog" title="管理员转让" :visible.sync="dialogTransferDoc" :close-on-click-modal="false" center>
+      <el-dialog class="w7-dialog" title="管理员转让" :visible.sync="dialogTransferDoc" center>
         <div class="transfer-tip">
           <i class="el-icon-warning"></i>转让管理员权限后您将成为操作员，不再是管理员，请谨慎操作。
         </div>
