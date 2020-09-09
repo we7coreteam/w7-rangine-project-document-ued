@@ -567,9 +567,15 @@
 
       .el-input-group__append {
         background-color: #fff;
-        padding: 0 35px;
+        padding: 0;
         color: #333;
         cursor: pointer;
+        span {
+          display: flex;
+          align-items: center;
+          padding: 0 35px;
+          height: 100%;
+        }
       }
 
       .el-input__inner {

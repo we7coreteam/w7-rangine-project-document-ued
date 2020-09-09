@@ -560,7 +560,11 @@
       goSearch() {
         const id = this.$route.params.id;
         const keywords = this.keywords;
-        this.$router.push({name: 'searchResults', query: {id, keywords}})
+        if (keywords) {
+          this.$router.push({name: 'searchResults', query: {id, keywords}})
+        } else {
+          this.$message.error('搜索关键字不能为空！')
+        }
       }
     }
   }
@@ -674,9 +678,15 @@
 
       .el-input-group__append {
         background-color: #fff;
-        padding: 0 35px;
+        padding: 0;
         color: #333;
         cursor: pointer;
+        span {
+          display: flex;
+          align-items: center;
+          padding: 0 35px;
+          height: 100%;
+        }
       }
 
       .el-input__inner {
