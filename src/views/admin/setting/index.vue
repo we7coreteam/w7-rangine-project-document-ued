@@ -109,10 +109,10 @@ export default {
       this.$refs['form'].validate(valid => {
         if (valid) {
           // this.$post('/admin/setting/save', {'key': this.formData['key'], 'setting' : this.formData})
-          this.$post('/admin/setting/save', {'key': 'cloud_cosv5', 'setting' : this.formData})
-            .then(() => {
-              this.$message('保存成功！')
-            })
+          this.$post('/admin/setting/save', {'key': 'cloud_cosv5', 'setting' : this.formData}).then(() => {
+            this.$message('保存成功！');
+            this.editStatus = false;
+          })
         } else {
           return false
         }
