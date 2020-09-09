@@ -42,7 +42,8 @@
     <el-button type="primary" @click="editStatus = true" v-if="!editStatus">编辑</el-button>
     <template v-if="editStatus">
       <el-button type="primary" @click="onSubmit">保存</el-button>
-      <el-button @click="editStatus = false">取消</el-button>
+      <!--<el-button @click="editStatus = false">取消</el-button>-->
+      <el-button @click="cancelSubmit">取消</el-button>
     </template>
   </div>
 </template>
@@ -116,6 +117,10 @@ export default {
           return false
         }
       })
+    },
+    cancelSubmit() {
+      this.init();
+      this.editStatus = false;
     }
   }
 }
