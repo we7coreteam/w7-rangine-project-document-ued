@@ -560,7 +560,8 @@
 
 <style lang="scss" scoped>
   .el-main {
-    min-height: 550px;
+    min-height: 600px;
+    margin-bottom: 50px;
   }
 
   .w7-aside-home-content {
@@ -804,7 +805,7 @@
       min-width: 221px;
       width: calc(50% - 700px + 220px) !important;
       position: fixed;
-      top: 240px;
+      top: 270px;
       height: calc(100vh - 60px);
 
       .w7-aside-home-box {
@@ -977,7 +978,7 @@
       .warpper {
         font-size: 14px;
         color: #333333;
-        margin-top: 48px;
+        margin-top: 40px;
         margin-left: 50px;
         max-width: 1200px;
 
