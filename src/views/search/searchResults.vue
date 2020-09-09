@@ -40,7 +40,7 @@
                 <div class="total">搜索<span>“{{ keywords }}”</span>的相关结果，共{{ total }}条</div>
                 <div class="list">
                   <div class="con" v-for="(item, index) in list" :key="index" @click="goViewChapter(item)">
-                    <div class="name">{{ item.name }}</div>
+                    <div class="name" v-html="item.name"></div>
 <!--
                     <div class="markdown-body">
                       <div class="markdown-content" v-html="item.content"></div>
@@ -50,6 +50,12 @@
                     </div>
 -->
                     <div class="content" v-html="item.content"></div>
+                    <div class="navigation">
+                      <template v-for="(item2, j) in item.navigation">
+                        <span>{{ item2 }}</span>
+                        <span style="margin: 0 3px" v-if="j < item.navigation.length-1">></span>
+                      </template>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -87,7 +93,7 @@
         loading: '',
         keywords: '',
         total: 0,
-        list: []
+        list: [],
       }
     },
     computed: {
@@ -142,7 +148,9 @@
               } else {
                 item.content = item.content.substr(0, 400) + '...';
               }
-              item.content = item.content.replace(eval(reg),`<span style="color: #ff3939">${keywords}</span>`)
+              item.content = item.content.replace(eval(reg),`<span style="color: #ff3939">${keywords}</span>`);
+              item.name = item.name.replace(eval(reg),`<span style="color: #ff3939">${keywords}</span>`);
+              item.navigation = item.navigation.split('>')
             })
           }
         }).catch(e => {
@@ -483,7 +491,8 @@
   }
 
   .search-results {
-    min-height: 550px;
+    min-height: 600px;
+    margin-bottom: 50px;
 
     .total {
       margin-bottom: 25px;
@@ -495,18 +504,25 @@
     }
 
     .con {
+      margin-bottom: 25px;
+
       .name {
         font-size: 18px;
         color: #333;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
         cursor: pointer;
       }
 
       .content {
-        margin-bottom: 10px;
         color: #666;
         line-height: 1.6;
         cursor: pointer;
+        margin-bottom: 8px;
+      }
+
+      .navigation {
+        color: #666;
+        line-height: 1.6;
       }
     }
   }
@@ -690,7 +706,7 @@
       min-width: 221px;
       width: calc(50% - 700px + 220px) !important;
       position: fixed;
-      top: 240px;
+      top: 270px;
       height: calc(100vh - 60px);
 
       .w7-aside-home-box {
@@ -837,7 +853,7 @@
       .warpper {
         font-size: 14px;
         color: #333333;
-        margin-top: 48px;
+        margin-top: 40px;
         margin-left: 50px;
         max-width: 1200px;
 

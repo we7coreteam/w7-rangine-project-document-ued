@@ -75,18 +75,30 @@
             <el-table-column prop="username" label="名称" width="300px"></el-table-column>
             <el-table-column label="身份" align="center">
               <template slot-scope="scope">
-                <div class="identity" v-if="scope.row.acl.role == 1">{{scope.row.acl.name}}</div>
-                <template v-else>{{scope.row.acl.name}}</template>
+                <el-select class="edit-role" v-if="shwoEditRole && selectUserId == scope.row.id" v-model="selectUserRole" @change="editRole">
+                  <el-option
+                      v-for="item in role_list"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id">
+                  </el-option>
+                </el-select>
+                <template v-else>
+                  <div class="identity" v-if="scope.row.acl.role == 1">{{scope.row.acl.name}}</div>
+                  <template v-else>{{scope.row.acl.name}}</template>
+                </template>
               </template>
             </el-table-column>
             <el-table-column label="操作" align="right">
               <div class="oper" slot-scope="scope">
-                <el-tooltip  effect="dark" content="编辑" placement="bottom">
-                  <i class="wi wi-edit" @click="editManage(scope.row)" v-if="details.acl.has_manage && scope.row.acl.role != 1"></i>
+                <el-tooltip  effect="dark" content="编辑" placement="bottom" v-if="details.is_public == 2">
+                  <i class="wi wi-edit" @click.stop="editManage(scope.row)" v-if="details.acl.has_manage && scope.row.acl.role != 1"></i>
                 </el-tooltip>
                 <el-tooltip effect="dark" content="删除" placement="bottom">
                   <i class="wi wi-delete" @click="removeManage(scope.row.id)" v-if="details.acl.has_manage && scope.row.acl.role != 1"></i>
                 </el-tooltip>
+                <!--去除弹层2020/09/09-->
+<!--
                 <div class="edit-role" v-if="shwoEditRole && selectUserId == scope.row.id">
                   <div class="edit-role-content">
                     <div class="label">权限:</div>
@@ -104,6 +116,7 @@
                     <el-button @click="shwoEditRole = false">取消</el-button>
                   </div>
                 </div>
+-->
               </div>
             </el-table-column>
           </el-table>
@@ -219,6 +232,11 @@
   },
   created() {
     this.getdetails()
+  },
+  mounted() {
+    $(document).on('click', () => {
+      this.shwoEditRole = false;
+    })
   },
   methods: {
     onClickNav(index) {
@@ -541,7 +559,7 @@
           position: relative;
         }
         .el-table__body-wrapper, .cell {
-          overflow: auto;
+          /*overflow: auto;*/
         }
         .identity {
           margin: 0 auto;
