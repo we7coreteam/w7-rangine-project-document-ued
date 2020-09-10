@@ -132,8 +132,8 @@
           // str.match(/[^\x00-\xff]+(：|:)+([^\x00-\xff]|\w|-)+(\s|[\r\n])*/g)
           if (this.list.length) {
             this.list.forEach(item => {
-              console.log('mavonEditor');
-              console.log(this.$refs.mavonEditor);
+              // console.log('mavonEditor');
+              // console.log(this.$refs.mavonEditor);
               // item.content = this.$refs.mavonEditor.markdownIt.render(item.content)
               // //html转成文字
               // item.content = this.htmlToWord(item.content)
@@ -141,17 +141,26 @@
               // item.name = this.highlight(item.name)
               // item.content = this.highlight(item.content)
               const reg = "/" + keywords + "/ig";
-              item.content = item.content.replace(/[\-\_\,\!\|\~\`\(\)\#\$\%\^\&\*\{\}\:\;\"\L\<\>\?]/g, '');
-              const hasKeywords = item.content.indexOf(keywords);
-              if (hasKeywords != -1) {
-                item.content = item.content.substr(item.content.indexOf(keywords), 400) + '...'
-              } else {
-                item.content = item.content.substr(0, 400) + '...';
+              if (item.content) {
+                item.content = item.content.replace(/[\-\_\,\!\|\~\`\(\)\#\$\%\^\&\*\{\}\:\;\"\L\<\>\?]/g, '');
+                const hasKeywords = item.content.indexOf(keywords);
+                if (hasKeywords != -1) {
+                  item.content = item.content.substr(item.content.indexOf(keywords), 400) + '...'
+                } else {
+                  item.content = item.content.substr(0, 400) + '...';
+                }
+                item.content = item.content.replace(eval(reg),`<span style="color: #ff3939">${keywords}</span>`);
               }
-              item.content = item.content.replace(eval(reg),`<span style="color: #ff3939">${keywords}</span>`);
-              item.name = item.name.replace(eval(reg),`<span style="color: #ff3939">${keywords}</span>`);
-              item.navigation = item.navigation.split('>')
+              if (item.name) {
+                item.name = item.name.replace(eval(reg),`<span style="color: #ff3939">${keywords}</span>`);
+              }
+              if (item.navigation) {
+                item.navigation = item.navigation.split('>')
+                console.log(item.navigation);
+              }
             })
+            console.log('list');
+            console.log(this.list);
           }
         }).catch(e => {
           console.log(e);
