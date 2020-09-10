@@ -573,6 +573,18 @@
   .el-main {
     min-height: 550px;
     margin-bottom: 50px;
+
+    .share {
+      .share-block {
+        &:hover {
+          color: #3296fa;
+
+          i {
+            color: #3296fa !important;
+          }
+        }
+      }
+    }
   }
 
   .w7-aside-home-content {
@@ -629,6 +641,7 @@
         .el-tree-node__expand-icon.expanded::before {
           content: '\e6df' !important;
         }
+
         .w7-tree .is-current > .el-tree-node__content {
           /*background-color: #fcfcfc !important;*/
         }
