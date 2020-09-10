@@ -2,7 +2,7 @@
   <div>
     <div class="search-wrap">
       <div class="h1">{{document_name}}</div>
-      <el-input placeholder="请输入内容" v-model="keywords" class="input-wrap" @keyup.native.enter="getSearchResults">
+      <el-input placeholder="请输入内容" v-model="listQuery.keywords" class="input-wrap" @keyup.native.enter="getSearchResults">
         <img slot="prepend" @click="getSearchResults" src="@/assets/img/icon-search.png">
         <span slot="append" @click="getSearchResults">搜索</span>
       </el-input>
@@ -37,7 +37,7 @@
             <div class="warpper">
               <div class="search-results">
                 <mavon-editor ref="mavonEditor" v-show="false"></mavon-editor>
-                <div class="total">搜索<span>“{{ keywords }}”</span>的相关结果，共{{ total }}条</div>
+                <div class="total">搜索<span>“{{ listQuery.keywords }}”</span>的相关结果，共{{ total }}条</div>
                 <div class="list">
                   <div class="con" v-for="(item, index) in list" :key="index" @click="goViewChapter(item)">
                     <div class="name" v-html="item.name"></div>
@@ -58,6 +58,19 @@
                     </div>
                   </div>
                 </div>
+              </div>
+              <div class="pagination-wrap">
+                <el-pagination
+                    background
+                    :hide-on-single-page="total <= 10"
+                    :current-page.sync="listQuery.page"
+                    :page-sizes="[10,20,30]"
+                    :page-size="listQuery.page_size"
+                    :layout="paginationLayouts"
+                    :total="total"
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                />
               </div>
             </div>
           </el-main>
@@ -91,13 +104,21 @@
         selectChapterId: '',//左侧文档id(选中节点)
         expandIdArray: [],//需要展开的节点id
         loading: '',
-        keywords: '',
         total: 0,
         list: [],
+        listQuery: {
+          page: 1,
+          page_size: 10,
+          keywords: '',
+          document_id: ''
+        }
       }
     },
     computed: {
-      ...mapGetters({UserInfo: 'UserInfo'})
+      ...mapGetters({UserInfo: 'UserInfo'}),
+      paginationLayouts() {
+        return this.total && (this.total / this.listQuery.page_size) > 1 ? 'total, sizes, prev, pager, next, jumper' : 'total, sizes'
+      }
     },
     watch: {
     },
@@ -108,10 +129,11 @@
     },
     methods: {
       init() {
+        this.listQuery.document_id = this.$route.query.id;
         this.document_id = this.$route.query.id;
-        this.keywords = this.$route.query.keywords;
+        this.listQuery.keywords = this.$route.query.keywords;
         getDocumentDetail({
-          document_id: this.document_id
+          document_id: this.listQuery.document_id
         }).then(res => {
           this.document_name = res.data.name;
           this.getChapters()
@@ -119,14 +141,10 @@
         this.getSearchResults();
       },
       getSearchResults() {
-        // const keywords = this.$route.query.keywords;
-        const keywords = this.keywords;
-        const id = this.document_id;
+        const keywords = this.listQuery.keywords.toLowerCase();
+        const id = this.listQuery.document_id;
         this.$router.push({query: {id, keywords}})
-        getSearchResults({
-          document_id: this.document_id,
-          keywords
-        }).then(res => {
+        getSearchResults(this.listQuery).then(res => {
           this.total = res.data.total;
           this.list = res.data.data;
           // str.match(/[^\x00-\xff]+(：|:)+([^\x00-\xff]|\w|-)+(\s|[\r\n])*/g)
@@ -140,9 +158,16 @@
               // //关键字变亮
               // item.name = this.highlight(item.name)
               // item.content = this.highlight(item.content)
-              const reg = "/" + keywords + "/ig";
+              const reg = "/" + keywords + "/gi";
               if (item.content) {
-                item.content = item.content.replace(/[\-\_\,\!\|\~\`\(\)\#\$\%\^\&\*\{\}\:\;\"\L\<\>\?]/g, '');
+                // 过滤特殊字符
+                item.content = item.content.replace(/[\-\_\,\!\|\~\`\(\)\#\$\%\^\&\*\{\}\:\;\"\<\>\?]/g, '');
+                // 字母转小写
+                item.content = item.content.replace(/^[A-Za-z]+$/g,function($1){return $1.toLowerCase()});
+                // 过滤图片地址
+                item.content = item.content.replace(/(cdn\.w7\.cc)(.|\/)+\.(jpg|png|jpeg)/g,'');
+
+                console.log(item.content);
                 const hasKeywords = item.content.indexOf(keywords);
                 if (hasKeywords != -1) {
                   item.content = item.content.substr(item.content.indexOf(keywords), 400) + '...'
@@ -156,7 +181,7 @@
               }
               if (item.navigation) {
                 item.navigation = item.navigation.split('>')
-                console.log(item.navigation);
+                // console.log(item.navigation);
               }
             })
             console.log('list');
@@ -328,7 +353,7 @@
         }
         this.$post('/document/chapter/search', {
           document_id: this.$route.params.id,
-          keywords: this.keyword
+          keywords: this.listQuery.keywords
         }).then(res => {
           this.articleFlag = false
           res.data.forEach(articleInfo => {
@@ -420,11 +445,6 @@
             this.articleContent.star_id = res.data.star_id || ''
           })
       },
-      goSearch() {
-        const document_id = this.$route.params.id;
-        const keywords = this.keywords;
-        this.$router.push({name: 'searchResults', query: {document_id, keywords}})
-      },
       goViewChapter(item) {
         this.$router.push({path: '/chapter/' + this.document_id, query: {id: item.chapter_id}})
         // this.$router.push({
@@ -432,6 +452,14 @@
         //   params: {id: this.document_id},
         //   query: {id: item.id}
         // })http://localhost:8080/chapter/155?id=1033
+      },
+      handleSizeChange(val) {
+        this.listQuery.page_size = val
+        this.getSearchResults()
+      },
+      handleCurrentChange(val) {
+        this.listQuery.page = val
+        this.getSearchResults()
       }
     }
   }
@@ -501,7 +529,6 @@
 
   .search-results {
     min-height: 600px;
-    margin-bottom: 50px;
 
     .total {
       margin-bottom: 25px;
@@ -532,8 +559,17 @@
       .navigation {
         color: #666;
         line-height: 1.6;
+        cursor: pointer;
+        &:hover {
+          color: #3296fa;
+      }
       }
     }
+  }
+
+  .pagination-wrap {
+    overflow: hidden;
+    margin-bottom: 50px;
   }
 </style>
 
@@ -548,7 +584,7 @@
     position: fixed;
     width: 100%;
     top: 60px;
-    z-index: 999;
+    z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;
