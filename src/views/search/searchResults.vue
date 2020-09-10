@@ -166,8 +166,10 @@
                 item.content = item.content.replace(/^[A-Za-z]+$/g,function($1){return $1.toLowerCase()});
                 // 过滤图片地址
                 item.content = item.content.replace(/(cdn\.w7\.cc)(.|\/)+\.(jpg|png|jpeg)/g,'');
+                item.content = item.content.replace(/(http)(.|\/)+\.(jpg|png|jpeg)/g,'');
+                item.content = item.content.replace(/\.(jpg|png|jpeg)/g,'');
 
-                console.log(item.content);
+                // console.log(item.content);
                 const hasKeywords = item.content.indexOf(keywords);
                 if (hasKeywords != -1) {
                   item.content = item.content.substr(item.content.indexOf(keywords), 400) + '...'
@@ -184,8 +186,8 @@
                 // console.log(item.navigation);
               }
             })
-            console.log('list');
-            console.log(this.list);
+            // console.log('list');
+            // console.log(this.list);
           }
         }).catch(e => {
           console.log(e);

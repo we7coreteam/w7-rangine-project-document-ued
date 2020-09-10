@@ -162,7 +162,6 @@
 <script>
   import {mapGetters} from 'vuex'
   import QrcodeVue from 'qrcode.vue'
-  import tocbot from 'tocbot'
 
   export default {
     name: 'homeChild',
@@ -416,7 +415,6 @@
               // window.scroll({
               //   top: total
               // })
-              this.initToc()
               let hash = this.$route.hash
               if (hash) {
                 window.location.hash = ''
@@ -426,6 +424,7 @@
                   top: 0
                 })
               }
+              this.initToc()
             })
             this.articleFlag = true
             if (this.UserInfo.username) {
@@ -437,41 +436,41 @@
         })
       },
       initToc(option) {
-        this.$nextTick(() => {
-          var content = document.querySelector('.markdown-content')
-          var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
-          var headingMap = {}
-          Array.prototype.forEach.call(headings, function (heading) {
-            var id = heading.id ? heading.id : ('h' + heading.querySelector('a').id.replace(/[\!\@\#\$\%\^\&\*\(\)\:]/ig, ''))
-            headingMap[id] = !isNaN(headingMap[id]) ? ++headingMap[id] : 0
-            if (headingMap[id]) {
-              heading.id = id + '-' + headingMap[id]
-            } else {
-              heading.id = id
-            }
-          })
-          let defaultOption = {
-            contentSelector: '.markdown-content',
-            tocSelector: '.js-toc',
-            headingSelector: 'h1, h2, h3 ',
-            scrollSmooth: true,
-            // scrollSmoothDuration: 500,
-            // scrollContainer: '.js-toc',
-            scrollSmoothOffset: -260,
-            // headingsOffset: -500,
-            // hasInnerContainers: true,
-            scrollEndCallback: () => {
-              document.body.style.paddingBottom = '1px'
-              if (document.querySelector('.markdown-menu .el-scrollbar__wrap')) {
-                document.querySelector('.markdown-menu .el-scrollbar__wrap').scrollTop = document.querySelector('.is-active-li') ? (document.querySelector('.is-active-li').offsetTop - 200) : 0
-              }
-              setTimeout(() => {
-                document.body.style.paddingBottom = 0
-              }, 100)
-            }
+        var content = document.querySelector('.markdown-content')
+        var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
+        var headingMap = {}
+        Array.prototype.forEach.call(headings, function (heading) {
+          var id = heading.id ? heading.id : ('h' + heading.querySelector('a').id.replace(/[\!\@\#\$\%\^\&\*\(\)\:]/ig, ''))
+          headingMap[id] = !isNaN(headingMap[id]) ? ++headingMap[id] : 0
+          if (headingMap[id]) {
+            heading.id = id + '-' + headingMap[id]
+          } else {
+            heading.id = id
           }
-          option = Object.assign(defaultOption, option)
-          tocbot.init(option)
+        })
+        let defaultOption = {
+          contentSelector: '.markdown-content',
+          tocSelector: '.js-toc',
+          headingSelector: 'h1, h2, h3 ',
+          scrollSmooth: true,
+          // scrollSmoothDuration: 500,
+          // scrollContainer: '.js-toc',
+          scrollSmoothOffset: -260,
+          // headingsOffset: -500,
+          // hasInnerContainers: true,
+          scrollEndCallback: () => {
+            document.body.style.paddingBottom = '1px'
+            if (document.querySelector('.markdown-menu .el-scrollbar__wrap')) {
+              document.querySelector('.markdown-menu .el-scrollbar__wrap').scrollTop = document.querySelector('.is-active-li') ? (document.querySelector('.is-active-li').offsetTop - 200) : 0
+            }
+            setTimeout(() => {
+              document.body.style.paddingBottom = 0
+            }, 100)
+          }
+        }
+        option = Object.assign(defaultOption, option)
+        this.$nextTick(() => {
+          // tocbot.init(option)
         })
       },
       selectNode(id) {
