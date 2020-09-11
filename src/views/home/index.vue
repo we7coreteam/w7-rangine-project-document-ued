@@ -516,17 +516,19 @@
             // scrollSmoothDuration: 500,
             // scrollContainer: '.js-toc',
             scrollSmoothOffset: -260,
-            // headingsOffset: -500,
+            headingsOffset: 100,
             // hasInnerContainers: true,
+/*
             scrollEndCallback: () => {
               document.body.style.paddingBottom = '1px'
               if (document.querySelector('.markdown-menu .el-scrollbar__wrap')) {
-                document.querySelector('.markdown-menu .el-scrollbar__wrap').scrollTop = document.querySelector('.is-active-li') ? (document.querySelector('.is-active-li').offsetTop - 200) : 0
+                document.querySelector('.markdown-menu .el-scrollbar__wrap').scrollTop = document.querySelector('.is-active-li') ? (document.querySelector('.is-active-li').offsetTop - 160) : 0
               }
               setTimeout(() => {
                 document.body.style.paddingBottom = 0
               }, 100)
             }
+*/
           }
           option = Object.assign(defaultOption, option)
           tocbot.init(option)
