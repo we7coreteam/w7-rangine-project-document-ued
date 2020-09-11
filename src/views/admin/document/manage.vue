@@ -5,8 +5,8 @@
       <div class="search-box">
         <div class="search-box-input">
           <el-input v-model="listQuery.keyword" class="demo-input-suffix" placeholder="请输入文档名称" clearable
-                    @keyup.enter.native="getAllProject">
-            <i slot="suffix" class="el-input__icon el-icon-search" @click="getAllProject"></i>
+                    @keyup.enter.native="searchProject">
+            <i slot="suffix" class="el-input__icon el-icon-search" @click="searchProject"></i>
           </el-input>
           <el-select v-model="listQuery.is_public" @change="getAllProject">
             <el-option label="全部" value=""></el-option>
@@ -297,8 +297,13 @@ methods: {
     this.getAllProject()
   },
   handleCurrentChange(val) {
+    console.log(val);
     this.listQuery.page = val
     this.getAllProject()
+  },
+  searchProject() {
+    this.listQuery.page = 1;
+    this.getAllProject();
   }
 }
 }
