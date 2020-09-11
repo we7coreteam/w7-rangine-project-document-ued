@@ -279,7 +279,7 @@
       },
       changeRoute(id, name, handSelectNode) {
         if (id == this.$route.query.id) {
-          this.getArticle()
+          // this.getArticle()
         } else {
           this.selectChapterId = id
           this.$router.push({path: '/chapter/' + this.document_id, query: {id: this.selectChapterId}})
@@ -301,53 +301,53 @@
         }
 
         this.loading = this.$loading();
-
-        this.$post('/document/chapter/detail', data).then(res => {
-          if (res.code == 200) {
-            this.articleContent = res.data;
-            this.loading.close();
-            if (res.data.api) {
-              this.mockUrl = location.origin + `/document/mockApiReponse/${this.$route.params.id}` + '/' + res.data.api.url;
-            } else {
-              this.mockUrl = '';
-            }
-            if (res.data.document) {
-              this.projectName = res.data.document.name;
-            }
-            // this.articleContent.content = res.content ? this.$refs.mavonEditor.markdownIt.render('<div class="markdown-content">\n \n'+res.content+'\n \n</div>' + '<div class="markdown-menu"><el-scrollbar>\n \n @[toc]( ) \n \n</el-scrollbar></div>\n \n' ) : ''
-            this.articleContent.content = res.data.content ? this.$refs.mavonEditor.markdownIt.render(res.data.content) : ''
-            this.$nextTick(() => {
-              // let id = this.$route.hash.substr(1)
-              // let jump = document.getElementById(id)
-              // let total = jump.offsetTop
-              // window.scroll({
-              //   top: total
-              // })
-              // this.initToc()
-              let hash = this.$route.hash
-              if (hash) {
-                window.location.hash = ''
-                window.location.hash = decodeURIComponent(hash)
-              } else {
-                window.scroll({
-                  top: 0
-                })
-              }
-            })
-            this.articleFlag = true
-            if (this.UserInfo.username) {
-              this.getShareKey()
-            } else {
-              this.shareUrl = window.location.href
-            }
-          }
-        })
+        // this.$post('/document/chapter/detail', data).then(res => {
+        //   if (res.code == 200) {
+        //     this.articleContent = res.data;
+        //     this.loading.close();
+        //     if (res.data.api) {
+        //       this.mockUrl = location.origin + `/document/mockApiReponse/${this.$route.params.id}` + '/' + res.data.api.url;
+        //     } else {
+        //       this.mockUrl = '';
+        //     }
+        //     if (res.data.document) {
+        //       this.projectName = res.data.document.name;
+        //     }
+        //     // this.articleContent.content = res.content ? this.$refs.mavonEditor.markdownIt.render('<div class="markdown-content">\n \n'+res.content+'\n \n</div>' + '<div class="markdown-menu"><el-scrollbar>\n \n @[toc]( ) \n \n</el-scrollbar></div>\n \n' ) : ''
+        //     this.articleContent.content = res.data.content ? this.$refs.mavonEditor.markdownIt.render(res.data.content) : ''
+        //     this.$nextTick(() => {
+        //       // let id = this.$route.hash.substr(1)
+        //       // let jump = document.getElementById(id)
+        //       // let total = jump.offsetTop
+        //       // window.scroll({
+        //       //   top: total
+        //       // })
+        //       // this.initToc()
+        //       let hash = this.$route.hash
+        //       if (hash) {
+        //         window.location.hash = ''
+        //         window.location.hash = decodeURIComponent(hash)
+        //       } else {
+        //         window.scroll({
+        //           top: 0
+        //         })
+        //       }
+        //     })
+        //     // this.articleFlag = true
+        //     // if (this.UserInfo.username) {
+        //     //   // this.getShareKey()
+        //     // } else {
+        //     //   // this.shareUrl = window.location.href
+        //     // }
+        //   }
+        // })
       },
       selectNode(id) {
         this.$refs.chaptersTree.setCurrentKey(id)
         this.expandIdArray = []
         this.expandIdArray.push(id)
       },
+/*
       search() {
         if (this.keyword == "") {
           this.$message('搜索关键字不能为空！')
@@ -369,6 +369,7 @@
           this.articleInfoList = res.data;
         })
       },
+*/
       highlight(text) {
         var keyword = this.keyword
         text = text.split('')
@@ -396,6 +397,7 @@
             this.shareUrl = res.data
           })
       },
+/*
       initToc(option) {
         this.$nextTick(() => {
           var content = document.querySelector('.markdown-content')
@@ -432,6 +434,7 @@
           tocbot.init(option)
         })
       },
+*/
       operStar() {
         let url = this.articleContent.star_id ? '/admin/star/delete' : '/admin/star/add'
         let data = {
@@ -449,6 +452,7 @@
       },
       goViewChapter(item) {
         this.$router.push({path: '/chapter/' + this.document_id, query: {id: item.chapter_id}})
+        // location.href=`/chapter/${this.document_id}?id=${item.chapter_id}`
         // this.$router.push({
         //   path: '/chapter/',
         //   params: {id: this.document_id},

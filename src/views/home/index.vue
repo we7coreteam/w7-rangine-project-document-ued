@@ -162,6 +162,7 @@
 <script>
   import {mapGetters} from 'vuex'
   import QrcodeVue from 'qrcode.vue'
+  import tocbot from 'tocbot'
 
   export default {
     name: 'homeChild',
@@ -215,6 +216,9 @@
     mounted() {
       // this.projectName = localStorage.projectName;
     },
+    beforeDestroy() {
+      tocbot.destroy();
+    },
     methods: {
       querySearch(queryString, cb) {
         // var restaurants = this.restaurants;
@@ -251,11 +255,10 @@
       getDocumentName() {
         this.$post('/document/detail', {
           document_id: this.document_id
+        }).then(res => {
+          this.document_name = res.data.name;
+          this.getChapters()
         })
-          .then(res => {
-            this.document_name = res.data.name;
-            this.getChapters()
-          })
       },
       getChapters() {
         this.$post('/document/chapter/list', {
@@ -279,6 +282,61 @@
             }
           })
           this.chapters = res.data;
+
+          if (this.$route.query.id) {
+            //F5刷新
+            this.selectChapterId = this.$route.query.id
+            //递归找name
+            let name = '';
+            let getName = function (array, id) {
+              array.forEach(chapters => {
+                if (!chapters.children.length) {
+                  getName(chapters.children)
+                }
+                if (chapters.id == id) {
+                  name = chapters.name
+                  return
+                }
+              })
+            }
+            getName(this.chapters, this.selectChapterId)
+            this.selectNode(this.selectChapterId)
+            document.title = name ? (name + ' — ' + this.document_name) : this.document_name
+            this.getArticle()
+          } else {
+            const findChapter = (arr) => {
+              if (arr.length) {
+                for (const item of arr) {
+                  /*
+                  * 如果是文档首先选中排在前的文档
+                  * 如果是目录，则选中第一个目录内的第一个文档*/
+                  try {
+                    if (item.is_dir && item.children.length) {
+                      findChapter(item.children);
+                      return false;
+                    } else if (!item.is_dir && item.id) {
+                      this.handleNodeClick(item);
+                      this.selectNode(item.id)
+                      this.defaultExpanded = [item.parent_id];
+                      // this.$router.push({path: '/chapter/' + this.$route.params.id, query: {id: item.id}}) // 临时注释
+                      return false;
+                    } else {
+                    }
+                  } catch (e) {
+                    console.log(e);
+                  }
+                }
+              }
+            }
+            findChapter(res.data);
+            // this.goDefaultChaper(res)
+            // if (res.data.length) {
+            //   this.selectNode(res.data[0].id);
+            //   this.handleNodeClick(res.data[0])
+            // }
+          }
+
+/*
           this.$nextTick(() => {
             if (this.$route.query.id) {
               //F5刷新
@@ -304,9 +362,9 @@
               const findChapter = (arr) => {
                 if (arr.length) {
                   for (const item of arr) {
-                    /*
+                    /!*
                     * 如果是文档首先选中排在前的文档
-                    * 如果是目录，则选中第一个目录内的第一个文档*/
+                    * 如果是目录，则选中第一个目录内的第一个文档*!/
                     try {
                       if (item.is_dir && item.children.length) {
                         findChapter(item.children);
@@ -333,6 +391,7 @@
               // }
             }
           })
+*/
         })
       },
       //判断是否有默认文档,有则选中
@@ -448,29 +507,29 @@
             heading.id = id
           }
         })
-        let defaultOption = {
-          contentSelector: '.markdown-content',
-          tocSelector: '.js-toc',
-          headingSelector: 'h1, h2, h3 ',
-          scrollSmooth: true,
-          // scrollSmoothDuration: 500,
-          // scrollContainer: '.js-toc',
-          scrollSmoothOffset: -260,
-          // headingsOffset: -500,
-          // hasInnerContainers: true,
-          scrollEndCallback: () => {
-            document.body.style.paddingBottom = '1px'
-            if (document.querySelector('.markdown-menu .el-scrollbar__wrap')) {
-              document.querySelector('.markdown-menu .el-scrollbar__wrap').scrollTop = document.querySelector('.is-active-li') ? (document.querySelector('.is-active-li').offsetTop - 200) : 0
-            }
-            setTimeout(() => {
-              document.body.style.paddingBottom = 0
-            }, 100)
-          }
-        }
-        option = Object.assign(defaultOption, option)
         this.$nextTick(() => {
-          // tocbot.init(option)
+          let defaultOption = {
+            contentSelector: '.markdown-content',
+            tocSelector: '.js-toc',
+            headingSelector: 'h1, h2, h3 ',
+            scrollSmooth: true,
+            // scrollSmoothDuration: 500,
+            // scrollContainer: '.js-toc',
+            scrollSmoothOffset: -260,
+            // headingsOffset: -500,
+            // hasInnerContainers: true,
+            scrollEndCallback: () => {
+              document.body.style.paddingBottom = '1px'
+              if (document.querySelector('.markdown-menu .el-scrollbar__wrap')) {
+                document.querySelector('.markdown-menu .el-scrollbar__wrap').scrollTop = document.querySelector('.is-active-li') ? (document.querySelector('.is-active-li').offsetTop - 200) : 0
+              }
+              setTimeout(() => {
+                document.body.style.paddingBottom = 0
+              }, 100)
+            }
+          }
+          option = Object.assign(defaultOption, option)
+          tocbot.init(option)
         })
       },
       selectNode(id) {
