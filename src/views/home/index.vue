@@ -522,7 +522,7 @@
             scrollEndCallback: () => {
               document.body.style.paddingBottom = '1px'
               if (document.querySelector('.markdown-menu .el-scrollbar__wrap')) {
-                document.querySelector('.markdown-menu .el-scrollbar__wrap').scrollTop = document.querySelector('.is-active-li') ? (document.querySelector('.is-active-li').offsetTop - 160) : 0
+                document.querySelector('.markdown-menu .el-scrollbar__wrap').scrollTop = document.querySelector('.is-active-li') ? (document.querySelector('.is-active-li').offsetTop - 200) : 0
               }
               setTimeout(() => {
                 document.body.style.paddingBottom = 0
